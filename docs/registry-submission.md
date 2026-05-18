@@ -7,21 +7,21 @@ Registry publishing flow:
 - `docs/_index.md` provides the package overview.
 - `docs/installation-configuration.md` provides install and setup docs.
 - `npm run registry:check` validates the local Registry-facing files.
+- `npm run plugin:dist` builds GitHub Release plugin archives matching
+  Pulumi's expected executable plugin asset naming.
 
-Public Registry submission is still blocked on the executable package
-track. The current package is a source-based TypeScript component
-package; Pulumi's public Registry publishing flow expects a
-`pluginDownloadURL` that points to compiled plugin binaries and package
-SDKs published to the relevant language package feeds.
+`schema.json` sets `pluginDownloadURL` to
+`github://api.github.com/johnneerdael/pulumi-netskope-publisher`.
+Tagged releases upload archives named
+`pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz`.
 
-When the executable package track is available:
+Before opening the public Registry PR:
 
 1. Publish the npm package and any generated SDK packages.
-2. Publish compiled plugin binaries to GitHub Releases or another
-   supported host.
-3. Add `pluginDownloadURL` to `schema.json`.
-4. Run `npm run registry:check`.
-5. Open a PR against `pulumi/registry` and add:
+2. Confirm the tag release attached plugin archives for supported
+   platforms.
+3. Run `npm run registry:check`.
+4. Open a PR against `pulumi/registry` and add:
 
    ```json
    {

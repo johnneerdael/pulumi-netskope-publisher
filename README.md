@@ -28,6 +28,7 @@ npm install
 npm run typecheck
 npm test
 npm run registry:check
+npm run plugin:dist
 ```
 
 ## Quick start
@@ -68,7 +69,7 @@ https://johnneerdael.github.io/pulumi-netskope-publisher/
 Registry-facing metadata and docs live in `schema.json` and `docs/`.
 Run `npm run registry:check` before opening a Registry submission PR.
 
-The package is currently a source-based TypeScript component package.
-Public Pulumi Registry publication still needs either Pulumi acceptance
-for that packaging model or an executable plugin release path with
-`pluginDownloadURL` configured in `schema.json`.
+`schema.json` sets `pluginDownloadURL` to GitHub Releases. Tagged
+releases build Pulumi plugin archives named
+`pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz` and
+attach them to the release before publication.

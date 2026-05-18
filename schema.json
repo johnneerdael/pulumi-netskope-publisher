@@ -20,6 +20,7 @@
   "repository": "https://github.com/johnneerdael/pulumi-netskope-publisher",
   "license": "Apache-2.0",
   "logoUrl": "https://raw.githubusercontent.com/johnneerdael/pulumi-netskope-publisher/main/site/source/images/netskope-logo.png",
+  "pluginDownloadURL": "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
   "language": {
     "nodejs": {
       "packageName": "@johnneerdael/pulumi-netskope-publisher"

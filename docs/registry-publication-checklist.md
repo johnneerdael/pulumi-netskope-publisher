@@ -16,11 +16,11 @@ Before requesting public Registry listing:
 - Keep the component resource tokens aligned with the schema package
   name: `netskope-publisher:index:*`.
 - Run `npm run registry:check`.
+- Run `npm run plugin:dist` and confirm the release archives are named
+  `pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz`.
 - Publish the npm package.
-- Add an executable package release path or decide with Pulumi whether
-  a source-based TypeScript component package can be accepted.
-- If using the executable package track, publish provider binaries for
-  supported platforms and add `pluginDownloadURL` to `schema.json`.
+- Confirm the tag release uploaded the plugin archives to GitHub
+  Releases, matching `pluginDownloadURL` in `schema.json`.
 - If generating multi-language SDKs, publish the SDK packages to the
   relevant public package feeds.
 - Open a PR against `pulumi/registry` and add the community package

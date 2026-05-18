@@ -13,6 +13,9 @@
     "PulumiPlugin.yaml",
     "README.md",
     "schema.json",
+    "cmd",
+    "go.mod",
+    "scripts/build-plugin-archives.mjs",
     "scripts/check-registry-readiness.mjs",
     "LICENSE"
   ],
@@ -22,8 +25,9 @@
     "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
     "clean": "rm -rf dist",
     "prepack": "npm run clean && npm run build",
+    "plugin:dist": "node scripts/build-plugin-archives.mjs",
     "registry:check": "node scripts/check-registry-readiness.mjs",
-    "release:check": "npm ci && npm run typecheck && npm test"
+    "release:check": "npm ci && npm run typecheck && npm test && npm run registry:check && npm run plugin:dist"
   },
   "keywords": [
     "pulumi",

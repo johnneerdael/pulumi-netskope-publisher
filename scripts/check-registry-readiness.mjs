@@ -5,6 +5,8 @@ const requiredFiles = [
   "PulumiPlugin.yaml",
   "package.json",
   "schema.json",
+  "cmd/pulumi-resource-netskope-publisher/main.go",
+  "scripts/build-plugin-archives.mjs",
   "docs/_index.md",
   "docs/installation-configuration.md",
   "docs/registry-submission.md",
@@ -91,10 +93,8 @@ if (schema) {
     errors.push("schema.json must declare language.nodejs.packageName");
   }
 
-  if (!schema.pluginDownloadURL) {
-    warnings.push(
-      "schema.json does not include pluginDownloadURL. Public Pulumi Registry publishing still needs an executable plugin binary release path."
-    );
+  if (schema.pluginDownloadURL !== "github://api.github.com/johnneerdael/pulumi-netskope-publisher") {
+    errors.push("schema.json pluginDownloadURL must point to the GitHub Releases plugin asset host");
   }
 }
 
@@ -121,6 +121,9 @@ for (const file of [
   "docs/registry-submission.md",
   "PulumiPlugin.yaml",
   "README.md",
+  "cmd",
+  "go.mod",
+  "scripts/build-plugin-archives.mjs",
   "scripts/check-registry-readiness.mjs"
 ]) {
   if (!packageJson.files?.includes(file)) {
@@ -130,6 +133,10 @@ for (const file of [
 
 if (!packageJson.scripts?.["registry:check"]) {
   errors.push("package.json must expose npm run registry:check");
+}
+
+if (!packageJson.scripts?.["plugin:dist"]) {
+  errors.push("package.json must expose npm run plugin:dist");
 }
 
 if (errors.length > 0) {
