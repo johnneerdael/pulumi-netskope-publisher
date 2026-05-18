@@ -1,0 +1,19 @@
+{
+  "name": "pulumi-netskope-publisher-azure-single-example",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p ../../tsconfig.json",
+    "preview": "pulumi preview",
+    "up": "pulumi up",
+    "destroy": "pulumi destroy"
+  },
+  "dependencies": {
+    "@johnneerdael/pulumi-netskope-publisher": "file:../..",
+    "@pulumi/azure-native": "^3.18.0",
+    "@pulumi/pulumi": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

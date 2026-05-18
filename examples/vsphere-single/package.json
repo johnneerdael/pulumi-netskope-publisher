@@ -1,0 +1,19 @@
+{
+  "name": "pulumi-netskope-publisher-vsphere-single-example",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p ../../tsconfig.json",
+    "preview": "pulumi preview",
+    "up": "pulumi up",
+    "destroy": "pulumi destroy"
+  },
+  "dependencies": {
+    "@johnneerdael/pulumi-netskope-publisher": "file:../..",
+    "@pulumi/pulumi": "^3.0.0",
+    "@pulumi/vsphere": "^4.16.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

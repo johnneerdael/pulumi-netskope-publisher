@@ -1,0 +1,3 @@
+name: azure-single
+description: Deploy Netskope Private Access Publishers on Azure.
+runtime: nodejs

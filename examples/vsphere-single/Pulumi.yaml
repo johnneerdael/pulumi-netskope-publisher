@@ -1,0 +1,3 @@
+name: vsphere-single
+description: Deploy Netskope Private Access Publishers on vSphere.
+runtime: nodejs
