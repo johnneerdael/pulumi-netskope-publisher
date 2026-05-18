@@ -1,4 +1,4 @@
-# pulumi-netskope-publisher
+# Unoffical Netskope NPA Publisher — Pulumi Deployment Guide
 
 Pulumi components for provisioning Netskope Private Access Publishers.
 
