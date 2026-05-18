@@ -96,6 +96,27 @@ export interface VspherePublisherArgs extends CommonPublisherArgs {
   memory?: pulumi.Input<number>;
 }
 
+export interface HypervHardDrive {
+  path: pulumi.Input<string>;
+  controllerType?: pulumi.Input<string>;
+  controllerNumber?: pulumi.Input<number>;
+  controllerLocation?: pulumi.Input<number>;
+}
+
+export interface HypervPublisherArgs extends CommonPublisherArgs {
+  switchName: pulumi.Input<string>;
+  hardDrives: pulumi.Input<pulumi.Input<HypervHardDrive>[]>;
+  generation?: pulumi.Input<number>;
+  processorCount?: pulumi.Input<number>;
+  memorySize?: pulumi.Input<number>;
+  dynamicMemory?: pulumi.Input<boolean>;
+  minimumMemory?: pulumi.Input<number>;
+  maximumMemory?: pulumi.Input<number>;
+  autoStartAction?: pulumi.Input<string>;
+  autoStopAction?: pulumi.Input<string>;
+  enableExperimentalHyperv?: boolean;
+}
+
 export interface PublisherOutput {
   publisherId: number;
   registrationToken: string;
