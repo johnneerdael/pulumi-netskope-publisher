@@ -4,12 +4,16 @@ title: Roadmap
 
 # Roadmap
 
-The Pulumi package starts with AWS. Planned provider components:
+Supported provider components:
 
+- AWS
 - Azure
 - GCP
 - vSphere
-- Hyper-V
 
-These providers should reuse the shared name derivation, registration,
-cloud-init, and output conventions.
+Planned follow-up:
+
+- Enable full Hyper-V once `@pulumi/hyperv` is available through a stable
+  package source.
+- Evaluate executable-based packaging before public Pulumi Registry
+  submission.
