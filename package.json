@@ -13,8 +13,12 @@
     "PulumiPlugin.yaml",
     "README.md",
     "schema.json",
-    "cmd",
+    "cmd/pulumi-resource-netskope-publisher/main.go",
+    "internal/provider/components.go",
+    "internal/provider/provider.go",
+    "internal/provider/types.go",
     "go.mod",
+    "go.sum",
     "scripts/build-plugin-archives.mjs",
     "scripts/check-registry-readiness.mjs",
     "LICENSE"
@@ -25,9 +29,10 @@
     "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
     "clean": "rm -rf dist",
     "prepack": "npm run clean && npm run build",
+    "go:test": "go test ./cmd/pulumi-resource-netskope-publisher ./internal/provider",
     "plugin:dist": "node scripts/build-plugin-archives.mjs",
     "registry:check": "node scripts/check-registry-readiness.mjs",
-    "release:check": "npm ci && npm run typecheck && npm test && npm run registry:check && npm run plugin:dist"
+    "release:check": "npm ci && npm run typecheck && npm test && npm run go:test && npm run registry:check && npm run plugin:dist"
   },
   "keywords": [
     "pulumi",

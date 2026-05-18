@@ -27,6 +27,7 @@ VHDX and OVA download URLs are exported from `officialImageSources`.
 npm install
 npm run typecheck
 npm test
+npm run go:test
 npm run registry:check
 npm run plugin:dist
 ```
@@ -69,7 +70,12 @@ https://johnneerdael.github.io/pulumi-netskope-publisher/
 Registry-facing metadata and docs live in `schema.json` and `docs/`.
 Run `npm run registry:check` before opening a Registry submission PR.
 
-`schema.json` sets `pluginDownloadURL` to GitHub Releases. Tagged
-releases build Pulumi plugin archives named
+`schema.json` sets `pluginDownloadURL` to GitHub Releases. The provider
+binary is implemented with `pulumi-go-provider` and exposes the package
+components as an executable component provider. Tagged releases build
+Pulumi plugin archives named
 `pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz` and
 attach them to the release before publication.
+
+The TypeScript components remain the deployment implementation while the
+Go provider is brought to full child-resource parity.

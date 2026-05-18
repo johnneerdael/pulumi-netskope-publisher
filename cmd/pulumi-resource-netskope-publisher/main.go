@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+
+	netskopeprovider "github.com/johnneerdael/pulumi-netskope-publisher/internal/provider"
 )
 
 var version = "dev"
@@ -14,12 +17,24 @@ func main() {
 			fmt.Printf("pulumi-resource-netskope-publisher %s\n", version)
 			return
 		case "--schema":
-			fmt.Fprintln(os.Stderr, "schema is published from schema.json in the repository")
-			os.Exit(1)
+			schema, err := netskopeprovider.Schema(context.Background(), 1)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "schema error: %s\n", err)
+				os.Exit(1)
+			}
+			fmt.Println(schema)
+			return
 		}
 	}
 
-	fmt.Fprintln(os.Stderr, "pulumi-resource-netskope-publisher is a release shim for the TypeScript component package")
-	fmt.Fprintln(os.Stderr, "Use @johnneerdael/pulumi-netskope-publisher from npm for current component execution")
-	os.Exit(1)
+	provider, err := netskopeprovider.New()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "provider error: %s\n", err)
+		os.Exit(1)
+	}
+
+	if err := provider.Run(context.Background(), netskopeprovider.Name, version); err != nil {
+		fmt.Fprintf(os.Stderr, "provider error: %s\n", err)
+		os.Exit(1)
+	}
 }

@@ -15,6 +15,7 @@ Before requesting public Registry listing:
   description in `schema.json`.
 - Keep the component resource tokens aligned with the schema package
   name: `netskope-publisher:index:*`.
+- Run `npm run go:test`.
 - Run `npm run registry:check`.
 - Run `npm run plugin:dist` and confirm the release archives are named
   `pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz`.

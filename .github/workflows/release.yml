@@ -21,10 +21,11 @@ jobs:
           registry-url: https://registry.npmjs.org
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.25.8"
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - run: npm run go:test
       - run: npm run registry:check
       - run: npm run plugin:dist
       - run: npm publish --provenance --access public

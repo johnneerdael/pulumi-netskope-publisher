@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 
 const requiredFiles = [
   "README.md",
@@ -6,6 +7,8 @@ const requiredFiles = [
   "package.json",
   "schema.json",
   "cmd/pulumi-resource-netskope-publisher/main.go",
+  "internal/provider/provider.go",
+  "go.sum",
   "scripts/build-plugin-archives.mjs",
   "docs/_index.md",
   "docs/installation-configuration.md",
@@ -121,8 +124,12 @@ for (const file of [
   "docs/registry-submission.md",
   "PulumiPlugin.yaml",
   "README.md",
-  "cmd",
+  "cmd/pulumi-resource-netskope-publisher/main.go",
+  "internal/provider/components.go",
+  "internal/provider/provider.go",
+  "internal/provider/types.go",
   "go.mod",
+  "go.sum",
   "scripts/build-plugin-archives.mjs",
   "scripts/check-registry-readiness.mjs"
 ]) {
@@ -137,6 +144,29 @@ if (!packageJson.scripts?.["registry:check"]) {
 
 if (!packageJson.scripts?.["plugin:dist"]) {
   errors.push("package.json must expose npm run plugin:dist");
+}
+
+const pluginYaml = readFileSync("PulumiPlugin.yaml", "utf8").trim();
+if (pluginYaml !== "runtime: go") {
+  errors.push("PulumiPlugin.yaml must declare runtime: go for the executable provider package");
+}
+
+const schemaCommand = spawnSync("go", ["run", "./cmd/pulumi-resource-netskope-publisher", "--schema"], {
+  encoding: "utf8"
+});
+if (schemaCommand.status !== 0) {
+  errors.push(`Go provider schema command failed: ${schemaCommand.stderr || schemaCommand.stdout}`);
+} else {
+  try {
+    const providerSchema = JSON.parse(schemaCommand.stdout);
+    for (const token of expectedResourceTokens) {
+      if (!providerSchema.resources?.[token]) {
+        errors.push(`Go provider schema is missing resource token: ${token}`);
+      }
+    }
+  } catch (error) {
+    errors.push(`Go provider schema command did not emit valid JSON: ${error.message}`);
+  }
 }
 
 if (errors.length > 0) {
