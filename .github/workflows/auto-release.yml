@@ -91,7 +91,7 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.REGISTRY_PR_TOKEN }}
-          REGISTRY_FORK: ${{ vars.PULUMI_REGISTRY_FORK }}
+          REGISTRY_FORK: ${{ secrets.PULUMI_REGISTRY_FORK || vars.PULUMI_REGISTRY_FORK }}
         run: |
           if [ -z "$GH_TOKEN" ] || [ -z "$REGISTRY_FORK" ]; then
             echo "Skipping Registry PR. Configure REGISTRY_PR_TOKEN and PULUMI_REGISTRY_FORK to enable it."
