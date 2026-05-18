@@ -6,6 +6,10 @@
     "declaration": true,
     "outDir": "dist",
     "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@johnneerdael/pulumi-netskope-publisher": ["src/index.ts"]
+    },
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

@@ -1,0 +1,19 @@
+{
+  "name": "pulumi-netskope-publisher-aws-single-example",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p ../../tsconfig.json",
+    "preview": "pulumi preview",
+    "up": "pulumi up",
+    "destroy": "pulumi destroy"
+  },
+  "dependencies": {
+    "@pulumi/aws": "^6.0.0",
+    "@pulumi/pulumi": "^3.0.0",
+    "@johnneerdael/pulumi-netskope-publisher": "file:../.."
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
