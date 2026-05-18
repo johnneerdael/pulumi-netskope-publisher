@@ -1,0 +1,39 @@
+{
+  "name": "@johnneerdael/pulumi-netskope-publisher",
+  "version": "0.1.0",
+  "description": "Pulumi components for Netskope Private Access Publishers.",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "files": [
+    "dist",
+    "PulumiPlugin.yaml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "pulumi",
+    "netskope",
+    "npa",
+    "publisher",
+    "aws"
+  ],
+  "author": "John Neerdael",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@pulumi/aws": "^6.0.0",
+    "@pulumi/pulumi": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
