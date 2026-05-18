@@ -23,7 +23,25 @@
   "pluginDownloadURL": "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
   "language": {
     "nodejs": {
-      "packageName": "@johninnl/pulumi-netskope-publisher"
+      "packageName": "@johninnl/pulumi-netskope-publisher",
+      "respectSchemaVersion": true
+    },
+    "python": {
+      "packageName": "pulumi_netskope_publisher",
+      "pythonRequires": ">=3.9",
+      "requires": {
+        "pulumi": ">=3.0.0,<4.0.0"
+      },
+      "respectSchemaVersion": true,
+      "pyproject": {
+        "enabled": true
+      }
+    },
+    "csharp": {
+      "packageReferences": {
+        "Pulumi": "3.*"
+      },
+      "respectSchemaVersion": true
     }
   },
   "resources": {
@@ -128,8 +146,7 @@
         },
         "publishers": {
           "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
-          "description": "Publisher registration and VM details keyed by name.",
-          "secret": true
+          "description": "Publisher registration and VM details keyed by name."
         }
       }
     },
@@ -241,8 +258,7 @@
         },
         "publishers": {
           "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
-          "description": "Publisher registration and VM details keyed by name.",
-          "secret": true
+          "description": "Publisher registration and VM details keyed by name."
         }
       }
     },
@@ -346,8 +362,7 @@
         },
         "publishers": {
           "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
-          "description": "Publisher registration and VM details keyed by name.",
-          "secret": true
+          "description": "Publisher registration and VM details keyed by name."
         }
       }
     },
@@ -447,8 +462,7 @@
         },
         "publishers": {
           "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
-          "description": "Publisher registration and VM details keyed by name.",
-          "secret": true
+          "description": "Publisher registration and VM details keyed by name."
         }
       }
     },
@@ -550,8 +564,7 @@
         },
         "publishers": {
           "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
-          "description": "Publisher registration and VM details keyed by name.",
-          "secret": true
+          "description": "Publisher registration and VM details keyed by name."
         }
       }
     },

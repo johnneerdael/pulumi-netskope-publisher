@@ -40,18 +40,39 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
       - uses: actions/setup-go@v5
         with:
           go-version: "1.25.8"
 
       - run: npm ci
 
-      - name: Verify npm publishing token
+      - name: Install Python packaging tools
+        run: python3 -m pip install --upgrade build twine
+
+      - name: Verify publishing tokens
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
             echo "::error::Configure the NPM_TOKEN repository secret before automatic releases can publish."
+            exit 1
+          fi
+          if [ -z "$PYPI_API_TOKEN" ]; then
+            echo "::error::Configure the PYPI_API_TOKEN repository secret before automatic releases can publish the Python SDK."
+            exit 1
+          fi
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "::error::Configure the NUGET_API_KEY repository secret before automatic releases can publish the C# SDK."
             exit 1
           fi
 
@@ -70,11 +91,27 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Rebuild plugin archives after npm prepack
+        run: npm run plugin:dist
+
+      - name: Rebuild SDK packages after npm prepack
+        run: npm run sdk:pack
+
+      - name: Publish Python SDK
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: python3 -m twine upload --non-interactive -u __token__ -p "$PYPI_API_TOKEN" dist/sdks/python/*
+
+      - name: Publish C# SDK
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push dist/sdks/dotnet/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
       - name: Commit release bump and tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json schema.json internal/provider/provider.go
+          git add package.json package-lock.json schema.json internal/provider/provider.go sdk
           git commit -m "chore(release): v${{ steps.version.outputs.version }}"
           git tag "v${{ steps.version.outputs.version }}"
           git push origin HEAD:main
@@ -101,6 +138,8 @@ jobs:
           branch="add-pulumi-netskope-publisher"
           fork_owner="${REGISTRY_FORK%%/*}"
           workdir="$(mktemp -d)"
+          body_file="$workdir/registry-pr-body.md"
+          sed "s/{{TAG}}/${{ steps.version.outputs.tag }}/g" "$GITHUB_WORKSPACE/docs/registry-pr-body.md" > "$body_file"
 
           git clone "https://x-access-token:${GH_TOKEN}@github.com/${REGISTRY_FORK}.git" "$workdir/registry"
           cd "$workdir/registry"
@@ -142,11 +181,11 @@ jobs:
           if [ -n "$existing_pr" ]; then
             gh pr edit "$existing_pr" --repo pulumi/registry \
               --title "Add pulumi-netskope-publisher package" \
-              --body "Adds johnneerdael/pulumi-netskope-publisher to the community Pulumi Registry package list."
+              --body-file "$body_file"
           else
             gh pr create --repo pulumi/registry \
               --base "$default_branch" \
               --head "$fork_owner:$branch" \
               --title "Add pulumi-netskope-publisher package" \
-              --body "Adds johnneerdael/pulumi-netskope-publisher to the community Pulumi Registry package list."
+              --body-file "$body_file"
           fi

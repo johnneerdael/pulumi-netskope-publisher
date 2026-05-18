@@ -23,7 +23,7 @@ Each component accepts either Netskope tenant credentials for automatic
 publisher registration or pre-created registration tokens keyed by
 publisher name.
 
-## Example
+## TypeScript example
 
 ```typescript
 import * as pulumi from "@pulumi/pulumi";
@@ -42,6 +42,57 @@ const publisher = new AwsPublisher("publisher", {
 
 export const publisherNames = publisher.publisherNames;
 export const publishers = pulumi.secret(publisher.publishers);
+```
+
+## Python example
+
+```python
+import pulumi
+from pulumi_netskope_publisher import AwsPublisher
+
+config = pulumi.Config()
+
+publisher = AwsPublisher(
+    "publisher",
+    name_prefix="pub-eu",
+    replicas=2,
+    tenant_url=config.require("tenantUrl"),
+    api_token=config.require_secret("apiToken"),
+    subnet_id=config.require("subnetId"),
+    security_group_ids=config.require_object("securityGroupIds"),
+)
+
+pulumi.export("publisherNames", publisher.publisher_names)
+pulumi.export("publishers", publisher.publishers)
+```
+
+## C# example
+
+```csharp
+using System.Collections.Generic;
+using Pulumi;
+using Pulumi.NetskopePublisher;
+
+return await Deployment.RunAsync(() =>
+{
+    var config = new Config();
+
+    var publisher = new AwsPublisher("publisher", new AwsPublisherArgs
+    {
+        NamePrefix = "pub-eu",
+        Replicas = 2,
+        TenantUrl = config.Require("tenantUrl"),
+        ApiToken = config.RequireSecret("apiToken"),
+        SubnetId = config.Require("subnetId"),
+        SecurityGroupIds = config.RequireObject<string[]>("securityGroupIds"),
+    });
+
+    return new Dictionary<string, object?>
+    {
+        ["publisherNames"] = publisher.PublisherNames,
+        ["publishers"] = publisher.Publishers,
+    };
+});
 ```
 
 Provider-specific examples are available in the repository under

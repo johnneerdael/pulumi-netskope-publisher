@@ -6,9 +6,14 @@ Registry publishing flow:
 - `schema.json` contains package metadata and component API docs.
 - `docs/_index.md` provides the package overview.
 - `docs/installation-configuration.md` provides install and setup docs.
+- `docs/registry-pr-body.md` provides a copy/paste Pulumi Registry PR
+  checklist with the current published artifact status.
 - `npm run registry:check` validates the local Registry-facing files.
 - `npm run plugin:dist` builds GitHub Release plugin archives matching
   Pulumi's expected executable plugin asset naming.
+- `npm run sdk:gen` generates Python and C# SDKs from `schema.json`.
+- `npm run sdk:pack` builds the Python distribution artifacts and the
+  NuGet package.
 - `npm run go:test` validates the Go executable component provider and
   its schema command.
 
@@ -27,12 +32,15 @@ graphs for AWS, Azure, GCP, and vSphere.
 
 Before opening the public Registry PR:
 
-1. Publish the npm package and any generated SDK packages.
+1. Publish the npm package, Python SDK, and C# SDK.
 2. Confirm the tag release attached plugin archives for supported
    platforms.
-3. Run `npm run go:test`.
-4. Run `npm run registry:check`.
-5. Open a PR against `pulumi/registry` and add:
+3. Run `npm run sdk:gen`.
+4. Run `npm run sdk:pack`.
+5. Run `npm run go:test`.
+6. Run `npm run registry:check`.
+7. Open a PR against `pulumi/registry`, use
+   `docs/registry-pr-body.md` for the checklist details, and add:
 
    ```json
    {

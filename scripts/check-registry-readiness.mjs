@@ -11,11 +11,17 @@ const requiredFiles = [
   "go.sum",
   "scripts/build-plugin-archives.mjs",
   "scripts/bump-release-version.mjs",
+  "scripts/generate-sdks.mjs",
+  "scripts/package-sdks.mjs",
   "scripts/run-node-tests.mjs",
   "docs/_index.md",
   "docs/installation-configuration.md",
+  "docs/registry-pr-body.md",
   "docs/registry-submission.md",
-  "docs/registry-publication-checklist.md"
+  "docs/registry-publication-checklist.md",
+  "sdk/python/pyproject.toml",
+  "sdk/python/pulumi_netskope_publisher/__init__.py",
+  "sdk/dotnet/Pulumi.NetskopePublisher.csproj"
 ];
 
 const expectedResourceTokens = [
@@ -99,6 +105,14 @@ if (schema) {
     errors.push("schema.json must declare language.nodejs.packageName");
   }
 
+  if (!schema.language?.python?.packageName) {
+    errors.push("schema.json must declare language.python.packageName for the published Python SDK");
+  }
+
+  if (!schema.language?.csharp?.packageReferences?.Pulumi) {
+    errors.push("schema.json must declare language.csharp.packageReferences.Pulumi for the published C# SDK");
+  }
+
   if (schema.pluginDownloadURL !== "github://api.github.com/johnneerdael/pulumi-netskope-publisher") {
     errors.push("schema.json pluginDownloadURL must point to the GitHub Releases plugin asset host");
   }
@@ -124,6 +138,7 @@ for (const file of [
   "schema.json",
   "docs/_index.md",
   "docs/installation-configuration.md",
+  "docs/registry-pr-body.md",
   "docs/registry-submission.md",
   "PulumiPlugin.yaml",
   "README.md",
@@ -137,6 +152,8 @@ for (const file of [
   "scripts/build-plugin-archives.mjs",
   "scripts/bump-release-version.mjs",
   "scripts/check-registry-readiness.mjs",
+  "scripts/generate-sdks.mjs",
+  "scripts/package-sdks.mjs",
   "scripts/run-node-tests.mjs"
 ]) {
   if (!packageJson.files?.includes(file)) {
@@ -150,6 +167,14 @@ if (!packageJson.scripts?.["registry:check"]) {
 
 if (!packageJson.scripts?.["plugin:dist"]) {
   errors.push("package.json must expose npm run plugin:dist");
+}
+
+if (!packageJson.scripts?.["sdk:gen"]) {
+  errors.push("package.json must expose npm run sdk:gen");
+}
+
+if (!packageJson.scripts?.["sdk:pack"]) {
+  errors.push("package.json must expose npm run sdk:pack");
 }
 
 if (!packageJson.scripts?.["release:bump"]) {

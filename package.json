@@ -12,6 +12,7 @@
     "dist/src",
     "docs/_index.md",
     "docs/installation-configuration.md",
+    "docs/registry-pr-body.md",
     "docs/registry-publication-checklist.md",
     "docs/registry-submission.md",
     "PulumiPlugin.yaml",
@@ -27,6 +28,8 @@
     "scripts/build-plugin-archives.mjs",
     "scripts/bump-release-version.mjs",
     "scripts/check-registry-readiness.mjs",
+    "scripts/generate-sdks.mjs",
+    "scripts/package-sdks.mjs",
     "scripts/run-node-tests.mjs",
     "LICENSE"
   ],
@@ -38,9 +41,11 @@
     "prepack": "npm run clean && npm run build",
     "go:test": "go test ./cmd/pulumi-resource-netskope-publisher ./internal/provider",
     "plugin:dist": "node scripts/build-plugin-archives.mjs",
+    "sdk:gen": "node scripts/generate-sdks.mjs",
+    "sdk:pack": "node scripts/package-sdks.mjs",
     "registry:check": "node scripts/check-registry-readiness.mjs",
     "release:bump": "node scripts/bump-release-version.mjs",
-    "release:check": "npm ci && npm run typecheck && npm test && npm run go:test && npm run registry:check && npm run plugin:dist"
+    "release:check": "npm ci && npm run typecheck && npm test && npm run go:test && npm run sdk:gen && npm run registry:check && npm run plugin:dist && npm run sdk:pack"
   },
   "keywords": [
     "pulumi",

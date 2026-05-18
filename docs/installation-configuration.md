@@ -4,11 +4,34 @@ meta_desc: Install and configure the Netskope Publisher Pulumi package.
 layout: package
 ---
 
-Install the package from npm:
+Install the TypeScript SDK from npm:
 
 ```bash
 npm install @johninnl/pulumi-netskope-publisher
 ```
+
+Published TypeScript SDK:
+[`@johninnl/pulumi-netskope-publisher`](https://www.npmjs.com/package/@johninnl/pulumi-netskope-publisher).
+
+Install the Python SDK from PyPI:
+
+```bash
+pip install pulumi-netskope-publisher
+```
+
+Published Python SDK:
+[`pulumi-netskope-publisher`](https://pypi.org/project/pulumi-netskope-publisher/).
+
+Install the C# SDK from NuGet:
+
+```bash
+dotnet add package Pulumi.NetskopePublisher
+```
+
+Published C# SDK:
+[`Pulumi.NetskopePublisher`](https://www.nuget.org/packages/Pulumi.NetskopePublisher).
+
+Go and Java SDK packages are not published yet.
 
 Install the cloud provider packages used by the component you deploy:
 

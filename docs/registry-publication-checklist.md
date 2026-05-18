@@ -8,6 +8,8 @@ reviewed locally:
 - `docs/installation-configuration.md`
 - `docs/registry-submission.md`
 - `npm run registry:check`
+- `npm run sdk:gen`
+- `npm run sdk:pack`
 
 Before requesting public Registry listing:
 
@@ -16,16 +18,19 @@ Before requesting public Registry listing:
 - Keep the component resource tokens aligned with the schema package
   name: `netskope-publisher:index:*`.
 - Run `npm run go:test`.
+- Run `npm run sdk:gen`.
+- Run `npm run sdk:pack`.
 - Run `npm run registry:check`.
 - Run `npm run plugin:dist` and confirm the release archives are named
   `pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz`.
 - Publish the npm package.
+- Publish the Python SDK to PyPI.
+- Publish the C# SDK to NuGet.
 - Confirm the tag release uploaded the plugin archives to GitHub
   Releases, matching `pluginDownloadURL` in `schema.json`.
 - Confirm the Go provider schema includes `NetskopeRegistration` plus
   the AWS, Azure, GCP, vSphere, and Hyper-V resources.
-- If generating multi-language SDKs, publish the SDK packages to the
-  relevant public package feeds.
+- Use `docs/registry-pr-body.md` for the public Pulumi Registry PR body.
 - Open a PR against `pulumi/registry` and add the community package
   entry for `johnneerdael/pulumi-netskope-publisher` with schema path
   `schema.json`.
