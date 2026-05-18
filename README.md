@@ -28,6 +28,8 @@ npm install
 npm run typecheck
 npm test
 npm run go:test
+npm run sdk:gen
+npm run sdk:pack
 npm run registry:check
 npm run plugin:dist
 ```
@@ -67,8 +69,9 @@ https://johnneerdael.github.io/pulumi-netskope-publisher/
 
 ## Pulumi Registry
 
-Registry-facing metadata and docs live in `schema.json` and `docs/`.
-Run `npm run registry:check` before opening a Registry submission PR.
+Registry-facing metadata and docs live in `schema.json`, `docs/`, and
+the generated SDKs under `sdk/`. Run `npm run registry:check` before
+opening a Registry submission PR.
 
 `schema.json` sets `pluginDownloadURL` to GitHub Releases. The provider
 binary is implemented with `pulumi-go-provider` and exposes the package
@@ -76,6 +79,11 @@ components as an executable component provider. Tagged releases build
 Pulumi plugin archives named
 `pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz` and
 attach them to the release before publication.
+
+The release also publishes the TypeScript SDK to npm, the Python SDK to
+PyPI, the C# SDK to NuGet, and the Go SDK through the tagged GitHub
+module path
+`github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher`.
 
 The Go provider constructs AWS, Azure, GCP, and vSphere child resources
 and includes a stateful `NetskopeRegistration` resource for creating or
@@ -86,13 +94,16 @@ available as an escape hatch.
 
 Pushes to `main` run `.github/workflows/auto-release.yml`. The workflow
 bumps the patch version, updates `package.json`, `package-lock.json`,
-`schema.json`, and the Go provider schema version, runs the release
-checks, commits the version bump, tags `vX.Y.Z`, publishes npm, and
-uploads plugin archives to the GitHub release.
+`schema.json`, the generated SDKs, and the Go provider schema version,
+runs the release checks, commits the version bump, tags `vX.Y.Z`,
+publishes the SDK packages, and uploads plugin archives to the GitHub
+release.
 
 Required repository secret:
 
 - `NPM_TOKEN`: npm automation token for publishing
+- `PYPI_API_TOKEN`: PyPI token for publishing the Python SDK
+- `NUGET_API_KEY`: NuGet API key for publishing the C# SDK
 
 Repository Actions settings must allow workflows to write repository
 contents so the release workflow can push the version commit and tag.

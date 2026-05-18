@@ -26,73 +26,82 @@ publisher name.
 ## TypeScript example
 
 ```typescript
-import * as pulumi from "@pulumi/pulumi";
 import { AwsPublisher } from "@johninnl/pulumi-netskope-publisher";
-
-const config = new pulumi.Config();
 
 const publisher = new AwsPublisher("publisher", {
   namePrefix: "pub-eu",
   replicas: 2,
-  tenantUrl: config.require("tenantUrl"),
-  apiToken: config.requireSecret("apiToken"),
-  subnetId: config.require("subnetId"),
-  securityGroupIds: config.requireObject<string[]>("securityGroupIds"),
+  tenantUrl: "https://example.goskope.com",
+  apiToken: "ns-api-token",
+  subnetId: "subnet-0123456789abcdef0",
+  securityGroupIds: ["sg-0123456789abcdef0"],
 });
-
-export const publisherNames = publisher.publisherNames;
-export const publishers = pulumi.secret(publisher.publishers);
 ```
 
 ## Python example
 
 ```python
-import pulumi
 from pulumi_netskope_publisher import AwsPublisher
-
-config = pulumi.Config()
 
 publisher = AwsPublisher(
     "publisher",
     name_prefix="pub-eu",
     replicas=2,
-    tenant_url=config.require("tenantUrl"),
-    api_token=config.require_secret("apiToken"),
-    subnet_id=config.require("subnetId"),
-    security_group_ids=config.require_object("securityGroupIds"),
+    tenant_url="https://example.goskope.com",
+    api_token="ns-api-token",
+    subnet_id="subnet-0123456789abcdef0",
+    security_group_ids=["sg-0123456789abcdef0"],
 )
-
-pulumi.export("publisherNames", publisher.publisher_names)
-pulumi.export("publishers", publisher.publishers)
 ```
 
 ## C# example
 
 ```csharp
-using System.Collections.Generic;
 using Pulumi;
 using Pulumi.NetskopePublisher;
 
 return await Deployment.RunAsync(() =>
 {
-    var config = new Config();
-
     var publisher = new AwsPublisher("publisher", new AwsPublisherArgs
     {
         NamePrefix = "pub-eu",
         Replicas = 2,
-        TenantUrl = config.Require("tenantUrl"),
-        ApiToken = config.RequireSecret("apiToken"),
-        SubnetId = config.Require("subnetId"),
-        SecurityGroupIds = config.RequireObject<string[]>("securityGroupIds"),
+        TenantUrl = "https://example.goskope.com",
+        ApiToken = "ns-api-token",
+        SubnetId = "subnet-0123456789abcdef0",
+        SecurityGroupIds = new[] { "sg-0123456789abcdef0" },
     });
-
-    return new Dictionary<string, object?>
-    {
-        ["publisherNames"] = publisher.PublisherNames,
-        ["publishers"] = publisher.Publishers,
-    };
 });
+```
+
+## Go example
+
+```go
+package main
+
+import (
+	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+)
+
+func main() {
+	pulumi.Run(func(ctx *pulumi.Context) error {
+		_, err := netskopepublisher.NewAwsPublisher(ctx, "publisher", &netskopepublisher.AwsPublisherArgs{
+			NamePrefix: pulumi.StringPtr("pub-eu"),
+			Replicas: pulumi.IntPtr(2),
+			TenantUrl: pulumi.StringPtr("https://example.goskope.com"),
+			ApiToken: pulumi.StringPtr("ns-api-token"),
+			SubnetId: pulumi.String("subnet-0123456789abcdef0"),
+			SecurityGroupIds: pulumi.StringArray{
+				pulumi.String("sg-0123456789abcdef0"),
+			},
+		})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+}
 ```
 
 Provider-specific examples are available in the repository under

@@ -25,13 +25,22 @@ Published Python SDK:
 Install the C# SDK from NuGet:
 
 ```bash
-dotnet add package Pulumi.NetskopePublisher
+dotnet add package JohninNL.Pulumi.NetskopePublisher
 ```
 
 Published C# SDK:
-[`Pulumi.NetskopePublisher`](https://www.nuget.org/packages/Pulumi.NetskopePublisher).
+[`JohninNL.Pulumi.NetskopePublisher`](https://www.nuget.org/packages/JohninNL.Pulumi.NetskopePublisher).
 
-Go and Java SDK packages are not published yet.
+Install the Go SDK from the tagged GitHub module:
+
+```bash
+go get github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher
+```
+
+Published Go SDK:
+[`github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher`](https://pkg.go.dev/github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher).
+
+The Java SDK is optional and not currently published.
 
 Install the cloud provider packages used by the component you deploy:
 

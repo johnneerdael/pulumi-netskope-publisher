@@ -32,6 +32,16 @@ const sdkPackages = [
       }
     ],
     missingToolHint: "Install the .NET SDK before packaging the C# SDK."
+  },
+  {
+    name: "go",
+    commands: [
+      {
+        command: "go",
+        args: ["test", "./sdk/go/..."]
+      }
+    ],
+    missingToolHint: "Install Go before validating the generated Go SDK."
   }
 ];
 
@@ -41,7 +51,9 @@ for (const sdkPackage of sdkPackages) {
     process.exit(1);
   }
 
-  rmSync(sdkPackage.outputDir, { recursive: true, force: true });
+  if (sdkPackage.outputDir) {
+    rmSync(sdkPackage.outputDir, { recursive: true, force: true });
+  }
   for (const command of sdkPackage.commands) {
     const result = spawnSync(command.command, command.args, {
       cwd: command.cwd,

@@ -10,6 +10,7 @@
     <RepositoryUrl>https://github.com/johnneerdael/pulumi-netskope-publisher</RepositoryUrl>
     <PackageIcon>logo.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageId>JohninNL.Pulumi.NetskopePublisher</PackageId>
     <Version>0.1.4</Version>
 
     <TargetFramework>net6.0</TargetFramework>

@@ -2,9 +2,9 @@ import { copyFileSync, existsSync, readFileSync, rmSync, writeFileSync } from "n
 import { spawnSync } from "node:child_process";
 
 const languages = process.argv.slice(2);
-const selectedLanguages = languages.length > 0 ? languages : ["python", "dotnet"];
+const selectedLanguages = languages.length > 0 ? languages : ["python", "dotnet", "go"];
 
-const supportedLanguages = new Set(["python", "dotnet"]);
+const supportedLanguages = new Set(["python", "dotnet", "go"]);
 for (const language of selectedLanguages) {
   if (!supportedLanguages.has(language)) {
     console.error(`Unsupported SDK language: ${language}`);
@@ -38,10 +38,16 @@ for (const language of selectedLanguages) {
   if (language === "dotnet") {
     const project = "sdk/dotnet/Pulumi.NetskopePublisher.csproj";
     let contents = readFileSync(project, "utf8");
+    if (!contents.includes("<PackageId>JohninNL.Pulumi.NetskopePublisher</PackageId>")) {
+      contents = contents.replace(
+        "    <PackageReadmeFile>README.md</PackageReadmeFile>\n",
+        "    <PackageReadmeFile>README.md</PackageReadmeFile>\n    <PackageId>JohninNL.Pulumi.NetskopePublisher</PackageId>\n"
+      );
+    }
     if (!contents.includes("<PackageReadmeFile>README.md</PackageReadmeFile>")) {
       contents = contents.replace(
         "    <PackageIcon>logo.png</PackageIcon>\n",
-        "    <PackageIcon>logo.png</PackageIcon>\n    <PackageReadmeFile>README.md</PackageReadmeFile>\n"
+        "    <PackageIcon>logo.png</PackageIcon>\n    <PackageReadmeFile>README.md</PackageReadmeFile>\n    <PackageId>JohninNL.Pulumi.NetskopePublisher</PackageId>\n"
       );
     }
     if (!contents.includes('<None Include="README.md"')) {

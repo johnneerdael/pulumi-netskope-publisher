@@ -38,9 +38,15 @@
       }
     },
     "csharp": {
+      "packageName": "JohninNL.Pulumi.NetskopePublisher",
       "packageReferences": {
         "Pulumi": "3.*"
       },
+      "respectSchemaVersion": true
+    },
+    "go": {
+      "importBasePath": "github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher",
+      "pulumiSDKVersion": 3,
       "respectSchemaVersion": true
     }
   },

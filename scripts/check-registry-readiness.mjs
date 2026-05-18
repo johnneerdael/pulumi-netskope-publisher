@@ -21,7 +21,10 @@ const requiredFiles = [
   "docs/registry-publication-checklist.md",
   "sdk/python/pyproject.toml",
   "sdk/python/pulumi_netskope_publisher/__init__.py",
-  "sdk/dotnet/Pulumi.NetskopePublisher.csproj"
+  "sdk/dotnet/Pulumi.NetskopePublisher.csproj",
+  "sdk/go/netskopepublisher/awsPublisher.go",
+  "sdk/go/netskopepublisher/provider.go",
+  "sdk/go/netskopepublisher/pulumi-plugin.json"
 ];
 
 const expectedResourceTokens = [
@@ -109,8 +112,20 @@ if (schema) {
     errors.push("schema.json must declare language.python.packageName for the published Python SDK");
   }
 
+  if (schema.language?.csharp?.packageName !== "JohninNL.Pulumi.NetskopePublisher") {
+    errors.push("schema.json must declare language.csharp.packageName for the published C# SDK");
+  }
+
   if (!schema.language?.csharp?.packageReferences?.Pulumi) {
     errors.push("schema.json must declare language.csharp.packageReferences.Pulumi for the published C# SDK");
+  }
+
+  if (schema.language?.go?.importBasePath !== "github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher") {
+    errors.push("schema.json must declare language.go.importBasePath for the published Go SDK");
+  }
+
+  if (schema.language?.go?.pulumiSDKVersion !== 3) {
+    errors.push("schema.json must declare language.go.pulumiSDKVersion as 3");
   }
 
   if (schema.pluginDownloadURL !== "github://api.github.com/johnneerdael/pulumi-netskope-publisher") {

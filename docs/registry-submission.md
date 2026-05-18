@@ -11,9 +11,9 @@ Registry publishing flow:
 - `npm run registry:check` validates the local Registry-facing files.
 - `npm run plugin:dist` builds GitHub Release plugin archives matching
   Pulumi's expected executable plugin asset naming.
-- `npm run sdk:gen` generates Python and C# SDKs from `schema.json`.
-- `npm run sdk:pack` builds the Python distribution artifacts and the
-  NuGet package.
+- `npm run sdk:gen` generates Python, Go, and C# SDKs from `schema.json`.
+- `npm run sdk:pack` builds the Python distribution artifacts, validates
+  the generated Go SDK, and builds the NuGet package.
 - `npm run go:test` validates the Go executable component provider and
   its schema command.
 
@@ -32,7 +32,7 @@ graphs for AWS, Azure, GCP, and vSphere.
 
 Before opening the public Registry PR:
 
-1. Publish the npm package, Python SDK, and C# SDK.
+1. Publish the npm package, Python SDK, Go SDK, and C# SDK.
 2. Confirm the tag release attached plugin archives for supported
    platforms.
 3. Run `npm run sdk:gen`.
