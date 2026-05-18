@@ -23,7 +23,34 @@ npm run typecheck
 npm test
 ```
 
-## Example
+## Quick start
+
+```ts
+import * as pulumi from "@pulumi/pulumi";
+import { AwsPublisher } from "@johnneerdael/pulumi-netskope-publisher";
+
+const config = new pulumi.Config();
+
+const publisher = new AwsPublisher("publisher", {
+  namePrefix: "pub-eu",
+  replicas: 2,
+  tenantUrl: config.require("tenantUrl"),
+  apiToken: config.requireSecret("apiToken"),
+  subnetId: config.require("subnetId"),
+  securityGroupIds: config.requireObject<string[]>("securityGroupIds"),
+});
+
+export const publisherNames = publisher.publisherNames;
+export const publishers = pulumi.secret(publisher.publishers);
+```
+
+## Examples
 
 See `examples/aws-single` for a Pulumi program that deploys one or more
 AWS publishers.
+
+## Documentation
+
+Full guides are published with GitHub Pages:
+
+https://johnneerdael.github.io/pulumi-netskope-publisher/
