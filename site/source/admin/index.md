@@ -15,6 +15,7 @@ operations for the Pulumi package.
 - [GCP](/pulumi-netskope-publisher/admin/component/gcp.html)
 - [vSphere](/pulumi-netskope-publisher/admin/component/vsphere.html)
 - [Hyper-V (experimental)](/pulumi-netskope-publisher/admin/component/hyperv.html)
+- [Netskope Registration](/pulumi-netskope-publisher/admin/component/registration.html)
 
 ## Operations
 

@@ -554,6 +554,60 @@
           "secret": true
         }
       }
+    },
+    "netskope-publisher:index:NetskopeRegistration": {
+      "description": "Stateful Netskope publisher registration resource.",
+      "inputProperties": {
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Publisher names to register or reuse in Netskope."
+        },
+        "tenantUrl": {
+          "type": "string",
+          "description": "Netskope tenant URL used for publisher registration."
+        },
+        "apiToken": {
+          "type": "string",
+          "description": "Netskope API token used for publisher registration.",
+          "secret": true
+        }
+      },
+      "requiredInputs": [
+        "publisherNames",
+        "tenantUrl",
+        "apiToken"
+      ],
+      "properties": {
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Publisher names registered or reused in Netskope."
+        },
+        "tenantUrl": {
+          "type": "string",
+          "description": "Netskope tenant URL used for publisher registration."
+        },
+        "apiToken": {
+          "type": "string",
+          "description": "Netskope API token used for publisher registration.",
+          "secret": true
+        },
+        "registrations": {
+          "$ref": "#/types/netskope-publisher:index:PublisherRegistrationMap",
+          "description": "Netskope publisher registrations keyed by publisher name."
+        }
+      },
+      "required": [
+        "publisherNames",
+        "tenantUrl",
+        "apiToken",
+        "registrations"
+      ]
     }
   },
   "types": {
@@ -583,6 +637,10 @@
           "type": "string",
           "description": "Netskope publisher registration token.",
           "secret": true
+        },
+        "existedBefore": {
+          "type": "boolean",
+          "description": "Whether the publisher already existed in Netskope before registration."
         }
       },
       "required": [

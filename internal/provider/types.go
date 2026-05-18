@@ -16,6 +16,7 @@ type CommonPublisherArgs struct {
 type PublisherRegistrationInput struct {
 	PublisherID       int    `pulumi:"publisherId"`
 	RegistrationToken string `pulumi:"registrationToken" provider:"secret"`
+	ExistedBefore     bool   `pulumi:"existedBefore,optional"`
 }
 
 type PublisherOutput struct {

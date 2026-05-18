@@ -15,5 +15,5 @@ Hyper-V provider is not published to npm.
 
 The repository also includes a Go executable component provider and
 Registry metadata for Pulumi Registry publication. The Go provider
-constructs AWS, Azure, GCP, and vSphere child resources and currently
-expects pre-created Netskope registration tokens.
+constructs AWS, Azure, GCP, and vSphere child resources and includes a
+stateful `NetskopeRegistration` resource.

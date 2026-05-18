@@ -25,7 +25,7 @@ Before opening the public Registry PR:
 6. Tag a GitHub release and confirm the plugin archives are attached.
 7. Add the community package entry in `pulumi/registry`.
 
-The Go provider constructs AWS, Azure, GCP, and vSphere child resources.
-On the Go provider path, pass pre-created Netskope `registrations`
-until Netskope registration is implemented as a stateful provider
-resource.
+The Go provider constructs AWS, Azure, GCP, and vSphere child resources
+and includes the stateful `NetskopeRegistration` resource used by those
+components when `tenantUrl` and `apiToken` are provided. Pre-created
+`registrations` remain available for BYO registration workflows.

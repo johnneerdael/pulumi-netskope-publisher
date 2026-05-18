@@ -54,7 +54,7 @@ func NewAwsPublisher(ctx *pulumi.Context, name string, args AwsPublisherArgs, op
 		return nil, err
 	}
 
-	publisherNames, registrations, err := resolvePublisherInputs(args.common())
+	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func NewAwsPublisher(ctx *pulumi.Context, name string, args AwsPublisherArgs, op
 			IamInstanceProfile:       stringPtrInput(args.IAMInstanceProfile),
 			EbsOptimized:             pulumi.BoolPtr(defaultBool(args.EBSOptimized, true)),
 			Monitoring:               pulumi.BoolPtr(defaultBool(args.Monitoring, true)),
-			UserDataBase64:           pulumi.StringPtr(renderUserDataBase64(publisherName, registration.RegistrationToken, args.WizardPath)),
+			UserDataBase64:           renderUserDataBase64Output(publisherName, registration.RegistrationToken, args.WizardPath).ToStringPtrOutput(),
 			MetadataOptions: &awsec2.InstanceMetadataOptionsArgs{
 				HttpEndpoint: pulumi.StringPtr(defaultMetadataValue(args.MetadataOptions, "endpoint", "enabled")),
 				HttpTokens:   pulumi.StringPtr(defaultMetadataValue(args.MetadataOptions, "tokens", "required")),
@@ -155,7 +155,7 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 		return nil, err
 	}
 
-	publisherNames, registrations, err := resolvePublisherInputs(args.common())
+	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
 	}
@@ -229,7 +229,7 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 			OsProfile: &azurecompute.OSProfileArgs{
 				ComputerName:  pulumi.StringPtr(publisherName),
 				AdminUsername: pulumi.StringPtr(defaultString(args.AdminUsername, "ubuntu")),
-				CustomData:    pulumi.StringPtr(renderUserDataBase64(publisherName, registration.RegistrationToken, args.WizardPath)),
+				CustomData:    renderUserDataBase64Output(publisherName, registration.RegistrationToken, args.WizardPath).ToStringPtrOutput(),
 				LinuxConfiguration: &azurecompute.LinuxConfigurationArgs{
 					DisablePasswordAuthentication: pulumi.BoolPtr(true),
 					Ssh: &azurecompute.SshConfigurationArgs{
@@ -302,7 +302,7 @@ func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, op
 		return nil, err
 	}
 
-	publisherNames, registrations, err := resolvePublisherInputs(args.common())
+	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
 	}
@@ -333,7 +333,7 @@ func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, op
 			},
 			NetworkInterfaces: gcpcompute.InstanceNetworkInterfaceArray{networkInterface},
 			Metadata: pulumi.StringMap{
-				"user-data": pulumi.String(renderUserData(publisherName, registration.RegistrationToken, args.WizardPath)),
+				"user-data": renderUserDataOutput(publisherName, registration.RegistrationToken, args.WizardPath),
 			},
 		}
 		if args.ServiceAccount != nil {
@@ -404,7 +404,7 @@ func NewVspherePublisher(ctx *pulumi.Context, name string, args VspherePublisher
 		return nil, err
 	}
 
-	publisherNames, registrations, err := resolvePublisherInputs(args.common())
+	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
 	}
@@ -450,7 +450,7 @@ func NewVspherePublisher(ctx *pulumi.Context, name string, args VspherePublisher
 				TemplateUuid: template.Id(),
 			},
 			ExtraConfig: pulumi.StringMap{
-				"guestinfo.userdata":          pulumi.String(renderUserDataBase64(publisherName, registration.RegistrationToken, args.WizardPath)),
+				"guestinfo.userdata":          renderUserDataBase64Output(publisherName, registration.RegistrationToken, args.WizardPath),
 				"guestinfo.userdata.encoding": pulumi.String("base64"),
 				"guestinfo.metadata":          pulumi.String(base64.StdEncoding.EncodeToString([]byte(renderMetadata(publisherName)))),
 				"guestinfo.metadata.encoding": pulumi.String("base64"),
@@ -545,20 +545,146 @@ func (args VspherePublisherArgs) common() CommonPublisherArgs {
 	}
 }
 
-func resolvePublisherInputs(args CommonPublisherArgs) ([]string, map[string]PublisherRegistrationInput, error) {
+type publisherRegistrationOutput struct {
+	PublisherID       pulumi.IntOutput
+	RegistrationToken pulumi.StringOutput
+	ExistedBefore     pulumi.BoolOutput
+}
+
+type NetskopeRegistrationResource struct {
+	pulumi.CustomResourceState
+
+	Registrations pulumi.MapOutput `pulumi:"registrations"`
+}
+
+func resolvePublisherInputs(
+	ctx *pulumi.Context,
+	parent pulumi.Resource,
+	componentName string,
+	args CommonPublisherArgs,
+) ([]string, map[string]publisherRegistrationOutput, error) {
 	names, err := derivePublisherNames(args)
 	if err != nil {
 		return nil, nil, err
 	}
-	if len(args.Registrations) == 0 {
-		return nil, nil, fmt.Errorf("registrations are required by the Go provider until Netskope registration is implemented as a provider resource")
-	}
-	for _, name := range names {
-		if _, ok := args.Registrations[name]; !ok {
-			return nil, nil, fmt.Errorf("registrations is missing data for publisher %s", name)
+
+	if len(args.Registrations) > 0 {
+		registrations := make(map[string]publisherRegistrationOutput, len(names))
+		for _, name := range names {
+			registration, ok := args.Registrations[name]
+			if !ok {
+				return nil, nil, fmt.Errorf("registrations is missing data for publisher %s", name)
+			}
+			registrations[name] = publisherRegistrationOutput{
+				PublisherID:       pulumi.Int(registration.PublisherID).ToIntOutput(),
+				RegistrationToken: pulumi.ToSecret(pulumi.String(registration.RegistrationToken)).(pulumi.StringOutput),
+				ExistedBefore:     pulumi.Bool(registration.ExistedBefore).ToBoolOutput(),
+			}
 		}
+		return names, registrations, nil
 	}
-	return names, args.Registrations, nil
+
+	if args.TenantURL == nil || *args.TenantURL == "" || args.APIToken == nil || *args.APIToken == "" {
+		return nil, nil, fmt.Errorf("tenantUrl and apiToken are required when registrations are not provided")
+	}
+
+	registrationResource := &NetskopeRegistrationResource{}
+	err = ctx.RegisterResource("netskope-publisher:index:NetskopeRegistration", componentName+"-registration", pulumi.Map{
+		"publisherNames": toStringArray(names),
+		"tenantUrl":      pulumi.String(*args.TenantURL),
+		"apiToken":       pulumi.ToSecret(pulumi.String(*args.APIToken)),
+	}, registrationResource, pulumi.Parent(parent))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	registrations := make(map[string]publisherRegistrationOutput, len(names))
+	for _, name := range names {
+		registrations[name] = registrationOutputFromMap(registrationResource.Registrations, name)
+	}
+	return names, registrations, nil
+}
+
+func registrationOutputFromMap(registrations pulumi.MapOutput, publisherName string) publisherRegistrationOutput {
+	publisherID := registrations.ApplyT(func(values map[string]interface{}) int {
+		return intFromRegistrationMap(values, publisherName, "publisherId")
+	}).(pulumi.IntOutput)
+	registrationToken := registrations.ApplyT(func(values map[string]interface{}) string {
+		return stringFromRegistrationMap(values, publisherName, "registrationToken")
+	}).(pulumi.StringOutput)
+	existedBefore := registrations.ApplyT(func(values map[string]interface{}) bool {
+		return boolFromRegistrationMap(values, publisherName, "existedBefore")
+	}).(pulumi.BoolOutput)
+
+	return publisherRegistrationOutput{
+		PublisherID:       publisherID,
+		RegistrationToken: pulumi.ToSecret(registrationToken).(pulumi.StringOutput),
+		ExistedBefore:     existedBefore,
+	}
+}
+
+func registrationRecord(values map[string]interface{}, publisherName string) map[string]interface{} {
+	value, ok := values[publisherName]
+	if !ok || value == nil {
+		return map[string]interface{}{}
+	}
+	switch record := value.(type) {
+	case map[string]interface{}:
+		return record
+	case map[string]string:
+		result := make(map[string]interface{}, len(record))
+		for key, value := range record {
+			result[key] = value
+		}
+		return result
+	case map[string]int:
+		result := make(map[string]interface{}, len(record))
+		for key, value := range record {
+			result[key] = value
+		}
+		return result
+	default:
+		return map[string]interface{}{}
+	}
+}
+
+func intFromRegistrationMap(values map[string]interface{}, publisherName string, field string) int {
+	switch value := registrationRecord(values, publisherName)[field].(type) {
+	case int:
+		return value
+	case int64:
+		return int(value)
+	case float64:
+		return int(value)
+	case string:
+		parsed, _ := parsePublisherID(value)
+		return parsed
+	default:
+		return 0
+	}
+}
+
+func stringFromRegistrationMap(values map[string]interface{}, publisherName string, field string) string {
+	value, ok := registrationRecord(values, publisherName)[field]
+	if !ok || value == nil {
+		return ""
+	}
+	return fmt.Sprint(value)
+}
+
+func boolFromRegistrationMap(values map[string]interface{}, publisherName string, field string) bool {
+	value, ok := registrationRecord(values, publisherName)[field]
+	if !ok || value == nil {
+		return false
+	}
+	switch value := value.(type) {
+	case bool:
+		return value
+	case string:
+		return value == "true"
+	default:
+		return false
+	}
 }
 
 func derivePublisherNames(args CommonPublisherArgs) ([]string, error) {
@@ -577,10 +703,10 @@ func derivePublisherNames(args CommonPublisherArgs) ([]string, error) {
 	return names, nil
 }
 
-func publisherOutput(registration PublisherRegistrationInput, vmID pulumi.StringOutput, privateIP pulumi.StringOutput, publicIP pulumi.StringOutput) pulumi.MapOutput {
+func publisherOutput(registration publisherRegistrationOutput, vmID pulumi.StringOutput, privateIP pulumi.StringOutput, publicIP pulumi.StringOutput) pulumi.MapOutput {
 	return pulumi.Map{
-		"publisherId":       pulumi.Int(registration.PublisherID),
-		"registrationToken": pulumi.ToSecret(pulumi.String(registration.RegistrationToken)),
+		"publisherId":       registration.PublisherID,
+		"registrationToken": registration.RegistrationToken,
 		"vmId":              vmID,
 		"privateIp":         privateIP,
 		"publicIp":          publicIP,
@@ -601,6 +727,18 @@ func renderUserData(publisherName string, registrationToken string, wizardPath *
 
 func renderUserDataBase64(publisherName string, registrationToken string, wizardPath *string) string {
 	return base64.StdEncoding.EncodeToString([]byte(renderUserData(publisherName, registrationToken, wizardPath)))
+}
+
+func renderUserDataOutput(publisherName string, registrationToken pulumi.StringOutput, wizardPath *string) pulumi.StringOutput {
+	return registrationToken.ApplyT(func(token string) string {
+		return renderUserData(publisherName, token, wizardPath)
+	}).(pulumi.StringOutput)
+}
+
+func renderUserDataBase64Output(publisherName string, registrationToken pulumi.StringOutput, wizardPath *string) pulumi.StringOutput {
+	return registrationToken.ApplyT(func(token string) string {
+		return renderUserDataBase64(publisherName, token, wizardPath)
+	}).(pulumi.StringOutput)
 }
 
 func renderMetadata(publisherName string) string {

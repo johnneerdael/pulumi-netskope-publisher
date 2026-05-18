@@ -16,6 +16,7 @@
     "cmd/pulumi-resource-netskope-publisher/main.go",
     "internal/provider/components.go",
     "internal/provider/provider.go",
+    "internal/provider/registration.go",
     "internal/provider/types.go",
     "go.mod",
     "go.sum",

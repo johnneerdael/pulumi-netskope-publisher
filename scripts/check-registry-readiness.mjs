@@ -22,7 +22,8 @@ const expectedResourceTokens = [
   "netskope-publisher:index:AzurePublisher",
   "netskope-publisher:index:GcpPublisher",
   "netskope-publisher:index:VspherePublisher",
-  "netskope-publisher:index:HypervPublisher"
+  "netskope-publisher:index:HypervPublisher",
+  "netskope-publisher:index:NetskopeRegistration"
 ];
 
 const sourceTokens = {
@@ -128,6 +129,7 @@ for (const file of [
   "cmd/pulumi-resource-netskope-publisher/main.go",
   "internal/provider/components.go",
   "internal/provider/provider.go",
+  "internal/provider/registration.go",
   "internal/provider/types.go",
   "go.mod",
   "go.sum",

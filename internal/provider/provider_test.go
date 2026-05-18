@@ -1,6 +1,9 @@
 package provider
 
 import (
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/blang/semver"
@@ -9,6 +12,94 @@ import (
 	presource "github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/property"
 )
+
+func TestNetskopeRegistrationCreatesMissingPublishersAndTokens(t *testing.T) {
+	var requests []string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests = append(requests, r.Method+" "+r.URL.Path)
+		if got := r.Header.Get("Netskope-Api-Token"); got != "api-token" {
+			t.Fatalf("expected Netskope API token header, got %q", got)
+		}
+
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/infrastructure/publishers":
+			writeJSON(t, w, map[string]any{
+				"data": map[string]any{
+					"publishers": []map[string]any{{
+						"publisher_name": "pub-a",
+						"publisher_id":   "101",
+					}},
+				},
+			})
+		case r.Method == http.MethodPost && r.URL.Path == "/api/v2/infrastructure/publishers":
+			writeJSON(t, w, map[string]any{"data": map[string]any{"id": 202}})
+		case r.Method == http.MethodPost && r.URL.Path == "/api/v2/infrastructure/publishers/101/registration_token":
+			writeJSON(t, w, map[string]any{"data": map[string]any{"token": "token-101"}})
+		case r.Method == http.MethodPost && r.URL.Path == "/api/v2/infrastructure/publishers/202/registration_token":
+			writeJSON(t, w, map[string]any{"data": map[string]any{"token": "token-202"}})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	response := createRegistrationResource(t, property.NewMap(map[string]property.Value{
+		"publisherNames": property.New([]property.Value{property.New("pub-a"), property.New("pub-b")}),
+		"tenantUrl":      property.New(server.URL + "/"),
+		"apiToken":       property.New("api-token"),
+	}))
+
+	registrations := response.Properties.Get("registrations").AsMap()
+	pubA := registrations.Get("pub-a").AsMap()
+	pubB := registrations.Get("pub-b").AsMap()
+
+	if got := int(pubA.Get("publisherId").AsNumber()); got != 101 {
+		t.Fatalf("expected existing publisher ID 101, got %d", got)
+	}
+	if got := pubA.Get("registrationToken").AsString(); got != "token-101" {
+		t.Fatalf("expected existing publisher token, got %q", got)
+	}
+	if got := pubA.Get("existedBefore").AsBool(); !got {
+		t.Fatalf("expected pub-a to be marked as existing")
+	}
+	if got := int(pubB.Get("publisherId").AsNumber()); got != 202 {
+		t.Fatalf("expected created publisher ID 202, got %d", got)
+	}
+	if got := pubB.Get("registrationToken").AsString(); got != "token-202" {
+		t.Fatalf("expected created publisher token, got %q", got)
+	}
+	if got := pubB.Get("existedBefore").AsBool(); got {
+		t.Fatalf("expected pub-b to be marked as newly created")
+	}
+
+	expectedRequests := []string{
+		"GET /api/v2/infrastructure/publishers",
+		"POST /api/v2/infrastructure/publishers/101/registration_token",
+		"POST /api/v2/infrastructure/publishers",
+		"POST /api/v2/infrastructure/publishers/202/registration_token",
+	}
+	if !equalStrings(requests, expectedRequests) {
+		t.Fatalf("expected requests %v, got %v", expectedRequests, requests)
+	}
+}
+
+func TestAwsConstructCreatesRegistrationChildWhenRegistrationsOmitted(t *testing.T) {
+	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:AwsPublisher", property.NewMap(map[string]property.Value{
+		"names":            property.New([]property.Value{property.New("pub-1")}),
+		"tenantUrl":        property.New("https://tenant.goskope.com"),
+		"apiToken":         property.New("api-token"),
+		"subnetId":         property.New("subnet-123"),
+		"securityGroupIds": property.New([]property.Value{property.New("sg-123")}),
+		"amiId":            property.New("ami-123"),
+	}))
+
+	if !contains(createdTypes, "netskope-publisher:index:NetskopeRegistration") {
+		t.Fatalf("expected AWS construct to create NetskopeRegistration child, got %v", createdTypes)
+	}
+	if !contains(createdTypes, "aws:ec2/instance:Instance") {
+		t.Fatalf("expected AWS construct to still create EC2 instance, got %v", createdTypes)
+	}
+}
 
 func TestAwsConstructCreatesEc2InstanceChild(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:AwsPublisher", property.NewMap(map[string]property.Value{
@@ -89,6 +180,11 @@ func constructAndCollectTypes(t *testing.T, token string, inputs property.Map) [
 		integration.WithMocks(&integration.MockResourceMonitor{
 			NewResourceF: func(args integration.MockResourceArgs) (string, property.Map, error) {
 				createdTypes = append(createdTypes, string(args.TypeToken))
+				if string(args.TypeToken) == "netskope-publisher:index:NetskopeRegistration" {
+					return args.Name + "-id", property.NewMap(map[string]property.Value{
+						"registrations": registrationMap("pub-1"),
+					}), nil
+				}
 				return args.Name + "-id", args.Inputs, nil
 			},
 			CallF: func(args integration.MockCallArgs) (property.Map, error) {
@@ -121,13 +217,52 @@ func constructAndCollectTypes(t *testing.T, token string, inputs property.Map) [
 	return createdTypes
 }
 
+func createRegistrationResource(t *testing.T, inputs property.Map) p.CreateResponse {
+	t.Helper()
+
+	provider, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server, err := integration.NewServer(
+		t.Context(),
+		Name,
+		semver.MustParse("0.1.0"),
+		integration.WithProvider(provider),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response, err := server.Create(p.CreateRequest{
+		Urn:        presource.URN("urn:pulumi:stack::project::netskope-publisher:index:NetskopeRegistration::registration"),
+		Properties: inputs,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return response
+}
+
 func registrationMap(name string) property.Value {
 	return property.New(map[string]property.Value{
 		name: property.New(map[string]property.Value{
 			"publisherId":       property.New(123.0),
 			"registrationToken": property.New("token"),
+			"existedBefore":     property.New(true),
 		}),
 	})
+}
+
+func writeJSON(t *testing.T, w http.ResponseWriter, body any) {
+	t.Helper()
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(body); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func contains(values []string, expected string) bool {
@@ -137,4 +272,16 @@ func contains(values []string, expected string) bool {
 		}
 	}
 	return false
+}
+
+func equalStrings(left []string, right []string) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for i := range left {
+		if left[i] != right[i] {
+			return false
+		}
+	}
+	return true
 }

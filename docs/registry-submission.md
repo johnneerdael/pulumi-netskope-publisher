@@ -22,9 +22,8 @@ The executable provider is implemented with `pulumi-go-provider` under
 `cmd/pulumi-resource-netskope-publisher`.
 
 The Go provider exposes the component schema, executable provider entry
-point, and child-resource graphs for AWS, Azure, GCP, and vSphere. The
-Go path currently requires pre-created Netskope `registrations` until
-publisher registration is implemented as a stateful provider resource.
+point, a stateful `NetskopeRegistration` resource, and child-resource
+graphs for AWS, Azure, GCP, and vSphere.
 
 Before opening the public Registry PR:
 
@@ -33,10 +32,7 @@ Before opening the public Registry PR:
    platforms.
 3. Run `npm run go:test`.
 4. Run `npm run registry:check`.
-5. Confirm whether Pulumi Registry will accept the Go provider with
-   pre-created Netskope registrations or wait for the stateful
-   registration resource.
-6. Open a PR against `pulumi/registry` and add:
+5. Open a PR against `pulumi/registry` and add:
 
    ```json
    {

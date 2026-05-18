@@ -33,6 +33,9 @@ func New() (p.Provider, error) {
 		WithLogoURL(LogoURL).
 		WithPluginDownloadURL(PluginDownloadURL).
 		WithKeywords("category/network", "kind/component", "pulumi", "netskope", "npa", "publisher", "aws", "azure", "gcp", "vsphere").
+		WithResources(
+			infer.Resource(&NetskopeRegistration{}),
+		).
 		WithComponents(
 			infer.ComponentF(NewAwsPublisher),
 			infer.ComponentF(NewAzurePublisher),

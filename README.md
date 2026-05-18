@@ -77,6 +77,7 @@ Pulumi plugin archives named
 `pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz` and
 attach them to the release before publication.
 
-The Go provider constructs AWS, Azure, GCP, and vSphere child resources.
-It currently requires pre-created Netskope `registrations` while
-publisher registration is promoted into a stateful provider resource.
+The Go provider constructs AWS, Azure, GCP, and vSphere child resources
+and includes a stateful `NetskopeRegistration` resource for creating or
+reusing Netskope publisher records. Pre-created `registrations` remain
+available as an escape hatch.
