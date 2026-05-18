@@ -21,12 +21,13 @@
     "go.sum",
     "scripts/build-plugin-archives.mjs",
     "scripts/check-registry-readiness.mjs",
+    "scripts/run-node-tests.mjs",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
+    "test": "npm run build && node scripts/run-node-tests.mjs",
     "clean": "rm -rf dist",
     "prepack": "npm run clean && npm run build",
     "go:test": "go test ./cmd/pulumi-resource-netskope-publisher ./internal/provider",

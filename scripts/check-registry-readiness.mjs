@@ -10,6 +10,7 @@ const requiredFiles = [
   "internal/provider/provider.go",
   "go.sum",
   "scripts/build-plugin-archives.mjs",
+  "scripts/run-node-tests.mjs",
   "docs/_index.md",
   "docs/installation-configuration.md",
   "docs/registry-submission.md",
@@ -131,7 +132,8 @@ for (const file of [
   "go.mod",
   "go.sum",
   "scripts/build-plugin-archives.mjs",
-  "scripts/check-registry-readiness.mjs"
+  "scripts/check-registry-readiness.mjs",
+  "scripts/run-node-tests.mjs"
 ]) {
   if (!packageJson.files?.includes(file)) {
     errors.push(`package.json files must include ${file}`);
