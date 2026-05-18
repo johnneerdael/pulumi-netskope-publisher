@@ -59,7 +59,7 @@ test("AwsPublisher creates outputs keyed by publisher name", async () => {
 
   assert.deepEqual(publisherNames, ["pub-1"]);
   assert.equal(publishers["pub-1"].publisherId, 101);
-  assert.equal(publishers["pub-1"].instanceId, "publisher-pub-1-id");
+  assert.equal(publishers["pub-1"].vmId, "publisher-pub-1-id");
 });
 
 async function outputValue<T>(output: pulumi.Output<T>): Promise<T> {

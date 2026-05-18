@@ -1,9 +1,13 @@
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 import { renderUserDataBase64 } from "./cloudInit";
-import { derivePublisherNames } from "./names";
-import { NetskopeRegistration, RegistrationRecord } from "./netskopeRegistration";
-import { AwsPublisherArgs, PublisherOutput, PublisherRegistrationInput } from "./types";
+import {
+  buildNameTag,
+  createPublisherOutput,
+  createRegistrations,
+  resolvePublisherNames,
+} from "./componentCore";
+import { AwsPublisherArgs, PublisherOutput } from "./types";
 
 export class AwsPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -13,19 +17,10 @@ export class AwsPublisher extends pulumi.ComponentResource {
     super("netskope:index:AwsPublisher", name, {}, opts);
 
     const parentOpts = { parent: this };
-    const publisherNames = derivePublisherNames({
-      namePrefix: args.namePrefix,
-      names: args.names,
-      replicas: args.replicas,
-    });
+    const publisherNames = resolvePublisherNames(args);
 
     this.publisherNames = pulumi.output(publisherNames);
-
-    const registrations = args.registrations !== undefined
-      ? pulumi.output(args.registrations).apply((byoRegistrations) =>
-        normalizeByoRegistrations(publisherNames, byoRegistrations),
-      )
-      : createManagedRegistrations(name, publisherNames, args, parentOpts);
+    const registrations = createRegistrations(name, publisherNames, args, parentOpts);
 
     const ami = args.amiId
       ? pulumi.output(args.amiId)
@@ -50,10 +45,7 @@ export class AwsPublisher extends pulumi.ComponentResource {
         }),
       );
 
-      const tags = pulumi.output(args.tags ?? {}).apply((inputTags) => ({
-        ...inputTags,
-        Name: publisherName,
-      }));
+      const tags = buildNameTag(args.tags, publisherName);
 
       const instance = new aws.ec2.Instance(`${name}-${publisherName}`, {
         ami,
@@ -73,18 +65,12 @@ export class AwsPublisher extends pulumi.ComponentResource {
         tags,
       }, parentOpts);
 
-      publisherOutputs[publisherName] = pulumi.all([
+      publisherOutputs[publisherName] = createPublisherOutput({
         registration,
-        instance.id,
-        instance.privateIp,
-        instance.publicIp,
-      ]).apply(([registration, instanceId, privateIp, publicIp]) => ({
-        publisherId: registration.publisherId,
-        registrationToken: registration.registrationToken,
-        instanceId,
-        privateIp,
-        publicIp,
-      }));
+        vmId: instance.id,
+        privateIp: instance.privateIp,
+        publicIp: instance.publicIp,
+      });
     }
 
     this.publishers = pulumi.secret(pulumi.all(publisherOutputs));
@@ -94,39 +80,4 @@ export class AwsPublisher extends pulumi.ComponentResource {
       publishers: this.publishers,
     });
   }
-}
-
-function createManagedRegistrations(
-  name: string,
-  publisherNames: string[],
-  args: AwsPublisherArgs,
-  opts: pulumi.CustomResourceOptions,
-): pulumi.Output<Record<string, RegistrationRecord>> {
-  if (args.tenantUrl === undefined || args.apiToken === undefined) {
-    throw new Error("tenantUrl and apiToken are required when registrations are not provided");
-  }
-
-  return new NetskopeRegistration(`${name}-registration`, {
-    publisherNames,
-    tenantUrl: args.tenantUrl,
-    apiToken: args.apiToken,
-  }, opts).registrations;
-}
-
-function normalizeByoRegistrations(
-  publisherNames: string[],
-  registrations: Record<string, PublisherRegistrationInput>,
-): Record<string, RegistrationRecord> {
-  return Object.fromEntries(publisherNames.map((publisherName) => {
-    const registration = registrations[publisherName];
-    if (registration === undefined) {
-      throw new Error(`registrations is missing data for publisher ${publisherName}`);
-    }
-
-    return [publisherName, {
-      publisherId: Number(registration.publisherId),
-      registrationToken: String(registration.registrationToken),
-      existedBefore: true,
-    }];
-  }));
 }
