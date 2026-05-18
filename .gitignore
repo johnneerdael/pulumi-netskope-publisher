@@ -3,3 +3,4 @@ node_modules/
 dist/
 site/node_modules/
 site/public/
+site/db.json

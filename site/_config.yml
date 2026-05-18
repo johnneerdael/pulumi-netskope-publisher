@@ -1,0 +1,16 @@
+title:       pulumi-netskope-publisher
+subtitle:    Provision Netskope Publishers on AWS with Pulumi
+description: Pulumi components for Netskope Private Access Publishers.
+author:      John Neerdael
+language:    en
+timezone:    Europe/Amsterdam
+
+url:         https://johnneerdael.github.io/pulumi-netskope-publisher
+root:        /pulumi-netskope-publisher/
+permalink:   :title/
+
+source_dir:    source
+public_dir:    public
+
+default_layout: page
+theme: cactus
