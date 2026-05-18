@@ -4,6 +4,10 @@
   "description": "Pulumi components for Netskope Private Access Publishers.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnneerdael/pulumi-netskope-publisher"
+  },
   "files": [
     "dist/src",
     "docs/_index.md",
