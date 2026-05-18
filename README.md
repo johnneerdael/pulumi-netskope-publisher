@@ -81,3 +81,25 @@ The Go provider constructs AWS, Azure, GCP, and vSphere child resources
 and includes a stateful `NetskopeRegistration` resource for creating or
 reusing Netskope publisher records. Pre-created `registrations` remain
 available as an escape hatch.
+
+## Release automation
+
+Pushes to `main` run `.github/workflows/auto-release.yml`. The workflow
+bumps the patch version, updates `package.json`, `package-lock.json`,
+`schema.json`, and the Go provider schema version, runs the release
+checks, commits the version bump, tags `vX.Y.Z`, publishes npm, and
+uploads plugin archives to the GitHub release.
+
+Required repository secret:
+
+- `NPM_TOKEN`: npm automation token for publishing
+
+Repository Actions settings must allow workflows to write repository
+contents so the release workflow can push the version commit and tag.
+
+Optional Pulumi Registry PR automation:
+
+- `REGISTRY_PR_TOKEN`: GitHub token that can push to your
+  `pulumi/registry` fork and open PRs
+- `PULUMI_REGISTRY_FORK`: repository variable with the fork slug, for
+  example `johnneerdael/registry`

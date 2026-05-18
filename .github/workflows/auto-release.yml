@@ -1,0 +1,152 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Semver segment to bump
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: auto-release-main
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TYPE: ${{ github.event.inputs.release_type || 'patch' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.8"
+
+      - run: npm ci
+
+      - name: Verify npm publishing token
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::Configure the NPM_TOKEN repository secret before automatic releases can publish."
+            exit 1
+          fi
+
+      - name: Bump release version
+        id: version
+        run: |
+          version="$(npm run --silent release:bump -- "$RELEASE_TYPE")"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Run release checks
+        run: npm run release:check
+
+      - name: Commit release bump and tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json schema.json internal/provider/provider.go
+          git commit -m "chore(release): v${{ steps.version.outputs.version }}"
+          git tag "v${{ steps.version.outputs.version }}"
+          git push origin HEAD:main
+          git push origin "v${{ steps.version.outputs.version }}"
+
+      - name: Publish npm package
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          generate_release_notes: true
+          files: dist/plugins/*.tar.gz
+
+      - name: Open or update Pulumi Registry PR
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.REGISTRY_PR_TOKEN }}
+          REGISTRY_FORK: ${{ vars.PULUMI_REGISTRY_FORK }}
+        run: |
+          if [ -z "$GH_TOKEN" ] || [ -z "$REGISTRY_FORK" ]; then
+            echo "Skipping Registry PR. Configure REGISTRY_PR_TOKEN and PULUMI_REGISTRY_FORK to enable it."
+            exit 0
+          fi
+
+          branch="add-pulumi-netskope-publisher"
+          fork_owner="${REGISTRY_FORK%%/*}"
+          workdir="$(mktemp -d)"
+
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${REGISTRY_FORK}.git" "$workdir/registry"
+          cd "$workdir/registry"
+          git remote add upstream https://github.com/pulumi/registry.git
+          git fetch upstream
+          default_branch="$(gh repo view pulumi/registry --json defaultBranchRef --jq '.defaultBranchRef.name')"
+          git checkout -B "$branch" "upstream/$default_branch"
+
+          node - <<'NODE'
+          const { readFileSync, writeFileSync } = require("node:fs");
+          const path = "community-packages/package-list.json";
+          const data = JSON.parse(readFileSync(path, "utf8"));
+          const entry = {
+            repoSlug: "johnneerdael/pulumi-netskope-publisher",
+            schemaFile: "schema.json"
+          };
+          const packages = data.include ?? data.packages ?? data;
+          const existing = packages.find((pkg) => pkg.repoSlug === entry.repoSlug);
+          if (existing) {
+            existing.schemaFile = entry.schemaFile;
+          } else {
+            packages.push(entry);
+          }
+          writeFileSync(path, `${JSON.stringify(data, null, 2)}\n`);
+          NODE
+
+          if git diff --quiet; then
+            echo "Pulumi Registry package list already contains this package."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add community-packages/package-list.json
+          git commit -m "Add pulumi-netskope-publisher package"
+          git push --force-with-lease origin "$branch"
+
+          existing_pr="$(gh pr list --repo pulumi/registry --head "$fork_owner:$branch" --json number --jq '.[0].number')"
+          if [ -n "$existing_pr" ]; then
+            gh pr edit "$existing_pr" --repo pulumi/registry \
+              --title "Add pulumi-netskope-publisher package" \
+              --body "Adds johnneerdael/pulumi-netskope-publisher to the community Pulumi Registry package list."
+          else
+            gh pr create --repo pulumi/registry \
+              --base "$default_branch" \
+              --head "$fork_owner:$branch" \
+              --title "Add pulumi-netskope-publisher package" \
+              --body "Adds johnneerdael/pulumi-netskope-publisher to the community Pulumi Registry package list."
+          fi

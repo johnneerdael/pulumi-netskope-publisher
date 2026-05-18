@@ -21,6 +21,7 @@
     "go.mod",
     "go.sum",
     "scripts/build-plugin-archives.mjs",
+    "scripts/bump-release-version.mjs",
     "scripts/check-registry-readiness.mjs",
     "scripts/run-node-tests.mjs",
     "LICENSE"
@@ -34,6 +35,7 @@
     "go:test": "go test ./cmd/pulumi-resource-netskope-publisher ./internal/provider",
     "plugin:dist": "node scripts/build-plugin-archives.mjs",
     "registry:check": "node scripts/check-registry-readiness.mjs",
+    "release:bump": "node scripts/bump-release-version.mjs",
     "release:check": "npm ci && npm run typecheck && npm test && npm run go:test && npm run registry:check && npm run plugin:dist"
   },
   "keywords": [

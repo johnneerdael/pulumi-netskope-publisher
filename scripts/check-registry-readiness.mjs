@@ -10,6 +10,7 @@ const requiredFiles = [
   "internal/provider/provider.go",
   "go.sum",
   "scripts/build-plugin-archives.mjs",
+  "scripts/bump-release-version.mjs",
   "scripts/run-node-tests.mjs",
   "docs/_index.md",
   "docs/installation-configuration.md",
@@ -134,6 +135,7 @@ for (const file of [
   "go.mod",
   "go.sum",
   "scripts/build-plugin-archives.mjs",
+  "scripts/bump-release-version.mjs",
   "scripts/check-registry-readiness.mjs",
   "scripts/run-node-tests.mjs"
 ]) {
@@ -148,6 +150,10 @@ if (!packageJson.scripts?.["registry:check"]) {
 
 if (!packageJson.scripts?.["plugin:dist"]) {
   errors.push("package.json must expose npm run plugin:dist");
+}
+
+if (!packageJson.scripts?.["release:bump"]) {
+  errors.push("package.json must expose npm run release:bump");
 }
 
 const pluginYaml = readFileSync("PulumiPlugin.yaml", "utf8").trim();
