@@ -40,6 +40,33 @@ export interface AwsPublisherArgs extends CommonPublisherArgs {
   metadataOptions?: pulumi.Input<MetadataOptions>;
 }
 
+export interface AzureMarketplaceImage {
+  publisher: pulumi.Input<string>;
+  offer: pulumi.Input<string>;
+  sku: pulumi.Input<string>;
+  version?: pulumi.Input<string>;
+}
+
+export interface AzureOsDisk {
+  type?: pulumi.Input<string>;
+  sizeGb?: pulumi.Input<number>;
+}
+
+export interface AzurePublisherArgs extends CommonPublisherArgs {
+  resourceGroupName: pulumi.Input<string>;
+  location: pulumi.Input<string>;
+  subnetId: pulumi.Input<string>;
+  vmSize?: pulumi.Input<string>;
+  adminUsername?: pulumi.Input<string>;
+  adminSshPublicKey: pulumi.Input<string>;
+  networkSecurityGroupId?: pulumi.Input<string>;
+  assignPublicIp?: pulumi.Input<boolean>;
+  osDisk?: pulumi.Input<AzureOsDisk>;
+  imageId?: pulumi.Input<string>;
+  marketplace?: pulumi.Input<AzureMarketplaceImage>;
+  acceptMarketplaceTerms?: pulumi.Input<boolean>;
+}
+
 export interface PublisherOutput {
   publisherId: number;
   registrationToken: string;
