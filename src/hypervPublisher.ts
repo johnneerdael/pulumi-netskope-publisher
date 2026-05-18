@@ -6,7 +6,7 @@ export class HypervPublisher extends pulumi.ComponentResource {
   public readonly publishers: pulumi.Output<Record<string, PublisherOutput>>;
 
   constructor(name: string, args: HypervPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
-    super("netskope:index:HypervPublisher", name, {}, opts);
+    super("netskope-publisher:index:HypervPublisher", name, {}, opts);
 
     if (args.enableExperimentalHyperv !== true) {
       throw new Error("Hyper-V support is experimental and requires enableExperimentalHyperv: true");

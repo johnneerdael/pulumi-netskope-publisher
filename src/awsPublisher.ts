@@ -14,7 +14,7 @@ export class AwsPublisher extends pulumi.ComponentResource {
   public readonly publishers: pulumi.Output<Record<string, PublisherOutput>>;
 
   constructor(name: string, args: AwsPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
-    super("netskope:index:AwsPublisher", name, {}, opts);
+    super("netskope-publisher:index:AwsPublisher", name, {}, opts);
 
     const parentOpts = { parent: this };
     const publisherNames = resolvePublisherNames(args);

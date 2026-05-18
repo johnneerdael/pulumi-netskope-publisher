@@ -13,7 +13,7 @@ export class VspherePublisher extends pulumi.ComponentResource {
   public readonly publishers: pulumi.Output<Record<string, PublisherOutput>>;
 
   constructor(name: string, args: VspherePublisherArgs, opts?: pulumi.ComponentResourceOptions) {
-    super("netskope:index:VspherePublisher", name, {}, opts);
+    super("netskope-publisher:index:VspherePublisher", name, {}, opts);
 
     if (args.cluster === undefined && args.host === undefined) {
       throw new Error("Provide either vsphere.cluster or vsphere.host.");

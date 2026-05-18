@@ -5,9 +5,15 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "files": [
-    "dist",
+    "dist/src",
+    "docs/_index.md",
+    "docs/installation-configuration.md",
+    "docs/registry-publication-checklist.md",
+    "docs/registry-submission.md",
     "PulumiPlugin.yaml",
     "README.md",
+    "schema.json",
+    "scripts/check-registry-readiness.mjs",
     "LICENSE"
   ],
   "scripts": {
@@ -16,6 +22,7 @@
     "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
     "clean": "rm -rf dist",
     "prepack": "npm run clean && npm run build",
+    "registry:check": "node scripts/check-registry-readiness.mjs",
     "release:check": "npm ci && npm run typecheck && npm test"
   },
   "keywords": [
@@ -23,7 +30,10 @@
     "netskope",
     "npa",
     "publisher",
-    "aws"
+    "aws",
+    "azure",
+    "gcp",
+    "vsphere"
   ],
   "author": "John Neerdael",
   "license": "Apache-2.0",

@@ -14,7 +14,7 @@ export class AzurePublisher extends pulumi.ComponentResource {
   public readonly publishers: pulumi.Output<Record<string, PublisherOutput>>;
 
   constructor(name: string, args: AzurePublisherArgs, opts?: pulumi.ComponentResourceOptions) {
-    super("netskope:index:AzurePublisher", name, {}, opts);
+    super("netskope-publisher:index:AzurePublisher", name, {}, opts);
 
     if (args.imageId === undefined && args.marketplace === undefined) {
       throw new Error("Provide either imageId or marketplace.");

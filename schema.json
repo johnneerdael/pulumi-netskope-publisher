@@ -1,0 +1,726 @@
+{
+  "name": "netskope-publisher",
+  "version": "0.1.0",
+  "displayName": "Netskope Publisher",
+  "description": "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, vSphere, and experimental Hyper-V.",
+  "publisher": "johnneerdael",
+  "keywords": [
+    "category/network",
+    "kind/component",
+    "pulumi",
+    "netskope",
+    "npa",
+    "publisher",
+    "aws",
+    "azure",
+    "gcp",
+    "vsphere"
+  ],
+  "homepage": "https://johnneerdael.github.io/pulumi-netskope-publisher/",
+  "repository": "https://github.com/johnneerdael/pulumi-netskope-publisher",
+  "license": "Apache-2.0",
+  "logoUrl": "https://raw.githubusercontent.com/johnneerdael/pulumi-netskope-publisher/main/site/source/images/netskope-logo.png",
+  "language": {
+    "nodejs": {
+      "packageName": "@johnneerdael/pulumi-netskope-publisher"
+    }
+  },
+  "resources": {
+    "netskope-publisher:index:AwsPublisher": {
+      "isComponent": true,
+      "description": "Creates one or more Netskope Private Access Publisher EC2 instances and registers them with a Netskope tenant.",
+      "inputProperties": {
+        "namePrefix": {
+          "type": "string",
+          "description": "Prefix used to derive publisher names when explicit names are not supplied."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit publisher names to create."
+        },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of publishers to create when names are not supplied."
+        },
+        "tenantUrl": {
+          "type": "string",
+          "description": "Netskope tenant URL used for publisher registration."
+        },
+        "apiToken": {
+          "type": "string",
+          "description": "Netskope API token used for publisher registration.",
+          "secret": true
+        },
+        "wizardPath": {
+          "type": "string",
+          "description": "Netskope publisher registration wizard API path."
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Tags applied to supported provider resources."
+        },
+        "registrations": {
+          "$ref": "#/types/netskope-publisher:index:PublisherRegistrationMap",
+          "description": "Pre-created Netskope publisher registrations keyed by publisher name."
+        },
+        "subnetId": {
+          "type": "string",
+          "description": "AWS subnet ID for publisher network interfaces."
+        },
+        "securityGroupIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "AWS security group IDs attached to publisher instances."
+        },
+        "keyName": {
+          "type": "string",
+          "description": "Optional EC2 key pair name."
+        },
+        "instanceType": {
+          "type": "string",
+          "description": "EC2 instance type."
+        },
+        "amiId": {
+          "type": "string",
+          "description": "Publisher AMI ID."
+        },
+        "associatePublicIpAddress": {
+          "type": "boolean",
+          "description": "Whether to associate public IP addresses."
+        },
+        "iamInstanceProfile": {
+          "type": "string",
+          "description": "Optional IAM instance profile name."
+        },
+        "ebsOptimized": {
+          "type": "boolean",
+          "description": "Whether to enable EBS optimization."
+        },
+        "monitoring": {
+          "type": "boolean",
+          "description": "Whether to enable detailed EC2 monitoring."
+        },
+        "metadataOptions": {
+          "$ref": "#/types/netskope-publisher:index:MetadataOptions",
+          "description": "EC2 instance metadata service options."
+        }
+      },
+      "requiredInputs": [
+        "subnetId",
+        "securityGroupIds"
+      ],
+      "properties": {
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Created publisher names."
+        },
+        "publishers": {
+          "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
+          "description": "Publisher registration and VM details keyed by name.",
+          "secret": true
+        }
+      }
+    },
+    "netskope-publisher:index:AzurePublisher": {
+      "isComponent": true,
+      "description": "Creates one or more Netskope Private Access Publisher Azure virtual machines and registers them with a Netskope tenant.",
+      "inputProperties": {
+        "namePrefix": {
+          "type": "string",
+          "description": "Prefix used to derive publisher names when explicit names are not supplied."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit publisher names to create."
+        },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of publishers to create when names are not supplied."
+        },
+        "tenantUrl": {
+          "type": "string",
+          "description": "Netskope tenant URL used for publisher registration."
+        },
+        "apiToken": {
+          "type": "string",
+          "description": "Netskope API token used for publisher registration.",
+          "secret": true
+        },
+        "wizardPath": {
+          "type": "string",
+          "description": "Netskope publisher registration wizard API path."
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Tags applied to supported provider resources."
+        },
+        "registrations": {
+          "$ref": "#/types/netskope-publisher:index:PublisherRegistrationMap",
+          "description": "Pre-created Netskope publisher registrations keyed by publisher name."
+        },
+        "resourceGroupName": {
+          "type": "string",
+          "description": "Azure resource group name."
+        },
+        "location": {
+          "type": "string",
+          "description": "Azure region."
+        },
+        "subnetId": {
+          "type": "string",
+          "description": "Azure subnet resource ID."
+        },
+        "vmSize": {
+          "type": "string",
+          "description": "Azure VM size."
+        },
+        "adminUsername": {
+          "type": "string",
+          "description": "Admin username configured for the VM."
+        },
+        "adminSshPublicKey": {
+          "type": "string",
+          "description": "SSH public key for the admin user."
+        },
+        "networkSecurityGroupId": {
+          "type": "string",
+          "description": "Optional network security group resource ID."
+        },
+        "assignPublicIp": {
+          "type": "boolean",
+          "description": "Whether to assign public IP addresses."
+        },
+        "osDisk": {
+          "$ref": "#/types/netskope-publisher:index:AzureOsDisk",
+          "description": "Managed OS disk options."
+        },
+        "imageId": {
+          "type": "string",
+          "description": "Custom image resource ID."
+        },
+        "marketplace": {
+          "$ref": "#/types/netskope-publisher:index:AzureMarketplaceImage",
+          "description": "Marketplace image reference."
+        },
+        "acceptMarketplaceTerms": {
+          "type": "boolean",
+          "description": "Whether to accept marketplace image plan terms."
+        }
+      },
+      "requiredInputs": [
+        "resourceGroupName",
+        "location",
+        "subnetId",
+        "adminSshPublicKey"
+      ],
+      "properties": {
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Created publisher names."
+        },
+        "publishers": {
+          "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
+          "description": "Publisher registration and VM details keyed by name.",
+          "secret": true
+        }
+      }
+    },
+    "netskope-publisher:index:GcpPublisher": {
+      "isComponent": true,
+      "description": "Creates one or more Netskope Private Access Publisher Google Compute Engine instances and registers them with a Netskope tenant.",
+      "inputProperties": {
+        "namePrefix": {
+          "type": "string",
+          "description": "Prefix used to derive publisher names when explicit names are not supplied."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit publisher names to create."
+        },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of publishers to create when names are not supplied."
+        },
+        "tenantUrl": {
+          "type": "string",
+          "description": "Netskope tenant URL used for publisher registration."
+        },
+        "apiToken": {
+          "type": "string",
+          "description": "Netskope API token used for publisher registration.",
+          "secret": true
+        },
+        "wizardPath": {
+          "type": "string",
+          "description": "Netskope publisher registration wizard API path."
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Tags applied to supported provider resources."
+        },
+        "registrations": {
+          "$ref": "#/types/netskope-publisher:index:PublisherRegistrationMap",
+          "description": "Pre-created Netskope publisher registrations keyed by publisher name."
+        },
+        "project": {
+          "type": "string",
+          "description": "GCP project ID."
+        },
+        "zone": {
+          "type": "string",
+          "description": "GCP zone."
+        },
+        "network": {
+          "type": "string",
+          "description": "GCP VPC network self link or name."
+        },
+        "subnetwork": {
+          "type": "string",
+          "description": "GCP subnetwork self link or name."
+        },
+        "machineType": {
+          "type": "string",
+          "description": "Compute Engine machine type."
+        },
+        "image": {
+          "type": "string",
+          "description": "Publisher boot image."
+        },
+        "assignPublicIp": {
+          "type": "boolean",
+          "description": "Whether to assign public IP addresses."
+        },
+        "networkTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Network tags attached to instances."
+        },
+        "serviceAccount": {
+          "$ref": "#/types/netskope-publisher:index:GcpServiceAccount",
+          "description": "Optional service account assignment."
+        }
+      },
+      "requiredInputs": [
+        "project",
+        "zone",
+        "network",
+        "subnetwork",
+        "image"
+      ],
+      "properties": {
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Created publisher names."
+        },
+        "publishers": {
+          "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
+          "description": "Publisher registration and VM details keyed by name.",
+          "secret": true
+        }
+      }
+    },
+    "netskope-publisher:index:VspherePublisher": {
+      "isComponent": true,
+      "description": "Creates one or more Netskope Private Access Publisher vSphere virtual machines and registers them with a Netskope tenant.",
+      "inputProperties": {
+        "namePrefix": {
+          "type": "string",
+          "description": "Prefix used to derive publisher names when explicit names are not supplied."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit publisher names to create."
+        },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of publishers to create when names are not supplied."
+        },
+        "tenantUrl": {
+          "type": "string",
+          "description": "Netskope tenant URL used for publisher registration."
+        },
+        "apiToken": {
+          "type": "string",
+          "description": "Netskope API token used for publisher registration.",
+          "secret": true
+        },
+        "wizardPath": {
+          "type": "string",
+          "description": "Netskope publisher registration wizard API path."
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Tags applied to supported provider resources."
+        },
+        "registrations": {
+          "$ref": "#/types/netskope-publisher:index:PublisherRegistrationMap",
+          "description": "Pre-created Netskope publisher registrations keyed by publisher name."
+        },
+        "datacenter": {
+          "type": "string",
+          "description": "vSphere datacenter name."
+        },
+        "cluster": {
+          "type": "string",
+          "description": "vSphere cluster name."
+        },
+        "host": {
+          "type": "string",
+          "description": "vSphere host name."
+        },
+        "datastore": {
+          "type": "string",
+          "description": "vSphere datastore name."
+        },
+        "networkName": {
+          "type": "string",
+          "description": "vSphere network name."
+        },
+        "templateName": {
+          "type": "string",
+          "description": "vSphere template VM name."
+        },
+        "folder": {
+          "type": "string",
+          "description": "Optional VM folder."
+        },
+        "numCpus": {
+          "type": "integer",
+          "description": "Number of virtual CPUs."
+        },
+        "memory": {
+          "type": "integer",
+          "description": "Memory in MB."
+        }
+      },
+      "requiredInputs": [
+        "datacenter",
+        "datastore",
+        "networkName",
+        "templateName"
+      ],
+      "properties": {
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Created publisher names."
+        },
+        "publishers": {
+          "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
+          "description": "Publisher registration and VM details keyed by name.",
+          "secret": true
+        }
+      }
+    },
+    "netskope-publisher:index:HypervPublisher": {
+      "isComponent": true,
+      "description": "Experimental component for creating one or more Netskope Private Access Publisher Hyper-V virtual machines.",
+      "inputProperties": {
+        "namePrefix": {
+          "type": "string",
+          "description": "Prefix used to derive publisher names when explicit names are not supplied."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit publisher names to create."
+        },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of publishers to create when names are not supplied."
+        },
+        "tenantUrl": {
+          "type": "string",
+          "description": "Netskope tenant URL used for publisher registration."
+        },
+        "apiToken": {
+          "type": "string",
+          "description": "Netskope API token used for publisher registration.",
+          "secret": true
+        },
+        "wizardPath": {
+          "type": "string",
+          "description": "Netskope publisher registration wizard API path."
+        },
+        "registrations": {
+          "$ref": "#/types/netskope-publisher:index:PublisherRegistrationMap",
+          "description": "Pre-created Netskope publisher registrations keyed by publisher name."
+        },
+        "switchName": {
+          "type": "string",
+          "description": "Hyper-V virtual switch name."
+        },
+        "hardDrives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/types/netskope-publisher:index:HypervHardDrive"
+          },
+          "description": "Virtual hard disks attached to each VM."
+        },
+        "generation": {
+          "type": "integer",
+          "description": "Hyper-V VM generation."
+        },
+        "processorCount": {
+          "type": "integer",
+          "description": "Virtual processor count."
+        },
+        "memorySize": {
+          "type": "integer",
+          "description": "Startup memory in bytes."
+        },
+        "dynamicMemory": {
+          "type": "boolean",
+          "description": "Whether to enable dynamic memory."
+        },
+        "minimumMemory": {
+          "type": "integer",
+          "description": "Minimum dynamic memory in bytes."
+        },
+        "maximumMemory": {
+          "type": "integer",
+          "description": "Maximum dynamic memory in bytes."
+        },
+        "autoStartAction": {
+          "type": "string",
+          "description": "Hyper-V automatic start action."
+        },
+        "autoStopAction": {
+          "type": "string",
+          "description": "Hyper-V automatic stop action."
+        },
+        "enableExperimentalHyperv": {
+          "type": "boolean",
+          "description": "Required opt-in gate for the experimental Hyper-V component."
+        }
+      },
+      "requiredInputs": [
+        "switchName",
+        "hardDrives"
+      ],
+      "properties": {
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Created publisher names."
+        },
+        "publishers": {
+          "$ref": "#/types/netskope-publisher:index:PublisherOutputMap",
+          "description": "Publisher registration and VM details keyed by name.",
+          "secret": true
+        }
+      }
+    }
+  },
+  "types": {
+    "netskope-publisher:index:MetadataOptions": {
+      "type": "object",
+      "description": "AWS EC2 instance metadata service options.",
+      "properties": {
+        "httpEndpoint": {
+          "type": "string",
+          "description": "Whether the metadata service endpoint is enabled."
+        },
+        "httpTokens": {
+          "type": "string",
+          "description": "Whether IMDSv2 tokens are required."
+        }
+      }
+    },
+    "netskope-publisher:index:PublisherRegistration": {
+      "type": "object",
+      "description": "Existing Netskope publisher registration details.",
+      "properties": {
+        "publisherId": {
+          "type": "integer",
+          "description": "Netskope publisher ID."
+        },
+        "registrationToken": {
+          "type": "string",
+          "description": "Netskope publisher registration token.",
+          "secret": true
+        }
+      },
+      "required": [
+        "publisherId",
+        "registrationToken"
+      ]
+    },
+    "netskope-publisher:index:PublisherRegistrationMap": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/types/netskope-publisher:index:PublisherRegistration"
+      },
+      "description": "Publisher registrations keyed by publisher name."
+    },
+    "netskope-publisher:index:PublisherOutput": {
+      "type": "object",
+      "description": "Created publisher registration and VM details.",
+      "properties": {
+        "publisherId": {
+          "type": "integer",
+          "description": "Netskope publisher ID."
+        },
+        "registrationToken": {
+          "type": "string",
+          "description": "Netskope publisher registration token.",
+          "secret": true
+        },
+        "vmId": {
+          "type": "string",
+          "description": "Provider VM resource ID."
+        },
+        "privateIp": {
+          "type": "string",
+          "description": "Private IP address."
+        },
+        "publicIp": {
+          "type": "string",
+          "description": "Public IP address when assigned."
+        }
+      },
+      "required": [
+        "publisherId",
+        "registrationToken",
+        "vmId",
+        "privateIp"
+      ]
+    },
+    "netskope-publisher:index:PublisherOutputMap": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/types/netskope-publisher:index:PublisherOutput"
+      },
+      "description": "Publisher outputs keyed by publisher name."
+    },
+    "netskope-publisher:index:AzureMarketplaceImage": {
+      "type": "object",
+      "description": "Azure marketplace image reference.",
+      "properties": {
+        "publisher": {
+          "type": "string",
+          "description": "Marketplace publisher."
+        },
+        "offer": {
+          "type": "string",
+          "description": "Marketplace offer."
+        },
+        "sku": {
+          "type": "string",
+          "description": "Marketplace SKU."
+        },
+        "version": {
+          "type": "string",
+          "description": "Marketplace image version."
+        }
+      },
+      "required": [
+        "publisher",
+        "offer",
+        "sku"
+      ]
+    },
+    "netskope-publisher:index:AzureOsDisk": {
+      "type": "object",
+      "description": "Azure managed OS disk options.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Managed disk storage account type."
+        },
+        "sizeGb": {
+          "type": "integer",
+          "description": "OS disk size in GiB."
+        }
+      }
+    },
+    "netskope-publisher:index:GcpServiceAccount": {
+      "type": "object",
+      "description": "GCP service account assignment.",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Service account email."
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "OAuth scopes."
+        }
+      },
+      "required": [
+        "email"
+      ]
+    },
+    "netskope-publisher:index:HypervHardDrive": {
+      "type": "object",
+      "description": "Hyper-V virtual hard disk attachment.",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "VHDX path."
+        },
+        "controllerType": {
+          "type": "string",
+          "description": "Controller type."
+        },
+        "controllerNumber": {
+          "type": "integer",
+          "description": "Controller number."
+        },
+        "controllerLocation": {
+          "type": "integer",
+          "description": "Controller location."
+        }
+      },
+      "required": [
+        "path"
+      ]
+    }
+  }
+}

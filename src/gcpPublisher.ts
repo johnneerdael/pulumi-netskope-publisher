@@ -13,7 +13,7 @@ export class GcpPublisher extends pulumi.ComponentResource {
   public readonly publishers: pulumi.Output<Record<string, PublisherOutput>>;
 
   constructor(name: string, args: GcpPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
-    super("netskope:index:GcpPublisher", name, {}, opts);
+    super("netskope-publisher:index:GcpPublisher", name, {}, opts);
 
     const parentOpts = { parent: this };
     const publisherNames = resolvePublisherNames(args);
