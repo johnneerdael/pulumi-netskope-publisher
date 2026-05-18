@@ -1,5 +1,10 @@
 # Unoffical Netskope NPA Publisher — Pulumi Deployment Guide
 
+[![npm](https://img.shields.io/npm/v/%40johninnl%2Fpulumi-netskope-publisher?logo=npm)](https://www.npmjs.com/package/@johninnl/pulumi-netskope-publisher)
+[![PyPI](https://img.shields.io/pypi/v/pulumi-netskope-publisher?logo=pypi)](https://pypi.org/project/pulumi-netskope-publisher/)
+[![NuGet](https://img.shields.io/nuget/v/JohninNL.Pulumi.NetskopePublisher?logo=nuget)](https://www.nuget.org/packages/JohninNL.Pulumi.NetskopePublisher)
+[![Go Reference](https://pkg.go.dev/badge/github.com/johnneerdael/pulumi-netskope-publisher.svg)](https://pkg.go.dev/github.com/johnneerdael/pulumi-netskope-publisher)
+
 Pulumi components for provisioning Netskope Private Access Publishers.
 
 The package mirrors the Terraform modules from
