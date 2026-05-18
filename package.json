@@ -14,7 +14,9 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test \"dist/test/**/*.test.js\"",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepack": "npm run clean && npm run build",
+    "release:check": "npm ci && npm run typecheck && npm test"
   },
   "keywords": [
     "pulumi",
