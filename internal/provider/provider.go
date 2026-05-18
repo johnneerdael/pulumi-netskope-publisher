@@ -58,7 +58,7 @@ func Schema(ctx context.Context, version int) (string, error) {
 	server, err := integration.NewServer(
 		ctx,
 		Name,
-		semver.MustParse("0.1.4"),
+		semver.MustParse("0.1.5"),
 		integration.WithProvider(provider),
 	)
 	if err != nil {
