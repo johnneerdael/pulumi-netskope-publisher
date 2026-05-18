@@ -8,7 +8,7 @@
     "destroy": "pulumi destroy"
   },
   "dependencies": {
-    "@johnneerdael/pulumi-netskope-publisher": "file:../..",
+    "@johninnl/pulumi-netskope-publisher": "file:../..",
     "@pulumi/pulumi": "^3.0.0",
     "@pulumi/vsphere": "^4.16.5"
   },

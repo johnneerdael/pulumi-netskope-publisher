@@ -10,7 +10,7 @@
   "dependencies": {
     "@pulumi/aws": "^6.0.0",
     "@pulumi/pulumi": "^3.0.0",
-    "@johnneerdael/pulumi-netskope-publisher": "file:../.."
+    "@johninnl/pulumi-netskope-publisher": "file:../.."
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

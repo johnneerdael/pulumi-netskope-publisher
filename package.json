@@ -1,5 +1,5 @@
 {
-  "name": "@johnneerdael/pulumi-netskope-publisher",
+  "name": "@johninnl/pulumi-netskope-publisher",
   "version": "0.1.1",
   "description": "Pulumi components for Netskope Private Access Publishers.",
   "main": "dist/src/index.js",

@@ -23,7 +23,7 @@
   "pluginDownloadURL": "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
   "language": {
     "nodejs": {
-      "packageName": "@johnneerdael/pulumi-netskope-publisher"
+      "packageName": "@johninnl/pulumi-netskope-publisher"
     }
   },
   "resources": {

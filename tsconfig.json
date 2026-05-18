@@ -8,7 +8,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@johnneerdael/pulumi-netskope-publisher": ["src/index.ts"]
+      "@johninnl/pulumi-netskope-publisher": ["src/index.ts"]
     },
     "strict": true,
     "esModuleInterop": true,

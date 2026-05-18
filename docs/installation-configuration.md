@@ -7,7 +7,7 @@ layout: package
 Install the package from npm:
 
 ```bash
-npm install @johnneerdael/pulumi-netskope-publisher
+npm install @johninnl/pulumi-netskope-publisher
 ```
 
 Install the cloud provider packages used by the component you deploy:
@@ -49,7 +49,7 @@ The package exports `officialImageSources` with the official Netskope
 VHDX and OVA download URLs:
 
 ```typescript
-import { officialImageSources } from "@johnneerdael/pulumi-netskope-publisher";
+import { officialImageSources } from "@johninnl/pulumi-netskope-publisher";
 
 export const ovaUrl = officialImageSources.ova;
 export const vhdxUrl = officialImageSources.vhdx;

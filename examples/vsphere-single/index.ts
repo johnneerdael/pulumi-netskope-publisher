@@ -1,5 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
-import { VspherePublisher } from "@johnneerdael/pulumi-netskope-publisher";
+import { VspherePublisher } from "@johninnl/pulumi-netskope-publisher";
 
 const config = new pulumi.Config();
 
