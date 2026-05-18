@@ -27,7 +27,8 @@ const sdkPackages = [
       },
       {
         command: dotnetCommand,
-        args: ["pack", "sdk/dotnet/Pulumi.NetskopePublisher.csproj", "--configuration", "Release", "--no-build", "--output", "dist/sdks/dotnet"]
+        args: ["pack", "Pulumi.NetskopePublisher.csproj", "--configuration", "Release", "--no-build", "--output", "../../dist/sdks/dotnet"],
+        cwd: "sdk/dotnet"
       }
     ],
     missingToolHint: "Install the .NET SDK before packaging the C# SDK."
@@ -42,7 +43,10 @@ for (const sdkPackage of sdkPackages) {
 
   rmSync(sdkPackage.outputDir, { recursive: true, force: true });
   for (const command of sdkPackage.commands) {
-    const result = spawnSync(command.command, command.args, { stdio: "inherit" });
+    const result = spawnSync(command.command, command.args, {
+      cwd: command.cwd,
+      stdio: "inherit"
+    });
 
     if (result.error?.code === "ENOENT") {
       console.error(sdkPackage.missingToolHint);
