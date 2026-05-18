@@ -114,6 +114,8 @@ jobs:
           git add package.json package-lock.json schema.json internal/provider/provider.go sdk
           git commit -m "chore(release): v${{ steps.version.outputs.version }}"
           git tag "v${{ steps.version.outputs.version }}"
+          git fetch origin main
+          git rebase origin/main
           git push origin HEAD:main
           git push origin "v${{ steps.version.outputs.version }}"
 
