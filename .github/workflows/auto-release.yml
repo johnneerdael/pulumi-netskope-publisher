@@ -65,6 +65,11 @@ jobs:
       - name: Run release checks
         run: npm run release:check
 
+      - name: Publish npm package
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Commit release bump and tag
         run: |
           git config user.name "github-actions[bot]"
@@ -74,11 +79,6 @@ jobs:
           git tag "v${{ steps.version.outputs.version }}"
           git push origin HEAD:main
           git push origin "v${{ steps.version.outputs.version }}"
-
-      - name: Publish npm package
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
