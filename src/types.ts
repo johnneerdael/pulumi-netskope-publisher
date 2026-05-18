@@ -67,6 +67,23 @@ export interface AzurePublisherArgs extends CommonPublisherArgs {
   acceptMarketplaceTerms?: pulumi.Input<boolean>;
 }
 
+export interface GcpServiceAccount {
+  email: pulumi.Input<string>;
+  scopes?: pulumi.Input<pulumi.Input<string>[]>;
+}
+
+export interface GcpPublisherArgs extends CommonPublisherArgs {
+  project: pulumi.Input<string>;
+  zone: pulumi.Input<string>;
+  network: pulumi.Input<string>;
+  subnetwork: pulumi.Input<string>;
+  machineType?: pulumi.Input<string>;
+  image: pulumi.Input<string>;
+  assignPublicIp?: pulumi.Input<boolean>;
+  networkTags?: pulumi.Input<pulumi.Input<string>[]>;
+  serviceAccount?: pulumi.Input<GcpServiceAccount>;
+}
+
 export interface PublisherOutput {
   publisherId: number;
   registrationToken: string;
