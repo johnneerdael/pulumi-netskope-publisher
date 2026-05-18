@@ -7,3 +7,4 @@ export * from "./netskopeRegistration";
 export * from "./awsPublisher";
 export * from "./azurePublisher";
 export * from "./gcpPublisher";
+export * from "./vspherePublisher";

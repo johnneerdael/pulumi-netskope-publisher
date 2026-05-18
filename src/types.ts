@@ -84,6 +84,18 @@ export interface GcpPublisherArgs extends CommonPublisherArgs {
   serviceAccount?: pulumi.Input<GcpServiceAccount>;
 }
 
+export interface VspherePublisherArgs extends CommonPublisherArgs {
+  datacenter: pulumi.Input<string>;
+  cluster?: pulumi.Input<string>;
+  host?: pulumi.Input<string>;
+  datastore: pulumi.Input<string>;
+  networkName: pulumi.Input<string>;
+  templateName: pulumi.Input<string>;
+  folder?: pulumi.Input<string>;
+  numCpus?: pulumi.Input<number>;
+  memory?: pulumi.Input<number>;
+}
+
 export interface PublisherOutput {
   publisherId: number;
   registrationToken: string;
