@@ -23,11 +23,20 @@ export class GcpPublisher extends pulumi.ComponentResource {
 
     for (const publisherName of publisherNames) {
       const registration = registrations.apply((allRegistrations) => allRegistrations[publisherName]);
-      const userData = pulumi.all([registration, args.wizardPath]).apply(([record, wizardPath]) =>
+      const userData = pulumi.all([
+        registration,
+        args.wizardPath,
+        args.bootstrap ?? true,
+        args.bootstrapUrl,
+        args.nonat ?? true,
+      ]).apply(([record, wizardPath, bootstrap, bootstrapUrl, nonat]) =>
         renderUserData({
           publisherName,
           registrationToken: record.registrationToken,
           wizardPath,
+          bootstrap,
+          bootstrapUrl,
+          nonat,
         }),
       );
 

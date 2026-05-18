@@ -55,6 +55,8 @@ export class VspherePublisher extends pulumi.ComponentResource {
           publisherName,
           registrationToken: record.registrationToken,
           wizardPath,
+          bootstrap: false,
+          nonat: false,
         }),
       );
       const metadata = Buffer.from(renderMetadata(publisherName), "utf8").toString("base64");

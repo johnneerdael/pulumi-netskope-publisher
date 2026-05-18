@@ -79,7 +79,19 @@ namespace Pulumi.NetskopePublisher
         public Input<bool>? AssignPublicIp { get; set; }
 
         /// <summary>
-        /// Publisher boot image.
+        /// Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
+        /// </summary>
+        [Input("bootstrap")]
+        public Input<bool>? Bootstrap { get; set; }
+
+        /// <summary>
+        /// URL to the Netskope generic bootstrap script.
+        /// </summary>
+        [Input("bootstrapUrl")]
+        public Input<string>? BootstrapUrl { get; set; }
+
+        /// <summary>
+        /// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
         /// </summary>
         [Input("image", required: true)]
         public Input<string> Image { get; set; } = null!;
@@ -125,6 +137,12 @@ namespace Pulumi.NetskopePublisher
             get => _networkTags ?? (_networkTags = new InputList<string>());
             set => _networkTags = value;
         }
+
+        /// <summary>
+        /// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
+        /// </summary>
+        [Input("nonat")]
+        public Input<bool>? Nonat { get; set; }
 
         /// <summary>
         /// GCP project ID.

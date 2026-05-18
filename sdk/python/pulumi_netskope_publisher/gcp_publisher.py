@@ -28,10 +28,13 @@ class GcpPublisherArgs:
                  zone: pulumi.Input[_builtins.str],
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
                  machine_type: Optional[pulumi.Input[_builtins.str]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  network_tags: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  registrations: Optional[pulumi.Input['PublisherRegistrationMapArgs']] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
                  service_account: Optional[pulumi.Input['GcpServiceAccountArgs']] = None,
@@ -41,17 +44,20 @@ class GcpPublisherArgs:
         """
         The set of arguments for constructing a GcpPublisher resource.
 
-        :param pulumi.Input[_builtins.str] image: Publisher boot image.
+        :param pulumi.Input[_builtins.str] image: GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
         :param pulumi.Input[_builtins.str] network: GCP VPC network self link or name.
         :param pulumi.Input[_builtins.str] project: GCP project ID.
         :param pulumi.Input[_builtins.str] subnetwork: GCP subnetwork self link or name.
         :param pulumi.Input[_builtins.str] zone: GCP zone.
         :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
         :param pulumi.Input[_builtins.bool] assign_public_ip: Whether to assign public IP addresses.
+        :param pulumi.Input[_builtins.bool] bootstrap: Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
+        :param pulumi.Input[_builtins.str] bootstrap_url: URL to the Netskope generic bootstrap script.
         :param pulumi.Input[_builtins.str] machine_type: Compute Engine machine type.
         :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] network_tags: Network tags attached to instances.
+        :param pulumi.Input[_builtins.bool] nonat: Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
         :param pulumi.Input['PublisherRegistrationMapArgs'] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
         :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
         :param pulumi.Input['GcpServiceAccountArgs'] service_account: Optional service account assignment.
@@ -68,6 +74,10 @@ class GcpPublisherArgs:
             pulumi.set(__self__, "api_token", api_token)
         if assign_public_ip is not None:
             pulumi.set(__self__, "assign_public_ip", assign_public_ip)
+        if bootstrap is not None:
+            pulumi.set(__self__, "bootstrap", bootstrap)
+        if bootstrap_url is not None:
+            pulumi.set(__self__, "bootstrap_url", bootstrap_url)
         if machine_type is not None:
             pulumi.set(__self__, "machine_type", machine_type)
         if name_prefix is not None:
@@ -76,6 +86,8 @@ class GcpPublisherArgs:
             pulumi.set(__self__, "names", names)
         if network_tags is not None:
             pulumi.set(__self__, "network_tags", network_tags)
+        if nonat is not None:
+            pulumi.set(__self__, "nonat", nonat)
         if registrations is not None:
             pulumi.set(__self__, "registrations", registrations)
         if replicas is not None:
@@ -93,7 +105,7 @@ class GcpPublisherArgs:
     @pulumi.getter
     def image(self) -> pulumi.Input[_builtins.str]:
         """
-        Publisher boot image.
+        GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
         """
         return pulumi.get(self, "image")
 
@@ -174,6 +186,30 @@ class GcpPublisherArgs:
         pulumi.set(self, "assign_public_ip", value)
 
     @_builtins.property
+    @pulumi.getter
+    def bootstrap(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
+        """
+        return pulumi.get(self, "bootstrap")
+
+    @bootstrap.setter
+    def bootstrap(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "bootstrap", value)
+
+    @_builtins.property
+    @pulumi.getter(name="bootstrapUrl")
+    def bootstrap_url(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        URL to the Netskope generic bootstrap script.
+        """
+        return pulumi.get(self, "bootstrap_url")
+
+    @bootstrap_url.setter
+    def bootstrap_url(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "bootstrap_url", value)
+
+    @_builtins.property
     @pulumi.getter(name="machineType")
     def machine_type(self) -> Optional[pulumi.Input[_builtins.str]]:
         """
@@ -220,6 +256,18 @@ class GcpPublisherArgs:
     @network_tags.setter
     def network_tags(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "network_tags", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def nonat(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
+        """
+        return pulumi.get(self, "nonat")
+
+    @nonat.setter
+    def nonat(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "nonat", value)
 
     @_builtins.property
     @pulumi.getter
@@ -302,12 +350,15 @@ class GcpPublisher(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
                  machine_type: Optional[pulumi.Input[_builtins.str]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  network: Optional[pulumi.Input[_builtins.str]] = None,
                  network_tags: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  project: Optional[pulumi.Input[_builtins.str]] = None,
                  registrations: Optional[pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
@@ -326,12 +377,15 @@ class GcpPublisher(pulumi.ComponentResource):
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
         :param pulumi.Input[_builtins.bool] assign_public_ip: Whether to assign public IP addresses.
-        :param pulumi.Input[_builtins.str] image: Publisher boot image.
+        :param pulumi.Input[_builtins.bool] bootstrap: Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
+        :param pulumi.Input[_builtins.str] bootstrap_url: URL to the Netskope generic bootstrap script.
+        :param pulumi.Input[_builtins.str] image: GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
         :param pulumi.Input[_builtins.str] machine_type: Compute Engine machine type.
         :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
         :param pulumi.Input[_builtins.str] network: GCP VPC network self link or name.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] network_tags: Network tags attached to instances.
+        :param pulumi.Input[_builtins.bool] nonat: Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
         :param pulumi.Input[_builtins.str] project: GCP project ID.
         :param pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
         :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
@@ -369,12 +423,15 @@ class GcpPublisher(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
                  machine_type: Optional[pulumi.Input[_builtins.str]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  network: Optional[pulumi.Input[_builtins.str]] = None,
                  network_tags: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  project: Optional[pulumi.Input[_builtins.str]] = None,
                  registrations: Optional[pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
@@ -397,6 +454,8 @@ class GcpPublisher(pulumi.ComponentResource):
 
             __props__.__dict__["api_token"] = None if api_token is None else pulumi.Output.secret(api_token)
             __props__.__dict__["assign_public_ip"] = assign_public_ip
+            __props__.__dict__["bootstrap"] = bootstrap
+            __props__.__dict__["bootstrap_url"] = bootstrap_url
             if image is None and not opts.urn:
                 raise TypeError("Missing required property 'image'")
             __props__.__dict__["image"] = image
@@ -407,6 +466,7 @@ class GcpPublisher(pulumi.ComponentResource):
                 raise TypeError("Missing required property 'network'")
             __props__.__dict__["network"] = network
             __props__.__dict__["network_tags"] = network_tags
+            __props__.__dict__["nonat"] = nonat
             if project is None and not opts.urn:
                 raise TypeError("Missing required property 'project'")
             __props__.__dict__["project"] = project

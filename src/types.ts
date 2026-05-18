@@ -79,6 +79,9 @@ export interface GcpPublisherArgs extends CommonPublisherArgs {
   subnetwork: pulumi.Input<string>;
   machineType?: pulumi.Input<string>;
   image: pulumi.Input<string>;
+  bootstrap?: pulumi.Input<boolean>;
+  bootstrapUrl?: pulumi.Input<string>;
+  nonat?: pulumi.Input<boolean>;
   assignPublicIp?: pulumi.Input<boolean>;
   networkTags?: pulumi.Input<pulumi.Input<string>[]>;
   serviceAccount?: pulumi.Input<GcpServiceAccount>;

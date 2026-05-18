@@ -61,7 +61,11 @@ type gcpPublisherArgs struct {
 	ApiToken *string `pulumi:"apiToken"`
 	// Whether to assign public IP addresses.
 	AssignPublicIp *bool `pulumi:"assignPublicIp"`
-	// Publisher boot image.
+	// Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
+	Bootstrap *bool `pulumi:"bootstrap"`
+	// URL to the Netskope generic bootstrap script.
+	BootstrapUrl *string `pulumi:"bootstrapUrl"`
+	// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
 	Image string `pulumi:"image"`
 	// Compute Engine machine type.
 	MachineType *string `pulumi:"machineType"`
@@ -73,6 +77,8 @@ type gcpPublisherArgs struct {
 	Network string `pulumi:"network"`
 	// Network tags attached to instances.
 	NetworkTags []string `pulumi:"networkTags"`
+	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
+	Nonat *bool `pulumi:"nonat"`
 	// GCP project ID.
 	Project string `pulumi:"project"`
 	// Pre-created Netskope publisher registrations keyed by publisher name.
@@ -99,7 +105,11 @@ type GcpPublisherArgs struct {
 	ApiToken pulumi.StringPtrInput
 	// Whether to assign public IP addresses.
 	AssignPublicIp pulumi.BoolPtrInput
-	// Publisher boot image.
+	// Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
+	Bootstrap pulumi.BoolPtrInput
+	// URL to the Netskope generic bootstrap script.
+	BootstrapUrl pulumi.StringPtrInput
+	// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
 	Image pulumi.StringInput
 	// Compute Engine machine type.
 	MachineType pulumi.StringPtrInput
@@ -111,6 +121,8 @@ type GcpPublisherArgs struct {
 	Network pulumi.StringInput
 	// Network tags attached to instances.
 	NetworkTags pulumi.StringArrayInput
+	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
+	Nonat pulumi.BoolPtrInput
 	// GCP project ID.
 	Project pulumi.StringInput
 	// Pre-created Netskope publisher registrations keyed by publisher name.

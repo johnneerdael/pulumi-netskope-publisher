@@ -333,7 +333,19 @@
         },
         "image": {
           "type": "string",
-          "description": "Publisher boot image."
+          "description": "GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script."
+        },
+        "bootstrap": {
+          "type": "boolean",
+          "description": "Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image."
+        },
+        "bootstrapUrl": {
+          "type": "string",
+          "description": "URL to the Netskope generic bootstrap script."
+        },
+        "nonat": {
+          "type": "boolean",
+          "description": "Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU."
         },
         "assignPublicIp": {
           "type": "boolean",

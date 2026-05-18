@@ -73,7 +73,10 @@ Cloud, or vSphere.
 
 Each component also requires provider-specific network and image inputs.
 See the component API docs and the examples directory for complete
-programs.
+programs. On GCP, use a standard Linux image such as Ubuntu 22.04; the
+`GcpPublisher` component runs the Netskope generic bootstrap script from
+cloud-init by default because there is no public Netskope Publisher GCE
+image.
 
 ## Publisher images
 

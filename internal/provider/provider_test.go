@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/blang/semver"
@@ -128,6 +129,22 @@ func TestGcpConstructCreatesComputeInstanceChild(t *testing.T) {
 
 	if !contains(createdTypes, "gcp:compute/instance:Instance") {
 		t.Fatalf("expected GCP construct to create compute instance, got %v", createdTypes)
+	}
+}
+
+func TestRenderUserDataBootstrapsPublisherByDefault(t *testing.T) {
+	userData := renderUserData("pub-1", "token-123", nil)
+
+	for _, expected := range []string{
+		"system_info:\n  default_user:\n    name: ubuntu",
+		"install -d -o ubuntu -g ubuntu -m 0755 /home/ubuntu/resources",
+		"install -o ubuntu -g ubuntu -m 0644 /dev/null /home/ubuntu/resources/.nonat",
+		"curl -fsSL https://s3-us-west-2.amazonaws.com/publisher.netskope.com/latest/generic/bootstrap.sh | sudo bash",
+		"sudo /home/ubuntu/npa_publisher_wizard -token \"token-123\"",
+	} {
+		if !strings.Contains(userData, expected) {
+			t.Fatalf("expected user data to contain %q, got:\n%s", expected, userData)
+		}
 	}
 }
 

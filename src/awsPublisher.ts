@@ -42,6 +42,8 @@ export class AwsPublisher extends pulumi.ComponentResource {
           publisherName,
           registrationToken: record.registrationToken,
           wizardPath,
+          bootstrap: false,
+          nonat: false,
         }),
       );
 

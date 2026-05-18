@@ -88,7 +88,7 @@ func NewAwsPublisher(ctx *pulumi.Context, name string, args AwsPublisherArgs, op
 			IamInstanceProfile:       stringPtrInput(args.IAMInstanceProfile),
 			EbsOptimized:             pulumi.BoolPtr(defaultBool(args.EBSOptimized, true)),
 			Monitoring:               pulumi.BoolPtr(defaultBool(args.Monitoring, true)),
-			UserDataBase64:           renderUserDataBase64Output(publisherName, registration.RegistrationToken, args.WizardPath).ToStringPtrOutput(),
+			UserDataBase64:           renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, preBakedCloudInitOptions()).ToStringPtrOutput(),
 			MetadataOptions: &awsec2.InstanceMetadataOptionsArgs{
 				HttpEndpoint: pulumi.StringPtr(defaultMetadataValue(args.MetadataOptions, "endpoint", "enabled")),
 				HttpTokens:   pulumi.StringPtr(defaultMetadataValue(args.MetadataOptions, "tokens", "required")),
@@ -229,7 +229,7 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 			OsProfile: &azurecompute.OSProfileArgs{
 				ComputerName:  pulumi.StringPtr(publisherName),
 				AdminUsername: pulumi.StringPtr(defaultString(args.AdminUsername, "ubuntu")),
-				CustomData:    renderUserDataBase64Output(publisherName, registration.RegistrationToken, args.WizardPath).ToStringPtrOutput(),
+				CustomData:    renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, preBakedCloudInitOptions()).ToStringPtrOutput(),
 				LinuxConfiguration: &azurecompute.LinuxConfigurationArgs{
 					DisablePasswordAuthentication: pulumi.BoolPtr(true),
 					Ssh: &azurecompute.SshConfigurationArgs{
@@ -280,6 +280,9 @@ type GcpPublisherArgs struct {
 	Subnetwork     string             `pulumi:"subnetwork"`
 	MachineType    *string            `pulumi:"machineType,optional"`
 	Image          string             `pulumi:"image"`
+	Bootstrap      *bool              `pulumi:"bootstrap,optional"`
+	BootstrapURL   *string            `pulumi:"bootstrapUrl,optional"`
+	Nonat          *bool              `pulumi:"nonat,optional"`
 	AssignPublicIP *bool              `pulumi:"assignPublicIp,optional"`
 	NetworkTags    []string           `pulumi:"networkTags,optional"`
 	ServiceAccount *GcpServiceAccount `pulumi:"serviceAccount,optional"`
@@ -333,7 +336,11 @@ func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, op
 			},
 			NetworkInterfaces: gcpcompute.InstanceNetworkInterfaceArray{networkInterface},
 			Metadata: pulumi.StringMap{
-				"user-data": renderUserDataOutput(publisherName, registration.RegistrationToken, args.WizardPath),
+				"user-data": renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptions{
+					Bootstrap:    defaultBool(args.Bootstrap, true),
+					BootstrapURL: defaultString(args.BootstrapURL, defaultBootstrapURL),
+					Nonat:        defaultBool(args.Nonat, true),
+				}),
 			},
 		}
 		if args.ServiceAccount != nil {
@@ -450,7 +457,7 @@ func NewVspherePublisher(ctx *pulumi.Context, name string, args VspherePublisher
 				TemplateUuid: template.Id(),
 			},
 			ExtraConfig: pulumi.StringMap{
-				"guestinfo.userdata":          renderUserDataBase64Output(publisherName, registration.RegistrationToken, args.WizardPath),
+				"guestinfo.userdata":          renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, preBakedCloudInitOptions()),
 				"guestinfo.userdata.encoding": pulumi.String("base64"),
 				"guestinfo.metadata":          pulumi.String(base64.StdEncoding.EncodeToString([]byte(renderMetadata(publisherName)))),
 				"guestinfo.metadata.encoding": pulumi.String("base64"),
@@ -713,31 +720,84 @@ func publisherOutput(registration publisherRegistrationOutput, vmID pulumi.Strin
 	}.ToMapOutput()
 }
 
+const defaultBootstrapURL = "https://s3-us-west-2.amazonaws.com/publisher.netskope.com/latest/generic/bootstrap.sh"
+
+type cloudInitOptions struct {
+	Bootstrap    bool
+	BootstrapURL string
+	Nonat        bool
+}
+
+func preBakedCloudInitOptions() cloudInitOptions {
+	return cloudInitOptions{Bootstrap: false, Nonat: false}
+}
+
 func renderUserData(publisherName string, registrationToken string, wizardPath *string) string {
+	return renderUserDataWithOptions(publisherName, registrationToken, wizardPath, cloudInitOptions{
+		Bootstrap:    true,
+		BootstrapURL: defaultBootstrapURL,
+		Nonat:        true,
+	})
+}
+
+func renderUserDataWithOptions(publisherName string, registrationToken string, wizardPath *string, options cloudInitOptions) string {
 	path := defaultString(wizardPath, "/home/ubuntu/npa_publisher_wizard")
-	return strings.Join([]string{
+	if !options.Bootstrap && !options.Nonat {
+		return strings.Join([]string{
+			"#cloud-config",
+			"hostname: " + publisherName,
+			"preserve_hostname: false",
+			"runcmd:",
+			fmt.Sprintf("  - [ %s, -token, \"%s\" ]", path, escapeDoubleQuoted(registrationToken)),
+			"",
+		}, "\n")
+	}
+	bootstrapURL := defaultString(&options.BootstrapURL, defaultBootstrapURL)
+	lines := []string{
 		"#cloud-config",
 		"hostname: " + publisherName,
 		"preserve_hostname: false",
-		"runcmd:",
-		fmt.Sprintf("  - [ %s, -token, \"%s\" ]", path, escapeDoubleQuoted(registrationToken)),
 		"",
-	}, "\n")
+		"system_info:",
+		"  default_user:",
+		"    name: ubuntu",
+		"",
+		"users:",
+		"  - name: ubuntu",
+		"    groups: [sudo]",
+		"    sudo: \"ALL=(ALL) NOPASSWD:ALL\"",
+		"    shell: /bin/bash",
+		"    lock_passwd: true",
+		"",
+		"runcmd:",
+		"  - chmod 1777 /tmp",
+	}
+	if options.Nonat {
+		lines = append(lines,
+			"  - install -d -o ubuntu -g ubuntu -m 0755 /home/ubuntu/resources",
+			"  - install -o ubuntu -g ubuntu -m 0644 /dev/null /home/ubuntu/resources/.nonat",
+		)
+	}
+	if options.Bootstrap {
+		lines = append(lines, fmt.Sprintf("  - su - ubuntu -c 'curl -fsSL %s | sudo bash'", bootstrapURL))
+	}
+	lines = append(lines, fmt.Sprintf("  - su - ubuntu -c 'sudo %s -token \"%s\"'", path, escapeSingleQuoted(registrationToken)), "")
+	return strings.Join(lines, "\n")
 }
 
-func renderUserDataBase64(publisherName string, registrationToken string, wizardPath *string) string {
-	return base64.StdEncoding.EncodeToString([]byte(renderUserData(publisherName, registrationToken, wizardPath)))
+func renderUserDataBase64WithOptions(publisherName string, registrationToken string, wizardPath *string, options cloudInitOptions) string {
+	return base64.StdEncoding.EncodeToString([]byte(renderUserDataWithOptions(publisherName, registrationToken, wizardPath, options)))
 }
 
-func renderUserDataOutput(publisherName string, registrationToken pulumi.StringOutput, wizardPath *string) pulumi.StringOutput {
+func renderUserDataOutputWithOptions(publisherName string, registrationToken pulumi.StringOutput, wizardPath *string, options cloudInitOptions) pulumi.StringOutput {
 	return registrationToken.ApplyT(func(token string) string {
-		return renderUserData(publisherName, token, wizardPath)
+		return renderUserDataWithOptions(publisherName, token, wizardPath, options)
 	}).(pulumi.StringOutput)
 }
 
-func renderUserDataBase64Output(publisherName string, registrationToken pulumi.StringOutput, wizardPath *string) pulumi.StringOutput {
+func renderUserDataBase64OutputWithOptions(publisherName string, registrationToken pulumi.StringOutput, wizardPath *string, options cloudInitOptions) pulumi.StringOutput {
 	return registrationToken.ApplyT(func(token string) string {
-		return renderUserDataBase64(publisherName, token, wizardPath)
+		return renderUserDataBase64WithOptions(publisherName, token, wizardPath, options)
 	}).(pulumi.StringOutput)
 }
 
@@ -851,4 +911,8 @@ func nameTag(tags map[string]string, publisherName string) map[string]string {
 
 func escapeDoubleQuoted(value string) string {
 	return strings.ReplaceAll(strings.ReplaceAll(value, `\`, `\\`), `"`, `\"`)
+}
+
+func escapeSingleQuoted(value string) string {
+	return strings.ReplaceAll(value, `'`, `'"'"'`)
 }

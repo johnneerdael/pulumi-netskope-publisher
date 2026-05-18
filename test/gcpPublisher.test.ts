@@ -4,9 +4,12 @@ import * as pulumi from "@pulumi/pulumi";
 import { GcpPublisher } from "../src/gcpPublisher";
 import { PublisherOutput } from "../src/types";
 
+const createdInstances: Record<string, any> = {};
+
 pulumi.runtime.setMocks({
   newResource(args) {
     if (args.type === "gcp:compute/instance:Instance") {
+      createdInstances[args.name] = args.inputs;
       return {
         id: `${args.name}-id`,
         state: {
@@ -58,6 +61,8 @@ test("GcpPublisher creates outputs keyed by publisher name", async () => {
   assert.deepEqual(publisherNames, ["pub-1"]);
   assert.equal(publishers["pub-1"].publisherId, 101);
   assert.equal(publishers["pub-1"].vmId, "publisher-pub-1-numeric-id");
+  assert.match(createdInstances["publisher-pub-1"].metadata["user-data"], /bootstrap\.sh/);
+  assert.match(createdInstances["publisher-pub-1"].metadata["user-data"], /resources\/\.nonat/);
 });
 
 async function outputValue<T>(output: pulumi.Output<T>): Promise<T> {
