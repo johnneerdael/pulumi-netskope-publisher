@@ -77,5 +77,6 @@ Pulumi plugin archives named
 `pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz` and
 attach them to the release before publication.
 
-The TypeScript components remain the deployment implementation while the
-Go provider is brought to full child-resource parity.
+The Go provider constructs AWS, Azure, GCP, and vSphere child resources.
+It currently requires pre-created Netskope `registrations` while
+publisher registration is promoted into a stateful provider resource.

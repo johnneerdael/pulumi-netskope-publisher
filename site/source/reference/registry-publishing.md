@@ -4,18 +4,28 @@ title: Registry Publishing
 
 # Registry Publishing
 
-This package is currently a TypeScript source-based component package.
-It can be consumed from Git references and published to npm for
-TypeScript users.
+The repository carries both release paths needed for publication:
 
-Pulumi's public Registry path for broadly consumable components expects
-an executable-based package with generated SDKs. Moving this package to
-public Registry publication requires a separate provider packaging track.
+- the TypeScript component package published to npm
+- the Go executable component provider used for Pulumi Registry plugin
+  downloads
 
-Immediate supported release path:
+`schema.json` sets `pluginDownloadURL` to GitHub Releases. Tagged
+releases build plugin archives named
+`pulumi-resource-netskope-publisher-v<version>-<os>-<arch>.tar.gz` for
+Linux, macOS, and Windows targets.
 
-1. Publish the TypeScript package to npm.
-2. Tag GitHub releases.
-3. Use Git references or npm for consumption.
-4. Revisit executable-based packaging before public Pulumi Registry
-   submission.
+Before opening the public Registry PR:
+
+1. Run `npm test`.
+2. Run `npm run go:test`.
+3. Run `npm run registry:check`.
+4. Run `npm run plugin:dist`.
+5. Publish the npm package.
+6. Tag a GitHub release and confirm the plugin archives are attached.
+7. Add the community package entry in `pulumi/registry`.
+
+The Go provider constructs AWS, Azure, GCP, and vSphere child resources.
+On the Go provider path, pass pre-created Netskope `registrations`
+until Netskope registration is implemented as a stateful provider
+resource.

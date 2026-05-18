@@ -22,6 +22,8 @@ Before requesting public Registry listing:
 - Publish the npm package.
 - Confirm the tag release uploaded the plugin archives to GitHub
   Releases, matching `pluginDownloadURL` in `schema.json`.
+- Confirm whether the public Registry submission can proceed with
+  pre-created Netskope registrations on the Go provider path.
 - If generating multi-language SDKs, publish the SDK packages to the
   relevant public package feeds.
 - Open a PR against `pulumi/registry` and add the community package

@@ -4,7 +4,12 @@ go 1.25.8
 
 require (
 	github.com/blang/semver v3.5.1+incompatible
+	github.com/pulumi/pulumi-aws/sdk/v6 v6.83.3
+	github.com/pulumi/pulumi-azure-native-sdk/compute/v3 v3.18.0
+	github.com/pulumi/pulumi-azure-native-sdk/network/v3 v3.18.0
+	github.com/pulumi/pulumi-gcp/sdk/v9 v9.23.0
 	github.com/pulumi/pulumi-go-provider v1.3.2
+	github.com/pulumi/pulumi-vsphere/sdk/v4 v4.16.5
 	github.com/pulumi/pulumi/sdk/v3 v3.241.0
 )
 
@@ -80,6 +85,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 // indirect
 	github.com/pulumi/esc v0.24.0 // indirect
+	github.com/pulumi/pulumi-azure-native-sdk/v3 v3.18.0 // indirect
 	github.com/pulumi/pulumi/pkg/v3 v3.241.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
