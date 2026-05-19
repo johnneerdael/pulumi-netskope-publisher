@@ -21,4 +21,4 @@ You have a working publisher. From here:
   unless you maintain your own pre-baked publisher image.
 
 For deeper operational guidance, start with
-[secret handling](/pulumi-netskope-publisher/admin/operations/secrets/).
+[secret handling](/pulumi-netskope-publisher/admin/operations/secret-handling/).

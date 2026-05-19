@@ -1,13 +1,8 @@
 ---
-title: Secret Handling
+title: Secrets
 ---
 
-# Secret Handling
+# Secrets
 
-Set the Netskope API token as a Pulumi secret:
-
-```bash
-pulumi config set apiToken --secret
-```
-
-Registration tokens are returned as secret outputs.
+Secret guidance moved to
+[Secret handling](/pulumi-netskope-publisher/admin/operations/secret-handling/).
