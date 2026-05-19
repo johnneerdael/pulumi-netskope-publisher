@@ -6,16 +6,30 @@ import builtins as _builtins
 from . import _utilities
 import typing
 # Export this package's modules as members:
+from .alicloud_publisher import *
 from .aws_publisher import *
 from .azure_publisher import *
+from .esxi_publisher import *
 from .gcp_publisher import *
+from .hcloud_publisher import *
 from .hyperv_publisher import *
 from .kubernetes_publisher import *
 from .netskope_registration import *
-from .provider import *
+from .nutanix_publisher import *
+from .oci_publisher import *
+from .openstack_publisher import *
+from .ovh_publisher import *
+from .provider_ import *
+from .scaleway_publisher import *
 from .vsphere_publisher import *
-from ._inputs import *
-from . import outputs
+
+# Make subpackages available:
+if typing.TYPE_CHECKING:
+    import pulumi_netskope_publisher.provider as __provider
+    provider = __provider
+else:
+    provider = _utilities.lazy_import('pulumi_netskope_publisher.provider')
+
 _utilities.register(
     resource_modules="""
 [
@@ -24,12 +38,20 @@ _utilities.register(
   "mod": "index",
   "fqn": "pulumi_netskope_publisher",
   "classes": {
+   "netskope-publisher:index:AlicloudPublisher": "AlicloudPublisher",
    "netskope-publisher:index:AwsPublisher": "AwsPublisher",
    "netskope-publisher:index:AzurePublisher": "AzurePublisher",
+   "netskope-publisher:index:EsxiPublisher": "EsxiPublisher",
    "netskope-publisher:index:GcpPublisher": "GcpPublisher",
+   "netskope-publisher:index:HcloudPublisher": "HcloudPublisher",
    "netskope-publisher:index:HypervPublisher": "HypervPublisher",
    "netskope-publisher:index:KubernetesPublisher": "KubernetesPublisher",
    "netskope-publisher:index:NetskopeRegistration": "NetskopeRegistration",
+   "netskope-publisher:index:NutanixPublisher": "NutanixPublisher",
+   "netskope-publisher:index:OciPublisher": "OciPublisher",
+   "netskope-publisher:index:OpenstackPublisher": "OpenstackPublisher",
+   "netskope-publisher:index:OvhPublisher": "OvhPublisher",
+   "netskope-publisher:index:ScalewayPublisher": "ScalewayPublisher",
    "netskope-publisher:index:VspherePublisher": "VspherePublisher"
   }
  }

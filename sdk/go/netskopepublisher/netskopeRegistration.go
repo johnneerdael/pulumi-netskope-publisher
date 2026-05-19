@@ -9,21 +9,17 @@ import (
 
 	"errors"
 	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/internal"
+	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// Stateful Netskope publisher registration resource.
 type NetskopeRegistration struct {
 	pulumi.CustomResourceState
 
-	// Netskope API token used for publisher registration.
-	ApiToken pulumi.StringOutput `pulumi:"apiToken"`
-	// Publisher names registered or reused in Netskope.
-	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
-	// Netskope publisher registrations keyed by publisher name.
-	Registrations PublisherRegistrationMapOutput `pulumi:"registrations"`
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl pulumi.StringOutput `pulumi:"tenantUrl"`
+	ApiToken       pulumi.StringOutput                  `pulumi:"apiToken"`
+	PublisherNames pulumi.StringArrayOutput             `pulumi:"publisherNames"`
+	Registrations  provider.RegistrationRecordMapOutput `pulumi:"registrations"`
+	TenantUrl      pulumi.StringOutput                  `pulumi:"tenantUrl"`
 }
 
 // NewNetskopeRegistration registers a new resource with the given unique name, arguments, and options.
@@ -82,22 +78,16 @@ func (NetskopeRegistrationState) ElementType() reflect.Type {
 }
 
 type netskopeRegistrationArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken string `pulumi:"apiToken"`
-	// Publisher names to register or reuse in Netskope.
+	ApiToken       string   `pulumi:"apiToken"`
 	PublisherNames []string `pulumi:"publisherNames"`
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl string `pulumi:"tenantUrl"`
+	TenantUrl      string   `pulumi:"tenantUrl"`
 }
 
 // The set of arguments for constructing a NetskopeRegistration resource.
 type NetskopeRegistrationArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken pulumi.StringInput
-	// Publisher names to register or reuse in Netskope.
+	ApiToken       pulumi.StringInput
 	PublisherNames pulumi.StringArrayInput
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl pulumi.StringInput
+	TenantUrl      pulumi.StringInput
 }
 
 func (NetskopeRegistrationArgs) ElementType() reflect.Type {
@@ -137,22 +127,18 @@ func (o NetskopeRegistrationOutput) ToNetskopeRegistrationOutputWithContext(ctx 
 	return o
 }
 
-// Netskope API token used for publisher registration.
 func (o NetskopeRegistrationOutput) ApiToken() pulumi.StringOutput {
 	return o.ApplyT(func(v *NetskopeRegistration) pulumi.StringOutput { return v.ApiToken }).(pulumi.StringOutput)
 }
 
-// Publisher names registered or reused in Netskope.
 func (o NetskopeRegistrationOutput) PublisherNames() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *NetskopeRegistration) pulumi.StringArrayOutput { return v.PublisherNames }).(pulumi.StringArrayOutput)
 }
 
-// Netskope publisher registrations keyed by publisher name.
-func (o NetskopeRegistrationOutput) Registrations() PublisherRegistrationMapOutput {
-	return o.ApplyT(func(v *NetskopeRegistration) PublisherRegistrationMapOutput { return v.Registrations }).(PublisherRegistrationMapOutput)
+func (o NetskopeRegistrationOutput) Registrations() provider.RegistrationRecordMapOutput {
+	return o.ApplyT(func(v *NetskopeRegistration) provider.RegistrationRecordMapOutput { return v.Registrations }).(provider.RegistrationRecordMapOutput)
 }
 
-// Netskope tenant URL used for publisher registration.
 func (o NetskopeRegistrationOutput) TenantUrl() pulumi.StringOutput {
 	return o.ApplyT(func(v *NetskopeRegistration) pulumi.StringOutput { return v.TenantUrl }).(pulumi.StringOutput)
 }

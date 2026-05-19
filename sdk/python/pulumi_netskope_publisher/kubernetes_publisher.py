@@ -13,55 +13,34 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import NotRequired, TypedDict, TypeAlias
 from . import _utilities
-from . import outputs
-from ._inputs import *
+from . import provider as _provider
 
 __all__ = ['KubernetesPublisherArgs', 'KubernetesPublisher']
 
 @pulumi.input_type
 class KubernetesPublisherArgs:
     def __init__(__self__, *,
-                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
-                 chart_repository: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_token: Optional[_builtins.str] = None,
+                 chart_repository: Optional[_builtins.str] = None,
                  chart_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
-                 chart_version: pulumi.Input[Optional[_builtins.str]] = None,
-                 enrollment_mode: pulumi.Input[Optional[_builtins.str]] = None,
-                 hpa_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
-                 hpa_max_replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 hpa_min_replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 image_repository: pulumi.Input[Optional[_builtins.str]] = None,
-                 image_tag: pulumi.Input[Optional[_builtins.str]] = None,
-                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
-                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 namespace: pulumi.Input[Optional[_builtins.str]] = None,
-                 registrations: pulumi.Input[Optional['PublisherRegistrationMapArgs']] = None,
-                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
-                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None,
-                 workload_type: pulumi.Input[Optional[_builtins.str]] = None):
+                 chart_version: Optional[_builtins.str] = None,
+                 enrollment_mode: Optional[_builtins.str] = None,
+                 hpa_enabled: Optional[_builtins.bool] = None,
+                 hpa_max_replicas: Optional[_builtins.int] = None,
+                 hpa_min_replicas: Optional[_builtins.int] = None,
+                 image_repository: Optional[_builtins.str] = None,
+                 image_tag: Optional[_builtins.str] = None,
+                 name_prefix: Optional[_builtins.str] = None,
+                 names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 namespace: Optional[_builtins.str] = None,
+                 registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
+                 replicas: Optional[_builtins.int] = None,
+                 tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
+                 tenant_url: Optional[_builtins.str] = None,
+                 wizard_path: Optional[_builtins.str] = None,
+                 workload_type: Optional[_builtins.str] = None):
         """
         The set of arguments for constructing a KubernetesPublisher resource.
-
-        :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
-        :param pulumi.Input[_builtins.str] chart_repository: Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-        :param pulumi.Input[Mapping[str, Any]] chart_values: Free-form Helm values merged last.
-        :param pulumi.Input[_builtins.str] chart_version: Helm chart version constraint. Defaults to ~> 1.4.
-        :param pulumi.Input[_builtins.str] enrollment_mode: Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-        :param pulumi.Input[_builtins.bool] hpa_enabled: Whether to enable chart HPA when workloadType is statefulset.
-        :param pulumi.Input[_builtins.int] hpa_max_replicas: Maximum HPA replicas.
-        :param pulumi.Input[_builtins.int] hpa_min_replicas: Minimum HPA replicas.
-        :param pulumi.Input[_builtins.str] image_repository: Override publisher container image repository.
-        :param pulumi.Input[_builtins.str] image_tag: Override publisher container image tag.
-        :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
-        :param pulumi.Input[_builtins.str] namespace: Kubernetes namespace to create and install into. Defaults to netskope.
-        :param pulumi.Input['PublisherRegistrationMapArgs'] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
-        :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Tags or labels applied to supported provider resources.
-        :param pulumi.Input[_builtins.str] tenant_url: Netskope tenant URL used for publisher registration.
-        :param pulumi.Input[_builtins.str] wizard_path: Netskope publisher registration wizard API path.
-        :param pulumi.Input[_builtins.str] workload_type: Chart workload type: daemonset or statefulset.
         """
         if api_token is not None:
             pulumi.set(__self__, "api_token", api_token)
@@ -104,34 +83,25 @@ class KubernetesPublisherArgs:
 
     @_builtins.property
     @pulumi.getter(name="apiToken")
-    def api_token(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Netskope API token used for publisher registration.
-        """
+    def api_token(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "api_token")
 
     @api_token.setter
-    def api_token(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def api_token(self, value: Optional[_builtins.str]):
         pulumi.set(self, "api_token", value)
 
     @_builtins.property
     @pulumi.getter(name="chartRepository")
-    def chart_repository(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-        """
+    def chart_repository(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "chart_repository")
 
     @chart_repository.setter
-    def chart_repository(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def chart_repository(self, value: Optional[_builtins.str]):
         pulumi.set(self, "chart_repository", value)
 
     @_builtins.property
     @pulumi.getter(name="chartValues")
     def chart_values(self) -> pulumi.Input[Optional[Mapping[str, Any]]]:
-        """
-        Free-form Helm values merged last.
-        """
         return pulumi.get(self, "chart_values")
 
     @chart_values.setter
@@ -140,194 +110,146 @@ class KubernetesPublisherArgs:
 
     @_builtins.property
     @pulumi.getter(name="chartVersion")
-    def chart_version(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Helm chart version constraint. Defaults to ~> 1.4.
-        """
+    def chart_version(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "chart_version")
 
     @chart_version.setter
-    def chart_version(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def chart_version(self, value: Optional[_builtins.str]):
         pulumi.set(self, "chart_version", value)
 
     @_builtins.property
     @pulumi.getter(name="enrollmentMode")
-    def enrollment_mode(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-        """
+    def enrollment_mode(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "enrollment_mode")
 
     @enrollment_mode.setter
-    def enrollment_mode(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def enrollment_mode(self, value: Optional[_builtins.str]):
         pulumi.set(self, "enrollment_mode", value)
 
     @_builtins.property
     @pulumi.getter(name="hpaEnabled")
-    def hpa_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
-        """
-        Whether to enable chart HPA when workloadType is statefulset.
-        """
+    def hpa_enabled(self) -> Optional[_builtins.bool]:
         return pulumi.get(self, "hpa_enabled")
 
     @hpa_enabled.setter
-    def hpa_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
+    def hpa_enabled(self, value: Optional[_builtins.bool]):
         pulumi.set(self, "hpa_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="hpaMaxReplicas")
-    def hpa_max_replicas(self) -> pulumi.Input[Optional[_builtins.int]]:
-        """
-        Maximum HPA replicas.
-        """
+    def hpa_max_replicas(self) -> Optional[_builtins.int]:
         return pulumi.get(self, "hpa_max_replicas")
 
     @hpa_max_replicas.setter
-    def hpa_max_replicas(self, value: pulumi.Input[Optional[_builtins.int]]):
+    def hpa_max_replicas(self, value: Optional[_builtins.int]):
         pulumi.set(self, "hpa_max_replicas", value)
 
     @_builtins.property
     @pulumi.getter(name="hpaMinReplicas")
-    def hpa_min_replicas(self) -> pulumi.Input[Optional[_builtins.int]]:
-        """
-        Minimum HPA replicas.
-        """
+    def hpa_min_replicas(self) -> Optional[_builtins.int]:
         return pulumi.get(self, "hpa_min_replicas")
 
     @hpa_min_replicas.setter
-    def hpa_min_replicas(self, value: pulumi.Input[Optional[_builtins.int]]):
+    def hpa_min_replicas(self, value: Optional[_builtins.int]):
         pulumi.set(self, "hpa_min_replicas", value)
 
     @_builtins.property
     @pulumi.getter(name="imageRepository")
-    def image_repository(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Override publisher container image repository.
-        """
+    def image_repository(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "image_repository")
 
     @image_repository.setter
-    def image_repository(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def image_repository(self, value: Optional[_builtins.str]):
         pulumi.set(self, "image_repository", value)
 
     @_builtins.property
     @pulumi.getter(name="imageTag")
-    def image_tag(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Override publisher container image tag.
-        """
+    def image_tag(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "image_tag")
 
     @image_tag.setter
-    def image_tag(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def image_tag(self, value: Optional[_builtins.str]):
         pulumi.set(self, "image_tag", value)
 
     @_builtins.property
     @pulumi.getter(name="namePrefix")
-    def name_prefix(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Prefix used to derive publisher names when explicit names are not supplied.
-        """
+    def name_prefix(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "name_prefix")
 
     @name_prefix.setter
-    def name_prefix(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def name_prefix(self, value: Optional[_builtins.str]):
         pulumi.set(self, "name_prefix", value)
 
     @_builtins.property
     @pulumi.getter
-    def names(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
-        """
-        Explicit publisher names to create.
-        """
+    def names(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
         return pulumi.get(self, "names")
 
     @names.setter
-    def names(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
+    def names(self, value: pulumi.Input[Optional[Sequence[_builtins.str]]]):
         pulumi.set(self, "names", value)
 
     @_builtins.property
     @pulumi.getter
-    def namespace(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Kubernetes namespace to create and install into. Defaults to netskope.
-        """
+    def namespace(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "namespace")
 
     @namespace.setter
-    def namespace(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def namespace(self, value: Optional[_builtins.str]):
         pulumi.set(self, "namespace", value)
 
     @_builtins.property
     @pulumi.getter
-    def registrations(self) -> pulumi.Input[Optional['PublisherRegistrationMapArgs']]:
-        """
-        Pre-created Netskope publisher registrations keyed by publisher name.
-        """
+    def registrations(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]:
         return pulumi.get(self, "registrations")
 
     @registrations.setter
-    def registrations(self, value: pulumi.Input[Optional['PublisherRegistrationMapArgs']]):
+    def registrations(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]):
         pulumi.set(self, "registrations", value)
 
     @_builtins.property
     @pulumi.getter
-    def replicas(self) -> pulumi.Input[Optional[_builtins.int]]:
-        """
-        Number of publishers to create when names are not supplied.
-        """
+    def replicas(self) -> Optional[_builtins.int]:
         return pulumi.get(self, "replicas")
 
     @replicas.setter
-    def replicas(self, value: pulumi.Input[Optional[_builtins.int]]):
+    def replicas(self, value: Optional[_builtins.int]):
         pulumi.set(self, "replicas", value)
 
     @_builtins.property
     @pulumi.getter
-    def tags(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
-        """
-        Tags or labels applied to supported provider resources.
-        """
+    def tags(self) -> pulumi.Input[Optional[Mapping[str, _builtins.str]]]:
         return pulumi.get(self, "tags")
 
     @tags.setter
-    def tags(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def tags(self, value: pulumi.Input[Optional[Mapping[str, _builtins.str]]]):
         pulumi.set(self, "tags", value)
 
     @_builtins.property
     @pulumi.getter(name="tenantUrl")
-    def tenant_url(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Netskope tenant URL used for publisher registration.
-        """
+    def tenant_url(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "tenant_url")
 
     @tenant_url.setter
-    def tenant_url(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def tenant_url(self, value: Optional[_builtins.str]):
         pulumi.set(self, "tenant_url", value)
 
     @_builtins.property
     @pulumi.getter(name="wizardPath")
-    def wizard_path(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Netskope publisher registration wizard API path.
-        """
+    def wizard_path(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "wizard_path")
 
     @wizard_path.setter
-    def wizard_path(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def wizard_path(self, value: Optional[_builtins.str]):
         pulumi.set(self, "wizard_path", value)
 
     @_builtins.property
     @pulumi.getter(name="workloadType")
-    def workload_type(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Chart workload type: daemonset or statefulset.
-        """
+    def workload_type(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "workload_type")
 
     @workload_type.setter
-    def workload_type(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def workload_type(self, value: Optional[_builtins.str]):
         pulumi.set(self, "workload_type", value)
 
 
@@ -337,51 +259,31 @@ class KubernetesPublisher(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
-                 chart_repository: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_token: Optional[_builtins.str] = None,
+                 chart_repository: Optional[_builtins.str] = None,
                  chart_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
-                 chart_version: pulumi.Input[Optional[_builtins.str]] = None,
-                 enrollment_mode: pulumi.Input[Optional[_builtins.str]] = None,
-                 hpa_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
-                 hpa_max_replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 hpa_min_replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 image_repository: pulumi.Input[Optional[_builtins.str]] = None,
-                 image_tag: pulumi.Input[Optional[_builtins.str]] = None,
-                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
-                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 namespace: pulumi.Input[Optional[_builtins.str]] = None,
-                 registrations: pulumi.Input[Optional[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
-                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
-                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None,
-                 workload_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 chart_version: Optional[_builtins.str] = None,
+                 enrollment_mode: Optional[_builtins.str] = None,
+                 hpa_enabled: Optional[_builtins.bool] = None,
+                 hpa_max_replicas: Optional[_builtins.int] = None,
+                 hpa_min_replicas: Optional[_builtins.int] = None,
+                 image_repository: Optional[_builtins.str] = None,
+                 image_tag: Optional[_builtins.str] = None,
+                 name_prefix: Optional[_builtins.str] = None,
+                 names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 namespace: Optional[_builtins.str] = None,
+                 registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
+                 replicas: Optional[_builtins.int] = None,
+                 tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
+                 tenant_url: Optional[_builtins.str] = None,
+                 wizard_path: Optional[_builtins.str] = None,
+                 workload_type: Optional[_builtins.str] = None,
                  __props__=None):
         """
-        Installs Netskope Private Access Publishers on Kubernetes with the kubernetes-netskope-publisher Helm chart.
-
+        Create a KubernetesPublisher resource with the given unique name, props, and options.
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
-        :param pulumi.Input[_builtins.str] chart_repository: Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-        :param pulumi.Input[Mapping[str, Any]] chart_values: Free-form Helm values merged last.
-        :param pulumi.Input[_builtins.str] chart_version: Helm chart version constraint. Defaults to ~> 1.4.
-        :param pulumi.Input[_builtins.str] enrollment_mode: Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-        :param pulumi.Input[_builtins.bool] hpa_enabled: Whether to enable chart HPA when workloadType is statefulset.
-        :param pulumi.Input[_builtins.int] hpa_max_replicas: Maximum HPA replicas.
-        :param pulumi.Input[_builtins.int] hpa_min_replicas: Minimum HPA replicas.
-        :param pulumi.Input[_builtins.str] image_repository: Override publisher container image repository.
-        :param pulumi.Input[_builtins.str] image_tag: Override publisher container image tag.
-        :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
-        :param pulumi.Input[_builtins.str] namespace: Kubernetes namespace to create and install into. Defaults to netskope.
-        :param pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
-        :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Tags or labels applied to supported provider resources.
-        :param pulumi.Input[_builtins.str] tenant_url: Netskope tenant URL used for publisher registration.
-        :param pulumi.Input[_builtins.str] wizard_path: Netskope publisher registration wizard API path.
-        :param pulumi.Input[_builtins.str] workload_type: Chart workload type: daemonset or statefulset.
         """
         ...
     @overload
@@ -390,8 +292,7 @@ class KubernetesPublisher(pulumi.ComponentResource):
                  args: Optional[KubernetesPublisherArgs] = None,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Installs Netskope Private Access Publishers on Kubernetes with the kubernetes-netskope-publisher Helm chart.
-
+        Create a KubernetesPublisher resource with the given unique name, props, and options.
 
         :param str resource_name: The name of the resource.
         :param KubernetesPublisherArgs args: The arguments to use to populate this resource's properties.
@@ -408,25 +309,25 @@ class KubernetesPublisher(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
-                 chart_repository: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_token: Optional[_builtins.str] = None,
+                 chart_repository: Optional[_builtins.str] = None,
                  chart_values: pulumi.Input[Optional[Mapping[str, Any]]] = None,
-                 chart_version: pulumi.Input[Optional[_builtins.str]] = None,
-                 enrollment_mode: pulumi.Input[Optional[_builtins.str]] = None,
-                 hpa_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
-                 hpa_max_replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 hpa_min_replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 image_repository: pulumi.Input[Optional[_builtins.str]] = None,
-                 image_tag: pulumi.Input[Optional[_builtins.str]] = None,
-                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
-                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 namespace: pulumi.Input[Optional[_builtins.str]] = None,
-                 registrations: pulumi.Input[Optional[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
-                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
-                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None,
-                 workload_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 chart_version: Optional[_builtins.str] = None,
+                 enrollment_mode: Optional[_builtins.str] = None,
+                 hpa_enabled: Optional[_builtins.bool] = None,
+                 hpa_max_replicas: Optional[_builtins.int] = None,
+                 hpa_min_replicas: Optional[_builtins.int] = None,
+                 image_repository: Optional[_builtins.str] = None,
+                 image_tag: Optional[_builtins.str] = None,
+                 name_prefix: Optional[_builtins.str] = None,
+                 names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 namespace: Optional[_builtins.str] = None,
+                 registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
+                 replicas: Optional[_builtins.int] = None,
+                 tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
+                 tenant_url: Optional[_builtins.str] = None,
+                 wizard_path: Optional[_builtins.str] = None,
+                 workload_type: Optional[_builtins.str] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -460,6 +361,8 @@ class KubernetesPublisher(pulumi.ComponentResource):
             __props__.__dict__["helm_release_names"] = None
             __props__.__dict__["publisher_names"] = None
             __props__.__dict__["publishers"] = None
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "publishers"])
+        opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         super(KubernetesPublisher, __self__).__init__(
             'netskope-publisher:index:KubernetesPublisher',
             resource_name,
@@ -468,26 +371,112 @@ class KubernetesPublisher(pulumi.ComponentResource):
             remote=True)
 
     @_builtins.property
+    @pulumi.getter(name="apiToken")
+    def api_token(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "api_token")
+
+    @_builtins.property
+    @pulumi.getter(name="chartRepository")
+    def chart_repository(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "chart_repository")
+
+    @_builtins.property
+    @pulumi.getter(name="chartValues")
+    def chart_values(self) -> pulumi.Output[Optional[Mapping[str, Any]]]:
+        return pulumi.get(self, "chart_values")
+
+    @_builtins.property
+    @pulumi.getter(name="chartVersion")
+    def chart_version(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "chart_version")
+
+    @_builtins.property
+    @pulumi.getter(name="enrollmentMode")
+    def enrollment_mode(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "enrollment_mode")
+
+    @_builtins.property
     @pulumi.getter(name="helmReleaseNames")
-    def helm_release_names(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
-        """
-        Helm release names created in the cluster.
-        """
+    def helm_release_names(self) -> pulumi.Output[Sequence[_builtins.str]]:
         return pulumi.get(self, "helm_release_names")
 
     @_builtins.property
+    @pulumi.getter(name="hpaEnabled")
+    def hpa_enabled(self) -> pulumi.Output[Optional[_builtins.bool]]:
+        return pulumi.get(self, "hpa_enabled")
+
+    @_builtins.property
+    @pulumi.getter(name="hpaMaxReplicas")
+    def hpa_max_replicas(self) -> pulumi.Output[Optional[_builtins.int]]:
+        return pulumi.get(self, "hpa_max_replicas")
+
+    @_builtins.property
+    @pulumi.getter(name="hpaMinReplicas")
+    def hpa_min_replicas(self) -> pulumi.Output[Optional[_builtins.int]]:
+        return pulumi.get(self, "hpa_min_replicas")
+
+    @_builtins.property
+    @pulumi.getter(name="imageRepository")
+    def image_repository(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "image_repository")
+
+    @_builtins.property
+    @pulumi.getter(name="imageTag")
+    def image_tag(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "image_tag")
+
+    @_builtins.property
+    @pulumi.getter(name="namePrefix")
+    def name_prefix(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "name_prefix")
+
+    @_builtins.property
+    @pulumi.getter
+    def names(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "names")
+
+    @_builtins.property
+    @pulumi.getter
+    def namespace(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "namespace")
+
+    @_builtins.property
     @pulumi.getter(name="publisherNames")
-    def publisher_names(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
-        """
-        Derived publisher names.
-        """
+    def publisher_names(self) -> pulumi.Output[Sequence[_builtins.str]]:
         return pulumi.get(self, "publisher_names")
 
     @_builtins.property
     @pulumi.getter
-    def publishers(self) -> pulumi.Output[Optional['outputs.KubernetesPublisherOutputMap']]:
-        """
-        Publisher registration and Helm release details keyed by publisher or release name.
-        """
+    def publishers(self) -> pulumi.Output[Mapping[str, Any]]:
         return pulumi.get(self, "publishers")
+
+    @_builtins.property
+    @pulumi.getter
+    def registrations(self) -> pulumi.Output[Optional[Mapping[str, '_provider.outputs.PublisherRegistrationInput']]]:
+        return pulumi.get(self, "registrations")
+
+    @_builtins.property
+    @pulumi.getter
+    def replicas(self) -> pulumi.Output[Optional[_builtins.int]]:
+        return pulumi.get(self, "replicas")
+
+    @_builtins.property
+    @pulumi.getter
+    def tags(self) -> pulumi.Output[Optional[Mapping[str, _builtins.str]]]:
+        return pulumi.get(self, "tags")
+
+    @_builtins.property
+    @pulumi.getter(name="tenantUrl")
+    def tenant_url(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "tenant_url")
+
+    @_builtins.property
+    @pulumi.getter(name="wizardPath")
+    def wizard_path(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "wizard_path")
+
+    @_builtins.property
+    @pulumi.getter(name="workloadType")
+    def workload_type(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "workload_type")
 

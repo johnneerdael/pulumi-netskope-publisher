@@ -13,7 +13,7 @@ import (
 const (
 	Name              = "netskope-publisher"
 	DisplayName       = "Netskope Publisher"
-	Description       = "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, and experimental Hyper-V."
+	Description       = "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, ESXi, Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, and experimental Hyper-V."
 	Publisher         = "johnneerdael"
 	Homepage          = "https://johnneerdael.github.io/pulumi-netskope-publisher/"
 	Repository        = "https://github.com/johnneerdael/pulumi-netskope-publisher"
@@ -32,7 +32,7 @@ func New() (p.Provider, error) {
 		WithLicense(License).
 		WithLogoURL(LogoURL).
 		WithPluginDownloadURL(PluginDownloadURL).
-		WithKeywords("category/network", "kind/component", "pulumi", "netskope", "npa", "publisher", "aws", "azure", "gcp", "kubernetes", "vsphere").
+		WithKeywords("category/network", "kind/component", "pulumi", "netskope", "npa", "publisher", "aws", "azure", "gcp", "kubernetes", "vsphere", "esxi", "hcloud", "nutanix", "openstack", "ovh", "scaleway", "oci", "alicloud").
 		WithResources(
 			infer.Resource(&NetskopeRegistration{}),
 		).
@@ -42,6 +42,14 @@ func New() (p.Provider, error) {
 			infer.ComponentF(NewGcpPublisher),
 			infer.ComponentF(NewKubernetesPublisher),
 			infer.ComponentF(NewVspherePublisher),
+			infer.ComponentF(NewEsxiPublisher),
+			infer.ComponentF(NewHcloudPublisher),
+			infer.ComponentF(NewNutanixPublisher),
+			infer.ComponentF(NewOpenstackPublisher),
+			infer.ComponentF(NewOvhPublisher),
+			infer.ComponentF(NewScalewayPublisher),
+			infer.ComponentF(NewOciPublisher),
+			infer.ComponentF(NewAlicloudPublisher),
 			infer.ComponentF(NewHypervPublisher),
 		).
 		WithModuleMap(map[tokens.ModuleName]tokens.ModuleName{

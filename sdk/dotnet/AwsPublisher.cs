@@ -9,23 +9,95 @@ using Pulumi.Serialization;
 
 namespace Pulumi.NetskopePublisher
 {
-    /// <summary>
-    /// Creates one or more Netskope Private Access Publisher EC2 instances and registers them with a Netskope tenant.
-    /// </summary>
     [NetskopePublisherResourceType("netskope-publisher:index:AwsPublisher")]
     public partial class AwsPublisher : global::Pulumi.ComponentResource
     {
-        /// <summary>
-        /// Created publisher names.
-        /// </summary>
+        [Output("amiId")]
+        public Output<string?> AmiId { get; private set; } = null!;
+
+        [Output("apiToken")]
+        public Output<string?> ApiToken { get; private set; } = null!;
+
+        [Output("associatePublicIpAddress")]
+        public Output<bool?> AssociatePublicIpAddress { get; private set; } = null!;
+
+        [Output("bootstrap")]
+        public Output<bool?> Bootstrap { get; private set; } = null!;
+
+        [Output("bootstrapUrl")]
+        public Output<string?> BootstrapUrl { get; private set; } = null!;
+
+        [Output("deleteDefaultUser")]
+        public Output<bool?> DeleteDefaultUser { get; private set; } = null!;
+
+        [Output("ebsOptimized")]
+        public Output<bool?> EbsOptimized { get; private set; } = null!;
+
+        [Output("guestNetworkInterface")]
+        public Output<Pulumi.NetskopePublisher.Provider.Outputs.GuestNetworkInterface?> GuestNetworkInterface { get; private set; } = null!;
+
+        [Output("iamInstanceProfile")]
+        public Output<string?> IamInstanceProfile { get; private set; } = null!;
+
+        [Output("installUser")]
+        public Output<string?> InstallUser { get; private set; } = null!;
+
+        [Output("installUserPassword")]
+        public Output<string?> InstallUserPassword { get; private set; } = null!;
+
+        [Output("installUserPasswordIsHash")]
+        public Output<bool?> InstallUserPasswordIsHash { get; private set; } = null!;
+
+        [Output("installUserSshAuthorizedKeys")]
+        public Output<ImmutableArray<string>> InstallUserSshAuthorizedKeys { get; private set; } = null!;
+
+        [Output("instanceType")]
+        public Output<string?> InstanceType { get; private set; } = null!;
+
+        [Output("keyName")]
+        public Output<string?> KeyName { get; private set; } = null!;
+
+        [Output("metadataOptions")]
+        public Output<Pulumi.NetskopePublisher.Provider.Outputs.MetadataOptions?> MetadataOptions { get; private set; } = null!;
+
+        [Output("monitoring")]
+        public Output<bool?> Monitoring { get; private set; } = null!;
+
+        [Output("namePrefix")]
+        public Output<string?> NamePrefix { get; private set; } = null!;
+
+        [Output("names")]
+        public Output<ImmutableArray<string>> Names { get; private set; } = null!;
+
+        [Output("nonat")]
+        public Output<bool?> Nonat { get; private set; } = null!;
+
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
-        /// <summary>
-        /// Publisher registration and VM details keyed by name.
-        /// </summary>
         [Output("publishers")]
-        public Output<Outputs.PublisherOutputMap?> Publishers { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, object>> Publishers { get; private set; } = null!;
+
+        [Output("registrations")]
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
+
+        [Output("replicas")]
+        public Output<int?> Replicas { get; private set; } = null!;
+
+        [Output("securityGroupIds")]
+        public Output<ImmutableArray<string>> SecurityGroupIds { get; private set; } = null!;
+
+        [Output("subnetId")]
+        public Output<string> SubnetId { get; private set; } = null!;
+
+        [Output("tags")]
+        public Output<ImmutableDictionary<string, string>?> Tags { get; private set; } = null!;
+
+        [Output("tenantUrl")]
+        public Output<string?> TenantUrl { get; private set; } = null!;
+
+        [Output("wizardPath")]
+        public Output<string?> WizardPath { get; private set; } = null!;
 
 
         /// <summary>
@@ -46,6 +118,12 @@ namespace Pulumi.NetskopePublisher
             {
                 Version = Utilities.Version,
                 PluginDownloadURL = "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
+                AdditionalSecretOutputs =
+                {
+                    "apiToken",
+                    "installUserPassword",
+                    "publishers",
+                },
             };
             var merged = ComponentResourceOptions.Merge(defaultOptions, options);
             // Override the ID if one was specified for consistency with other language SDKs.
@@ -56,211 +134,121 @@ namespace Pulumi.NetskopePublisher
 
     public sealed class AwsPublisherArgs : global::Pulumi.ResourceArgs
     {
-        /// <summary>
-        /// Publisher AMI ID.
-        /// </summary>
         [Input("amiId")]
-        public Input<string>? AmiId { get; set; }
+        public string? AmiId { get; set; }
 
         [Input("apiToken")]
-        private Input<string>? _apiToken;
-
-        /// <summary>
-        /// Netskope API token used for publisher registration.
-        /// </summary>
-        public Input<string>? ApiToken
+        private string? _apiToken;
+        public string? ApiToken
         {
             get => _apiToken;
-            set
-            {
-                var emptySecret = Output.CreateSecret(0);
-                _apiToken = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
-            }
+            set => _apiToken = value;
         }
 
-        /// <summary>
-        /// Whether to associate public IP addresses.
-        /// </summary>
         [Input("associatePublicIpAddress")]
-        public Input<bool>? AssociatePublicIpAddress { get; set; }
+        public bool? AssociatePublicIpAddress { get; set; }
 
-        /// <summary>
-        /// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
-        /// </summary>
         [Input("bootstrap")]
-        public Input<bool>? Bootstrap { get; set; }
+        public bool? Bootstrap { get; set; }
 
-        /// <summary>
-        /// URL to the Netskope generic bootstrap script.
-        /// </summary>
         [Input("bootstrapUrl")]
-        public Input<string>? BootstrapUrl { get; set; }
+        public string? BootstrapUrl { get; set; }
 
-        /// <summary>
-        /// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-        /// </summary>
         [Input("deleteDefaultUser")]
-        public Input<bool>? DeleteDefaultUser { get; set; }
+        public bool? DeleteDefaultUser { get; set; }
 
-        /// <summary>
-        /// Whether to enable EBS optimization.
-        /// </summary>
         [Input("ebsOptimized")]
-        public Input<bool>? EbsOptimized { get; set; }
+        public bool? EbsOptimized { get; set; }
 
-        /// <summary>
-        /// Optional guest OS primary interface override applied with netplan during cloud-init.
-        /// </summary>
         [Input("guestNetworkInterface")]
-        public Input<Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
+        public Input<Pulumi.NetskopePublisher.Provider.Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
 
-        /// <summary>
-        /// Optional IAM instance profile name.
-        /// </summary>
         [Input("iamInstanceProfile")]
-        public Input<string>? IamInstanceProfile { get; set; }
+        public string? IamInstanceProfile { get; set; }
 
-        /// <summary>
-        /// Linux user that owns the Publisher install. Defaults to ubuntu.
-        /// </summary>
         [Input("installUser")]
-        public Input<string>? InstallUser { get; set; }
+        public string? InstallUser { get; set; }
 
         [Input("installUserPassword")]
-        private Input<string>? _installUserPassword;
-
-        /// <summary>
-        /// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-        /// </summary>
-        public Input<string>? InstallUserPassword
+        private string? _installUserPassword;
+        public string? InstallUserPassword
         {
             get => _installUserPassword;
-            set
-            {
-                var emptySecret = Output.CreateSecret(0);
-                _installUserPassword = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
-            }
+            set => _installUserPassword = value;
         }
 
-        /// <summary>
-        /// Set true when installUserPassword is already a crypt(3) hash.
-        /// </summary>
         [Input("installUserPasswordIsHash")]
-        public Input<bool>? InstallUserPasswordIsHash { get; set; }
+        public bool? InstallUserPasswordIsHash { get; set; }
 
         [Input("installUserSshAuthorizedKeys")]
         private InputList<string>? _installUserSshAuthorizedKeys;
-
-        /// <summary>
-        /// Public SSH keys installed in the install user's authorized_keys file.
-        /// </summary>
         public InputList<string> InstallUserSshAuthorizedKeys
         {
             get => _installUserSshAuthorizedKeys ?? (_installUserSshAuthorizedKeys = new InputList<string>());
             set => _installUserSshAuthorizedKeys = value;
         }
 
-        /// <summary>
-        /// EC2 instance type.
-        /// </summary>
         [Input("instanceType")]
-        public Input<string>? InstanceType { get; set; }
+        public string? InstanceType { get; set; }
 
-        /// <summary>
-        /// Optional EC2 key pair name.
-        /// </summary>
         [Input("keyName")]
-        public Input<string>? KeyName { get; set; }
+        public string? KeyName { get; set; }
 
-        /// <summary>
-        /// EC2 instance metadata service options.
-        /// </summary>
         [Input("metadataOptions")]
-        public Input<Inputs.MetadataOptionsArgs>? MetadataOptions { get; set; }
+        public Input<Pulumi.NetskopePublisher.Provider.Inputs.MetadataOptionsArgs>? MetadataOptions { get; set; }
 
-        /// <summary>
-        /// Whether to enable detailed EC2 monitoring.
-        /// </summary>
         [Input("monitoring")]
-        public Input<bool>? Monitoring { get; set; }
+        public bool? Monitoring { get; set; }
 
-        /// <summary>
-        /// Prefix used to derive publisher names when explicit names are not supplied.
-        /// </summary>
         [Input("namePrefix")]
-        public Input<string>? NamePrefix { get; set; }
+        public string? NamePrefix { get; set; }
 
         [Input("names")]
         private InputList<string>? _names;
-
-        /// <summary>
-        /// Explicit publisher names to create.
-        /// </summary>
         public InputList<string> Names
         {
             get => _names ?? (_names = new InputList<string>());
             set => _names = value;
         }
 
-        /// <summary>
-        /// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
-        /// </summary>
         [Input("nonat")]
-        public Input<bool>? Nonat { get; set; }
+        public bool? Nonat { get; set; }
 
-        /// <summary>
-        /// Pre-created Netskope publisher registrations keyed by publisher name.
-        /// </summary>
         [Input("registrations")]
-        public Input<Inputs.PublisherRegistrationMapArgs>? Registrations { get; set; }
+        private InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>? _registrations;
+        public InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs> Registrations
+        {
+            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>());
+            set => _registrations = value;
+        }
 
-        /// <summary>
-        /// Number of publishers to create when names are not supplied.
-        /// </summary>
         [Input("replicas")]
-        public Input<int>? Replicas { get; set; }
+        public int? Replicas { get; set; }
 
         [Input("securityGroupIds", required: true)]
         private InputList<string>? _securityGroupIds;
-
-        /// <summary>
-        /// AWS security group IDs attached to publisher instances.
-        /// </summary>
         public InputList<string> SecurityGroupIds
         {
             get => _securityGroupIds ?? (_securityGroupIds = new InputList<string>());
             set => _securityGroupIds = value;
         }
 
-        /// <summary>
-        /// AWS subnet ID for publisher network interfaces.
-        /// </summary>
         [Input("subnetId", required: true)]
-        public Input<string> SubnetId { get; set; } = null!;
+        public string SubnetId { get; set; } = null!;
 
         [Input("tags")]
         private InputMap<string>? _tags;
-
-        /// <summary>
-        /// Tags applied to supported provider resources.
-        /// </summary>
         public InputMap<string> Tags
         {
             get => _tags ?? (_tags = new InputMap<string>());
             set => _tags = value;
         }
 
-        /// <summary>
-        /// Netskope tenant URL used for publisher registration.
-        /// </summary>
         [Input("tenantUrl")]
-        public Input<string>? TenantUrl { get; set; }
+        public string? TenantUrl { get; set; }
 
-        /// <summary>
-        /// Netskope publisher registration wizard API path.
-        /// </summary>
         [Input("wizardPath")]
-        public Input<string>? WizardPath { get; set; }
+        public string? WizardPath { get; set; }
 
         public AwsPublisherArgs()
         {

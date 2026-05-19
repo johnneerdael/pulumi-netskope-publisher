@@ -21,18 +21,34 @@ func (m *module) Version() semver.Version {
 
 func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi.Resource, err error) {
 	switch typ {
+	case "netskope-publisher:index:AlicloudPublisher":
+		r = &AlicloudPublisher{}
 	case "netskope-publisher:index:AwsPublisher":
 		r = &AwsPublisher{}
 	case "netskope-publisher:index:AzurePublisher":
 		r = &AzurePublisher{}
+	case "netskope-publisher:index:EsxiPublisher":
+		r = &EsxiPublisher{}
 	case "netskope-publisher:index:GcpPublisher":
 		r = &GcpPublisher{}
+	case "netskope-publisher:index:HcloudPublisher":
+		r = &HcloudPublisher{}
 	case "netskope-publisher:index:HypervPublisher":
 		r = &HypervPublisher{}
 	case "netskope-publisher:index:KubernetesPublisher":
 		r = &KubernetesPublisher{}
 	case "netskope-publisher:index:NetskopeRegistration":
 		r = &NetskopeRegistration{}
+	case "netskope-publisher:index:NutanixPublisher":
+		r = &NutanixPublisher{}
+	case "netskope-publisher:index:OciPublisher":
+		r = &OciPublisher{}
+	case "netskope-publisher:index:OpenstackPublisher":
+		r = &OpenstackPublisher{}
+	case "netskope-publisher:index:OvhPublisher":
+		r = &OvhPublisher{}
+	case "netskope-publisher:index:ScalewayPublisher":
+		r = &ScalewayPublisher{}
 	case "netskope-publisher:index:VspherePublisher":
 		r = &VspherePublisher{}
 	default:

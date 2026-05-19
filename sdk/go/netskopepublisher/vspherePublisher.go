@@ -9,17 +9,32 @@ import (
 
 	"errors"
 	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/internal"
+	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// Creates one or more Netskope Private Access Publisher vSphere virtual machines and registers them with a Netskope tenant.
 type VspherePublisher struct {
 	pulumi.ResourceState
 
-	// Created publisher names.
-	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
-	// Publisher registration and VM details keyed by name.
-	Publishers PublisherOutputMapPtrOutput `pulumi:"publishers"`
+	ApiToken       pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	Cluster        pulumi.StringPtrOutput                       `pulumi:"cluster"`
+	Datacenter     pulumi.StringOutput                          `pulumi:"datacenter"`
+	Datastore      pulumi.StringOutput                          `pulumi:"datastore"`
+	Folder         pulumi.StringPtrOutput                       `pulumi:"folder"`
+	Host           pulumi.StringPtrOutput                       `pulumi:"host"`
+	Memory         pulumi.IntPtrOutput                          `pulumi:"memory"`
+	NamePrefix     pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
+	Names          pulumi.StringArrayOutput                     `pulumi:"names"`
+	NetworkName    pulumi.StringOutput                          `pulumi:"networkName"`
+	NumCpus        pulumi.IntPtrOutput                          `pulumi:"numCpus"`
+	PublisherNames pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput                             `pulumi:"publishers"`
+	Registrations  provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
+	Replicas       pulumi.IntPtrOutput                          `pulumi:"replicas"`
+	Tags           pulumi.StringMapOutput                       `pulumi:"tags"`
+	TemplateName   pulumi.StringOutput                          `pulumi:"templateName"`
+	TenantUrl      pulumi.StringPtrOutput                       `pulumi:"tenantUrl"`
+	WizardPath     pulumi.StringPtrOutput                       `pulumi:"wizardPath"`
 }
 
 // NewVspherePublisher registers a new resource with the given unique name, arguments, and options.
@@ -29,21 +44,14 @@ func NewVspherePublisher(ctx *pulumi.Context,
 		return nil, errors.New("missing one or more required arguments")
 	}
 
-	if args.Datacenter == nil {
-		return nil, errors.New("invalid value for required argument 'Datacenter'")
-	}
-	if args.Datastore == nil {
-		return nil, errors.New("invalid value for required argument 'Datastore'")
-	}
-	if args.NetworkName == nil {
-		return nil, errors.New("invalid value for required argument 'NetworkName'")
-	}
-	if args.TemplateName == nil {
-		return nil, errors.New("invalid value for required argument 'TemplateName'")
-	}
 	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
+		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"apiToken",
+		"publishers",
+	})
+	opts = append(opts, secrets)
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource VspherePublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:VspherePublisher", name, args, &resource, opts...)
@@ -54,78 +62,44 @@ func NewVspherePublisher(ctx *pulumi.Context,
 }
 
 type vspherePublisherArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken *string `pulumi:"apiToken"`
-	// vSphere cluster name.
-	Cluster *string `pulumi:"cluster"`
-	// vSphere datacenter name.
-	Datacenter string `pulumi:"datacenter"`
-	// vSphere datastore name.
-	Datastore string `pulumi:"datastore"`
-	// Optional VM folder.
-	Folder *string `pulumi:"folder"`
-	// vSphere host name.
-	Host *string `pulumi:"host"`
-	// Memory in MB.
-	Memory *int `pulumi:"memory"`
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix *string `pulumi:"namePrefix"`
-	// Explicit publisher names to create.
-	Names []string `pulumi:"names"`
-	// vSphere network name.
-	NetworkName string `pulumi:"networkName"`
-	// Number of virtual CPUs.
-	NumCpus *int `pulumi:"numCpus"`
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations *PublisherRegistrationMap `pulumi:"registrations"`
-	// Number of publishers to create when names are not supplied.
-	Replicas *int `pulumi:"replicas"`
-	// Tags applied to supported provider resources.
-	Tags map[string]string `pulumi:"tags"`
-	// vSphere template VM name.
-	TemplateName string `pulumi:"templateName"`
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl *string `pulumi:"tenantUrl"`
-	// Netskope publisher registration wizard API path.
-	WizardPath *string `pulumi:"wizardPath"`
+	ApiToken      *string                                        `pulumi:"apiToken"`
+	Cluster       *string                                        `pulumi:"cluster"`
+	Datacenter    string                                         `pulumi:"datacenter"`
+	Datastore     string                                         `pulumi:"datastore"`
+	Folder        *string                                        `pulumi:"folder"`
+	Host          *string                                        `pulumi:"host"`
+	Memory        *int                                           `pulumi:"memory"`
+	NamePrefix    *string                                        `pulumi:"namePrefix"`
+	Names         []string                                       `pulumi:"names"`
+	NetworkName   string                                         `pulumi:"networkName"`
+	NumCpus       *int                                           `pulumi:"numCpus"`
+	Registrations map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
+	Replicas      *int                                           `pulumi:"replicas"`
+	Tags          map[string]string                              `pulumi:"tags"`
+	TemplateName  string                                         `pulumi:"templateName"`
+	TenantUrl     *string                                        `pulumi:"tenantUrl"`
+	WizardPath    *string                                        `pulumi:"wizardPath"`
 }
 
 // The set of arguments for constructing a VspherePublisher resource.
 type VspherePublisherArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken pulumi.StringPtrInput
-	// vSphere cluster name.
-	Cluster pulumi.StringPtrInput
-	// vSphere datacenter name.
-	Datacenter pulumi.StringInput
-	// vSphere datastore name.
-	Datastore pulumi.StringInput
-	// Optional VM folder.
-	Folder pulumi.StringPtrInput
-	// vSphere host name.
-	Host pulumi.StringPtrInput
-	// Memory in MB.
-	Memory pulumi.IntPtrInput
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix pulumi.StringPtrInput
-	// Explicit publisher names to create.
-	Names pulumi.StringArrayInput
-	// vSphere network name.
-	NetworkName pulumi.StringInput
-	// Number of virtual CPUs.
-	NumCpus pulumi.IntPtrInput
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations PublisherRegistrationMapPtrInput
-	// Number of publishers to create when names are not supplied.
-	Replicas pulumi.IntPtrInput
-	// Tags applied to supported provider resources.
-	Tags pulumi.StringMapInput
-	// vSphere template VM name.
-	TemplateName pulumi.StringInput
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl pulumi.StringPtrInput
-	// Netskope publisher registration wizard API path.
-	WizardPath pulumi.StringPtrInput
+	ApiToken      *string
+	Cluster       *string
+	Datacenter    string
+	Datastore     string
+	Folder        *string
+	Host          *string
+	Memory        *int
+	NamePrefix    *string
+	Names         pulumi.StringArrayInput
+	NetworkName   string
+	NumCpus       *int
+	Registrations provider.PublisherRegistrationInputMapInput
+	Replicas      *int
+	Tags          pulumi.StringMapInput
+	TemplateName  string
+	TenantUrl     *string
+	WizardPath    *string
 }
 
 func (VspherePublisherArgs) ElementType() reflect.Type {
@@ -165,14 +139,80 @@ func (o VspherePublisherOutput) ToVspherePublisherOutputWithContext(ctx context.
 	return o
 }
 
-// Created publisher names.
+func (o VspherePublisherOutput) ApiToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o VspherePublisherOutput) Cluster() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringPtrOutput { return v.Cluster }).(pulumi.StringPtrOutput)
+}
+
+func (o VspherePublisherOutput) Datacenter() pulumi.StringOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringOutput { return v.Datacenter }).(pulumi.StringOutput)
+}
+
+func (o VspherePublisherOutput) Datastore() pulumi.StringOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringOutput { return v.Datastore }).(pulumi.StringOutput)
+}
+
+func (o VspherePublisherOutput) Folder() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringPtrOutput { return v.Folder }).(pulumi.StringPtrOutput)
+}
+
+func (o VspherePublisherOutput) Host() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringPtrOutput { return v.Host }).(pulumi.StringPtrOutput)
+}
+
+func (o VspherePublisherOutput) Memory() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.IntPtrOutput { return v.Memory }).(pulumi.IntPtrOutput)
+}
+
+func (o VspherePublisherOutput) NamePrefix() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringPtrOutput { return v.NamePrefix }).(pulumi.StringPtrOutput)
+}
+
+func (o VspherePublisherOutput) Names() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringArrayOutput { return v.Names }).(pulumi.StringArrayOutput)
+}
+
+func (o VspherePublisherOutput) NetworkName() pulumi.StringOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringOutput { return v.NetworkName }).(pulumi.StringOutput)
+}
+
+func (o VspherePublisherOutput) NumCpus() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.IntPtrOutput { return v.NumCpus }).(pulumi.IntPtrOutput)
+}
+
 func (o VspherePublisherOutput) PublisherNames() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *VspherePublisher) pulumi.StringArrayOutput { return v.PublisherNames }).(pulumi.StringArrayOutput)
 }
 
-// Publisher registration and VM details keyed by name.
-func (o VspherePublisherOutput) Publishers() PublisherOutputMapPtrOutput {
-	return o.ApplyT(func(v *VspherePublisher) PublisherOutputMapPtrOutput { return v.Publishers }).(PublisherOutputMapPtrOutput)
+func (o VspherePublisherOutput) Publishers() pulumi.MapOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.MapOutput { return v.Publishers }).(pulumi.MapOutput)
+}
+
+func (o VspherePublisherOutput) Registrations() provider.PublisherRegistrationInputMapOutput {
+	return o.ApplyT(func(v *VspherePublisher) provider.PublisherRegistrationInputMapOutput { return v.Registrations }).(provider.PublisherRegistrationInputMapOutput)
+}
+
+func (o VspherePublisherOutput) Replicas() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.IntPtrOutput { return v.Replicas }).(pulumi.IntPtrOutput)
+}
+
+func (o VspherePublisherOutput) Tags() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringMapOutput { return v.Tags }).(pulumi.StringMapOutput)
+}
+
+func (o VspherePublisherOutput) TemplateName() pulumi.StringOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringOutput { return v.TemplateName }).(pulumi.StringOutput)
+}
+
+func (o VspherePublisherOutput) TenantUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringPtrOutput { return v.TenantUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o VspherePublisherOutput) WizardPath() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringPtrOutput { return v.WizardPath }).(pulumi.StringPtrOutput)
 }
 
 func init() {

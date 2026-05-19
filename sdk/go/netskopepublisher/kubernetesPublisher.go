@@ -8,19 +8,35 @@ import (
 	"reflect"
 
 	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/internal"
+	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// Installs Netskope Private Access Publishers on Kubernetes with the kubernetes-netskope-publisher Helm chart.
 type KubernetesPublisher struct {
 	pulumi.ResourceState
 
-	// Helm release names created in the cluster.
-	HelmReleaseNames pulumi.StringArrayOutput `pulumi:"helmReleaseNames"`
-	// Derived publisher names.
-	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
-	// Publisher registration and Helm release details keyed by publisher or release name.
-	Publishers KubernetesPublisherOutputMapPtrOutput `pulumi:"publishers"`
+	ApiToken         pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	ChartRepository  pulumi.StringPtrOutput                       `pulumi:"chartRepository"`
+	ChartValues      pulumi.MapOutput                             `pulumi:"chartValues"`
+	ChartVersion     pulumi.StringPtrOutput                       `pulumi:"chartVersion"`
+	EnrollmentMode   pulumi.StringPtrOutput                       `pulumi:"enrollmentMode"`
+	HelmReleaseNames pulumi.StringArrayOutput                     `pulumi:"helmReleaseNames"`
+	HpaEnabled       pulumi.BoolPtrOutput                         `pulumi:"hpaEnabled"`
+	HpaMaxReplicas   pulumi.IntPtrOutput                          `pulumi:"hpaMaxReplicas"`
+	HpaMinReplicas   pulumi.IntPtrOutput                          `pulumi:"hpaMinReplicas"`
+	ImageRepository  pulumi.StringPtrOutput                       `pulumi:"imageRepository"`
+	ImageTag         pulumi.StringPtrOutput                       `pulumi:"imageTag"`
+	NamePrefix       pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
+	Names            pulumi.StringArrayOutput                     `pulumi:"names"`
+	Namespace        pulumi.StringPtrOutput                       `pulumi:"namespace"`
+	PublisherNames   pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
+	Publishers       pulumi.MapOutput                             `pulumi:"publishers"`
+	Registrations    provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
+	Replicas         pulumi.IntPtrOutput                          `pulumi:"replicas"`
+	Tags             pulumi.StringMapOutput                       `pulumi:"tags"`
+	TenantUrl        pulumi.StringPtrOutput                       `pulumi:"tenantUrl"`
+	WizardPath       pulumi.StringPtrOutput                       `pulumi:"wizardPath"`
+	WorkloadType     pulumi.StringPtrOutput                       `pulumi:"workloadType"`
 }
 
 // NewKubernetesPublisher registers a new resource with the given unique name, arguments, and options.
@@ -31,8 +47,13 @@ func NewKubernetesPublisher(ctx *pulumi.Context,
 	}
 
 	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
+		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"apiToken",
+		"publishers",
+	})
+	opts = append(opts, secrets)
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource KubernetesPublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:KubernetesPublisher", name, args, &resource, opts...)
@@ -43,86 +64,48 @@ func NewKubernetesPublisher(ctx *pulumi.Context,
 }
 
 type kubernetesPublisherArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken *string `pulumi:"apiToken"`
-	// Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-	ChartRepository *string `pulumi:"chartRepository"`
-	// Free-form Helm values merged last.
-	ChartValues map[string]interface{} `pulumi:"chartValues"`
-	// Helm chart version constraint. Defaults to ~> 1.4.
-	ChartVersion *string `pulumi:"chartVersion"`
-	// Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-	EnrollmentMode *string `pulumi:"enrollmentMode"`
-	// Whether to enable chart HPA when workloadType is statefulset.
-	HpaEnabled *bool `pulumi:"hpaEnabled"`
-	// Maximum HPA replicas.
-	HpaMaxReplicas *int `pulumi:"hpaMaxReplicas"`
-	// Minimum HPA replicas.
-	HpaMinReplicas *int `pulumi:"hpaMinReplicas"`
-	// Override publisher container image repository.
-	ImageRepository *string `pulumi:"imageRepository"`
-	// Override publisher container image tag.
-	ImageTag *string `pulumi:"imageTag"`
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix *string `pulumi:"namePrefix"`
-	// Explicit publisher names to create.
-	Names []string `pulumi:"names"`
-	// Kubernetes namespace to create and install into. Defaults to netskope.
-	Namespace *string `pulumi:"namespace"`
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations *PublisherRegistrationMap `pulumi:"registrations"`
-	// Number of publishers to create when names are not supplied.
-	Replicas *int `pulumi:"replicas"`
-	// Tags or labels applied to supported provider resources.
-	Tags map[string]string `pulumi:"tags"`
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl *string `pulumi:"tenantUrl"`
-	// Netskope publisher registration wizard API path.
-	WizardPath *string `pulumi:"wizardPath"`
-	// Chart workload type: daemonset or statefulset.
-	WorkloadType *string `pulumi:"workloadType"`
+	ApiToken        *string                                        `pulumi:"apiToken"`
+	ChartRepository *string                                        `pulumi:"chartRepository"`
+	ChartValues     map[string]interface{}                         `pulumi:"chartValues"`
+	ChartVersion    *string                                        `pulumi:"chartVersion"`
+	EnrollmentMode  *string                                        `pulumi:"enrollmentMode"`
+	HpaEnabled      *bool                                          `pulumi:"hpaEnabled"`
+	HpaMaxReplicas  *int                                           `pulumi:"hpaMaxReplicas"`
+	HpaMinReplicas  *int                                           `pulumi:"hpaMinReplicas"`
+	ImageRepository *string                                        `pulumi:"imageRepository"`
+	ImageTag        *string                                        `pulumi:"imageTag"`
+	NamePrefix      *string                                        `pulumi:"namePrefix"`
+	Names           []string                                       `pulumi:"names"`
+	Namespace       *string                                        `pulumi:"namespace"`
+	Registrations   map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
+	Replicas        *int                                           `pulumi:"replicas"`
+	Tags            map[string]string                              `pulumi:"tags"`
+	TenantUrl       *string                                        `pulumi:"tenantUrl"`
+	WizardPath      *string                                        `pulumi:"wizardPath"`
+	WorkloadType    *string                                        `pulumi:"workloadType"`
 }
 
 // The set of arguments for constructing a KubernetesPublisher resource.
 type KubernetesPublisherArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken pulumi.StringPtrInput
-	// Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-	ChartRepository pulumi.StringPtrInput
-	// Free-form Helm values merged last.
-	ChartValues pulumi.MapInput
-	// Helm chart version constraint. Defaults to ~> 1.4.
-	ChartVersion pulumi.StringPtrInput
-	// Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-	EnrollmentMode pulumi.StringPtrInput
-	// Whether to enable chart HPA when workloadType is statefulset.
-	HpaEnabled pulumi.BoolPtrInput
-	// Maximum HPA replicas.
-	HpaMaxReplicas pulumi.IntPtrInput
-	// Minimum HPA replicas.
-	HpaMinReplicas pulumi.IntPtrInput
-	// Override publisher container image repository.
-	ImageRepository pulumi.StringPtrInput
-	// Override publisher container image tag.
-	ImageTag pulumi.StringPtrInput
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix pulumi.StringPtrInput
-	// Explicit publisher names to create.
-	Names pulumi.StringArrayInput
-	// Kubernetes namespace to create and install into. Defaults to netskope.
-	Namespace pulumi.StringPtrInput
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations PublisherRegistrationMapPtrInput
-	// Number of publishers to create when names are not supplied.
-	Replicas pulumi.IntPtrInput
-	// Tags or labels applied to supported provider resources.
-	Tags pulumi.StringMapInput
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl pulumi.StringPtrInput
-	// Netskope publisher registration wizard API path.
-	WizardPath pulumi.StringPtrInput
-	// Chart workload type: daemonset or statefulset.
-	WorkloadType pulumi.StringPtrInput
+	ApiToken        *string
+	ChartRepository *string
+	ChartValues     pulumi.MapInput
+	ChartVersion    *string
+	EnrollmentMode  *string
+	HpaEnabled      *bool
+	HpaMaxReplicas  *int
+	HpaMinReplicas  *int
+	ImageRepository *string
+	ImageTag        *string
+	NamePrefix      *string
+	Names           pulumi.StringArrayInput
+	Namespace       *string
+	Registrations   provider.PublisherRegistrationInputMapInput
+	Replicas        *int
+	Tags            pulumi.StringMapInput
+	TenantUrl       *string
+	WizardPath      *string
+	WorkloadType    *string
 }
 
 func (KubernetesPublisherArgs) ElementType() reflect.Type {
@@ -162,19 +145,92 @@ func (o KubernetesPublisherOutput) ToKubernetesPublisherOutputWithContext(ctx co
 	return o
 }
 
-// Helm release names created in the cluster.
+func (o KubernetesPublisherOutput) ApiToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) ChartRepository() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.ChartRepository }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) ChartValues() pulumi.MapOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.MapOutput { return v.ChartValues }).(pulumi.MapOutput)
+}
+
+func (o KubernetesPublisherOutput) ChartVersion() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.ChartVersion }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) EnrollmentMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.EnrollmentMode }).(pulumi.StringPtrOutput)
+}
+
 func (o KubernetesPublisherOutput) HelmReleaseNames() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringArrayOutput { return v.HelmReleaseNames }).(pulumi.StringArrayOutput)
 }
 
-// Derived publisher names.
+func (o KubernetesPublisherOutput) HpaEnabled() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.BoolPtrOutput { return v.HpaEnabled }).(pulumi.BoolPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) HpaMaxReplicas() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.IntPtrOutput { return v.HpaMaxReplicas }).(pulumi.IntPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) HpaMinReplicas() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.IntPtrOutput { return v.HpaMinReplicas }).(pulumi.IntPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) ImageRepository() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.ImageRepository }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) ImageTag() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.ImageTag }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) NamePrefix() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.NamePrefix }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) Names() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringArrayOutput { return v.Names }).(pulumi.StringArrayOutput)
+}
+
+func (o KubernetesPublisherOutput) Namespace() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.Namespace }).(pulumi.StringPtrOutput)
+}
+
 func (o KubernetesPublisherOutput) PublisherNames() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringArrayOutput { return v.PublisherNames }).(pulumi.StringArrayOutput)
 }
 
-// Publisher registration and Helm release details keyed by publisher or release name.
-func (o KubernetesPublisherOutput) Publishers() KubernetesPublisherOutputMapPtrOutput {
-	return o.ApplyT(func(v *KubernetesPublisher) KubernetesPublisherOutputMapPtrOutput { return v.Publishers }).(KubernetesPublisherOutputMapPtrOutput)
+func (o KubernetesPublisherOutput) Publishers() pulumi.MapOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.MapOutput { return v.Publishers }).(pulumi.MapOutput)
+}
+
+func (o KubernetesPublisherOutput) Registrations() provider.PublisherRegistrationInputMapOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) provider.PublisherRegistrationInputMapOutput { return v.Registrations }).(provider.PublisherRegistrationInputMapOutput)
+}
+
+func (o KubernetesPublisherOutput) Replicas() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.IntPtrOutput { return v.Replicas }).(pulumi.IntPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) Tags() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringMapOutput { return v.Tags }).(pulumi.StringMapOutput)
+}
+
+func (o KubernetesPublisherOutput) TenantUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.TenantUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) WizardPath() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.WizardPath }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) WorkloadType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.WorkloadType }).(pulumi.StringPtrOutput)
 }
 
 func init() {

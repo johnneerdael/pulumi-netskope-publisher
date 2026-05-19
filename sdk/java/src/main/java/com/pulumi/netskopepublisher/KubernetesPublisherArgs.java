@@ -5,7 +5,7 @@ package com.pulumi.netskopepublisher;
 
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
-import com.pulumi.netskopepublisher.inputs.PublisherRegistrationMapArgs;
+import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.Object;
@@ -21,288 +21,136 @@ public final class KubernetesPublisherArgs extends com.pulumi.resources.Resource
 
     public static final KubernetesPublisherArgs Empty = new KubernetesPublisherArgs();
 
-    /**
-     * Netskope API token used for publisher registration.
-     * 
-     */
     @Import(name="apiToken")
-    private @Nullable Output<String> apiToken;
+    private @Nullable String apiToken;
 
-    /**
-     * @return Netskope API token used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> apiToken() {
+    public Optional<String> apiToken() {
         return Optional.ofNullable(this.apiToken);
     }
 
-    /**
-     * Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-     * 
-     */
     @Import(name="chartRepository")
-    private @Nullable Output<String> chartRepository;
+    private @Nullable String chartRepository;
 
-    /**
-     * @return Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-     * 
-     */
-    public Optional<Output<String>> chartRepository() {
+    public Optional<String> chartRepository() {
         return Optional.ofNullable(this.chartRepository);
     }
 
-    /**
-     * Free-form Helm values merged last.
-     * 
-     */
     @Import(name="chartValues")
     private @Nullable Output<Map<String,Object>> chartValues;
 
-    /**
-     * @return Free-form Helm values merged last.
-     * 
-     */
     public Optional<Output<Map<String,Object>>> chartValues() {
         return Optional.ofNullable(this.chartValues);
     }
 
-    /**
-     * Helm chart version constraint. Defaults to ~&gt; 1.4.
-     * 
-     */
     @Import(name="chartVersion")
-    private @Nullable Output<String> chartVersion;
+    private @Nullable String chartVersion;
 
-    /**
-     * @return Helm chart version constraint. Defaults to ~&gt; 1.4.
-     * 
-     */
-    public Optional<Output<String>> chartVersion() {
+    public Optional<String> chartVersion() {
         return Optional.ofNullable(this.chartVersion);
     }
 
-    /**
-     * Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-     * 
-     */
     @Import(name="enrollmentMode")
-    private @Nullable Output<String> enrollmentMode;
+    private @Nullable String enrollmentMode;
 
-    /**
-     * @return Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-     * 
-     */
-    public Optional<Output<String>> enrollmentMode() {
+    public Optional<String> enrollmentMode() {
         return Optional.ofNullable(this.enrollmentMode);
     }
 
-    /**
-     * Whether to enable chart HPA when workloadType is statefulset.
-     * 
-     */
     @Import(name="hpaEnabled")
-    private @Nullable Output<Boolean> hpaEnabled;
+    private @Nullable Boolean hpaEnabled;
 
-    /**
-     * @return Whether to enable chart HPA when workloadType is statefulset.
-     * 
-     */
-    public Optional<Output<Boolean>> hpaEnabled() {
+    public Optional<Boolean> hpaEnabled() {
         return Optional.ofNullable(this.hpaEnabled);
     }
 
-    /**
-     * Maximum HPA replicas.
-     * 
-     */
     @Import(name="hpaMaxReplicas")
-    private @Nullable Output<Integer> hpaMaxReplicas;
+    private @Nullable Integer hpaMaxReplicas;
 
-    /**
-     * @return Maximum HPA replicas.
-     * 
-     */
-    public Optional<Output<Integer>> hpaMaxReplicas() {
+    public Optional<Integer> hpaMaxReplicas() {
         return Optional.ofNullable(this.hpaMaxReplicas);
     }
 
-    /**
-     * Minimum HPA replicas.
-     * 
-     */
     @Import(name="hpaMinReplicas")
-    private @Nullable Output<Integer> hpaMinReplicas;
+    private @Nullable Integer hpaMinReplicas;
 
-    /**
-     * @return Minimum HPA replicas.
-     * 
-     */
-    public Optional<Output<Integer>> hpaMinReplicas() {
+    public Optional<Integer> hpaMinReplicas() {
         return Optional.ofNullable(this.hpaMinReplicas);
     }
 
-    /**
-     * Override publisher container image repository.
-     * 
-     */
     @Import(name="imageRepository")
-    private @Nullable Output<String> imageRepository;
+    private @Nullable String imageRepository;
 
-    /**
-     * @return Override publisher container image repository.
-     * 
-     */
-    public Optional<Output<String>> imageRepository() {
+    public Optional<String> imageRepository() {
         return Optional.ofNullable(this.imageRepository);
     }
 
-    /**
-     * Override publisher container image tag.
-     * 
-     */
     @Import(name="imageTag")
-    private @Nullable Output<String> imageTag;
+    private @Nullable String imageTag;
 
-    /**
-     * @return Override publisher container image tag.
-     * 
-     */
-    public Optional<Output<String>> imageTag() {
+    public Optional<String> imageTag() {
         return Optional.ofNullable(this.imageTag);
     }
 
-    /**
-     * Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
     @Import(name="namePrefix")
-    private @Nullable Output<String> namePrefix;
+    private @Nullable String namePrefix;
 
-    /**
-     * @return Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
-    public Optional<Output<String>> namePrefix() {
+    public Optional<String> namePrefix() {
         return Optional.ofNullable(this.namePrefix);
     }
 
-    /**
-     * Explicit publisher names to create.
-     * 
-     */
     @Import(name="names")
     private @Nullable Output<List<String>> names;
 
-    /**
-     * @return Explicit publisher names to create.
-     * 
-     */
     public Optional<Output<List<String>>> names() {
         return Optional.ofNullable(this.names);
     }
 
-    /**
-     * Kubernetes namespace to create and install into. Defaults to netskope.
-     * 
-     */
     @Import(name="namespace")
-    private @Nullable Output<String> namespace;
+    private @Nullable String namespace;
 
-    /**
-     * @return Kubernetes namespace to create and install into. Defaults to netskope.
-     * 
-     */
-    public Optional<Output<String>> namespace() {
+    public Optional<String> namespace() {
         return Optional.ofNullable(this.namespace);
     }
 
-    /**
-     * Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
     @Import(name="registrations")
-    private @Nullable Output<PublisherRegistrationMapArgs> registrations;
+    private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
-    /**
-     * @return Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
-    public Optional<Output<PublisherRegistrationMapArgs>> registrations() {
+    public Optional<Output<Map<String,PublisherRegistrationInputArgs>>> registrations() {
         return Optional.ofNullable(this.registrations);
     }
 
-    /**
-     * Number of publishers to create when names are not supplied.
-     * 
-     */
     @Import(name="replicas")
-    private @Nullable Output<Integer> replicas;
+    private @Nullable Integer replicas;
 
-    /**
-     * @return Number of publishers to create when names are not supplied.
-     * 
-     */
-    public Optional<Output<Integer>> replicas() {
+    public Optional<Integer> replicas() {
         return Optional.ofNullable(this.replicas);
     }
 
-    /**
-     * Tags or labels applied to supported provider resources.
-     * 
-     */
     @Import(name="tags")
     private @Nullable Output<Map<String,String>> tags;
 
-    /**
-     * @return Tags or labels applied to supported provider resources.
-     * 
-     */
     public Optional<Output<Map<String,String>>> tags() {
         return Optional.ofNullable(this.tags);
     }
 
-    /**
-     * Netskope tenant URL used for publisher registration.
-     * 
-     */
     @Import(name="tenantUrl")
-    private @Nullable Output<String> tenantUrl;
+    private @Nullable String tenantUrl;
 
-    /**
-     * @return Netskope tenant URL used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> tenantUrl() {
+    public Optional<String> tenantUrl() {
         return Optional.ofNullable(this.tenantUrl);
     }
 
-    /**
-     * Netskope publisher registration wizard API path.
-     * 
-     */
     @Import(name="wizardPath")
-    private @Nullable Output<String> wizardPath;
+    private @Nullable String wizardPath;
 
-    /**
-     * @return Netskope publisher registration wizard API path.
-     * 
-     */
-    public Optional<Output<String>> wizardPath() {
+    public Optional<String> wizardPath() {
         return Optional.ofNullable(this.wizardPath);
     }
 
-    /**
-     * Chart workload type: daemonset or statefulset.
-     * 
-     */
     @Import(name="workloadType")
-    private @Nullable Output<String> workloadType;
+    private @Nullable String workloadType;
 
-    /**
-     * @return Chart workload type: daemonset or statefulset.
-     * 
-     */
-    public Optional<Output<String>> workloadType() {
+    public Optional<String> workloadType() {
         return Optional.ofNullable(this.workloadType);
     }
 
@@ -348,413 +196,119 @@ public final class KubernetesPublisherArgs extends com.pulumi.resources.Resource
             $ = new KubernetesPublisherArgs(Objects.requireNonNull(defaults));
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(@Nullable Output<String> apiToken) {
+        public Builder apiToken(@Nullable String apiToken) {
             $.apiToken = apiToken;
             return this;
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(String apiToken) {
-            return apiToken(Output.of(apiToken));
-        }
-
-        /**
-         * @param chartRepository Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder chartRepository(@Nullable Output<String> chartRepository) {
+        public Builder chartRepository(@Nullable String chartRepository) {
             $.chartRepository = chartRepository;
             return this;
         }
 
-        /**
-         * @param chartRepository Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder chartRepository(String chartRepository) {
-            return chartRepository(Output.of(chartRepository));
-        }
-
-        /**
-         * @param chartValues Free-form Helm values merged last.
-         * 
-         * @return builder
-         * 
-         */
         public Builder chartValues(@Nullable Output<Map<String,Object>> chartValues) {
             $.chartValues = chartValues;
             return this;
         }
 
-        /**
-         * @param chartValues Free-form Helm values merged last.
-         * 
-         * @return builder
-         * 
-         */
         public Builder chartValues(Map<String,Object> chartValues) {
             return chartValues(Output.of(chartValues));
         }
 
-        /**
-         * @param chartVersion Helm chart version constraint. Defaults to ~&gt; 1.4.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder chartVersion(@Nullable Output<String> chartVersion) {
+        public Builder chartVersion(@Nullable String chartVersion) {
             $.chartVersion = chartVersion;
             return this;
         }
 
-        /**
-         * @param chartVersion Helm chart version constraint. Defaults to ~&gt; 1.4.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder chartVersion(String chartVersion) {
-            return chartVersion(Output.of(chartVersion));
-        }
-
-        /**
-         * @param enrollmentMode Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder enrollmentMode(@Nullable Output<String> enrollmentMode) {
+        public Builder enrollmentMode(@Nullable String enrollmentMode) {
             $.enrollmentMode = enrollmentMode;
             return this;
         }
 
-        /**
-         * @param enrollmentMode Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder enrollmentMode(String enrollmentMode) {
-            return enrollmentMode(Output.of(enrollmentMode));
-        }
-
-        /**
-         * @param hpaEnabled Whether to enable chart HPA when workloadType is statefulset.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder hpaEnabled(@Nullable Output<Boolean> hpaEnabled) {
+        public Builder hpaEnabled(@Nullable Boolean hpaEnabled) {
             $.hpaEnabled = hpaEnabled;
             return this;
         }
 
-        /**
-         * @param hpaEnabled Whether to enable chart HPA when workloadType is statefulset.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder hpaEnabled(Boolean hpaEnabled) {
-            return hpaEnabled(Output.of(hpaEnabled));
-        }
-
-        /**
-         * @param hpaMaxReplicas Maximum HPA replicas.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder hpaMaxReplicas(@Nullable Output<Integer> hpaMaxReplicas) {
+        public Builder hpaMaxReplicas(@Nullable Integer hpaMaxReplicas) {
             $.hpaMaxReplicas = hpaMaxReplicas;
             return this;
         }
 
-        /**
-         * @param hpaMaxReplicas Maximum HPA replicas.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder hpaMaxReplicas(Integer hpaMaxReplicas) {
-            return hpaMaxReplicas(Output.of(hpaMaxReplicas));
-        }
-
-        /**
-         * @param hpaMinReplicas Minimum HPA replicas.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder hpaMinReplicas(@Nullable Output<Integer> hpaMinReplicas) {
+        public Builder hpaMinReplicas(@Nullable Integer hpaMinReplicas) {
             $.hpaMinReplicas = hpaMinReplicas;
             return this;
         }
 
-        /**
-         * @param hpaMinReplicas Minimum HPA replicas.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder hpaMinReplicas(Integer hpaMinReplicas) {
-            return hpaMinReplicas(Output.of(hpaMinReplicas));
-        }
-
-        /**
-         * @param imageRepository Override publisher container image repository.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder imageRepository(@Nullable Output<String> imageRepository) {
+        public Builder imageRepository(@Nullable String imageRepository) {
             $.imageRepository = imageRepository;
             return this;
         }
 
-        /**
-         * @param imageRepository Override publisher container image repository.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder imageRepository(String imageRepository) {
-            return imageRepository(Output.of(imageRepository));
-        }
-
-        /**
-         * @param imageTag Override publisher container image tag.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder imageTag(@Nullable Output<String> imageTag) {
+        public Builder imageTag(@Nullable String imageTag) {
             $.imageTag = imageTag;
             return this;
         }
 
-        /**
-         * @param imageTag Override publisher container image tag.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder imageTag(String imageTag) {
-            return imageTag(Output.of(imageTag));
-        }
-
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(@Nullable Output<String> namePrefix) {
+        public Builder namePrefix(@Nullable String namePrefix) {
             $.namePrefix = namePrefix;
             return this;
         }
 
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(String namePrefix) {
-            return namePrefix(Output.of(namePrefix));
-        }
-
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(@Nullable Output<List<String>> names) {
             $.names = names;
             return this;
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(List<String> names) {
             return names(Output.of(names));
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(String... names) {
             return names(List.of(names));
         }
 
-        /**
-         * @param namespace Kubernetes namespace to create and install into. Defaults to netskope.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namespace(@Nullable Output<String> namespace) {
+        public Builder namespace(@Nullable String namespace) {
             $.namespace = namespace;
             return this;
         }
 
-        /**
-         * @param namespace Kubernetes namespace to create and install into. Defaults to netskope.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namespace(String namespace) {
-            return namespace(Output.of(namespace));
-        }
-
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(@Nullable Output<PublisherRegistrationMapArgs> registrations) {
+        public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {
             $.registrations = registrations;
             return this;
         }
 
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(PublisherRegistrationMapArgs registrations) {
+        public Builder registrations(Map<String,PublisherRegistrationInputArgs> registrations) {
             return registrations(Output.of(registrations));
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(@Nullable Output<Integer> replicas) {
+        public Builder replicas(@Nullable Integer replicas) {
             $.replicas = replicas;
             return this;
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(Integer replicas) {
-            return replicas(Output.of(replicas));
-        }
-
-        /**
-         * @param tags Tags or labels applied to supported provider resources.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tags(@Nullable Output<Map<String,String>> tags) {
             $.tags = tags;
             return this;
         }
 
-        /**
-         * @param tags Tags or labels applied to supported provider resources.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tags(Map<String,String> tags) {
             return tags(Output.of(tags));
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(@Nullable Output<String> tenantUrl) {
+        public Builder tenantUrl(@Nullable String tenantUrl) {
             $.tenantUrl = tenantUrl;
             return this;
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(String tenantUrl) {
-            return tenantUrl(Output.of(tenantUrl));
-        }
-
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(@Nullable Output<String> wizardPath) {
+        public Builder wizardPath(@Nullable String wizardPath) {
             $.wizardPath = wizardPath;
             return this;
         }
 
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(String wizardPath) {
-            return wizardPath(Output.of(wizardPath));
-        }
-
-        /**
-         * @param workloadType Chart workload type: daemonset or statefulset.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder workloadType(@Nullable Output<String> workloadType) {
+        public Builder workloadType(@Nullable String workloadType) {
             $.workloadType = workloadType;
             return this;
-        }
-
-        /**
-         * @param workloadType Chart workload type: daemonset or statefulset.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder workloadType(String workloadType) {
-            return workloadType(Output.of(workloadType));
         }
 
         public KubernetesPublisherArgs build() {

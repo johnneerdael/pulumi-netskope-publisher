@@ -6,7 +6,7 @@ package com.pulumi.netskopepublisher;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
-import com.pulumi.netskopepublisher.inputs.PublisherRegistrationMapArgs;
+import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.List;
@@ -20,258 +20,122 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
 
     public static final VspherePublisherArgs Empty = new VspherePublisherArgs();
 
-    /**
-     * Netskope API token used for publisher registration.
-     * 
-     */
     @Import(name="apiToken")
-    private @Nullable Output<String> apiToken;
+    private @Nullable String apiToken;
 
-    /**
-     * @return Netskope API token used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> apiToken() {
+    public Optional<String> apiToken() {
         return Optional.ofNullable(this.apiToken);
     }
 
-    /**
-     * vSphere cluster name.
-     * 
-     */
     @Import(name="cluster")
-    private @Nullable Output<String> cluster;
+    private @Nullable String cluster;
 
-    /**
-     * @return vSphere cluster name.
-     * 
-     */
-    public Optional<Output<String>> cluster() {
+    public Optional<String> cluster() {
         return Optional.ofNullable(this.cluster);
     }
 
-    /**
-     * vSphere datacenter name.
-     * 
-     */
     @Import(name="datacenter", required=true)
-    private Output<String> datacenter;
+    private String datacenter;
 
-    /**
-     * @return vSphere datacenter name.
-     * 
-     */
-    public Output<String> datacenter() {
+    public String datacenter() {
         return this.datacenter;
     }
 
-    /**
-     * vSphere datastore name.
-     * 
-     */
     @Import(name="datastore", required=true)
-    private Output<String> datastore;
+    private String datastore;
 
-    /**
-     * @return vSphere datastore name.
-     * 
-     */
-    public Output<String> datastore() {
+    public String datastore() {
         return this.datastore;
     }
 
-    /**
-     * Optional VM folder.
-     * 
-     */
     @Import(name="folder")
-    private @Nullable Output<String> folder;
+    private @Nullable String folder;
 
-    /**
-     * @return Optional VM folder.
-     * 
-     */
-    public Optional<Output<String>> folder() {
+    public Optional<String> folder() {
         return Optional.ofNullable(this.folder);
     }
 
-    /**
-     * vSphere host name.
-     * 
-     */
     @Import(name="host")
-    private @Nullable Output<String> host;
+    private @Nullable String host;
 
-    /**
-     * @return vSphere host name.
-     * 
-     */
-    public Optional<Output<String>> host() {
+    public Optional<String> host() {
         return Optional.ofNullable(this.host);
     }
 
-    /**
-     * Memory in MB.
-     * 
-     */
     @Import(name="memory")
-    private @Nullable Output<Integer> memory;
+    private @Nullable Integer memory;
 
-    /**
-     * @return Memory in MB.
-     * 
-     */
-    public Optional<Output<Integer>> memory() {
+    public Optional<Integer> memory() {
         return Optional.ofNullable(this.memory);
     }
 
-    /**
-     * Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
     @Import(name="namePrefix")
-    private @Nullable Output<String> namePrefix;
+    private @Nullable String namePrefix;
 
-    /**
-     * @return Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
-    public Optional<Output<String>> namePrefix() {
+    public Optional<String> namePrefix() {
         return Optional.ofNullable(this.namePrefix);
     }
 
-    /**
-     * Explicit publisher names to create.
-     * 
-     */
     @Import(name="names")
     private @Nullable Output<List<String>> names;
 
-    /**
-     * @return Explicit publisher names to create.
-     * 
-     */
     public Optional<Output<List<String>>> names() {
         return Optional.ofNullable(this.names);
     }
 
-    /**
-     * vSphere network name.
-     * 
-     */
     @Import(name="networkName", required=true)
-    private Output<String> networkName;
+    private String networkName;
 
-    /**
-     * @return vSphere network name.
-     * 
-     */
-    public Output<String> networkName() {
+    public String networkName() {
         return this.networkName;
     }
 
-    /**
-     * Number of virtual CPUs.
-     * 
-     */
     @Import(name="numCpus")
-    private @Nullable Output<Integer> numCpus;
+    private @Nullable Integer numCpus;
 
-    /**
-     * @return Number of virtual CPUs.
-     * 
-     */
-    public Optional<Output<Integer>> numCpus() {
+    public Optional<Integer> numCpus() {
         return Optional.ofNullable(this.numCpus);
     }
 
-    /**
-     * Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
     @Import(name="registrations")
-    private @Nullable Output<PublisherRegistrationMapArgs> registrations;
+    private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
-    /**
-     * @return Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
-    public Optional<Output<PublisherRegistrationMapArgs>> registrations() {
+    public Optional<Output<Map<String,PublisherRegistrationInputArgs>>> registrations() {
         return Optional.ofNullable(this.registrations);
     }
 
-    /**
-     * Number of publishers to create when names are not supplied.
-     * 
-     */
     @Import(name="replicas")
-    private @Nullable Output<Integer> replicas;
+    private @Nullable Integer replicas;
 
-    /**
-     * @return Number of publishers to create when names are not supplied.
-     * 
-     */
-    public Optional<Output<Integer>> replicas() {
+    public Optional<Integer> replicas() {
         return Optional.ofNullable(this.replicas);
     }
 
-    /**
-     * Tags applied to supported provider resources.
-     * 
-     */
     @Import(name="tags")
     private @Nullable Output<Map<String,String>> tags;
 
-    /**
-     * @return Tags applied to supported provider resources.
-     * 
-     */
     public Optional<Output<Map<String,String>>> tags() {
         return Optional.ofNullable(this.tags);
     }
 
-    /**
-     * vSphere template VM name.
-     * 
-     */
     @Import(name="templateName", required=true)
-    private Output<String> templateName;
+    private String templateName;
 
-    /**
-     * @return vSphere template VM name.
-     * 
-     */
-    public Output<String> templateName() {
+    public String templateName() {
         return this.templateName;
     }
 
-    /**
-     * Netskope tenant URL used for publisher registration.
-     * 
-     */
     @Import(name="tenantUrl")
-    private @Nullable Output<String> tenantUrl;
+    private @Nullable String tenantUrl;
 
-    /**
-     * @return Netskope tenant URL used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> tenantUrl() {
+    public Optional<String> tenantUrl() {
         return Optional.ofNullable(this.tenantUrl);
     }
 
-    /**
-     * Netskope publisher registration wizard API path.
-     * 
-     */
     @Import(name="wizardPath")
-    private @Nullable Output<String> wizardPath;
+    private @Nullable String wizardPath;
 
-    /**
-     * @return Netskope publisher registration wizard API path.
-     * 
-     */
-    public Optional<Output<String>> wizardPath() {
+    public Optional<String> wizardPath() {
         return Optional.ofNullable(this.wizardPath);
     }
 
@@ -315,371 +179,105 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
             $ = new VspherePublisherArgs(Objects.requireNonNull(defaults));
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(@Nullable Output<String> apiToken) {
+        public Builder apiToken(@Nullable String apiToken) {
             $.apiToken = apiToken;
             return this;
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(String apiToken) {
-            return apiToken(Output.of(apiToken));
-        }
-
-        /**
-         * @param cluster vSphere cluster name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder cluster(@Nullable Output<String> cluster) {
+        public Builder cluster(@Nullable String cluster) {
             $.cluster = cluster;
             return this;
         }
 
-        /**
-         * @param cluster vSphere cluster name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder cluster(String cluster) {
-            return cluster(Output.of(cluster));
-        }
-
-        /**
-         * @param datacenter vSphere datacenter name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder datacenter(Output<String> datacenter) {
+        public Builder datacenter(String datacenter) {
             $.datacenter = datacenter;
             return this;
         }
 
-        /**
-         * @param datacenter vSphere datacenter name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder datacenter(String datacenter) {
-            return datacenter(Output.of(datacenter));
-        }
-
-        /**
-         * @param datastore vSphere datastore name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder datastore(Output<String> datastore) {
+        public Builder datastore(String datastore) {
             $.datastore = datastore;
             return this;
         }
 
-        /**
-         * @param datastore vSphere datastore name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder datastore(String datastore) {
-            return datastore(Output.of(datastore));
-        }
-
-        /**
-         * @param folder Optional VM folder.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder folder(@Nullable Output<String> folder) {
+        public Builder folder(@Nullable String folder) {
             $.folder = folder;
             return this;
         }
 
-        /**
-         * @param folder Optional VM folder.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder folder(String folder) {
-            return folder(Output.of(folder));
-        }
-
-        /**
-         * @param host vSphere host name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder host(@Nullable Output<String> host) {
+        public Builder host(@Nullable String host) {
             $.host = host;
             return this;
         }
 
-        /**
-         * @param host vSphere host name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder host(String host) {
-            return host(Output.of(host));
-        }
-
-        /**
-         * @param memory Memory in MB.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder memory(@Nullable Output<Integer> memory) {
+        public Builder memory(@Nullable Integer memory) {
             $.memory = memory;
             return this;
         }
 
-        /**
-         * @param memory Memory in MB.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder memory(Integer memory) {
-            return memory(Output.of(memory));
-        }
-
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(@Nullable Output<String> namePrefix) {
+        public Builder namePrefix(@Nullable String namePrefix) {
             $.namePrefix = namePrefix;
             return this;
         }
 
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(String namePrefix) {
-            return namePrefix(Output.of(namePrefix));
-        }
-
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(@Nullable Output<List<String>> names) {
             $.names = names;
             return this;
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(List<String> names) {
             return names(Output.of(names));
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(String... names) {
             return names(List.of(names));
         }
 
-        /**
-         * @param networkName vSphere network name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder networkName(Output<String> networkName) {
+        public Builder networkName(String networkName) {
             $.networkName = networkName;
             return this;
         }
 
-        /**
-         * @param networkName vSphere network name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder networkName(String networkName) {
-            return networkName(Output.of(networkName));
-        }
-
-        /**
-         * @param numCpus Number of virtual CPUs.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder numCpus(@Nullable Output<Integer> numCpus) {
+        public Builder numCpus(@Nullable Integer numCpus) {
             $.numCpus = numCpus;
             return this;
         }
 
-        /**
-         * @param numCpus Number of virtual CPUs.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder numCpus(Integer numCpus) {
-            return numCpus(Output.of(numCpus));
-        }
-
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(@Nullable Output<PublisherRegistrationMapArgs> registrations) {
+        public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {
             $.registrations = registrations;
             return this;
         }
 
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(PublisherRegistrationMapArgs registrations) {
+        public Builder registrations(Map<String,PublisherRegistrationInputArgs> registrations) {
             return registrations(Output.of(registrations));
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(@Nullable Output<Integer> replicas) {
+        public Builder replicas(@Nullable Integer replicas) {
             $.replicas = replicas;
             return this;
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(Integer replicas) {
-            return replicas(Output.of(replicas));
-        }
-
-        /**
-         * @param tags Tags applied to supported provider resources.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tags(@Nullable Output<Map<String,String>> tags) {
             $.tags = tags;
             return this;
         }
 
-        /**
-         * @param tags Tags applied to supported provider resources.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tags(Map<String,String> tags) {
             return tags(Output.of(tags));
         }
 
-        /**
-         * @param templateName vSphere template VM name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder templateName(Output<String> templateName) {
+        public Builder templateName(String templateName) {
             $.templateName = templateName;
             return this;
         }
 
-        /**
-         * @param templateName vSphere template VM name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder templateName(String templateName) {
-            return templateName(Output.of(templateName));
-        }
-
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(@Nullable Output<String> tenantUrl) {
+        public Builder tenantUrl(@Nullable String tenantUrl) {
             $.tenantUrl = tenantUrl;
             return this;
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(String tenantUrl) {
-            return tenantUrl(Output.of(tenantUrl));
-        }
-
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(@Nullable Output<String> wizardPath) {
+        public Builder wizardPath(@Nullable String wizardPath) {
             $.wizardPath = wizardPath;
             return this;
-        }
-
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(String wizardPath) {
-            return wizardPath(Output.of(wizardPath));
         }
 
         public VspherePublisherArgs build() {

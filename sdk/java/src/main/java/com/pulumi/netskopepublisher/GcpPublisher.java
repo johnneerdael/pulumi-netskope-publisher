@@ -9,45 +9,187 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.GcpPublisherArgs;
 import com.pulumi.netskopepublisher.Utilities;
-import com.pulumi.netskopepublisher.outputs.PublisherOutputMap;
+import com.pulumi.netskopepublisher.provider.outputs.GcpServiceAccount;
+import com.pulumi.netskopepublisher.provider.outputs.GuestNetworkInterface;
+import com.pulumi.netskopepublisher.provider.outputs.PublisherRegistrationInput;
+import java.lang.Boolean;
+import java.lang.Integer;
+import java.lang.Object;
 import java.lang.String;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-/**
- * Creates one or more Netskope Private Access Publisher Google Compute Engine instances and registers them with a Netskope tenant.
- * 
- */
 @ResourceType(type="netskope-publisher:index:GcpPublisher")
 public class GcpPublisher extends com.pulumi.resources.ComponentResource {
-    /**
-     * Created publisher names.
-     * 
-     */
-    @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
-    private Output</* @Nullable */ List<String>> publisherNames;
+    @Export(name="apiToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> apiToken;
 
-    /**
-     * @return Created publisher names.
-     * 
-     */
-    public Output<Optional<List<String>>> publisherNames() {
-        return Codegen.optional(this.publisherNames);
+    public Output<Optional<String>> apiToken() {
+        return Codegen.optional(this.apiToken);
     }
-    /**
-     * Publisher registration and VM details keyed by name.
-     * 
-     */
-    @Export(name="publishers", refs={PublisherOutputMap.class}, tree="[0]")
-    private Output</* @Nullable */ PublisherOutputMap> publishers;
+    @Export(name="assignPublicIp", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> assignPublicIp;
 
-    /**
-     * @return Publisher registration and VM details keyed by name.
-     * 
-     */
-    public Output<Optional<PublisherOutputMap>> publishers() {
-        return Codegen.optional(this.publishers);
+    public Output<Optional<Boolean>> assignPublicIp() {
+        return Codegen.optional(this.assignPublicIp);
+    }
+    @Export(name="bootstrap", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> bootstrap;
+
+    public Output<Optional<Boolean>> bootstrap() {
+        return Codegen.optional(this.bootstrap);
+    }
+    @Export(name="bootstrapUrl", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> bootstrapUrl;
+
+    public Output<Optional<String>> bootstrapUrl() {
+        return Codegen.optional(this.bootstrapUrl);
+    }
+    @Export(name="deleteDefaultUser", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> deleteDefaultUser;
+
+    public Output<Optional<Boolean>> deleteDefaultUser() {
+        return Codegen.optional(this.deleteDefaultUser);
+    }
+    @Export(name="guestNetworkInterface", refs={GuestNetworkInterface.class}, tree="[0]")
+    private Output</* @Nullable */ GuestNetworkInterface> guestNetworkInterface;
+
+    public Output<Optional<GuestNetworkInterface>> guestNetworkInterface() {
+        return Codegen.optional(this.guestNetworkInterface);
+    }
+    @Export(name="image", refs={String.class}, tree="[0]")
+    private Output<String> image;
+
+    public Output<String> image() {
+        return this.image;
+    }
+    @Export(name="installUser", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> installUser;
+
+    public Output<Optional<String>> installUser() {
+        return Codegen.optional(this.installUser);
+    }
+    @Export(name="installUserPassword", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> installUserPassword;
+
+    public Output<Optional<String>> installUserPassword() {
+        return Codegen.optional(this.installUserPassword);
+    }
+    @Export(name="installUserPasswordIsHash", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> installUserPasswordIsHash;
+
+    public Output<Optional<Boolean>> installUserPasswordIsHash() {
+        return Codegen.optional(this.installUserPasswordIsHash);
+    }
+    @Export(name="installUserSshAuthorizedKeys", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> installUserSshAuthorizedKeys;
+
+    public Output<Optional<List<String>>> installUserSshAuthorizedKeys() {
+        return Codegen.optional(this.installUserSshAuthorizedKeys);
+    }
+    @Export(name="machineType", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> machineType;
+
+    public Output<Optional<String>> machineType() {
+        return Codegen.optional(this.machineType);
+    }
+    @Export(name="namePrefix", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> namePrefix;
+
+    public Output<Optional<String>> namePrefix() {
+        return Codegen.optional(this.namePrefix);
+    }
+    @Export(name="names", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> names;
+
+    public Output<Optional<List<String>>> names() {
+        return Codegen.optional(this.names);
+    }
+    @Export(name="network", refs={String.class}, tree="[0]")
+    private Output<String> network;
+
+    public Output<String> network() {
+        return this.network;
+    }
+    @Export(name="networkTags", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> networkTags;
+
+    public Output<Optional<List<String>>> networkTags() {
+        return Codegen.optional(this.networkTags);
+    }
+    @Export(name="nonat", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> nonat;
+
+    public Output<Optional<Boolean>> nonat() {
+        return Codegen.optional(this.nonat);
+    }
+    @Export(name="project", refs={String.class}, tree="[0]")
+    private Output<String> project;
+
+    public Output<String> project() {
+        return this.project;
+    }
+    @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
+    private Output<List<String>> publisherNames;
+
+    public Output<List<String>> publisherNames() {
+        return this.publisherNames;
+    }
+    @Export(name="publishers", refs={Map.class,String.class,Object.class}, tree="[0,1,2]")
+    private Output<Map<String,Object>> publishers;
+
+    public Output<Map<String,Object>> publishers() {
+        return this.publishers;
+    }
+    @Export(name="registrations", refs={Map.class,String.class,PublisherRegistrationInput.class}, tree="[0,1,2]")
+    private Output</* @Nullable */ Map<String,PublisherRegistrationInput>> registrations;
+
+    public Output<Optional<Map<String,PublisherRegistrationInput>>> registrations() {
+        return Codegen.optional(this.registrations);
+    }
+    @Export(name="replicas", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> replicas;
+
+    public Output<Optional<Integer>> replicas() {
+        return Codegen.optional(this.replicas);
+    }
+    @Export(name="serviceAccount", refs={GcpServiceAccount.class}, tree="[0]")
+    private Output</* @Nullable */ GcpServiceAccount> serviceAccount;
+
+    public Output<Optional<GcpServiceAccount>> serviceAccount() {
+        return Codegen.optional(this.serviceAccount);
+    }
+    @Export(name="subnetwork", refs={String.class}, tree="[0]")
+    private Output<String> subnetwork;
+
+    public Output<String> subnetwork() {
+        return this.subnetwork;
+    }
+    @Export(name="tags", refs={Map.class,String.class}, tree="[0,1,1]")
+    private Output</* @Nullable */ Map<String,String>> tags;
+
+    public Output<Optional<Map<String,String>>> tags() {
+        return Codegen.optional(this.tags);
+    }
+    @Export(name="tenantUrl", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> tenantUrl;
+
+    public Output<Optional<String>> tenantUrl() {
+        return Codegen.optional(this.tenantUrl);
+    }
+    @Export(name="wizardPath", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> wizardPath;
+
+    public Output<Optional<String>> wizardPath() {
+        return Codegen.optional(this.wizardPath);
+    }
+    @Export(name="zone", refs={String.class}, tree="[0]")
+    private Output<String> zone;
+
+    public Output<String> zone() {
+        return this.zone;
     }
 
     /**
@@ -86,6 +228,11 @@ public class GcpPublisher extends com.pulumi.resources.ComponentResource {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
+            .additionalSecretOutputs(List.of(
+                "apiToken",
+                "installUserPassword",
+                "publishers"
+            ))
             .build();
         return com.pulumi.resources.ComponentResourceOptions.merge(defaultOptions, options, id);
     }

@@ -9,17 +9,34 @@ import (
 
 	"errors"
 	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/internal"
+	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// Experimental component for creating one or more Netskope Private Access Publisher Hyper-V virtual machines.
 type HypervPublisher struct {
 	pulumi.ResourceState
 
-	// Created publisher names.
-	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
-	// Publisher registration and VM details keyed by name.
-	Publishers PublisherOutputMapPtrOutput `pulumi:"publishers"`
+	ApiToken                 pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AutoStartAction          pulumi.StringPtrOutput                       `pulumi:"autoStartAction"`
+	AutoStopAction           pulumi.StringPtrOutput                       `pulumi:"autoStopAction"`
+	DynamicMemory            pulumi.BoolPtrOutput                         `pulumi:"dynamicMemory"`
+	EnableExperimentalHyperv pulumi.BoolPtrOutput                         `pulumi:"enableExperimentalHyperv"`
+	Generation               pulumi.IntPtrOutput                          `pulumi:"generation"`
+	HardDrives               provider.HypervHardDriveArrayOutput          `pulumi:"hardDrives"`
+	MaximumMemory            pulumi.IntPtrOutput                          `pulumi:"maximumMemory"`
+	MemorySize               pulumi.IntPtrOutput                          `pulumi:"memorySize"`
+	MinimumMemory            pulumi.IntPtrOutput                          `pulumi:"minimumMemory"`
+	NamePrefix               pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
+	Names                    pulumi.StringArrayOutput                     `pulumi:"names"`
+	ProcessorCount           pulumi.IntPtrOutput                          `pulumi:"processorCount"`
+	PublisherNames           pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
+	Publishers               pulumi.MapOutput                             `pulumi:"publishers"`
+	Registrations            provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
+	Replicas                 pulumi.IntPtrOutput                          `pulumi:"replicas"`
+	SwitchName               pulumi.StringOutput                          `pulumi:"switchName"`
+	Tags                     pulumi.StringMapOutput                       `pulumi:"tags"`
+	TenantUrl                pulumi.StringPtrOutput                       `pulumi:"tenantUrl"`
+	WizardPath               pulumi.StringPtrOutput                       `pulumi:"wizardPath"`
 }
 
 // NewHypervPublisher registers a new resource with the given unique name, arguments, and options.
@@ -32,12 +49,14 @@ func NewHypervPublisher(ctx *pulumi.Context,
 	if args.HardDrives == nil {
 		return nil, errors.New("invalid value for required argument 'HardDrives'")
 	}
-	if args.SwitchName == nil {
-		return nil, errors.New("invalid value for required argument 'SwitchName'")
-	}
 	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
+		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"apiToken",
+		"publishers",
+	})
+	opts = append(opts, secrets)
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource HypervPublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:HypervPublisher", name, args, &resource, opts...)
@@ -48,82 +67,48 @@ func NewHypervPublisher(ctx *pulumi.Context,
 }
 
 type hypervPublisherArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken *string `pulumi:"apiToken"`
-	// Hyper-V automatic start action.
-	AutoStartAction *string `pulumi:"autoStartAction"`
-	// Hyper-V automatic stop action.
-	AutoStopAction *string `pulumi:"autoStopAction"`
-	// Whether to enable dynamic memory.
-	DynamicMemory *bool `pulumi:"dynamicMemory"`
-	// Required opt-in gate for the experimental Hyper-V component.
-	EnableExperimentalHyperv *bool `pulumi:"enableExperimentalHyperv"`
-	// Hyper-V VM generation.
-	Generation *int `pulumi:"generation"`
-	// Virtual hard disks attached to each VM.
-	HardDrives []HypervHardDrive `pulumi:"hardDrives"`
-	// Maximum dynamic memory in bytes.
-	MaximumMemory *int `pulumi:"maximumMemory"`
-	// Startup memory in bytes.
-	MemorySize *int `pulumi:"memorySize"`
-	// Minimum dynamic memory in bytes.
-	MinimumMemory *int `pulumi:"minimumMemory"`
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix *string `pulumi:"namePrefix"`
-	// Explicit publisher names to create.
-	Names []string `pulumi:"names"`
-	// Virtual processor count.
-	ProcessorCount *int `pulumi:"processorCount"`
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations *PublisherRegistrationMap `pulumi:"registrations"`
-	// Number of publishers to create when names are not supplied.
-	Replicas *int `pulumi:"replicas"`
-	// Hyper-V virtual switch name.
-	SwitchName string `pulumi:"switchName"`
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl *string `pulumi:"tenantUrl"`
-	// Netskope publisher registration wizard API path.
-	WizardPath *string `pulumi:"wizardPath"`
+	ApiToken                 *string                                        `pulumi:"apiToken"`
+	AutoStartAction          *string                                        `pulumi:"autoStartAction"`
+	AutoStopAction           *string                                        `pulumi:"autoStopAction"`
+	DynamicMemory            *bool                                          `pulumi:"dynamicMemory"`
+	EnableExperimentalHyperv *bool                                          `pulumi:"enableExperimentalHyperv"`
+	Generation               *int                                           `pulumi:"generation"`
+	HardDrives               []provider.HypervHardDrive                     `pulumi:"hardDrives"`
+	MaximumMemory            *int                                           `pulumi:"maximumMemory"`
+	MemorySize               *int                                           `pulumi:"memorySize"`
+	MinimumMemory            *int                                           `pulumi:"minimumMemory"`
+	NamePrefix               *string                                        `pulumi:"namePrefix"`
+	Names                    []string                                       `pulumi:"names"`
+	ProcessorCount           *int                                           `pulumi:"processorCount"`
+	Registrations            map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
+	Replicas                 *int                                           `pulumi:"replicas"`
+	SwitchName               string                                         `pulumi:"switchName"`
+	Tags                     map[string]string                              `pulumi:"tags"`
+	TenantUrl                *string                                        `pulumi:"tenantUrl"`
+	WizardPath               *string                                        `pulumi:"wizardPath"`
 }
 
 // The set of arguments for constructing a HypervPublisher resource.
 type HypervPublisherArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken pulumi.StringPtrInput
-	// Hyper-V automatic start action.
-	AutoStartAction pulumi.StringPtrInput
-	// Hyper-V automatic stop action.
-	AutoStopAction pulumi.StringPtrInput
-	// Whether to enable dynamic memory.
-	DynamicMemory pulumi.BoolPtrInput
-	// Required opt-in gate for the experimental Hyper-V component.
-	EnableExperimentalHyperv pulumi.BoolPtrInput
-	// Hyper-V VM generation.
-	Generation pulumi.IntPtrInput
-	// Virtual hard disks attached to each VM.
-	HardDrives HypervHardDriveArrayInput
-	// Maximum dynamic memory in bytes.
-	MaximumMemory pulumi.IntPtrInput
-	// Startup memory in bytes.
-	MemorySize pulumi.IntPtrInput
-	// Minimum dynamic memory in bytes.
-	MinimumMemory pulumi.IntPtrInput
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix pulumi.StringPtrInput
-	// Explicit publisher names to create.
-	Names pulumi.StringArrayInput
-	// Virtual processor count.
-	ProcessorCount pulumi.IntPtrInput
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations PublisherRegistrationMapPtrInput
-	// Number of publishers to create when names are not supplied.
-	Replicas pulumi.IntPtrInput
-	// Hyper-V virtual switch name.
-	SwitchName pulumi.StringInput
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl pulumi.StringPtrInput
-	// Netskope publisher registration wizard API path.
-	WizardPath pulumi.StringPtrInput
+	ApiToken                 *string
+	AutoStartAction          *string
+	AutoStopAction           *string
+	DynamicMemory            *bool
+	EnableExperimentalHyperv *bool
+	Generation               *int
+	HardDrives               provider.HypervHardDriveArrayInput
+	MaximumMemory            *int
+	MemorySize               *int
+	MinimumMemory            *int
+	NamePrefix               *string
+	Names                    pulumi.StringArrayInput
+	ProcessorCount           *int
+	Registrations            provider.PublisherRegistrationInputMapInput
+	Replicas                 *int
+	SwitchName               string
+	Tags                     pulumi.StringMapInput
+	TenantUrl                *string
+	WizardPath               *string
 }
 
 func (HypervPublisherArgs) ElementType() reflect.Type {
@@ -163,14 +148,88 @@ func (o HypervPublisherOutput) ToHypervPublisherOutputWithContext(ctx context.Co
 	return o
 }
 
-// Created publisher names.
+func (o HypervPublisherOutput) ApiToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o HypervPublisherOutput) AutoStartAction() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.AutoStartAction }).(pulumi.StringPtrOutput)
+}
+
+func (o HypervPublisherOutput) AutoStopAction() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.AutoStopAction }).(pulumi.StringPtrOutput)
+}
+
+func (o HypervPublisherOutput) DynamicMemory() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.BoolPtrOutput { return v.DynamicMemory }).(pulumi.BoolPtrOutput)
+}
+
+func (o HypervPublisherOutput) EnableExperimentalHyperv() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.BoolPtrOutput { return v.EnableExperimentalHyperv }).(pulumi.BoolPtrOutput)
+}
+
+func (o HypervPublisherOutput) Generation() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.IntPtrOutput { return v.Generation }).(pulumi.IntPtrOutput)
+}
+
+func (o HypervPublisherOutput) HardDrives() provider.HypervHardDriveArrayOutput {
+	return o.ApplyT(func(v *HypervPublisher) provider.HypervHardDriveArrayOutput { return v.HardDrives }).(provider.HypervHardDriveArrayOutput)
+}
+
+func (o HypervPublisherOutput) MaximumMemory() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.IntPtrOutput { return v.MaximumMemory }).(pulumi.IntPtrOutput)
+}
+
+func (o HypervPublisherOutput) MemorySize() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.IntPtrOutput { return v.MemorySize }).(pulumi.IntPtrOutput)
+}
+
+func (o HypervPublisherOutput) MinimumMemory() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.IntPtrOutput { return v.MinimumMemory }).(pulumi.IntPtrOutput)
+}
+
+func (o HypervPublisherOutput) NamePrefix() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.NamePrefix }).(pulumi.StringPtrOutput)
+}
+
+func (o HypervPublisherOutput) Names() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringArrayOutput { return v.Names }).(pulumi.StringArrayOutput)
+}
+
+func (o HypervPublisherOutput) ProcessorCount() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.IntPtrOutput { return v.ProcessorCount }).(pulumi.IntPtrOutput)
+}
+
 func (o HypervPublisherOutput) PublisherNames() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *HypervPublisher) pulumi.StringArrayOutput { return v.PublisherNames }).(pulumi.StringArrayOutput)
 }
 
-// Publisher registration and VM details keyed by name.
-func (o HypervPublisherOutput) Publishers() PublisherOutputMapPtrOutput {
-	return o.ApplyT(func(v *HypervPublisher) PublisherOutputMapPtrOutput { return v.Publishers }).(PublisherOutputMapPtrOutput)
+func (o HypervPublisherOutput) Publishers() pulumi.MapOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.MapOutput { return v.Publishers }).(pulumi.MapOutput)
+}
+
+func (o HypervPublisherOutput) Registrations() provider.PublisherRegistrationInputMapOutput {
+	return o.ApplyT(func(v *HypervPublisher) provider.PublisherRegistrationInputMapOutput { return v.Registrations }).(provider.PublisherRegistrationInputMapOutput)
+}
+
+func (o HypervPublisherOutput) Replicas() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.IntPtrOutput { return v.Replicas }).(pulumi.IntPtrOutput)
+}
+
+func (o HypervPublisherOutput) SwitchName() pulumi.StringOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringOutput { return v.SwitchName }).(pulumi.StringOutput)
+}
+
+func (o HypervPublisherOutput) Tags() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringMapOutput { return v.Tags }).(pulumi.StringMapOutput)
+}
+
+func (o HypervPublisherOutput) TenantUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.TenantUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o HypervPublisherOutput) WizardPath() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.WizardPath }).(pulumi.StringPtrOutput)
 }
 
 func init() {

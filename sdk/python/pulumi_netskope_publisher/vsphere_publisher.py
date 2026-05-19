@@ -13,51 +13,32 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import NotRequired, TypedDict, TypeAlias
 from . import _utilities
-from . import outputs
-from ._inputs import *
+from . import provider as _provider
 
 __all__ = ['VspherePublisherArgs', 'VspherePublisher']
 
 @pulumi.input_type
 class VspherePublisherArgs:
     def __init__(__self__, *,
-                 datacenter: pulumi.Input[_builtins.str],
-                 datastore: pulumi.Input[_builtins.str],
-                 network_name: pulumi.Input[_builtins.str],
-                 template_name: pulumi.Input[_builtins.str],
-                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
-                 cluster: pulumi.Input[Optional[_builtins.str]] = None,
-                 folder: pulumi.Input[Optional[_builtins.str]] = None,
-                 host: pulumi.Input[Optional[_builtins.str]] = None,
-                 memory: pulumi.Input[Optional[_builtins.int]] = None,
-                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
-                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 num_cpus: pulumi.Input[Optional[_builtins.int]] = None,
-                 registrations: pulumi.Input[Optional['PublisherRegistrationMapArgs']] = None,
-                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
-                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None):
+                 datacenter: _builtins.str,
+                 datastore: _builtins.str,
+                 network_name: _builtins.str,
+                 template_name: _builtins.str,
+                 api_token: Optional[_builtins.str] = None,
+                 cluster: Optional[_builtins.str] = None,
+                 folder: Optional[_builtins.str] = None,
+                 host: Optional[_builtins.str] = None,
+                 memory: Optional[_builtins.int] = None,
+                 name_prefix: Optional[_builtins.str] = None,
+                 names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 num_cpus: Optional[_builtins.int] = None,
+                 registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
+                 replicas: Optional[_builtins.int] = None,
+                 tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
+                 tenant_url: Optional[_builtins.str] = None,
+                 wizard_path: Optional[_builtins.str] = None):
         """
         The set of arguments for constructing a VspherePublisher resource.
-
-        :param pulumi.Input[_builtins.str] datacenter: vSphere datacenter name.
-        :param pulumi.Input[_builtins.str] datastore: vSphere datastore name.
-        :param pulumi.Input[_builtins.str] network_name: vSphere network name.
-        :param pulumi.Input[_builtins.str] template_name: vSphere template VM name.
-        :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
-        :param pulumi.Input[_builtins.str] cluster: vSphere cluster name.
-        :param pulumi.Input[_builtins.str] folder: Optional VM folder.
-        :param pulumi.Input[_builtins.str] host: vSphere host name.
-        :param pulumi.Input[_builtins.int] memory: Memory in MB.
-        :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
-        :param pulumi.Input[_builtins.int] num_cpus: Number of virtual CPUs.
-        :param pulumi.Input['PublisherRegistrationMapArgs'] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
-        :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Tags applied to supported provider resources.
-        :param pulumi.Input[_builtins.str] tenant_url: Netskope tenant URL used for publisher registration.
-        :param pulumi.Input[_builtins.str] wizard_path: Netskope publisher registration wizard API path.
         """
         pulumi.set(__self__, "datacenter", datacenter)
         pulumi.set(__self__, "datastore", datastore)
@@ -92,206 +73,155 @@ class VspherePublisherArgs:
 
     @_builtins.property
     @pulumi.getter
-    def datacenter(self) -> pulumi.Input[_builtins.str]:
-        """
-        vSphere datacenter name.
-        """
+    def datacenter(self) -> _builtins.str:
         return pulumi.get(self, "datacenter")
 
     @datacenter.setter
-    def datacenter(self, value: pulumi.Input[_builtins.str]):
+    def datacenter(self, value: _builtins.str):
         pulumi.set(self, "datacenter", value)
 
     @_builtins.property
     @pulumi.getter
-    def datastore(self) -> pulumi.Input[_builtins.str]:
-        """
-        vSphere datastore name.
-        """
+    def datastore(self) -> _builtins.str:
         return pulumi.get(self, "datastore")
 
     @datastore.setter
-    def datastore(self, value: pulumi.Input[_builtins.str]):
+    def datastore(self, value: _builtins.str):
         pulumi.set(self, "datastore", value)
 
     @_builtins.property
     @pulumi.getter(name="networkName")
-    def network_name(self) -> pulumi.Input[_builtins.str]:
-        """
-        vSphere network name.
-        """
+    def network_name(self) -> _builtins.str:
         return pulumi.get(self, "network_name")
 
     @network_name.setter
-    def network_name(self, value: pulumi.Input[_builtins.str]):
+    def network_name(self, value: _builtins.str):
         pulumi.set(self, "network_name", value)
 
     @_builtins.property
     @pulumi.getter(name="templateName")
-    def template_name(self) -> pulumi.Input[_builtins.str]:
-        """
-        vSphere template VM name.
-        """
+    def template_name(self) -> _builtins.str:
         return pulumi.get(self, "template_name")
 
     @template_name.setter
-    def template_name(self, value: pulumi.Input[_builtins.str]):
+    def template_name(self, value: _builtins.str):
         pulumi.set(self, "template_name", value)
 
     @_builtins.property
     @pulumi.getter(name="apiToken")
-    def api_token(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Netskope API token used for publisher registration.
-        """
+    def api_token(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "api_token")
 
     @api_token.setter
-    def api_token(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def api_token(self, value: Optional[_builtins.str]):
         pulumi.set(self, "api_token", value)
 
     @_builtins.property
     @pulumi.getter
-    def cluster(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        vSphere cluster name.
-        """
+    def cluster(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "cluster")
 
     @cluster.setter
-    def cluster(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def cluster(self, value: Optional[_builtins.str]):
         pulumi.set(self, "cluster", value)
 
     @_builtins.property
     @pulumi.getter
-    def folder(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Optional VM folder.
-        """
+    def folder(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "folder")
 
     @folder.setter
-    def folder(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def folder(self, value: Optional[_builtins.str]):
         pulumi.set(self, "folder", value)
 
     @_builtins.property
     @pulumi.getter
-    def host(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        vSphere host name.
-        """
+    def host(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "host")
 
     @host.setter
-    def host(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def host(self, value: Optional[_builtins.str]):
         pulumi.set(self, "host", value)
 
     @_builtins.property
     @pulumi.getter
-    def memory(self) -> pulumi.Input[Optional[_builtins.int]]:
-        """
-        Memory in MB.
-        """
+    def memory(self) -> Optional[_builtins.int]:
         return pulumi.get(self, "memory")
 
     @memory.setter
-    def memory(self, value: pulumi.Input[Optional[_builtins.int]]):
+    def memory(self, value: Optional[_builtins.int]):
         pulumi.set(self, "memory", value)
 
     @_builtins.property
     @pulumi.getter(name="namePrefix")
-    def name_prefix(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Prefix used to derive publisher names when explicit names are not supplied.
-        """
+    def name_prefix(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "name_prefix")
 
     @name_prefix.setter
-    def name_prefix(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def name_prefix(self, value: Optional[_builtins.str]):
         pulumi.set(self, "name_prefix", value)
 
     @_builtins.property
     @pulumi.getter
-    def names(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
-        """
-        Explicit publisher names to create.
-        """
+    def names(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
         return pulumi.get(self, "names")
 
     @names.setter
-    def names(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
+    def names(self, value: pulumi.Input[Optional[Sequence[_builtins.str]]]):
         pulumi.set(self, "names", value)
 
     @_builtins.property
     @pulumi.getter(name="numCpus")
-    def num_cpus(self) -> pulumi.Input[Optional[_builtins.int]]:
-        """
-        Number of virtual CPUs.
-        """
+    def num_cpus(self) -> Optional[_builtins.int]:
         return pulumi.get(self, "num_cpus")
 
     @num_cpus.setter
-    def num_cpus(self, value: pulumi.Input[Optional[_builtins.int]]):
+    def num_cpus(self, value: Optional[_builtins.int]):
         pulumi.set(self, "num_cpus", value)
 
     @_builtins.property
     @pulumi.getter
-    def registrations(self) -> pulumi.Input[Optional['PublisherRegistrationMapArgs']]:
-        """
-        Pre-created Netskope publisher registrations keyed by publisher name.
-        """
+    def registrations(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]:
         return pulumi.get(self, "registrations")
 
     @registrations.setter
-    def registrations(self, value: pulumi.Input[Optional['PublisherRegistrationMapArgs']]):
+    def registrations(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]):
         pulumi.set(self, "registrations", value)
 
     @_builtins.property
     @pulumi.getter
-    def replicas(self) -> pulumi.Input[Optional[_builtins.int]]:
-        """
-        Number of publishers to create when names are not supplied.
-        """
+    def replicas(self) -> Optional[_builtins.int]:
         return pulumi.get(self, "replicas")
 
     @replicas.setter
-    def replicas(self, value: pulumi.Input[Optional[_builtins.int]]):
+    def replicas(self, value: Optional[_builtins.int]):
         pulumi.set(self, "replicas", value)
 
     @_builtins.property
     @pulumi.getter
-    def tags(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
-        """
-        Tags applied to supported provider resources.
-        """
+    def tags(self) -> pulumi.Input[Optional[Mapping[str, _builtins.str]]]:
         return pulumi.get(self, "tags")
 
     @tags.setter
-    def tags(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def tags(self, value: pulumi.Input[Optional[Mapping[str, _builtins.str]]]):
         pulumi.set(self, "tags", value)
 
     @_builtins.property
     @pulumi.getter(name="tenantUrl")
-    def tenant_url(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Netskope tenant URL used for publisher registration.
-        """
+    def tenant_url(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "tenant_url")
 
     @tenant_url.setter
-    def tenant_url(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def tenant_url(self, value: Optional[_builtins.str]):
         pulumi.set(self, "tenant_url", value)
 
     @_builtins.property
     @pulumi.getter(name="wizardPath")
-    def wizard_path(self) -> pulumi.Input[Optional[_builtins.str]]:
-        """
-        Netskope publisher registration wizard API path.
-        """
+    def wizard_path(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "wizard_path")
 
     @wizard_path.setter
-    def wizard_path(self, value: pulumi.Input[Optional[_builtins.str]]):
+    def wizard_path(self, value: Optional[_builtins.str]):
         pulumi.set(self, "wizard_path", value)
 
 
@@ -301,47 +231,29 @@ class VspherePublisher(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
-                 cluster: pulumi.Input[Optional[_builtins.str]] = None,
-                 datacenter: pulumi.Input[Optional[_builtins.str]] = None,
-                 datastore: pulumi.Input[Optional[_builtins.str]] = None,
-                 folder: pulumi.Input[Optional[_builtins.str]] = None,
-                 host: pulumi.Input[Optional[_builtins.str]] = None,
-                 memory: pulumi.Input[Optional[_builtins.int]] = None,
-                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
-                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 network_name: pulumi.Input[Optional[_builtins.str]] = None,
-                 num_cpus: pulumi.Input[Optional[_builtins.int]] = None,
-                 registrations: pulumi.Input[Optional[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
-                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 template_name: pulumi.Input[Optional[_builtins.str]] = None,
-                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
-                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_token: Optional[_builtins.str] = None,
+                 cluster: Optional[_builtins.str] = None,
+                 datacenter: Optional[_builtins.str] = None,
+                 datastore: Optional[_builtins.str] = None,
+                 folder: Optional[_builtins.str] = None,
+                 host: Optional[_builtins.str] = None,
+                 memory: Optional[_builtins.int] = None,
+                 name_prefix: Optional[_builtins.str] = None,
+                 names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 network_name: Optional[_builtins.str] = None,
+                 num_cpus: Optional[_builtins.int] = None,
+                 registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
+                 replicas: Optional[_builtins.int] = None,
+                 tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
+                 template_name: Optional[_builtins.str] = None,
+                 tenant_url: Optional[_builtins.str] = None,
+                 wizard_path: Optional[_builtins.str] = None,
                  __props__=None):
         """
-        Creates one or more Netskope Private Access Publisher vSphere virtual machines and registers them with a Netskope tenant.
-
+        Create a VspherePublisher resource with the given unique name, props, and options.
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
-        :param pulumi.Input[_builtins.str] cluster: vSphere cluster name.
-        :param pulumi.Input[_builtins.str] datacenter: vSphere datacenter name.
-        :param pulumi.Input[_builtins.str] datastore: vSphere datastore name.
-        :param pulumi.Input[_builtins.str] folder: Optional VM folder.
-        :param pulumi.Input[_builtins.str] host: vSphere host name.
-        :param pulumi.Input[_builtins.int] memory: Memory in MB.
-        :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
-        :param pulumi.Input[_builtins.str] network_name: vSphere network name.
-        :param pulumi.Input[_builtins.int] num_cpus: Number of virtual CPUs.
-        :param pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
-        :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
-        :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Tags applied to supported provider resources.
-        :param pulumi.Input[_builtins.str] template_name: vSphere template VM name.
-        :param pulumi.Input[_builtins.str] tenant_url: Netskope tenant URL used for publisher registration.
-        :param pulumi.Input[_builtins.str] wizard_path: Netskope publisher registration wizard API path.
         """
         ...
     @overload
@@ -350,8 +262,7 @@ class VspherePublisher(pulumi.ComponentResource):
                  args: VspherePublisherArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Creates one or more Netskope Private Access Publisher vSphere virtual machines and registers them with a Netskope tenant.
-
+        Create a VspherePublisher resource with the given unique name, props, and options.
 
         :param str resource_name: The name of the resource.
         :param VspherePublisherArgs args: The arguments to use to populate this resource's properties.
@@ -368,23 +279,23 @@ class VspherePublisher(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
-                 cluster: pulumi.Input[Optional[_builtins.str]] = None,
-                 datacenter: pulumi.Input[Optional[_builtins.str]] = None,
-                 datastore: pulumi.Input[Optional[_builtins.str]] = None,
-                 folder: pulumi.Input[Optional[_builtins.str]] = None,
-                 host: pulumi.Input[Optional[_builtins.str]] = None,
-                 memory: pulumi.Input[Optional[_builtins.int]] = None,
-                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
-                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 network_name: pulumi.Input[Optional[_builtins.str]] = None,
-                 num_cpus: pulumi.Input[Optional[_builtins.int]] = None,
-                 registrations: pulumi.Input[Optional[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
-                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
-                 tags: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 template_name: pulumi.Input[Optional[_builtins.str]] = None,
-                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
-                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_token: Optional[_builtins.str] = None,
+                 cluster: Optional[_builtins.str] = None,
+                 datacenter: Optional[_builtins.str] = None,
+                 datastore: Optional[_builtins.str] = None,
+                 folder: Optional[_builtins.str] = None,
+                 host: Optional[_builtins.str] = None,
+                 memory: Optional[_builtins.int] = None,
+                 name_prefix: Optional[_builtins.str] = None,
+                 names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 network_name: Optional[_builtins.str] = None,
+                 num_cpus: Optional[_builtins.int] = None,
+                 registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
+                 replicas: Optional[_builtins.int] = None,
+                 tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
+                 template_name: Optional[_builtins.str] = None,
+                 tenant_url: Optional[_builtins.str] = None,
+                 wizard_path: Optional[_builtins.str] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -423,6 +334,8 @@ class VspherePublisher(pulumi.ComponentResource):
             __props__.__dict__["wizard_path"] = wizard_path
             __props__.__dict__["publisher_names"] = None
             __props__.__dict__["publishers"] = None
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "publishers"])
+        opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         super(VspherePublisher, __self__).__init__(
             'netskope-publisher:index:VspherePublisher',
             resource_name,
@@ -431,18 +344,97 @@ class VspherePublisher(pulumi.ComponentResource):
             remote=True)
 
     @_builtins.property
+    @pulumi.getter(name="apiToken")
+    def api_token(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "api_token")
+
+    @_builtins.property
+    @pulumi.getter
+    def cluster(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "cluster")
+
+    @_builtins.property
+    @pulumi.getter
+    def datacenter(self) -> pulumi.Output[_builtins.str]:
+        return pulumi.get(self, "datacenter")
+
+    @_builtins.property
+    @pulumi.getter
+    def datastore(self) -> pulumi.Output[_builtins.str]:
+        return pulumi.get(self, "datastore")
+
+    @_builtins.property
+    @pulumi.getter
+    def folder(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "folder")
+
+    @_builtins.property
+    @pulumi.getter
+    def host(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "host")
+
+    @_builtins.property
+    @pulumi.getter
+    def memory(self) -> pulumi.Output[Optional[_builtins.int]]:
+        return pulumi.get(self, "memory")
+
+    @_builtins.property
+    @pulumi.getter(name="namePrefix")
+    def name_prefix(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "name_prefix")
+
+    @_builtins.property
+    @pulumi.getter
+    def names(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "names")
+
+    @_builtins.property
+    @pulumi.getter(name="networkName")
+    def network_name(self) -> pulumi.Output[_builtins.str]:
+        return pulumi.get(self, "network_name")
+
+    @_builtins.property
+    @pulumi.getter(name="numCpus")
+    def num_cpus(self) -> pulumi.Output[Optional[_builtins.int]]:
+        return pulumi.get(self, "num_cpus")
+
+    @_builtins.property
     @pulumi.getter(name="publisherNames")
-    def publisher_names(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
-        """
-        Created publisher names.
-        """
+    def publisher_names(self) -> pulumi.Output[Sequence[_builtins.str]]:
         return pulumi.get(self, "publisher_names")
 
     @_builtins.property
     @pulumi.getter
-    def publishers(self) -> pulumi.Output[Optional['outputs.PublisherOutputMap']]:
-        """
-        Publisher registration and VM details keyed by name.
-        """
+    def publishers(self) -> pulumi.Output[Mapping[str, Any]]:
         return pulumi.get(self, "publishers")
+
+    @_builtins.property
+    @pulumi.getter
+    def registrations(self) -> pulumi.Output[Optional[Mapping[str, '_provider.outputs.PublisherRegistrationInput']]]:
+        return pulumi.get(self, "registrations")
+
+    @_builtins.property
+    @pulumi.getter
+    def replicas(self) -> pulumi.Output[Optional[_builtins.int]]:
+        return pulumi.get(self, "replicas")
+
+    @_builtins.property
+    @pulumi.getter
+    def tags(self) -> pulumi.Output[Optional[Mapping[str, _builtins.str]]]:
+        return pulumi.get(self, "tags")
+
+    @_builtins.property
+    @pulumi.getter(name="templateName")
+    def template_name(self) -> pulumi.Output[_builtins.str]:
+        return pulumi.get(self, "template_name")
+
+    @_builtins.property
+    @pulumi.getter(name="tenantUrl")
+    def tenant_url(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "tenant_url")
+
+    @_builtins.property
+    @pulumi.getter(name="wizardPath")
+    def wizard_path(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "wizard_path")
 

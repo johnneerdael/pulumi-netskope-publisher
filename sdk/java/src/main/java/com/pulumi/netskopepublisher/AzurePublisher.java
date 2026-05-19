@@ -9,45 +9,206 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.AzurePublisherArgs;
 import com.pulumi.netskopepublisher.Utilities;
-import com.pulumi.netskopepublisher.outputs.PublisherOutputMap;
+import com.pulumi.netskopepublisher.provider.outputs.AzureMarketplaceImage;
+import com.pulumi.netskopepublisher.provider.outputs.AzureOsDisk;
+import com.pulumi.netskopepublisher.provider.outputs.GuestNetworkInterface;
+import com.pulumi.netskopepublisher.provider.outputs.PublisherRegistrationInput;
+import java.lang.Boolean;
+import java.lang.Integer;
+import java.lang.Object;
 import java.lang.String;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-/**
- * Creates one or more Netskope Private Access Publisher Azure virtual machines and registers them with a Netskope tenant.
- * 
- */
 @ResourceType(type="netskope-publisher:index:AzurePublisher")
 public class AzurePublisher extends com.pulumi.resources.ComponentResource {
-    /**
-     * Created publisher names.
-     * 
-     */
-    @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
-    private Output</* @Nullable */ List<String>> publisherNames;
+    @Export(name="acceptMarketplaceTerms", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> acceptMarketplaceTerms;
 
-    /**
-     * @return Created publisher names.
-     * 
-     */
-    public Output<Optional<List<String>>> publisherNames() {
-        return Codegen.optional(this.publisherNames);
+    public Output<Optional<Boolean>> acceptMarketplaceTerms() {
+        return Codegen.optional(this.acceptMarketplaceTerms);
     }
-    /**
-     * Publisher registration and VM details keyed by name.
-     * 
-     */
-    @Export(name="publishers", refs={PublisherOutputMap.class}, tree="[0]")
-    private Output</* @Nullable */ PublisherOutputMap> publishers;
+    @Export(name="adminSshPublicKey", refs={String.class}, tree="[0]")
+    private Output<String> adminSshPublicKey;
 
-    /**
-     * @return Publisher registration and VM details keyed by name.
-     * 
-     */
-    public Output<Optional<PublisherOutputMap>> publishers() {
-        return Codegen.optional(this.publishers);
+    public Output<String> adminSshPublicKey() {
+        return this.adminSshPublicKey;
+    }
+    @Export(name="adminUsername", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> adminUsername;
+
+    public Output<Optional<String>> adminUsername() {
+        return Codegen.optional(this.adminUsername);
+    }
+    @Export(name="apiToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> apiToken;
+
+    public Output<Optional<String>> apiToken() {
+        return Codegen.optional(this.apiToken);
+    }
+    @Export(name="assignPublicIp", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> assignPublicIp;
+
+    public Output<Optional<Boolean>> assignPublicIp() {
+        return Codegen.optional(this.assignPublicIp);
+    }
+    @Export(name="bootstrap", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> bootstrap;
+
+    public Output<Optional<Boolean>> bootstrap() {
+        return Codegen.optional(this.bootstrap);
+    }
+    @Export(name="bootstrapUrl", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> bootstrapUrl;
+
+    public Output<Optional<String>> bootstrapUrl() {
+        return Codegen.optional(this.bootstrapUrl);
+    }
+    @Export(name="deleteDefaultUser", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> deleteDefaultUser;
+
+    public Output<Optional<Boolean>> deleteDefaultUser() {
+        return Codegen.optional(this.deleteDefaultUser);
+    }
+    @Export(name="guestNetworkInterface", refs={GuestNetworkInterface.class}, tree="[0]")
+    private Output</* @Nullable */ GuestNetworkInterface> guestNetworkInterface;
+
+    public Output<Optional<GuestNetworkInterface>> guestNetworkInterface() {
+        return Codegen.optional(this.guestNetworkInterface);
+    }
+    @Export(name="imageId", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> imageId;
+
+    public Output<Optional<String>> imageId() {
+        return Codegen.optional(this.imageId);
+    }
+    @Export(name="installUser", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> installUser;
+
+    public Output<Optional<String>> installUser() {
+        return Codegen.optional(this.installUser);
+    }
+    @Export(name="installUserPassword", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> installUserPassword;
+
+    public Output<Optional<String>> installUserPassword() {
+        return Codegen.optional(this.installUserPassword);
+    }
+    @Export(name="installUserPasswordIsHash", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> installUserPasswordIsHash;
+
+    public Output<Optional<Boolean>> installUserPasswordIsHash() {
+        return Codegen.optional(this.installUserPasswordIsHash);
+    }
+    @Export(name="installUserSshAuthorizedKeys", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> installUserSshAuthorizedKeys;
+
+    public Output<Optional<List<String>>> installUserSshAuthorizedKeys() {
+        return Codegen.optional(this.installUserSshAuthorizedKeys);
+    }
+    @Export(name="location", refs={String.class}, tree="[0]")
+    private Output<String> location;
+
+    public Output<String> location() {
+        return this.location;
+    }
+    @Export(name="marketplace", refs={AzureMarketplaceImage.class}, tree="[0]")
+    private Output</* @Nullable */ AzureMarketplaceImage> marketplace;
+
+    public Output<Optional<AzureMarketplaceImage>> marketplace() {
+        return Codegen.optional(this.marketplace);
+    }
+    @Export(name="namePrefix", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> namePrefix;
+
+    public Output<Optional<String>> namePrefix() {
+        return Codegen.optional(this.namePrefix);
+    }
+    @Export(name="names", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> names;
+
+    public Output<Optional<List<String>>> names() {
+        return Codegen.optional(this.names);
+    }
+    @Export(name="networkSecurityGroupId", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> networkSecurityGroupId;
+
+    public Output<Optional<String>> networkSecurityGroupId() {
+        return Codegen.optional(this.networkSecurityGroupId);
+    }
+    @Export(name="nonat", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> nonat;
+
+    public Output<Optional<Boolean>> nonat() {
+        return Codegen.optional(this.nonat);
+    }
+    @Export(name="osDisk", refs={AzureOsDisk.class}, tree="[0]")
+    private Output</* @Nullable */ AzureOsDisk> osDisk;
+
+    public Output<Optional<AzureOsDisk>> osDisk() {
+        return Codegen.optional(this.osDisk);
+    }
+    @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
+    private Output<List<String>> publisherNames;
+
+    public Output<List<String>> publisherNames() {
+        return this.publisherNames;
+    }
+    @Export(name="publishers", refs={Map.class,String.class,Object.class}, tree="[0,1,2]")
+    private Output<Map<String,Object>> publishers;
+
+    public Output<Map<String,Object>> publishers() {
+        return this.publishers;
+    }
+    @Export(name="registrations", refs={Map.class,String.class,PublisherRegistrationInput.class}, tree="[0,1,2]")
+    private Output</* @Nullable */ Map<String,PublisherRegistrationInput>> registrations;
+
+    public Output<Optional<Map<String,PublisherRegistrationInput>>> registrations() {
+        return Codegen.optional(this.registrations);
+    }
+    @Export(name="replicas", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> replicas;
+
+    public Output<Optional<Integer>> replicas() {
+        return Codegen.optional(this.replicas);
+    }
+    @Export(name="resourceGroupName", refs={String.class}, tree="[0]")
+    private Output<String> resourceGroupName;
+
+    public Output<String> resourceGroupName() {
+        return this.resourceGroupName;
+    }
+    @Export(name="subnetId", refs={String.class}, tree="[0]")
+    private Output<String> subnetId;
+
+    public Output<String> subnetId() {
+        return this.subnetId;
+    }
+    @Export(name="tags", refs={Map.class,String.class}, tree="[0,1,1]")
+    private Output</* @Nullable */ Map<String,String>> tags;
+
+    public Output<Optional<Map<String,String>>> tags() {
+        return Codegen.optional(this.tags);
+    }
+    @Export(name="tenantUrl", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> tenantUrl;
+
+    public Output<Optional<String>> tenantUrl() {
+        return Codegen.optional(this.tenantUrl);
+    }
+    @Export(name="vmSize", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> vmSize;
+
+    public Output<Optional<String>> vmSize() {
+        return Codegen.optional(this.vmSize);
+    }
+    @Export(name="wizardPath", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> wizardPath;
+
+    public Output<Optional<String>> wizardPath() {
+        return Codegen.optional(this.wizardPath);
     }
 
     /**
@@ -86,6 +247,11 @@ public class AzurePublisher extends com.pulumi.resources.ComponentResource {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
+            .additionalSecretOutputs(List.of(
+                "apiToken",
+                "installUserPassword",
+                "publishers"
+            ))
             .build();
         return com.pulumi.resources.ComponentResourceOptions.merge(defaultOptions, options, id);
     }

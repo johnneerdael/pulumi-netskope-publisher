@@ -11,6 +11,16 @@ type CommonPublisherArgs struct {
 	WizardPath    *string                               `pulumi:"wizardPath,optional"`
 	Tags          map[string]string                     `pulumi:"tags,optional"`
 	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	Bootstrap     *bool                                 `pulumi:"bootstrap,optional"`
+	BootstrapURL  *string                               `pulumi:"bootstrapUrl,optional"`
+	Nonat         *bool                                 `pulumi:"nonat,optional"`
+
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
 }
 
 type PublisherRegistrationInput struct {

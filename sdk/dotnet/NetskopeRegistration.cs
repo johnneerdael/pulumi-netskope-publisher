@@ -9,33 +9,18 @@ using Pulumi.Serialization;
 
 namespace Pulumi.NetskopePublisher
 {
-    /// <summary>
-    /// Stateful Netskope publisher registration resource.
-    /// </summary>
     [NetskopePublisherResourceType("netskope-publisher:index:NetskopeRegistration")]
     public partial class NetskopeRegistration : global::Pulumi.CustomResource
     {
-        /// <summary>
-        /// Netskope API token used for publisher registration.
-        /// </summary>
         [Output("apiToken")]
         public Output<string> ApiToken { get; private set; } = null!;
 
-        /// <summary>
-        /// Publisher names registered or reused in Netskope.
-        /// </summary>
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
-        /// <summary>
-        /// Netskope publisher registrations keyed by publisher name.
-        /// </summary>
         [Output("registrations")]
-        public Output<Outputs.PublisherRegistrationMap> Registrations { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.RegistrationRecord>> Registrations { get; private set; } = null!;
 
-        /// <summary>
-        /// Netskope tenant URL used for publisher registration.
-        /// </summary>
         [Output("tenantUrl")]
         public Output<string> TenantUrl { get; private set; } = null!;
 
@@ -91,10 +76,6 @@ namespace Pulumi.NetskopePublisher
     {
         [Input("apiToken", required: true)]
         private Input<string>? _apiToken;
-
-        /// <summary>
-        /// Netskope API token used for publisher registration.
-        /// </summary>
         public Input<string>? ApiToken
         {
             get => _apiToken;
@@ -107,19 +88,12 @@ namespace Pulumi.NetskopePublisher
 
         [Input("publisherNames", required: true)]
         private InputList<string>? _publisherNames;
-
-        /// <summary>
-        /// Publisher names to register or reuse in Netskope.
-        /// </summary>
         public InputList<string> PublisherNames
         {
             get => _publisherNames ?? (_publisherNames = new InputList<string>());
             set => _publisherNames = value;
         }
 
-        /// <summary>
-        /// Netskope tenant URL used for publisher registration.
-        /// </summary>
         [Input("tenantUrl", required: true)]
         public Input<string> TenantUrl { get; set; } = null!;
 

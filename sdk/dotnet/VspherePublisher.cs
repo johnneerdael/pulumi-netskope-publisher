@@ -9,23 +9,65 @@ using Pulumi.Serialization;
 
 namespace Pulumi.NetskopePublisher
 {
-    /// <summary>
-    /// Creates one or more Netskope Private Access Publisher vSphere virtual machines and registers them with a Netskope tenant.
-    /// </summary>
     [NetskopePublisherResourceType("netskope-publisher:index:VspherePublisher")]
     public partial class VspherePublisher : global::Pulumi.ComponentResource
     {
-        /// <summary>
-        /// Created publisher names.
-        /// </summary>
+        [Output("apiToken")]
+        public Output<string?> ApiToken { get; private set; } = null!;
+
+        [Output("cluster")]
+        public Output<string?> Cluster { get; private set; } = null!;
+
+        [Output("datacenter")]
+        public Output<string> Datacenter { get; private set; } = null!;
+
+        [Output("datastore")]
+        public Output<string> Datastore { get; private set; } = null!;
+
+        [Output("folder")]
+        public Output<string?> Folder { get; private set; } = null!;
+
+        [Output("host")]
+        public Output<string?> Host { get; private set; } = null!;
+
+        [Output("memory")]
+        public Output<int?> Memory { get; private set; } = null!;
+
+        [Output("namePrefix")]
+        public Output<string?> NamePrefix { get; private set; } = null!;
+
+        [Output("names")]
+        public Output<ImmutableArray<string>> Names { get; private set; } = null!;
+
+        [Output("networkName")]
+        public Output<string> NetworkName { get; private set; } = null!;
+
+        [Output("numCpus")]
+        public Output<int?> NumCpus { get; private set; } = null!;
+
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
-        /// <summary>
-        /// Publisher registration and VM details keyed by name.
-        /// </summary>
         [Output("publishers")]
-        public Output<Outputs.PublisherOutputMap?> Publishers { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, object>> Publishers { get; private set; } = null!;
+
+        [Output("registrations")]
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
+
+        [Output("replicas")]
+        public Output<int?> Replicas { get; private set; } = null!;
+
+        [Output("tags")]
+        public Output<ImmutableDictionary<string, string>?> Tags { get; private set; } = null!;
+
+        [Output("templateName")]
+        public Output<string> TemplateName { get; private set; } = null!;
+
+        [Output("tenantUrl")]
+        public Output<string?> TenantUrl { get; private set; } = null!;
+
+        [Output("wizardPath")]
+        public Output<string?> WizardPath { get; private set; } = null!;
 
 
         /// <summary>
@@ -46,6 +88,11 @@ namespace Pulumi.NetskopePublisher
             {
                 Version = Utilities.Version,
                 PluginDownloadURL = "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
+                AdditionalSecretOutputs =
+                {
+                    "apiToken",
+                    "publishers",
+                },
             };
             var merged = ComponentResourceOptions.Merge(defaultOptions, options);
             // Override the ID if one was specified for consistency with other language SDKs.
@@ -57,128 +104,75 @@ namespace Pulumi.NetskopePublisher
     public sealed class VspherePublisherArgs : global::Pulumi.ResourceArgs
     {
         [Input("apiToken")]
-        private Input<string>? _apiToken;
-
-        /// <summary>
-        /// Netskope API token used for publisher registration.
-        /// </summary>
-        public Input<string>? ApiToken
+        private string? _apiToken;
+        public string? ApiToken
         {
             get => _apiToken;
-            set
-            {
-                var emptySecret = Output.CreateSecret(0);
-                _apiToken = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
-            }
+            set => _apiToken = value;
         }
 
-        /// <summary>
-        /// vSphere cluster name.
-        /// </summary>
         [Input("cluster")]
-        public Input<string>? Cluster { get; set; }
+        public string? Cluster { get; set; }
 
-        /// <summary>
-        /// vSphere datacenter name.
-        /// </summary>
         [Input("datacenter", required: true)]
-        public Input<string> Datacenter { get; set; } = null!;
+        public string Datacenter { get; set; } = null!;
 
-        /// <summary>
-        /// vSphere datastore name.
-        /// </summary>
         [Input("datastore", required: true)]
-        public Input<string> Datastore { get; set; } = null!;
+        public string Datastore { get; set; } = null!;
 
-        /// <summary>
-        /// Optional VM folder.
-        /// </summary>
         [Input("folder")]
-        public Input<string>? Folder { get; set; }
+        public string? Folder { get; set; }
 
-        /// <summary>
-        /// vSphere host name.
-        /// </summary>
         [Input("host")]
-        public Input<string>? Host { get; set; }
+        public string? Host { get; set; }
 
-        /// <summary>
-        /// Memory in MB.
-        /// </summary>
         [Input("memory")]
-        public Input<int>? Memory { get; set; }
+        public int? Memory { get; set; }
 
-        /// <summary>
-        /// Prefix used to derive publisher names when explicit names are not supplied.
-        /// </summary>
         [Input("namePrefix")]
-        public Input<string>? NamePrefix { get; set; }
+        public string? NamePrefix { get; set; }
 
         [Input("names")]
         private InputList<string>? _names;
-
-        /// <summary>
-        /// Explicit publisher names to create.
-        /// </summary>
         public InputList<string> Names
         {
             get => _names ?? (_names = new InputList<string>());
             set => _names = value;
         }
 
-        /// <summary>
-        /// vSphere network name.
-        /// </summary>
         [Input("networkName", required: true)]
-        public Input<string> NetworkName { get; set; } = null!;
+        public string NetworkName { get; set; } = null!;
 
-        /// <summary>
-        /// Number of virtual CPUs.
-        /// </summary>
         [Input("numCpus")]
-        public Input<int>? NumCpus { get; set; }
+        public int? NumCpus { get; set; }
 
-        /// <summary>
-        /// Pre-created Netskope publisher registrations keyed by publisher name.
-        /// </summary>
         [Input("registrations")]
-        public Input<Inputs.PublisherRegistrationMapArgs>? Registrations { get; set; }
+        private InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>? _registrations;
+        public InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs> Registrations
+        {
+            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>());
+            set => _registrations = value;
+        }
 
-        /// <summary>
-        /// Number of publishers to create when names are not supplied.
-        /// </summary>
         [Input("replicas")]
-        public Input<int>? Replicas { get; set; }
+        public int? Replicas { get; set; }
 
         [Input("tags")]
         private InputMap<string>? _tags;
-
-        /// <summary>
-        /// Tags applied to supported provider resources.
-        /// </summary>
         public InputMap<string> Tags
         {
             get => _tags ?? (_tags = new InputMap<string>());
             set => _tags = value;
         }
 
-        /// <summary>
-        /// vSphere template VM name.
-        /// </summary>
         [Input("templateName", required: true)]
-        public Input<string> TemplateName { get; set; } = null!;
+        public string TemplateName { get; set; } = null!;
 
-        /// <summary>
-        /// Netskope tenant URL used for publisher registration.
-        /// </summary>
         [Input("tenantUrl")]
-        public Input<string>? TenantUrl { get; set; }
+        public string? TenantUrl { get; set; }
 
-        /// <summary>
-        /// Netskope publisher registration wizard API path.
-        /// </summary>
         [Input("wizardPath")]
-        public Input<string>? WizardPath { get; set; }
+        public string? WizardPath { get; set; }
 
         public VspherePublisherArgs()
         {

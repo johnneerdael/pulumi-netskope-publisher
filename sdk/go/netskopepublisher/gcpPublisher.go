@@ -9,17 +9,41 @@ import (
 
 	"errors"
 	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/internal"
+	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// Creates one or more Netskope Private Access Publisher Google Compute Engine instances and registers them with a Netskope tenant.
 type GcpPublisher struct {
 	pulumi.ResourceState
 
-	// Created publisher names.
-	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
-	// Publisher registration and VM details keyed by name.
-	Publishers PublisherOutputMapPtrOutput `pulumi:"publishers"`
+	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AssignPublicIp               pulumi.BoolPtrOutput                         `pulumi:"assignPublicIp"`
+	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
+	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
+	DeleteDefaultUser            pulumi.BoolPtrOutput                         `pulumi:"deleteDefaultUser"`
+	GuestNetworkInterface        provider.GuestNetworkInterfacePtrOutput      `pulumi:"guestNetworkInterface"`
+	Image                        pulumi.StringOutput                          `pulumi:"image"`
+	InstallUser                  pulumi.StringPtrOutput                       `pulumi:"installUser"`
+	InstallUserPassword          pulumi.StringPtrOutput                       `pulumi:"installUserPassword"`
+	InstallUserPasswordIsHash    pulumi.BoolPtrOutput                         `pulumi:"installUserPasswordIsHash"`
+	InstallUserSshAuthorizedKeys pulumi.StringArrayOutput                     `pulumi:"installUserSshAuthorizedKeys"`
+	MachineType                  pulumi.StringPtrOutput                       `pulumi:"machineType"`
+	NamePrefix                   pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
+	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
+	Network                      pulumi.StringOutput                          `pulumi:"network"`
+	NetworkTags                  pulumi.StringArrayOutput                     `pulumi:"networkTags"`
+	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	Project                      pulumi.StringOutput                          `pulumi:"project"`
+	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
+	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
+	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
+	Replicas                     pulumi.IntPtrOutput                          `pulumi:"replicas"`
+	ServiceAccount               provider.GcpServiceAccountPtrOutput          `pulumi:"serviceAccount"`
+	Subnetwork                   pulumi.StringOutput                          `pulumi:"subnetwork"`
+	Tags                         pulumi.StringMapOutput                       `pulumi:"tags"`
+	TenantUrl                    pulumi.StringPtrOutput                       `pulumi:"tenantUrl"`
+	WizardPath                   pulumi.StringPtrOutput                       `pulumi:"wizardPath"`
+	Zone                         pulumi.StringOutput                          `pulumi:"zone"`
 }
 
 // NewGcpPublisher registers a new resource with the given unique name, arguments, and options.
@@ -29,27 +53,18 @@ func NewGcpPublisher(ctx *pulumi.Context,
 		return nil, errors.New("missing one or more required arguments")
 	}
 
-	if args.Image == nil {
-		return nil, errors.New("invalid value for required argument 'Image'")
-	}
-	if args.Network == nil {
-		return nil, errors.New("invalid value for required argument 'Network'")
-	}
-	if args.Project == nil {
-		return nil, errors.New("invalid value for required argument 'Project'")
-	}
-	if args.Subnetwork == nil {
-		return nil, errors.New("invalid value for required argument 'Subnetwork'")
-	}
-	if args.Zone == nil {
-		return nil, errors.New("invalid value for required argument 'Zone'")
-	}
 	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
+		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
 	if args.InstallUserPassword != nil {
-		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(pulumi.StringPtrInput)
+		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"apiToken",
+		"installUserPassword",
+		"publishers",
+	})
+	opts = append(opts, secrets)
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource GcpPublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:GcpPublisher", name, args, &resource, opts...)
@@ -60,114 +75,62 @@ func NewGcpPublisher(ctx *pulumi.Context,
 }
 
 type gcpPublisherArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken *string `pulumi:"apiToken"`
-	// Whether to assign public IP addresses.
-	AssignPublicIp *bool `pulumi:"assignPublicIp"`
-	// Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
-	Bootstrap *bool `pulumi:"bootstrap"`
-	// URL to the Netskope generic bootstrap script.
-	BootstrapUrl *string `pulumi:"bootstrapUrl"`
-	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-	DeleteDefaultUser *bool `pulumi:"deleteDefaultUser"`
-	// Optional guest OS primary interface override applied with netplan during cloud-init.
-	GuestNetworkInterface *GuestNetworkInterface `pulumi:"guestNetworkInterface"`
-	// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
-	Image string `pulumi:"image"`
-	// Linux user that owns the Publisher install. Defaults to ubuntu.
-	InstallUser *string `pulumi:"installUser"`
-	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-	InstallUserPassword *string `pulumi:"installUserPassword"`
-	// Set true when installUserPassword is already a crypt(3) hash.
-	InstallUserPasswordIsHash *bool `pulumi:"installUserPasswordIsHash"`
-	// Public SSH keys installed in the install user's authorized_keys file.
-	InstallUserSshAuthorizedKeys []string `pulumi:"installUserSshAuthorizedKeys"`
-	// Compute Engine machine type.
-	MachineType *string `pulumi:"machineType"`
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix *string `pulumi:"namePrefix"`
-	// Explicit publisher names to create.
-	Names []string `pulumi:"names"`
-	// GCP VPC network self link or name.
-	Network string `pulumi:"network"`
-	// Network tags attached to instances.
-	NetworkTags []string `pulumi:"networkTags"`
-	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
-	Nonat *bool `pulumi:"nonat"`
-	// GCP project ID.
-	Project string `pulumi:"project"`
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations *PublisherRegistrationMap `pulumi:"registrations"`
-	// Number of publishers to create when names are not supplied.
-	Replicas *int `pulumi:"replicas"`
-	// Optional service account assignment.
-	ServiceAccount *GcpServiceAccount `pulumi:"serviceAccount"`
-	// GCP subnetwork self link or name.
-	Subnetwork string `pulumi:"subnetwork"`
-	// Tags applied to supported provider resources.
-	Tags map[string]string `pulumi:"tags"`
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl *string `pulumi:"tenantUrl"`
-	// Netskope publisher registration wizard API path.
-	WizardPath *string `pulumi:"wizardPath"`
-	// GCP zone.
-	Zone string `pulumi:"zone"`
+	ApiToken                     *string                                        `pulumi:"apiToken"`
+	AssignPublicIp               *bool                                          `pulumi:"assignPublicIp"`
+	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
+	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
+	DeleteDefaultUser            *bool                                          `pulumi:"deleteDefaultUser"`
+	GuestNetworkInterface        *provider.GuestNetworkInterface                `pulumi:"guestNetworkInterface"`
+	Image                        string                                         `pulumi:"image"`
+	InstallUser                  *string                                        `pulumi:"installUser"`
+	InstallUserPassword          *string                                        `pulumi:"installUserPassword"`
+	InstallUserPasswordIsHash    *bool                                          `pulumi:"installUserPasswordIsHash"`
+	InstallUserSshAuthorizedKeys []string                                       `pulumi:"installUserSshAuthorizedKeys"`
+	MachineType                  *string                                        `pulumi:"machineType"`
+	NamePrefix                   *string                                        `pulumi:"namePrefix"`
+	Names                        []string                                       `pulumi:"names"`
+	Network                      string                                         `pulumi:"network"`
+	NetworkTags                  []string                                       `pulumi:"networkTags"`
+	Nonat                        *bool                                          `pulumi:"nonat"`
+	Project                      string                                         `pulumi:"project"`
+	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
+	Replicas                     *int                                           `pulumi:"replicas"`
+	ServiceAccount               *provider.GcpServiceAccount                    `pulumi:"serviceAccount"`
+	Subnetwork                   string                                         `pulumi:"subnetwork"`
+	Tags                         map[string]string                              `pulumi:"tags"`
+	TenantUrl                    *string                                        `pulumi:"tenantUrl"`
+	WizardPath                   *string                                        `pulumi:"wizardPath"`
+	Zone                         string                                         `pulumi:"zone"`
 }
 
 // The set of arguments for constructing a GcpPublisher resource.
 type GcpPublisherArgs struct {
-	// Netskope API token used for publisher registration.
-	ApiToken pulumi.StringPtrInput
-	// Whether to assign public IP addresses.
-	AssignPublicIp pulumi.BoolPtrInput
-	// Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
-	Bootstrap pulumi.BoolPtrInput
-	// URL to the Netskope generic bootstrap script.
-	BootstrapUrl pulumi.StringPtrInput
-	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-	DeleteDefaultUser pulumi.BoolPtrInput
-	// Optional guest OS primary interface override applied with netplan during cloud-init.
-	GuestNetworkInterface GuestNetworkInterfacePtrInput
-	// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
-	Image pulumi.StringInput
-	// Linux user that owns the Publisher install. Defaults to ubuntu.
-	InstallUser pulumi.StringPtrInput
-	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-	InstallUserPassword pulumi.StringPtrInput
-	// Set true when installUserPassword is already a crypt(3) hash.
-	InstallUserPasswordIsHash pulumi.BoolPtrInput
-	// Public SSH keys installed in the install user's authorized_keys file.
+	ApiToken                     *string
+	AssignPublicIp               *bool
+	Bootstrap                    *bool
+	BootstrapUrl                 *string
+	DeleteDefaultUser            *bool
+	GuestNetworkInterface        provider.GuestNetworkInterfacePtrInput
+	Image                        string
+	InstallUser                  *string
+	InstallUserPassword          *string
+	InstallUserPasswordIsHash    *bool
 	InstallUserSshAuthorizedKeys pulumi.StringArrayInput
-	// Compute Engine machine type.
-	MachineType pulumi.StringPtrInput
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix pulumi.StringPtrInput
-	// Explicit publisher names to create.
-	Names pulumi.StringArrayInput
-	// GCP VPC network self link or name.
-	Network pulumi.StringInput
-	// Network tags attached to instances.
-	NetworkTags pulumi.StringArrayInput
-	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
-	Nonat pulumi.BoolPtrInput
-	// GCP project ID.
-	Project pulumi.StringInput
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations PublisherRegistrationMapPtrInput
-	// Number of publishers to create when names are not supplied.
-	Replicas pulumi.IntPtrInput
-	// Optional service account assignment.
-	ServiceAccount GcpServiceAccountPtrInput
-	// GCP subnetwork self link or name.
-	Subnetwork pulumi.StringInput
-	// Tags applied to supported provider resources.
-	Tags pulumi.StringMapInput
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl pulumi.StringPtrInput
-	// Netskope publisher registration wizard API path.
-	WizardPath pulumi.StringPtrInput
-	// GCP zone.
-	Zone pulumi.StringInput
+	MachineType                  *string
+	NamePrefix                   *string
+	Names                        pulumi.StringArrayInput
+	Network                      string
+	NetworkTags                  pulumi.StringArrayInput
+	Nonat                        *bool
+	Project                      string
+	Registrations                provider.PublisherRegistrationInputMapInput
+	Replicas                     *int
+	ServiceAccount               provider.GcpServiceAccountPtrInput
+	Subnetwork                   string
+	Tags                         pulumi.StringMapInput
+	TenantUrl                    *string
+	WizardPath                   *string
+	Zone                         string
 }
 
 func (GcpPublisherArgs) ElementType() reflect.Type {
@@ -207,14 +170,116 @@ func (o GcpPublisherOutput) ToGcpPublisherOutputWithContext(ctx context.Context)
 	return o
 }
 
-// Created publisher names.
+func (o GcpPublisherOutput) ApiToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) AssignPublicIp() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.BoolPtrOutput { return v.AssignPublicIp }).(pulumi.BoolPtrOutput)
+}
+
+func (o GcpPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.BoolPtrOutput { return v.Bootstrap }).(pulumi.BoolPtrOutput)
+}
+
+func (o GcpPublisherOutput) BootstrapUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.BootstrapUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) DeleteDefaultUser() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.BoolPtrOutput { return v.DeleteDefaultUser }).(pulumi.BoolPtrOutput)
+}
+
+func (o GcpPublisherOutput) GuestNetworkInterface() provider.GuestNetworkInterfacePtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) provider.GuestNetworkInterfacePtrOutput { return v.GuestNetworkInterface }).(provider.GuestNetworkInterfacePtrOutput)
+}
+
+func (o GcpPublisherOutput) Image() pulumi.StringOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringOutput { return v.Image }).(pulumi.StringOutput)
+}
+
+func (o GcpPublisherOutput) InstallUser() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.InstallUser }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) InstallUserPassword() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.InstallUserPassword }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) InstallUserPasswordIsHash() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.BoolPtrOutput { return v.InstallUserPasswordIsHash }).(pulumi.BoolPtrOutput)
+}
+
+func (o GcpPublisherOutput) InstallUserSshAuthorizedKeys() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringArrayOutput { return v.InstallUserSshAuthorizedKeys }).(pulumi.StringArrayOutput)
+}
+
+func (o GcpPublisherOutput) MachineType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.MachineType }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) NamePrefix() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.NamePrefix }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) Names() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringArrayOutput { return v.Names }).(pulumi.StringArrayOutput)
+}
+
+func (o GcpPublisherOutput) Network() pulumi.StringOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringOutput { return v.Network }).(pulumi.StringOutput)
+}
+
+func (o GcpPublisherOutput) NetworkTags() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringArrayOutput { return v.NetworkTags }).(pulumi.StringArrayOutput)
+}
+
+func (o GcpPublisherOutput) Nonat() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o GcpPublisherOutput) Project() pulumi.StringOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringOutput { return v.Project }).(pulumi.StringOutput)
+}
+
 func (o GcpPublisherOutput) PublisherNames() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *GcpPublisher) pulumi.StringArrayOutput { return v.PublisherNames }).(pulumi.StringArrayOutput)
 }
 
-// Publisher registration and VM details keyed by name.
-func (o GcpPublisherOutput) Publishers() PublisherOutputMapPtrOutput {
-	return o.ApplyT(func(v *GcpPublisher) PublisherOutputMapPtrOutput { return v.Publishers }).(PublisherOutputMapPtrOutput)
+func (o GcpPublisherOutput) Publishers() pulumi.MapOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.MapOutput { return v.Publishers }).(pulumi.MapOutput)
+}
+
+func (o GcpPublisherOutput) Registrations() provider.PublisherRegistrationInputMapOutput {
+	return o.ApplyT(func(v *GcpPublisher) provider.PublisherRegistrationInputMapOutput { return v.Registrations }).(provider.PublisherRegistrationInputMapOutput)
+}
+
+func (o GcpPublisherOutput) Replicas() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.IntPtrOutput { return v.Replicas }).(pulumi.IntPtrOutput)
+}
+
+func (o GcpPublisherOutput) ServiceAccount() provider.GcpServiceAccountPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) provider.GcpServiceAccountPtrOutput { return v.ServiceAccount }).(provider.GcpServiceAccountPtrOutput)
+}
+
+func (o GcpPublisherOutput) Subnetwork() pulumi.StringOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringOutput { return v.Subnetwork }).(pulumi.StringOutput)
+}
+
+func (o GcpPublisherOutput) Tags() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringMapOutput { return v.Tags }).(pulumi.StringMapOutput)
+}
+
+func (o GcpPublisherOutput) TenantUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.TenantUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) WizardPath() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.WizardPath }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) Zone() pulumi.StringOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringOutput { return v.Zone }).(pulumi.StringOutput)
 }
 
 func init() {

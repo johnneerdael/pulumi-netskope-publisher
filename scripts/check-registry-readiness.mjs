@@ -33,6 +33,14 @@ const expectedResourceTokens = [
   "netskope-publisher:index:GcpPublisher",
   "netskope-publisher:index:KubernetesPublisher",
   "netskope-publisher:index:VspherePublisher",
+  "netskope-publisher:index:EsxiPublisher",
+  "netskope-publisher:index:HcloudPublisher",
+  "netskope-publisher:index:NutanixPublisher",
+  "netskope-publisher:index:OpenstackPublisher",
+  "netskope-publisher:index:OvhPublisher",
+  "netskope-publisher:index:ScalewayPublisher",
+  "netskope-publisher:index:OciPublisher",
+  "netskope-publisher:index:AlicloudPublisher",
   "netskope-publisher:index:HypervPublisher",
   "netskope-publisher:index:NetskopeRegistration"
 ];
@@ -43,6 +51,14 @@ const sourceTokens = {
   "src/gcpPublisher.ts": "netskope-publisher:index:GcpPublisher",
   "src/kubernetesPublisher.ts": "netskope-publisher:index:KubernetesPublisher",
   "src/vspherePublisher.ts": "netskope-publisher:index:VspherePublisher",
+  "src/esxiPublisher.ts": "netskope-publisher:index:EsxiPublisher",
+  "src/hcloudPublisher.ts": "netskope-publisher:index:HcloudPublisher",
+  "src/nutanixPublisher.ts": "netskope-publisher:index:NutanixPublisher",
+  "src/openstackPublisher.ts": "netskope-publisher:index:OpenstackPublisher",
+  "src/ovhPublisher.ts": "netskope-publisher:index:OvhPublisher",
+  "src/scalewayPublisher.ts": "netskope-publisher:index:ScalewayPublisher",
+  "src/ociPublisher.ts": "netskope-publisher:index:OciPublisher",
+  "src/alicloudPublisher.ts": "netskope-publisher:index:AlicloudPublisher",
   "src/hypervPublisher.ts": "netskope-publisher:index:HypervPublisher"
 };
 

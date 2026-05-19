@@ -6,9 +6,9 @@ package com.pulumi.netskopepublisher;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
-import com.pulumi.netskopepublisher.inputs.GcpServiceAccountArgs;
-import com.pulumi.netskopepublisher.inputs.GuestNetworkInterfaceArgs;
-import com.pulumi.netskopepublisher.inputs.PublisherRegistrationMapArgs;
+import com.pulumi.netskopepublisher.provider.inputs.GcpServiceAccountArgs;
+import com.pulumi.netskopepublisher.provider.inputs.GuestNetworkInterfaceArgs;
+import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
@@ -23,393 +23,185 @@ public final class GcpPublisherArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final GcpPublisherArgs Empty = new GcpPublisherArgs();
 
-    /**
-     * Netskope API token used for publisher registration.
-     * 
-     */
     @Import(name="apiToken")
-    private @Nullable Output<String> apiToken;
+    private @Nullable String apiToken;
 
-    /**
-     * @return Netskope API token used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> apiToken() {
+    public Optional<String> apiToken() {
         return Optional.ofNullable(this.apiToken);
     }
 
-    /**
-     * Whether to assign public IP addresses.
-     * 
-     */
     @Import(name="assignPublicIp")
-    private @Nullable Output<Boolean> assignPublicIp;
+    private @Nullable Boolean assignPublicIp;
 
-    /**
-     * @return Whether to assign public IP addresses.
-     * 
-     */
-    public Optional<Output<Boolean>> assignPublicIp() {
+    public Optional<Boolean> assignPublicIp() {
         return Optional.ofNullable(this.assignPublicIp);
     }
 
-    /**
-     * Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
-     * 
-     */
     @Import(name="bootstrap")
-    private @Nullable Output<Boolean> bootstrap;
+    private @Nullable Boolean bootstrap;
 
-    /**
-     * @return Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
-     * 
-     */
-    public Optional<Output<Boolean>> bootstrap() {
+    public Optional<Boolean> bootstrap() {
         return Optional.ofNullable(this.bootstrap);
     }
 
-    /**
-     * URL to the Netskope generic bootstrap script.
-     * 
-     */
     @Import(name="bootstrapUrl")
-    private @Nullable Output<String> bootstrapUrl;
+    private @Nullable String bootstrapUrl;
 
-    /**
-     * @return URL to the Netskope generic bootstrap script.
-     * 
-     */
-    public Optional<Output<String>> bootstrapUrl() {
+    public Optional<String> bootstrapUrl() {
         return Optional.ofNullable(this.bootstrapUrl);
     }
 
-    /**
-     * When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-     * 
-     */
     @Import(name="deleteDefaultUser")
-    private @Nullable Output<Boolean> deleteDefaultUser;
+    private @Nullable Boolean deleteDefaultUser;
 
-    /**
-     * @return When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-     * 
-     */
-    public Optional<Output<Boolean>> deleteDefaultUser() {
+    public Optional<Boolean> deleteDefaultUser() {
         return Optional.ofNullable(this.deleteDefaultUser);
     }
 
-    /**
-     * Optional guest OS primary interface override applied with netplan during cloud-init.
-     * 
-     */
     @Import(name="guestNetworkInterface")
     private @Nullable Output<GuestNetworkInterfaceArgs> guestNetworkInterface;
 
-    /**
-     * @return Optional guest OS primary interface override applied with netplan during cloud-init.
-     * 
-     */
     public Optional<Output<GuestNetworkInterfaceArgs>> guestNetworkInterface() {
         return Optional.ofNullable(this.guestNetworkInterface);
     }
 
-    /**
-     * GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
-     * 
-     */
     @Import(name="image", required=true)
-    private Output<String> image;
+    private String image;
 
-    /**
-     * @return GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
-     * 
-     */
-    public Output<String> image() {
+    public String image() {
         return this.image;
     }
 
-    /**
-     * Linux user that owns the Publisher install. Defaults to ubuntu.
-     * 
-     */
     @Import(name="installUser")
-    private @Nullable Output<String> installUser;
+    private @Nullable String installUser;
 
-    /**
-     * @return Linux user that owns the Publisher install. Defaults to ubuntu.
-     * 
-     */
-    public Optional<Output<String>> installUser() {
+    public Optional<String> installUser() {
         return Optional.ofNullable(this.installUser);
     }
 
-    /**
-     * Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-     * 
-     */
     @Import(name="installUserPassword")
-    private @Nullable Output<String> installUserPassword;
+    private @Nullable String installUserPassword;
 
-    /**
-     * @return Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-     * 
-     */
-    public Optional<Output<String>> installUserPassword() {
+    public Optional<String> installUserPassword() {
         return Optional.ofNullable(this.installUserPassword);
     }
 
-    /**
-     * Set true when installUserPassword is already a crypt(3) hash.
-     * 
-     */
     @Import(name="installUserPasswordIsHash")
-    private @Nullable Output<Boolean> installUserPasswordIsHash;
+    private @Nullable Boolean installUserPasswordIsHash;
 
-    /**
-     * @return Set true when installUserPassword is already a crypt(3) hash.
-     * 
-     */
-    public Optional<Output<Boolean>> installUserPasswordIsHash() {
+    public Optional<Boolean> installUserPasswordIsHash() {
         return Optional.ofNullable(this.installUserPasswordIsHash);
     }
 
-    /**
-     * Public SSH keys installed in the install user&#39;s authorized_keys file.
-     * 
-     */
     @Import(name="installUserSshAuthorizedKeys")
     private @Nullable Output<List<String>> installUserSshAuthorizedKeys;
 
-    /**
-     * @return Public SSH keys installed in the install user&#39;s authorized_keys file.
-     * 
-     */
     public Optional<Output<List<String>>> installUserSshAuthorizedKeys() {
         return Optional.ofNullable(this.installUserSshAuthorizedKeys);
     }
 
-    /**
-     * Compute Engine machine type.
-     * 
-     */
     @Import(name="machineType")
-    private @Nullable Output<String> machineType;
+    private @Nullable String machineType;
 
-    /**
-     * @return Compute Engine machine type.
-     * 
-     */
-    public Optional<Output<String>> machineType() {
+    public Optional<String> machineType() {
         return Optional.ofNullable(this.machineType);
     }
 
-    /**
-     * Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
     @Import(name="namePrefix")
-    private @Nullable Output<String> namePrefix;
+    private @Nullable String namePrefix;
 
-    /**
-     * @return Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
-    public Optional<Output<String>> namePrefix() {
+    public Optional<String> namePrefix() {
         return Optional.ofNullable(this.namePrefix);
     }
 
-    /**
-     * Explicit publisher names to create.
-     * 
-     */
     @Import(name="names")
     private @Nullable Output<List<String>> names;
 
-    /**
-     * @return Explicit publisher names to create.
-     * 
-     */
     public Optional<Output<List<String>>> names() {
         return Optional.ofNullable(this.names);
     }
 
-    /**
-     * GCP VPC network self link or name.
-     * 
-     */
     @Import(name="network", required=true)
-    private Output<String> network;
+    private String network;
 
-    /**
-     * @return GCP VPC network self link or name.
-     * 
-     */
-    public Output<String> network() {
+    public String network() {
         return this.network;
     }
 
-    /**
-     * Network tags attached to instances.
-     * 
-     */
     @Import(name="networkTags")
     private @Nullable Output<List<String>> networkTags;
 
-    /**
-     * @return Network tags attached to instances.
-     * 
-     */
     public Optional<Output<List<String>>> networkTags() {
         return Optional.ofNullable(this.networkTags);
     }
 
-    /**
-     * Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
-     * 
-     */
     @Import(name="nonat")
-    private @Nullable Output<Boolean> nonat;
+    private @Nullable Boolean nonat;
 
-    /**
-     * @return Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
-     * 
-     */
-    public Optional<Output<Boolean>> nonat() {
+    public Optional<Boolean> nonat() {
         return Optional.ofNullable(this.nonat);
     }
 
-    /**
-     * GCP project ID.
-     * 
-     */
     @Import(name="project", required=true)
-    private Output<String> project;
+    private String project;
 
-    /**
-     * @return GCP project ID.
-     * 
-     */
-    public Output<String> project() {
+    public String project() {
         return this.project;
     }
 
-    /**
-     * Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
     @Import(name="registrations")
-    private @Nullable Output<PublisherRegistrationMapArgs> registrations;
+    private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
-    /**
-     * @return Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
-    public Optional<Output<PublisherRegistrationMapArgs>> registrations() {
+    public Optional<Output<Map<String,PublisherRegistrationInputArgs>>> registrations() {
         return Optional.ofNullable(this.registrations);
     }
 
-    /**
-     * Number of publishers to create when names are not supplied.
-     * 
-     */
     @Import(name="replicas")
-    private @Nullable Output<Integer> replicas;
+    private @Nullable Integer replicas;
 
-    /**
-     * @return Number of publishers to create when names are not supplied.
-     * 
-     */
-    public Optional<Output<Integer>> replicas() {
+    public Optional<Integer> replicas() {
         return Optional.ofNullable(this.replicas);
     }
 
-    /**
-     * Optional service account assignment.
-     * 
-     */
     @Import(name="serviceAccount")
     private @Nullable Output<GcpServiceAccountArgs> serviceAccount;
 
-    /**
-     * @return Optional service account assignment.
-     * 
-     */
     public Optional<Output<GcpServiceAccountArgs>> serviceAccount() {
         return Optional.ofNullable(this.serviceAccount);
     }
 
-    /**
-     * GCP subnetwork self link or name.
-     * 
-     */
     @Import(name="subnetwork", required=true)
-    private Output<String> subnetwork;
+    private String subnetwork;
 
-    /**
-     * @return GCP subnetwork self link or name.
-     * 
-     */
-    public Output<String> subnetwork() {
+    public String subnetwork() {
         return this.subnetwork;
     }
 
-    /**
-     * Tags applied to supported provider resources.
-     * 
-     */
     @Import(name="tags")
     private @Nullable Output<Map<String,String>> tags;
 
-    /**
-     * @return Tags applied to supported provider resources.
-     * 
-     */
     public Optional<Output<Map<String,String>>> tags() {
         return Optional.ofNullable(this.tags);
     }
 
-    /**
-     * Netskope tenant URL used for publisher registration.
-     * 
-     */
     @Import(name="tenantUrl")
-    private @Nullable Output<String> tenantUrl;
+    private @Nullable String tenantUrl;
 
-    /**
-     * @return Netskope tenant URL used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> tenantUrl() {
+    public Optional<String> tenantUrl() {
         return Optional.ofNullable(this.tenantUrl);
     }
 
-    /**
-     * Netskope publisher registration wizard API path.
-     * 
-     */
     @Import(name="wizardPath")
-    private @Nullable Output<String> wizardPath;
+    private @Nullable String wizardPath;
 
-    /**
-     * @return Netskope publisher registration wizard API path.
-     * 
-     */
-    public Optional<Output<String>> wizardPath() {
+    public Optional<String> wizardPath() {
         return Optional.ofNullable(this.wizardPath);
     }
 
-    /**
-     * GCP zone.
-     * 
-     */
     @Import(name="zone", required=true)
-    private Output<String> zone;
+    private String zone;
 
-    /**
-     * @return GCP zone.
-     * 
-     */
-    public Output<String> zone() {
+    public String zone() {
         return this.zone;
     }
 
@@ -462,580 +254,174 @@ public final class GcpPublisherArgs extends com.pulumi.resources.ResourceArgs {
             $ = new GcpPublisherArgs(Objects.requireNonNull(defaults));
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(@Nullable Output<String> apiToken) {
+        public Builder apiToken(@Nullable String apiToken) {
             $.apiToken = apiToken;
             return this;
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(String apiToken) {
-            return apiToken(Output.of(apiToken));
-        }
-
-        /**
-         * @param assignPublicIp Whether to assign public IP addresses.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder assignPublicIp(@Nullable Output<Boolean> assignPublicIp) {
+        public Builder assignPublicIp(@Nullable Boolean assignPublicIp) {
             $.assignPublicIp = assignPublicIp;
             return this;
         }
 
-        /**
-         * @param assignPublicIp Whether to assign public IP addresses.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder assignPublicIp(Boolean assignPublicIp) {
-            return assignPublicIp(Output.of(assignPublicIp));
-        }
-
-        /**
-         * @param bootstrap Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrap(@Nullable Output<Boolean> bootstrap) {
+        public Builder bootstrap(@Nullable Boolean bootstrap) {
             $.bootstrap = bootstrap;
             return this;
         }
 
-        /**
-         * @param bootstrap Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrap(Boolean bootstrap) {
-            return bootstrap(Output.of(bootstrap));
-        }
-
-        /**
-         * @param bootstrapUrl URL to the Netskope generic bootstrap script.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrapUrl(@Nullable Output<String> bootstrapUrl) {
+        public Builder bootstrapUrl(@Nullable String bootstrapUrl) {
             $.bootstrapUrl = bootstrapUrl;
             return this;
         }
 
-        /**
-         * @param bootstrapUrl URL to the Netskope generic bootstrap script.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrapUrl(String bootstrapUrl) {
-            return bootstrapUrl(Output.of(bootstrapUrl));
-        }
-
-        /**
-         * @param deleteDefaultUser When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder deleteDefaultUser(@Nullable Output<Boolean> deleteDefaultUser) {
+        public Builder deleteDefaultUser(@Nullable Boolean deleteDefaultUser) {
             $.deleteDefaultUser = deleteDefaultUser;
             return this;
         }
 
-        /**
-         * @param deleteDefaultUser When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder deleteDefaultUser(Boolean deleteDefaultUser) {
-            return deleteDefaultUser(Output.of(deleteDefaultUser));
-        }
-
-        /**
-         * @param guestNetworkInterface Optional guest OS primary interface override applied with netplan during cloud-init.
-         * 
-         * @return builder
-         * 
-         */
         public Builder guestNetworkInterface(@Nullable Output<GuestNetworkInterfaceArgs> guestNetworkInterface) {
             $.guestNetworkInterface = guestNetworkInterface;
             return this;
         }
 
-        /**
-         * @param guestNetworkInterface Optional guest OS primary interface override applied with netplan during cloud-init.
-         * 
-         * @return builder
-         * 
-         */
         public Builder guestNetworkInterface(GuestNetworkInterfaceArgs guestNetworkInterface) {
             return guestNetworkInterface(Output.of(guestNetworkInterface));
         }
 
-        /**
-         * @param image GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder image(Output<String> image) {
+        public Builder image(String image) {
             $.image = image;
             return this;
         }
 
-        /**
-         * @param image GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder image(String image) {
-            return image(Output.of(image));
-        }
-
-        /**
-         * @param installUser Linux user that owns the Publisher install. Defaults to ubuntu.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUser(@Nullable Output<String> installUser) {
+        public Builder installUser(@Nullable String installUser) {
             $.installUser = installUser;
             return this;
         }
 
-        /**
-         * @param installUser Linux user that owns the Publisher install. Defaults to ubuntu.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUser(String installUser) {
-            return installUser(Output.of(installUser));
-        }
-
-        /**
-         * @param installUserPassword Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUserPassword(@Nullable Output<String> installUserPassword) {
+        public Builder installUserPassword(@Nullable String installUserPassword) {
             $.installUserPassword = installUserPassword;
             return this;
         }
 
-        /**
-         * @param installUserPassword Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUserPassword(String installUserPassword) {
-            return installUserPassword(Output.of(installUserPassword));
-        }
-
-        /**
-         * @param installUserPasswordIsHash Set true when installUserPassword is already a crypt(3) hash.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUserPasswordIsHash(@Nullable Output<Boolean> installUserPasswordIsHash) {
+        public Builder installUserPasswordIsHash(@Nullable Boolean installUserPasswordIsHash) {
             $.installUserPasswordIsHash = installUserPasswordIsHash;
             return this;
         }
 
-        /**
-         * @param installUserPasswordIsHash Set true when installUserPassword is already a crypt(3) hash.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUserPasswordIsHash(Boolean installUserPasswordIsHash) {
-            return installUserPasswordIsHash(Output.of(installUserPasswordIsHash));
-        }
-
-        /**
-         * @param installUserSshAuthorizedKeys Public SSH keys installed in the install user&#39;s authorized_keys file.
-         * 
-         * @return builder
-         * 
-         */
         public Builder installUserSshAuthorizedKeys(@Nullable Output<List<String>> installUserSshAuthorizedKeys) {
             $.installUserSshAuthorizedKeys = installUserSshAuthorizedKeys;
             return this;
         }
 
-        /**
-         * @param installUserSshAuthorizedKeys Public SSH keys installed in the install user&#39;s authorized_keys file.
-         * 
-         * @return builder
-         * 
-         */
         public Builder installUserSshAuthorizedKeys(List<String> installUserSshAuthorizedKeys) {
             return installUserSshAuthorizedKeys(Output.of(installUserSshAuthorizedKeys));
         }
 
-        /**
-         * @param installUserSshAuthorizedKeys Public SSH keys installed in the install user&#39;s authorized_keys file.
-         * 
-         * @return builder
-         * 
-         */
         public Builder installUserSshAuthorizedKeys(String... installUserSshAuthorizedKeys) {
             return installUserSshAuthorizedKeys(List.of(installUserSshAuthorizedKeys));
         }
 
-        /**
-         * @param machineType Compute Engine machine type.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder machineType(@Nullable Output<String> machineType) {
+        public Builder machineType(@Nullable String machineType) {
             $.machineType = machineType;
             return this;
         }
 
-        /**
-         * @param machineType Compute Engine machine type.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder machineType(String machineType) {
-            return machineType(Output.of(machineType));
-        }
-
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(@Nullable Output<String> namePrefix) {
+        public Builder namePrefix(@Nullable String namePrefix) {
             $.namePrefix = namePrefix;
             return this;
         }
 
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(String namePrefix) {
-            return namePrefix(Output.of(namePrefix));
-        }
-
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(@Nullable Output<List<String>> names) {
             $.names = names;
             return this;
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(List<String> names) {
             return names(Output.of(names));
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(String... names) {
             return names(List.of(names));
         }
 
-        /**
-         * @param network GCP VPC network self link or name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder network(Output<String> network) {
+        public Builder network(String network) {
             $.network = network;
             return this;
         }
 
-        /**
-         * @param network GCP VPC network self link or name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder network(String network) {
-            return network(Output.of(network));
-        }
-
-        /**
-         * @param networkTags Network tags attached to instances.
-         * 
-         * @return builder
-         * 
-         */
         public Builder networkTags(@Nullable Output<List<String>> networkTags) {
             $.networkTags = networkTags;
             return this;
         }
 
-        /**
-         * @param networkTags Network tags attached to instances.
-         * 
-         * @return builder
-         * 
-         */
         public Builder networkTags(List<String> networkTags) {
             return networkTags(Output.of(networkTags));
         }
 
-        /**
-         * @param networkTags Network tags attached to instances.
-         * 
-         * @return builder
-         * 
-         */
         public Builder networkTags(String... networkTags) {
             return networkTags(List.of(networkTags));
         }
 
-        /**
-         * @param nonat Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nonat(@Nullable Output<Boolean> nonat) {
+        public Builder nonat(@Nullable Boolean nonat) {
             $.nonat = nonat;
             return this;
         }
 
-        /**
-         * @param nonat Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nonat(Boolean nonat) {
-            return nonat(Output.of(nonat));
-        }
-
-        /**
-         * @param project GCP project ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder project(Output<String> project) {
+        public Builder project(String project) {
             $.project = project;
             return this;
         }
 
-        /**
-         * @param project GCP project ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder project(String project) {
-            return project(Output.of(project));
-        }
-
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(@Nullable Output<PublisherRegistrationMapArgs> registrations) {
+        public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {
             $.registrations = registrations;
             return this;
         }
 
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(PublisherRegistrationMapArgs registrations) {
+        public Builder registrations(Map<String,PublisherRegistrationInputArgs> registrations) {
             return registrations(Output.of(registrations));
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(@Nullable Output<Integer> replicas) {
+        public Builder replicas(@Nullable Integer replicas) {
             $.replicas = replicas;
             return this;
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(Integer replicas) {
-            return replicas(Output.of(replicas));
-        }
-
-        /**
-         * @param serviceAccount Optional service account assignment.
-         * 
-         * @return builder
-         * 
-         */
         public Builder serviceAccount(@Nullable Output<GcpServiceAccountArgs> serviceAccount) {
             $.serviceAccount = serviceAccount;
             return this;
         }
 
-        /**
-         * @param serviceAccount Optional service account assignment.
-         * 
-         * @return builder
-         * 
-         */
         public Builder serviceAccount(GcpServiceAccountArgs serviceAccount) {
             return serviceAccount(Output.of(serviceAccount));
         }
 
-        /**
-         * @param subnetwork GCP subnetwork self link or name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder subnetwork(Output<String> subnetwork) {
+        public Builder subnetwork(String subnetwork) {
             $.subnetwork = subnetwork;
             return this;
         }
 
-        /**
-         * @param subnetwork GCP subnetwork self link or name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder subnetwork(String subnetwork) {
-            return subnetwork(Output.of(subnetwork));
-        }
-
-        /**
-         * @param tags Tags applied to supported provider resources.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tags(@Nullable Output<Map<String,String>> tags) {
             $.tags = tags;
             return this;
         }
 
-        /**
-         * @param tags Tags applied to supported provider resources.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tags(Map<String,String> tags) {
             return tags(Output.of(tags));
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(@Nullable Output<String> tenantUrl) {
+        public Builder tenantUrl(@Nullable String tenantUrl) {
             $.tenantUrl = tenantUrl;
             return this;
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(String tenantUrl) {
-            return tenantUrl(Output.of(tenantUrl));
-        }
-
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(@Nullable Output<String> wizardPath) {
+        public Builder wizardPath(@Nullable String wizardPath) {
             $.wizardPath = wizardPath;
             return this;
         }
 
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(String wizardPath) {
-            return wizardPath(Output.of(wizardPath));
-        }
-
-        /**
-         * @param zone GCP zone.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder zone(Output<String> zone) {
+        public Builder zone(String zone) {
             $.zone = zone;
             return this;
-        }
-
-        /**
-         * @param zone GCP zone.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder zone(String zone) {
-            return zone(Output.of(zone));
         }
 
         public GcpPublisherArgs build() {

@@ -9,70 +9,35 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.NetskopeRegistrationArgs;
 import com.pulumi.netskopepublisher.Utilities;
-import com.pulumi.netskopepublisher.outputs.PublisherRegistrationMap;
+import com.pulumi.netskopepublisher.provider.outputs.RegistrationRecord;
 import java.lang.String;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Nullable;
 
-/**
- * Stateful Netskope publisher registration resource.
- * 
- */
 @ResourceType(type="netskope-publisher:index:NetskopeRegistration")
 public class NetskopeRegistration extends com.pulumi.resources.CustomResource {
-    /**
-     * Netskope API token used for publisher registration.
-     * 
-     */
     @Export(name="apiToken", refs={String.class}, tree="[0]")
     private Output<String> apiToken;
 
-    /**
-     * @return Netskope API token used for publisher registration.
-     * 
-     */
     public Output<String> apiToken() {
         return this.apiToken;
     }
-    /**
-     * Publisher names registered or reused in Netskope.
-     * 
-     */
     @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
     private Output<List<String>> publisherNames;
 
-    /**
-     * @return Publisher names registered or reused in Netskope.
-     * 
-     */
     public Output<List<String>> publisherNames() {
         return this.publisherNames;
     }
-    /**
-     * Netskope publisher registrations keyed by publisher name.
-     * 
-     */
-    @Export(name="registrations", refs={PublisherRegistrationMap.class}, tree="[0]")
-    private Output<PublisherRegistrationMap> registrations;
+    @Export(name="registrations", refs={Map.class,String.class,RegistrationRecord.class}, tree="[0,1,2]")
+    private Output<Map<String,RegistrationRecord>> registrations;
 
-    /**
-     * @return Netskope publisher registrations keyed by publisher name.
-     * 
-     */
-    public Output<PublisherRegistrationMap> registrations() {
+    public Output<Map<String,RegistrationRecord>> registrations() {
         return this.registrations;
     }
-    /**
-     * Netskope tenant URL used for publisher registration.
-     * 
-     */
     @Export(name="tenantUrl", refs={String.class}, tree="[0]")
     private Output<String> tenantUrl;
 
-    /**
-     * @return Netskope tenant URL used for publisher registration.
-     * 
-     */
     public Output<String> tenantUrl() {
         return this.tenantUrl;
     }

@@ -13,7 +13,7 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import NotRequired, TypedDict, TypeAlias
 from . import _utilities
-from . import outputs
+from . import provider as _provider
 
 __all__ = ['NetskopeRegistrationArgs', 'NetskopeRegistration']
 
@@ -25,10 +25,6 @@ class NetskopeRegistrationArgs:
                  tenant_url: pulumi.Input[_builtins.str]):
         """
         The set of arguments for constructing a NetskopeRegistration resource.
-
-        :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] publisher_names: Publisher names to register or reuse in Netskope.
-        :param pulumi.Input[_builtins.str] tenant_url: Netskope tenant URL used for publisher registration.
         """
         pulumi.set(__self__, "api_token", api_token)
         pulumi.set(__self__, "publisher_names", publisher_names)
@@ -37,9 +33,6 @@ class NetskopeRegistrationArgs:
     @_builtins.property
     @pulumi.getter(name="apiToken")
     def api_token(self) -> pulumi.Input[_builtins.str]:
-        """
-        Netskope API token used for publisher registration.
-        """
         return pulumi.get(self, "api_token")
 
     @api_token.setter
@@ -49,9 +42,6 @@ class NetskopeRegistrationArgs:
     @_builtins.property
     @pulumi.getter(name="publisherNames")
     def publisher_names(self) -> pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]:
-        """
-        Publisher names to register or reuse in Netskope.
-        """
         return pulumi.get(self, "publisher_names")
 
     @publisher_names.setter
@@ -61,9 +51,6 @@ class NetskopeRegistrationArgs:
     @_builtins.property
     @pulumi.getter(name="tenantUrl")
     def tenant_url(self) -> pulumi.Input[_builtins.str]:
-        """
-        Netskope tenant URL used for publisher registration.
-        """
         return pulumi.get(self, "tenant_url")
 
     @tenant_url.setter
@@ -82,14 +69,10 @@ class NetskopeRegistration(pulumi.CustomResource):
                  tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
-        Stateful Netskope publisher registration resource.
-
+        Create a NetskopeRegistration resource with the given unique name, props, and options.
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
-        :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
-        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] publisher_names: Publisher names to register or reuse in Netskope.
-        :param pulumi.Input[_builtins.str] tenant_url: Netskope tenant URL used for publisher registration.
         """
         ...
     @overload
@@ -98,8 +81,7 @@ class NetskopeRegistration(pulumi.CustomResource):
                  args: NetskopeRegistrationArgs,
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
-        Stateful Netskope publisher registration resource.
-
+        Create a NetskopeRegistration resource with the given unique name, props, and options.
 
         :param str resource_name: The name of the resource.
         :param NetskopeRegistrationArgs args: The arguments to use to populate this resource's properties.
@@ -171,32 +153,20 @@ class NetskopeRegistration(pulumi.CustomResource):
     @_builtins.property
     @pulumi.getter(name="apiToken")
     def api_token(self) -> pulumi.Output[_builtins.str]:
-        """
-        Netskope API token used for publisher registration.
-        """
         return pulumi.get(self, "api_token")
 
     @_builtins.property
     @pulumi.getter(name="publisherNames")
     def publisher_names(self) -> pulumi.Output[Sequence[_builtins.str]]:
-        """
-        Publisher names registered or reused in Netskope.
-        """
         return pulumi.get(self, "publisher_names")
 
     @_builtins.property
     @pulumi.getter
-    def registrations(self) -> pulumi.Output['outputs.PublisherRegistrationMap']:
-        """
-        Netskope publisher registrations keyed by publisher name.
-        """
+    def registrations(self) -> pulumi.Output[Mapping[str, '_provider.outputs.RegistrationRecord']]:
         return pulumi.get(self, "registrations")
 
     @_builtins.property
     @pulumi.getter(name="tenantUrl")
     def tenant_url(self) -> pulumi.Output[_builtins.str]:
-        """
-        Netskope tenant URL used for publisher registration.
-        """
         return pulumi.get(self, "tenant_url")
 

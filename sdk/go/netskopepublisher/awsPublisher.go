@@ -9,17 +9,42 @@ import (
 
 	"errors"
 	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/internal"
+	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// Creates one or more Netskope Private Access Publisher EC2 instances and registers them with a Netskope tenant.
 type AwsPublisher struct {
 	pulumi.ResourceState
 
-	// Created publisher names.
-	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
-	// Publisher registration and VM details keyed by name.
-	Publishers PublisherOutputMapPtrOutput `pulumi:"publishers"`
+	AmiId                        pulumi.StringPtrOutput                       `pulumi:"amiId"`
+	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AssociatePublicIpAddress     pulumi.BoolPtrOutput                         `pulumi:"associatePublicIpAddress"`
+	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
+	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
+	DeleteDefaultUser            pulumi.BoolPtrOutput                         `pulumi:"deleteDefaultUser"`
+	EbsOptimized                 pulumi.BoolPtrOutput                         `pulumi:"ebsOptimized"`
+	GuestNetworkInterface        provider.GuestNetworkInterfacePtrOutput      `pulumi:"guestNetworkInterface"`
+	IamInstanceProfile           pulumi.StringPtrOutput                       `pulumi:"iamInstanceProfile"`
+	InstallUser                  pulumi.StringPtrOutput                       `pulumi:"installUser"`
+	InstallUserPassword          pulumi.StringPtrOutput                       `pulumi:"installUserPassword"`
+	InstallUserPasswordIsHash    pulumi.BoolPtrOutput                         `pulumi:"installUserPasswordIsHash"`
+	InstallUserSshAuthorizedKeys pulumi.StringArrayOutput                     `pulumi:"installUserSshAuthorizedKeys"`
+	InstanceType                 pulumi.StringPtrOutput                       `pulumi:"instanceType"`
+	KeyName                      pulumi.StringPtrOutput                       `pulumi:"keyName"`
+	MetadataOptions              provider.MetadataOptionsPtrOutput            `pulumi:"metadataOptions"`
+	Monitoring                   pulumi.BoolPtrOutput                         `pulumi:"monitoring"`
+	NamePrefix                   pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
+	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
+	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
+	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
+	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
+	Replicas                     pulumi.IntPtrOutput                          `pulumi:"replicas"`
+	SecurityGroupIds             pulumi.StringArrayOutput                     `pulumi:"securityGroupIds"`
+	SubnetId                     pulumi.StringOutput                          `pulumi:"subnetId"`
+	Tags                         pulumi.StringMapOutput                       `pulumi:"tags"`
+	TenantUrl                    pulumi.StringPtrOutput                       `pulumi:"tenantUrl"`
+	WizardPath                   pulumi.StringPtrOutput                       `pulumi:"wizardPath"`
 }
 
 // NewAwsPublisher registers a new resource with the given unique name, arguments, and options.
@@ -32,15 +57,18 @@ func NewAwsPublisher(ctx *pulumi.Context,
 	if args.SecurityGroupIds == nil {
 		return nil, errors.New("invalid value for required argument 'SecurityGroupIds'")
 	}
-	if args.SubnetId == nil {
-		return nil, errors.New("invalid value for required argument 'SubnetId'")
-	}
 	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
+		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
 	if args.InstallUserPassword != nil {
-		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(pulumi.StringPtrInput)
+		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"apiToken",
+		"installUserPassword",
+		"publishers",
+	})
+	opts = append(opts, secrets)
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource AwsPublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:AwsPublisher", name, args, &resource, opts...)
@@ -51,118 +79,64 @@ func NewAwsPublisher(ctx *pulumi.Context,
 }
 
 type awsPublisherArgs struct {
-	// Publisher AMI ID.
-	AmiId *string `pulumi:"amiId"`
-	// Netskope API token used for publisher registration.
-	ApiToken *string `pulumi:"apiToken"`
-	// Whether to associate public IP addresses.
-	AssociatePublicIpAddress *bool `pulumi:"associatePublicIpAddress"`
-	// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
-	Bootstrap *bool `pulumi:"bootstrap"`
-	// URL to the Netskope generic bootstrap script.
-	BootstrapUrl *string `pulumi:"bootstrapUrl"`
-	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-	DeleteDefaultUser *bool `pulumi:"deleteDefaultUser"`
-	// Whether to enable EBS optimization.
-	EbsOptimized *bool `pulumi:"ebsOptimized"`
-	// Optional guest OS primary interface override applied with netplan during cloud-init.
-	GuestNetworkInterface *GuestNetworkInterface `pulumi:"guestNetworkInterface"`
-	// Optional IAM instance profile name.
-	IamInstanceProfile *string `pulumi:"iamInstanceProfile"`
-	// Linux user that owns the Publisher install. Defaults to ubuntu.
-	InstallUser *string `pulumi:"installUser"`
-	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-	InstallUserPassword *string `pulumi:"installUserPassword"`
-	// Set true when installUserPassword is already a crypt(3) hash.
-	InstallUserPasswordIsHash *bool `pulumi:"installUserPasswordIsHash"`
-	// Public SSH keys installed in the install user's authorized_keys file.
-	InstallUserSshAuthorizedKeys []string `pulumi:"installUserSshAuthorizedKeys"`
-	// EC2 instance type.
-	InstanceType *string `pulumi:"instanceType"`
-	// Optional EC2 key pair name.
-	KeyName *string `pulumi:"keyName"`
-	// EC2 instance metadata service options.
-	MetadataOptions *MetadataOptions `pulumi:"metadataOptions"`
-	// Whether to enable detailed EC2 monitoring.
-	Monitoring *bool `pulumi:"monitoring"`
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix *string `pulumi:"namePrefix"`
-	// Explicit publisher names to create.
-	Names []string `pulumi:"names"`
-	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
-	Nonat *bool `pulumi:"nonat"`
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations *PublisherRegistrationMap `pulumi:"registrations"`
-	// Number of publishers to create when names are not supplied.
-	Replicas *int `pulumi:"replicas"`
-	// AWS security group IDs attached to publisher instances.
-	SecurityGroupIds []string `pulumi:"securityGroupIds"`
-	// AWS subnet ID for publisher network interfaces.
-	SubnetId string `pulumi:"subnetId"`
-	// Tags applied to supported provider resources.
-	Tags map[string]string `pulumi:"tags"`
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl *string `pulumi:"tenantUrl"`
-	// Netskope publisher registration wizard API path.
-	WizardPath *string `pulumi:"wizardPath"`
+	AmiId                        *string                                        `pulumi:"amiId"`
+	ApiToken                     *string                                        `pulumi:"apiToken"`
+	AssociatePublicIpAddress     *bool                                          `pulumi:"associatePublicIpAddress"`
+	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
+	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
+	DeleteDefaultUser            *bool                                          `pulumi:"deleteDefaultUser"`
+	EbsOptimized                 *bool                                          `pulumi:"ebsOptimized"`
+	GuestNetworkInterface        *provider.GuestNetworkInterface                `pulumi:"guestNetworkInterface"`
+	IamInstanceProfile           *string                                        `pulumi:"iamInstanceProfile"`
+	InstallUser                  *string                                        `pulumi:"installUser"`
+	InstallUserPassword          *string                                        `pulumi:"installUserPassword"`
+	InstallUserPasswordIsHash    *bool                                          `pulumi:"installUserPasswordIsHash"`
+	InstallUserSshAuthorizedKeys []string                                       `pulumi:"installUserSshAuthorizedKeys"`
+	InstanceType                 *string                                        `pulumi:"instanceType"`
+	KeyName                      *string                                        `pulumi:"keyName"`
+	MetadataOptions              *provider.MetadataOptions                      `pulumi:"metadataOptions"`
+	Monitoring                   *bool                                          `pulumi:"monitoring"`
+	NamePrefix                   *string                                        `pulumi:"namePrefix"`
+	Names                        []string                                       `pulumi:"names"`
+	Nonat                        *bool                                          `pulumi:"nonat"`
+	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
+	Replicas                     *int                                           `pulumi:"replicas"`
+	SecurityGroupIds             []string                                       `pulumi:"securityGroupIds"`
+	SubnetId                     string                                         `pulumi:"subnetId"`
+	Tags                         map[string]string                              `pulumi:"tags"`
+	TenantUrl                    *string                                        `pulumi:"tenantUrl"`
+	WizardPath                   *string                                        `pulumi:"wizardPath"`
 }
 
 // The set of arguments for constructing a AwsPublisher resource.
 type AwsPublisherArgs struct {
-	// Publisher AMI ID.
-	AmiId pulumi.StringPtrInput
-	// Netskope API token used for publisher registration.
-	ApiToken pulumi.StringPtrInput
-	// Whether to associate public IP addresses.
-	AssociatePublicIpAddress pulumi.BoolPtrInput
-	// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
-	Bootstrap pulumi.BoolPtrInput
-	// URL to the Netskope generic bootstrap script.
-	BootstrapUrl pulumi.StringPtrInput
-	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-	DeleteDefaultUser pulumi.BoolPtrInput
-	// Whether to enable EBS optimization.
-	EbsOptimized pulumi.BoolPtrInput
-	// Optional guest OS primary interface override applied with netplan during cloud-init.
-	GuestNetworkInterface GuestNetworkInterfacePtrInput
-	// Optional IAM instance profile name.
-	IamInstanceProfile pulumi.StringPtrInput
-	// Linux user that owns the Publisher install. Defaults to ubuntu.
-	InstallUser pulumi.StringPtrInput
-	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-	InstallUserPassword pulumi.StringPtrInput
-	// Set true when installUserPassword is already a crypt(3) hash.
-	InstallUserPasswordIsHash pulumi.BoolPtrInput
-	// Public SSH keys installed in the install user's authorized_keys file.
+	AmiId                        *string
+	ApiToken                     *string
+	AssociatePublicIpAddress     *bool
+	Bootstrap                    *bool
+	BootstrapUrl                 *string
+	DeleteDefaultUser            *bool
+	EbsOptimized                 *bool
+	GuestNetworkInterface        provider.GuestNetworkInterfacePtrInput
+	IamInstanceProfile           *string
+	InstallUser                  *string
+	InstallUserPassword          *string
+	InstallUserPasswordIsHash    *bool
 	InstallUserSshAuthorizedKeys pulumi.StringArrayInput
-	// EC2 instance type.
-	InstanceType pulumi.StringPtrInput
-	// Optional EC2 key pair name.
-	KeyName pulumi.StringPtrInput
-	// EC2 instance metadata service options.
-	MetadataOptions MetadataOptionsPtrInput
-	// Whether to enable detailed EC2 monitoring.
-	Monitoring pulumi.BoolPtrInput
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix pulumi.StringPtrInput
-	// Explicit publisher names to create.
-	Names pulumi.StringArrayInput
-	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
-	Nonat pulumi.BoolPtrInput
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations PublisherRegistrationMapPtrInput
-	// Number of publishers to create when names are not supplied.
-	Replicas pulumi.IntPtrInput
-	// AWS security group IDs attached to publisher instances.
-	SecurityGroupIds pulumi.StringArrayInput
-	// AWS subnet ID for publisher network interfaces.
-	SubnetId pulumi.StringInput
-	// Tags applied to supported provider resources.
-	Tags pulumi.StringMapInput
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl pulumi.StringPtrInput
-	// Netskope publisher registration wizard API path.
-	WizardPath pulumi.StringPtrInput
+	InstanceType                 *string
+	KeyName                      *string
+	MetadataOptions              provider.MetadataOptionsPtrInput
+	Monitoring                   *bool
+	NamePrefix                   *string
+	Names                        pulumi.StringArrayInput
+	Nonat                        *bool
+	Registrations                provider.PublisherRegistrationInputMapInput
+	Replicas                     *int
+	SecurityGroupIds             pulumi.StringArrayInput
+	SubnetId                     string
+	Tags                         pulumi.StringMapInput
+	TenantUrl                    *string
+	WizardPath                   *string
 }
 
 func (AwsPublisherArgs) ElementType() reflect.Type {
@@ -202,14 +176,120 @@ func (o AwsPublisherOutput) ToAwsPublisherOutputWithContext(ctx context.Context)
 	return o
 }
 
-// Created publisher names.
+func (o AwsPublisherOutput) AmiId() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.AmiId }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) ApiToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) AssociatePublicIpAddress() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.AssociatePublicIpAddress }).(pulumi.BoolPtrOutput)
+}
+
+func (o AwsPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.Bootstrap }).(pulumi.BoolPtrOutput)
+}
+
+func (o AwsPublisherOutput) BootstrapUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.BootstrapUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) DeleteDefaultUser() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.DeleteDefaultUser }).(pulumi.BoolPtrOutput)
+}
+
+func (o AwsPublisherOutput) EbsOptimized() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.EbsOptimized }).(pulumi.BoolPtrOutput)
+}
+
+func (o AwsPublisherOutput) GuestNetworkInterface() provider.GuestNetworkInterfacePtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) provider.GuestNetworkInterfacePtrOutput { return v.GuestNetworkInterface }).(provider.GuestNetworkInterfacePtrOutput)
+}
+
+func (o AwsPublisherOutput) IamInstanceProfile() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.IamInstanceProfile }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) InstallUser() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.InstallUser }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) InstallUserPassword() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.InstallUserPassword }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) InstallUserPasswordIsHash() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.InstallUserPasswordIsHash }).(pulumi.BoolPtrOutput)
+}
+
+func (o AwsPublisherOutput) InstallUserSshAuthorizedKeys() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringArrayOutput { return v.InstallUserSshAuthorizedKeys }).(pulumi.StringArrayOutput)
+}
+
+func (o AwsPublisherOutput) InstanceType() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.InstanceType }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) KeyName() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.KeyName }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) MetadataOptions() provider.MetadataOptionsPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) provider.MetadataOptionsPtrOutput { return v.MetadataOptions }).(provider.MetadataOptionsPtrOutput)
+}
+
+func (o AwsPublisherOutput) Monitoring() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.Monitoring }).(pulumi.BoolPtrOutput)
+}
+
+func (o AwsPublisherOutput) NamePrefix() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.NamePrefix }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) Names() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringArrayOutput { return v.Names }).(pulumi.StringArrayOutput)
+}
+
+func (o AwsPublisherOutput) Nonat() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
 func (o AwsPublisherOutput) PublisherNames() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *AwsPublisher) pulumi.StringArrayOutput { return v.PublisherNames }).(pulumi.StringArrayOutput)
 }
 
-// Publisher registration and VM details keyed by name.
-func (o AwsPublisherOutput) Publishers() PublisherOutputMapPtrOutput {
-	return o.ApplyT(func(v *AwsPublisher) PublisherOutputMapPtrOutput { return v.Publishers }).(PublisherOutputMapPtrOutput)
+func (o AwsPublisherOutput) Publishers() pulumi.MapOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.MapOutput { return v.Publishers }).(pulumi.MapOutput)
+}
+
+func (o AwsPublisherOutput) Registrations() provider.PublisherRegistrationInputMapOutput {
+	return o.ApplyT(func(v *AwsPublisher) provider.PublisherRegistrationInputMapOutput { return v.Registrations }).(provider.PublisherRegistrationInputMapOutput)
+}
+
+func (o AwsPublisherOutput) Replicas() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.IntPtrOutput { return v.Replicas }).(pulumi.IntPtrOutput)
+}
+
+func (o AwsPublisherOutput) SecurityGroupIds() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringArrayOutput { return v.SecurityGroupIds }).(pulumi.StringArrayOutput)
+}
+
+func (o AwsPublisherOutput) SubnetId() pulumi.StringOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringOutput { return v.SubnetId }).(pulumi.StringOutput)
+}
+
+func (o AwsPublisherOutput) Tags() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringMapOutput { return v.Tags }).(pulumi.StringMapOutput)
+}
+
+func (o AwsPublisherOutput) TenantUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.TenantUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) WizardPath() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.WizardPath }).(pulumi.StringPtrOutput)
 }
 
 func init() {

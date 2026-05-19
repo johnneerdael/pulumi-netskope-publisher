@@ -6,12 +6,13 @@ package com.pulumi.netskopepublisher;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
-import com.pulumi.netskopepublisher.inputs.HypervHardDriveArgs;
-import com.pulumi.netskopepublisher.inputs.PublisherRegistrationMapArgs;
+import com.pulumi.netskopepublisher.provider.inputs.HypervHardDriveArgs;
+import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -21,273 +22,136 @@ public final class HypervPublisherArgs extends com.pulumi.resources.ResourceArgs
 
     public static final HypervPublisherArgs Empty = new HypervPublisherArgs();
 
-    /**
-     * Netskope API token used for publisher registration.
-     * 
-     */
     @Import(name="apiToken")
-    private @Nullable Output<String> apiToken;
+    private @Nullable String apiToken;
 
-    /**
-     * @return Netskope API token used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> apiToken() {
+    public Optional<String> apiToken() {
         return Optional.ofNullable(this.apiToken);
     }
 
-    /**
-     * Hyper-V automatic start action.
-     * 
-     */
     @Import(name="autoStartAction")
-    private @Nullable Output<String> autoStartAction;
+    private @Nullable String autoStartAction;
 
-    /**
-     * @return Hyper-V automatic start action.
-     * 
-     */
-    public Optional<Output<String>> autoStartAction() {
+    public Optional<String> autoStartAction() {
         return Optional.ofNullable(this.autoStartAction);
     }
 
-    /**
-     * Hyper-V automatic stop action.
-     * 
-     */
     @Import(name="autoStopAction")
-    private @Nullable Output<String> autoStopAction;
+    private @Nullable String autoStopAction;
 
-    /**
-     * @return Hyper-V automatic stop action.
-     * 
-     */
-    public Optional<Output<String>> autoStopAction() {
+    public Optional<String> autoStopAction() {
         return Optional.ofNullable(this.autoStopAction);
     }
 
-    /**
-     * Whether to enable dynamic memory.
-     * 
-     */
     @Import(name="dynamicMemory")
-    private @Nullable Output<Boolean> dynamicMemory;
+    private @Nullable Boolean dynamicMemory;
 
-    /**
-     * @return Whether to enable dynamic memory.
-     * 
-     */
-    public Optional<Output<Boolean>> dynamicMemory() {
+    public Optional<Boolean> dynamicMemory() {
         return Optional.ofNullable(this.dynamicMemory);
     }
 
-    /**
-     * Required opt-in gate for the experimental Hyper-V component.
-     * 
-     */
     @Import(name="enableExperimentalHyperv")
-    private @Nullable Output<Boolean> enableExperimentalHyperv;
+    private @Nullable Boolean enableExperimentalHyperv;
 
-    /**
-     * @return Required opt-in gate for the experimental Hyper-V component.
-     * 
-     */
-    public Optional<Output<Boolean>> enableExperimentalHyperv() {
+    public Optional<Boolean> enableExperimentalHyperv() {
         return Optional.ofNullable(this.enableExperimentalHyperv);
     }
 
-    /**
-     * Hyper-V VM generation.
-     * 
-     */
     @Import(name="generation")
-    private @Nullable Output<Integer> generation;
+    private @Nullable Integer generation;
 
-    /**
-     * @return Hyper-V VM generation.
-     * 
-     */
-    public Optional<Output<Integer>> generation() {
+    public Optional<Integer> generation() {
         return Optional.ofNullable(this.generation);
     }
 
-    /**
-     * Virtual hard disks attached to each VM.
-     * 
-     */
     @Import(name="hardDrives", required=true)
     private Output<List<HypervHardDriveArgs>> hardDrives;
 
-    /**
-     * @return Virtual hard disks attached to each VM.
-     * 
-     */
     public Output<List<HypervHardDriveArgs>> hardDrives() {
         return this.hardDrives;
     }
 
-    /**
-     * Maximum dynamic memory in bytes.
-     * 
-     */
     @Import(name="maximumMemory")
-    private @Nullable Output<Integer> maximumMemory;
+    private @Nullable Integer maximumMemory;
 
-    /**
-     * @return Maximum dynamic memory in bytes.
-     * 
-     */
-    public Optional<Output<Integer>> maximumMemory() {
+    public Optional<Integer> maximumMemory() {
         return Optional.ofNullable(this.maximumMemory);
     }
 
-    /**
-     * Startup memory in bytes.
-     * 
-     */
     @Import(name="memorySize")
-    private @Nullable Output<Integer> memorySize;
+    private @Nullable Integer memorySize;
 
-    /**
-     * @return Startup memory in bytes.
-     * 
-     */
-    public Optional<Output<Integer>> memorySize() {
+    public Optional<Integer> memorySize() {
         return Optional.ofNullable(this.memorySize);
     }
 
-    /**
-     * Minimum dynamic memory in bytes.
-     * 
-     */
     @Import(name="minimumMemory")
-    private @Nullable Output<Integer> minimumMemory;
+    private @Nullable Integer minimumMemory;
 
-    /**
-     * @return Minimum dynamic memory in bytes.
-     * 
-     */
-    public Optional<Output<Integer>> minimumMemory() {
+    public Optional<Integer> minimumMemory() {
         return Optional.ofNullable(this.minimumMemory);
     }
 
-    /**
-     * Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
     @Import(name="namePrefix")
-    private @Nullable Output<String> namePrefix;
+    private @Nullable String namePrefix;
 
-    /**
-     * @return Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
-    public Optional<Output<String>> namePrefix() {
+    public Optional<String> namePrefix() {
         return Optional.ofNullable(this.namePrefix);
     }
 
-    /**
-     * Explicit publisher names to create.
-     * 
-     */
     @Import(name="names")
     private @Nullable Output<List<String>> names;
 
-    /**
-     * @return Explicit publisher names to create.
-     * 
-     */
     public Optional<Output<List<String>>> names() {
         return Optional.ofNullable(this.names);
     }
 
-    /**
-     * Virtual processor count.
-     * 
-     */
     @Import(name="processorCount")
-    private @Nullable Output<Integer> processorCount;
+    private @Nullable Integer processorCount;
 
-    /**
-     * @return Virtual processor count.
-     * 
-     */
-    public Optional<Output<Integer>> processorCount() {
+    public Optional<Integer> processorCount() {
         return Optional.ofNullable(this.processorCount);
     }
 
-    /**
-     * Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
     @Import(name="registrations")
-    private @Nullable Output<PublisherRegistrationMapArgs> registrations;
+    private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
-    /**
-     * @return Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
-    public Optional<Output<PublisherRegistrationMapArgs>> registrations() {
+    public Optional<Output<Map<String,PublisherRegistrationInputArgs>>> registrations() {
         return Optional.ofNullable(this.registrations);
     }
 
-    /**
-     * Number of publishers to create when names are not supplied.
-     * 
-     */
     @Import(name="replicas")
-    private @Nullable Output<Integer> replicas;
+    private @Nullable Integer replicas;
 
-    /**
-     * @return Number of publishers to create when names are not supplied.
-     * 
-     */
-    public Optional<Output<Integer>> replicas() {
+    public Optional<Integer> replicas() {
         return Optional.ofNullable(this.replicas);
     }
 
-    /**
-     * Hyper-V virtual switch name.
-     * 
-     */
     @Import(name="switchName", required=true)
-    private Output<String> switchName;
+    private String switchName;
 
-    /**
-     * @return Hyper-V virtual switch name.
-     * 
-     */
-    public Output<String> switchName() {
+    public String switchName() {
         return this.switchName;
     }
 
-    /**
-     * Netskope tenant URL used for publisher registration.
-     * 
-     */
-    @Import(name="tenantUrl")
-    private @Nullable Output<String> tenantUrl;
+    @Import(name="tags")
+    private @Nullable Output<Map<String,String>> tags;
 
-    /**
-     * @return Netskope tenant URL used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> tenantUrl() {
+    public Optional<Output<Map<String,String>>> tags() {
+        return Optional.ofNullable(this.tags);
+    }
+
+    @Import(name="tenantUrl")
+    private @Nullable String tenantUrl;
+
+    public Optional<String> tenantUrl() {
         return Optional.ofNullable(this.tenantUrl);
     }
 
-    /**
-     * Netskope publisher registration wizard API path.
-     * 
-     */
     @Import(name="wizardPath")
-    private @Nullable Output<String> wizardPath;
+    private @Nullable String wizardPath;
 
-    /**
-     * @return Netskope publisher registration wizard API path.
-     * 
-     */
-    public Optional<Output<String>> wizardPath() {
+    public Optional<String> wizardPath() {
         return Optional.ofNullable(this.wizardPath);
     }
 
@@ -310,6 +174,7 @@ public final class HypervPublisherArgs extends com.pulumi.resources.ResourceArgs
         this.registrations = $.registrations;
         this.replicas = $.replicas;
         this.switchName = $.switchName;
+        this.tags = $.tags;
         this.tenantUrl = $.tenantUrl;
         this.wizardPath = $.wizardPath;
     }
@@ -332,402 +197,123 @@ public final class HypervPublisherArgs extends com.pulumi.resources.ResourceArgs
             $ = new HypervPublisherArgs(Objects.requireNonNull(defaults));
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(@Nullable Output<String> apiToken) {
+        public Builder apiToken(@Nullable String apiToken) {
             $.apiToken = apiToken;
             return this;
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(String apiToken) {
-            return apiToken(Output.of(apiToken));
-        }
-
-        /**
-         * @param autoStartAction Hyper-V automatic start action.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder autoStartAction(@Nullable Output<String> autoStartAction) {
+        public Builder autoStartAction(@Nullable String autoStartAction) {
             $.autoStartAction = autoStartAction;
             return this;
         }
 
-        /**
-         * @param autoStartAction Hyper-V automatic start action.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder autoStartAction(String autoStartAction) {
-            return autoStartAction(Output.of(autoStartAction));
-        }
-
-        /**
-         * @param autoStopAction Hyper-V automatic stop action.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder autoStopAction(@Nullable Output<String> autoStopAction) {
+        public Builder autoStopAction(@Nullable String autoStopAction) {
             $.autoStopAction = autoStopAction;
             return this;
         }
 
-        /**
-         * @param autoStopAction Hyper-V automatic stop action.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder autoStopAction(String autoStopAction) {
-            return autoStopAction(Output.of(autoStopAction));
-        }
-
-        /**
-         * @param dynamicMemory Whether to enable dynamic memory.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder dynamicMemory(@Nullable Output<Boolean> dynamicMemory) {
+        public Builder dynamicMemory(@Nullable Boolean dynamicMemory) {
             $.dynamicMemory = dynamicMemory;
             return this;
         }
 
-        /**
-         * @param dynamicMemory Whether to enable dynamic memory.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder dynamicMemory(Boolean dynamicMemory) {
-            return dynamicMemory(Output.of(dynamicMemory));
-        }
-
-        /**
-         * @param enableExperimentalHyperv Required opt-in gate for the experimental Hyper-V component.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder enableExperimentalHyperv(@Nullable Output<Boolean> enableExperimentalHyperv) {
+        public Builder enableExperimentalHyperv(@Nullable Boolean enableExperimentalHyperv) {
             $.enableExperimentalHyperv = enableExperimentalHyperv;
             return this;
         }
 
-        /**
-         * @param enableExperimentalHyperv Required opt-in gate for the experimental Hyper-V component.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder enableExperimentalHyperv(Boolean enableExperimentalHyperv) {
-            return enableExperimentalHyperv(Output.of(enableExperimentalHyperv));
-        }
-
-        /**
-         * @param generation Hyper-V VM generation.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder generation(@Nullable Output<Integer> generation) {
+        public Builder generation(@Nullable Integer generation) {
             $.generation = generation;
             return this;
         }
 
-        /**
-         * @param generation Hyper-V VM generation.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder generation(Integer generation) {
-            return generation(Output.of(generation));
-        }
-
-        /**
-         * @param hardDrives Virtual hard disks attached to each VM.
-         * 
-         * @return builder
-         * 
-         */
         public Builder hardDrives(Output<List<HypervHardDriveArgs>> hardDrives) {
             $.hardDrives = hardDrives;
             return this;
         }
 
-        /**
-         * @param hardDrives Virtual hard disks attached to each VM.
-         * 
-         * @return builder
-         * 
-         */
         public Builder hardDrives(List<HypervHardDriveArgs> hardDrives) {
             return hardDrives(Output.of(hardDrives));
         }
 
-        /**
-         * @param hardDrives Virtual hard disks attached to each VM.
-         * 
-         * @return builder
-         * 
-         */
         public Builder hardDrives(HypervHardDriveArgs... hardDrives) {
             return hardDrives(List.of(hardDrives));
         }
 
-        /**
-         * @param maximumMemory Maximum dynamic memory in bytes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder maximumMemory(@Nullable Output<Integer> maximumMemory) {
+        public Builder maximumMemory(@Nullable Integer maximumMemory) {
             $.maximumMemory = maximumMemory;
             return this;
         }
 
-        /**
-         * @param maximumMemory Maximum dynamic memory in bytes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder maximumMemory(Integer maximumMemory) {
-            return maximumMemory(Output.of(maximumMemory));
-        }
-
-        /**
-         * @param memorySize Startup memory in bytes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder memorySize(@Nullable Output<Integer> memorySize) {
+        public Builder memorySize(@Nullable Integer memorySize) {
             $.memorySize = memorySize;
             return this;
         }
 
-        /**
-         * @param memorySize Startup memory in bytes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder memorySize(Integer memorySize) {
-            return memorySize(Output.of(memorySize));
-        }
-
-        /**
-         * @param minimumMemory Minimum dynamic memory in bytes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder minimumMemory(@Nullable Output<Integer> minimumMemory) {
+        public Builder minimumMemory(@Nullable Integer minimumMemory) {
             $.minimumMemory = minimumMemory;
             return this;
         }
 
-        /**
-         * @param minimumMemory Minimum dynamic memory in bytes.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder minimumMemory(Integer minimumMemory) {
-            return minimumMemory(Output.of(minimumMemory));
-        }
-
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(@Nullable Output<String> namePrefix) {
+        public Builder namePrefix(@Nullable String namePrefix) {
             $.namePrefix = namePrefix;
             return this;
         }
 
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(String namePrefix) {
-            return namePrefix(Output.of(namePrefix));
-        }
-
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(@Nullable Output<List<String>> names) {
             $.names = names;
             return this;
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(List<String> names) {
             return names(Output.of(names));
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(String... names) {
             return names(List.of(names));
         }
 
-        /**
-         * @param processorCount Virtual processor count.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder processorCount(@Nullable Output<Integer> processorCount) {
+        public Builder processorCount(@Nullable Integer processorCount) {
             $.processorCount = processorCount;
             return this;
         }
 
-        /**
-         * @param processorCount Virtual processor count.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder processorCount(Integer processorCount) {
-            return processorCount(Output.of(processorCount));
-        }
-
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(@Nullable Output<PublisherRegistrationMapArgs> registrations) {
+        public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {
             $.registrations = registrations;
             return this;
         }
 
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(PublisherRegistrationMapArgs registrations) {
+        public Builder registrations(Map<String,PublisherRegistrationInputArgs> registrations) {
             return registrations(Output.of(registrations));
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(@Nullable Output<Integer> replicas) {
+        public Builder replicas(@Nullable Integer replicas) {
             $.replicas = replicas;
             return this;
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(Integer replicas) {
-            return replicas(Output.of(replicas));
-        }
-
-        /**
-         * @param switchName Hyper-V virtual switch name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder switchName(Output<String> switchName) {
+        public Builder switchName(String switchName) {
             $.switchName = switchName;
             return this;
         }
 
-        /**
-         * @param switchName Hyper-V virtual switch name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder switchName(String switchName) {
-            return switchName(Output.of(switchName));
+        public Builder tags(@Nullable Output<Map<String,String>> tags) {
+            $.tags = tags;
+            return this;
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(@Nullable Output<String> tenantUrl) {
+        public Builder tags(Map<String,String> tags) {
+            return tags(Output.of(tags));
+        }
+
+        public Builder tenantUrl(@Nullable String tenantUrl) {
             $.tenantUrl = tenantUrl;
             return this;
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(String tenantUrl) {
-            return tenantUrl(Output.of(tenantUrl));
-        }
-
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(@Nullable Output<String> wizardPath) {
+        public Builder wizardPath(@Nullable String wizardPath) {
             $.wizardPath = wizardPath;
             return this;
-        }
-
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(String wizardPath) {
-            return wizardPath(Output.of(wizardPath));
         }
 
         public HypervPublisherArgs build() {

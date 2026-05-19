@@ -9,59 +9,149 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.KubernetesPublisherArgs;
 import com.pulumi.netskopepublisher.Utilities;
-import com.pulumi.netskopepublisher.outputs.KubernetesPublisherOutputMap;
+import com.pulumi.netskopepublisher.provider.outputs.PublisherRegistrationInput;
+import java.lang.Boolean;
+import java.lang.Integer;
+import java.lang.Object;
 import java.lang.String;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-/**
- * Installs Netskope Private Access Publishers on Kubernetes with the kubernetes-netskope-publisher Helm chart.
- * 
- */
 @ResourceType(type="netskope-publisher:index:KubernetesPublisher")
 public class KubernetesPublisher extends com.pulumi.resources.ComponentResource {
-    /**
-     * Helm release names created in the cluster.
-     * 
-     */
+    @Export(name="apiToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> apiToken;
+
+    public Output<Optional<String>> apiToken() {
+        return Codegen.optional(this.apiToken);
+    }
+    @Export(name="chartRepository", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> chartRepository;
+
+    public Output<Optional<String>> chartRepository() {
+        return Codegen.optional(this.chartRepository);
+    }
+    @Export(name="chartValues", refs={Map.class,String.class,Object.class}, tree="[0,1,2]")
+    private Output</* @Nullable */ Map<String,Object>> chartValues;
+
+    public Output<Optional<Map<String,Object>>> chartValues() {
+        return Codegen.optional(this.chartValues);
+    }
+    @Export(name="chartVersion", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> chartVersion;
+
+    public Output<Optional<String>> chartVersion() {
+        return Codegen.optional(this.chartVersion);
+    }
+    @Export(name="enrollmentMode", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> enrollmentMode;
+
+    public Output<Optional<String>> enrollmentMode() {
+        return Codegen.optional(this.enrollmentMode);
+    }
     @Export(name="helmReleaseNames", refs={List.class,String.class}, tree="[0,1]")
-    private Output</* @Nullable */ List<String>> helmReleaseNames;
+    private Output<List<String>> helmReleaseNames;
 
-    /**
-     * @return Helm release names created in the cluster.
-     * 
-     */
-    public Output<Optional<List<String>>> helmReleaseNames() {
-        return Codegen.optional(this.helmReleaseNames);
+    public Output<List<String>> helmReleaseNames() {
+        return this.helmReleaseNames;
     }
-    /**
-     * Derived publisher names.
-     * 
-     */
+    @Export(name="hpaEnabled", refs={Boolean.class}, tree="[0]")
+    private Output</* @Nullable */ Boolean> hpaEnabled;
+
+    public Output<Optional<Boolean>> hpaEnabled() {
+        return Codegen.optional(this.hpaEnabled);
+    }
+    @Export(name="hpaMaxReplicas", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> hpaMaxReplicas;
+
+    public Output<Optional<Integer>> hpaMaxReplicas() {
+        return Codegen.optional(this.hpaMaxReplicas);
+    }
+    @Export(name="hpaMinReplicas", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> hpaMinReplicas;
+
+    public Output<Optional<Integer>> hpaMinReplicas() {
+        return Codegen.optional(this.hpaMinReplicas);
+    }
+    @Export(name="imageRepository", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> imageRepository;
+
+    public Output<Optional<String>> imageRepository() {
+        return Codegen.optional(this.imageRepository);
+    }
+    @Export(name="imageTag", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> imageTag;
+
+    public Output<Optional<String>> imageTag() {
+        return Codegen.optional(this.imageTag);
+    }
+    @Export(name="namePrefix", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> namePrefix;
+
+    public Output<Optional<String>> namePrefix() {
+        return Codegen.optional(this.namePrefix);
+    }
+    @Export(name="names", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> names;
+
+    public Output<Optional<List<String>>> names() {
+        return Codegen.optional(this.names);
+    }
+    @Export(name="namespace", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> namespace;
+
+    public Output<Optional<String>> namespace() {
+        return Codegen.optional(this.namespace);
+    }
     @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
-    private Output</* @Nullable */ List<String>> publisherNames;
+    private Output<List<String>> publisherNames;
 
-    /**
-     * @return Derived publisher names.
-     * 
-     */
-    public Output<Optional<List<String>>> publisherNames() {
-        return Codegen.optional(this.publisherNames);
+    public Output<List<String>> publisherNames() {
+        return this.publisherNames;
     }
-    /**
-     * Publisher registration and Helm release details keyed by publisher or release name.
-     * 
-     */
-    @Export(name="publishers", refs={KubernetesPublisherOutputMap.class}, tree="[0]")
-    private Output</* @Nullable */ KubernetesPublisherOutputMap> publishers;
+    @Export(name="publishers", refs={Map.class,String.class,Object.class}, tree="[0,1,2]")
+    private Output<Map<String,Object>> publishers;
 
-    /**
-     * @return Publisher registration and Helm release details keyed by publisher or release name.
-     * 
-     */
-    public Output<Optional<KubernetesPublisherOutputMap>> publishers() {
-        return Codegen.optional(this.publishers);
+    public Output<Map<String,Object>> publishers() {
+        return this.publishers;
+    }
+    @Export(name="registrations", refs={Map.class,String.class,PublisherRegistrationInput.class}, tree="[0,1,2]")
+    private Output</* @Nullable */ Map<String,PublisherRegistrationInput>> registrations;
+
+    public Output<Optional<Map<String,PublisherRegistrationInput>>> registrations() {
+        return Codegen.optional(this.registrations);
+    }
+    @Export(name="replicas", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> replicas;
+
+    public Output<Optional<Integer>> replicas() {
+        return Codegen.optional(this.replicas);
+    }
+    @Export(name="tags", refs={Map.class,String.class}, tree="[0,1,1]")
+    private Output</* @Nullable */ Map<String,String>> tags;
+
+    public Output<Optional<Map<String,String>>> tags() {
+        return Codegen.optional(this.tags);
+    }
+    @Export(name="tenantUrl", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> tenantUrl;
+
+    public Output<Optional<String>> tenantUrl() {
+        return Codegen.optional(this.tenantUrl);
+    }
+    @Export(name="wizardPath", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> wizardPath;
+
+    public Output<Optional<String>> wizardPath() {
+        return Codegen.optional(this.wizardPath);
+    }
+    @Export(name="workloadType", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> workloadType;
+
+    public Output<Optional<String>> workloadType() {
+        return Codegen.optional(this.workloadType);
     }
 
     /**
@@ -100,6 +190,10 @@ public class KubernetesPublisher extends com.pulumi.resources.ComponentResource 
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
+            .additionalSecretOutputs(List.of(
+                "apiToken",
+                "publishers"
+            ))
             .build();
         return com.pulumi.resources.ComponentResourceOptions.merge(defaultOptions, options, id);
     }

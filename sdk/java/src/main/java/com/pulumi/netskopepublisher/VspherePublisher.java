@@ -9,45 +9,130 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.Utilities;
 import com.pulumi.netskopepublisher.VspherePublisherArgs;
-import com.pulumi.netskopepublisher.outputs.PublisherOutputMap;
+import com.pulumi.netskopepublisher.provider.outputs.PublisherRegistrationInput;
+import java.lang.Integer;
+import java.lang.Object;
 import java.lang.String;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
-/**
- * Creates one or more Netskope Private Access Publisher vSphere virtual machines and registers them with a Netskope tenant.
- * 
- */
 @ResourceType(type="netskope-publisher:index:VspherePublisher")
 public class VspherePublisher extends com.pulumi.resources.ComponentResource {
-    /**
-     * Created publisher names.
-     * 
-     */
-    @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
-    private Output</* @Nullable */ List<String>> publisherNames;
+    @Export(name="apiToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> apiToken;
 
-    /**
-     * @return Created publisher names.
-     * 
-     */
-    public Output<Optional<List<String>>> publisherNames() {
-        return Codegen.optional(this.publisherNames);
+    public Output<Optional<String>> apiToken() {
+        return Codegen.optional(this.apiToken);
     }
-    /**
-     * Publisher registration and VM details keyed by name.
-     * 
-     */
-    @Export(name="publishers", refs={PublisherOutputMap.class}, tree="[0]")
-    private Output</* @Nullable */ PublisherOutputMap> publishers;
+    @Export(name="cluster", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> cluster;
 
-    /**
-     * @return Publisher registration and VM details keyed by name.
-     * 
-     */
-    public Output<Optional<PublisherOutputMap>> publishers() {
-        return Codegen.optional(this.publishers);
+    public Output<Optional<String>> cluster() {
+        return Codegen.optional(this.cluster);
+    }
+    @Export(name="datacenter", refs={String.class}, tree="[0]")
+    private Output<String> datacenter;
+
+    public Output<String> datacenter() {
+        return this.datacenter;
+    }
+    @Export(name="datastore", refs={String.class}, tree="[0]")
+    private Output<String> datastore;
+
+    public Output<String> datastore() {
+        return this.datastore;
+    }
+    @Export(name="folder", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> folder;
+
+    public Output<Optional<String>> folder() {
+        return Codegen.optional(this.folder);
+    }
+    @Export(name="host", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> host;
+
+    public Output<Optional<String>> host() {
+        return Codegen.optional(this.host);
+    }
+    @Export(name="memory", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> memory;
+
+    public Output<Optional<Integer>> memory() {
+        return Codegen.optional(this.memory);
+    }
+    @Export(name="namePrefix", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> namePrefix;
+
+    public Output<Optional<String>> namePrefix() {
+        return Codegen.optional(this.namePrefix);
+    }
+    @Export(name="names", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> names;
+
+    public Output<Optional<List<String>>> names() {
+        return Codegen.optional(this.names);
+    }
+    @Export(name="networkName", refs={String.class}, tree="[0]")
+    private Output<String> networkName;
+
+    public Output<String> networkName() {
+        return this.networkName;
+    }
+    @Export(name="numCpus", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> numCpus;
+
+    public Output<Optional<Integer>> numCpus() {
+        return Codegen.optional(this.numCpus);
+    }
+    @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
+    private Output<List<String>> publisherNames;
+
+    public Output<List<String>> publisherNames() {
+        return this.publisherNames;
+    }
+    @Export(name="publishers", refs={Map.class,String.class,Object.class}, tree="[0,1,2]")
+    private Output<Map<String,Object>> publishers;
+
+    public Output<Map<String,Object>> publishers() {
+        return this.publishers;
+    }
+    @Export(name="registrations", refs={Map.class,String.class,PublisherRegistrationInput.class}, tree="[0,1,2]")
+    private Output</* @Nullable */ Map<String,PublisherRegistrationInput>> registrations;
+
+    public Output<Optional<Map<String,PublisherRegistrationInput>>> registrations() {
+        return Codegen.optional(this.registrations);
+    }
+    @Export(name="replicas", refs={Integer.class}, tree="[0]")
+    private Output</* @Nullable */ Integer> replicas;
+
+    public Output<Optional<Integer>> replicas() {
+        return Codegen.optional(this.replicas);
+    }
+    @Export(name="tags", refs={Map.class,String.class}, tree="[0,1,1]")
+    private Output</* @Nullable */ Map<String,String>> tags;
+
+    public Output<Optional<Map<String,String>>> tags() {
+        return Codegen.optional(this.tags);
+    }
+    @Export(name="templateName", refs={String.class}, tree="[0]")
+    private Output<String> templateName;
+
+    public Output<String> templateName() {
+        return this.templateName;
+    }
+    @Export(name="tenantUrl", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> tenantUrl;
+
+    public Output<Optional<String>> tenantUrl() {
+        return Codegen.optional(this.tenantUrl);
+    }
+    @Export(name="wizardPath", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> wizardPath;
+
+    public Output<Optional<String>> wizardPath() {
+        return Codegen.optional(this.wizardPath);
     }
 
     /**
@@ -86,6 +171,10 @@ public class VspherePublisher extends com.pulumi.resources.ComponentResource {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
+            .additionalSecretOutputs(List.of(
+                "apiToken",
+                "publishers"
+            ))
             .build();
         return com.pulumi.resources.ComponentResourceOptions.merge(defaultOptions, options, id);
     }

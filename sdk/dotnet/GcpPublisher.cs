@@ -9,23 +9,92 @@ using Pulumi.Serialization;
 
 namespace Pulumi.NetskopePublisher
 {
-    /// <summary>
-    /// Creates one or more Netskope Private Access Publisher Google Compute Engine instances and registers them with a Netskope tenant.
-    /// </summary>
     [NetskopePublisherResourceType("netskope-publisher:index:GcpPublisher")]
     public partial class GcpPublisher : global::Pulumi.ComponentResource
     {
-        /// <summary>
-        /// Created publisher names.
-        /// </summary>
+        [Output("apiToken")]
+        public Output<string?> ApiToken { get; private set; } = null!;
+
+        [Output("assignPublicIp")]
+        public Output<bool?> AssignPublicIp { get; private set; } = null!;
+
+        [Output("bootstrap")]
+        public Output<bool?> Bootstrap { get; private set; } = null!;
+
+        [Output("bootstrapUrl")]
+        public Output<string?> BootstrapUrl { get; private set; } = null!;
+
+        [Output("deleteDefaultUser")]
+        public Output<bool?> DeleteDefaultUser { get; private set; } = null!;
+
+        [Output("guestNetworkInterface")]
+        public Output<Pulumi.NetskopePublisher.Provider.Outputs.GuestNetworkInterface?> GuestNetworkInterface { get; private set; } = null!;
+
+        [Output("image")]
+        public Output<string> Image { get; private set; } = null!;
+
+        [Output("installUser")]
+        public Output<string?> InstallUser { get; private set; } = null!;
+
+        [Output("installUserPassword")]
+        public Output<string?> InstallUserPassword { get; private set; } = null!;
+
+        [Output("installUserPasswordIsHash")]
+        public Output<bool?> InstallUserPasswordIsHash { get; private set; } = null!;
+
+        [Output("installUserSshAuthorizedKeys")]
+        public Output<ImmutableArray<string>> InstallUserSshAuthorizedKeys { get; private set; } = null!;
+
+        [Output("machineType")]
+        public Output<string?> MachineType { get; private set; } = null!;
+
+        [Output("namePrefix")]
+        public Output<string?> NamePrefix { get; private set; } = null!;
+
+        [Output("names")]
+        public Output<ImmutableArray<string>> Names { get; private set; } = null!;
+
+        [Output("network")]
+        public Output<string> Network { get; private set; } = null!;
+
+        [Output("networkTags")]
+        public Output<ImmutableArray<string>> NetworkTags { get; private set; } = null!;
+
+        [Output("nonat")]
+        public Output<bool?> Nonat { get; private set; } = null!;
+
+        [Output("project")]
+        public Output<string> Project { get; private set; } = null!;
+
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
-        /// <summary>
-        /// Publisher registration and VM details keyed by name.
-        /// </summary>
         [Output("publishers")]
-        public Output<Outputs.PublisherOutputMap?> Publishers { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, object>> Publishers { get; private set; } = null!;
+
+        [Output("registrations")]
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
+
+        [Output("replicas")]
+        public Output<int?> Replicas { get; private set; } = null!;
+
+        [Output("serviceAccount")]
+        public Output<Pulumi.NetskopePublisher.Provider.Outputs.GcpServiceAccount?> ServiceAccount { get; private set; } = null!;
+
+        [Output("subnetwork")]
+        public Output<string> Subnetwork { get; private set; } = null!;
+
+        [Output("tags")]
+        public Output<ImmutableDictionary<string, string>?> Tags { get; private set; } = null!;
+
+        [Output("tenantUrl")]
+        public Output<string?> TenantUrl { get; private set; } = null!;
+
+        [Output("wizardPath")]
+        public Output<string?> WizardPath { get; private set; } = null!;
+
+        [Output("zone")]
+        public Output<string> Zone { get; private set; } = null!;
 
 
         /// <summary>
@@ -46,6 +115,12 @@ namespace Pulumi.NetskopePublisher
             {
                 Version = Utilities.Version,
                 PluginDownloadURL = "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
+                AdditionalSecretOutputs =
+                {
+                    "apiToken",
+                    "installUserPassword",
+                    "publishers",
+                },
             };
             var merged = ComponentResourceOptions.Merge(defaultOptions, options);
             // Override the ID if one was specified for consistency with other language SDKs.
@@ -57,204 +132,117 @@ namespace Pulumi.NetskopePublisher
     public sealed class GcpPublisherArgs : global::Pulumi.ResourceArgs
     {
         [Input("apiToken")]
-        private Input<string>? _apiToken;
-
-        /// <summary>
-        /// Netskope API token used for publisher registration.
-        /// </summary>
-        public Input<string>? ApiToken
+        private string? _apiToken;
+        public string? ApiToken
         {
             get => _apiToken;
-            set
-            {
-                var emptySecret = Output.CreateSecret(0);
-                _apiToken = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
-            }
+            set => _apiToken = value;
         }
 
-        /// <summary>
-        /// Whether to assign public IP addresses.
-        /// </summary>
         [Input("assignPublicIp")]
-        public Input<bool>? AssignPublicIp { get; set; }
+        public bool? AssignPublicIp { get; set; }
 
-        /// <summary>
-        /// Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
-        /// </summary>
         [Input("bootstrap")]
-        public Input<bool>? Bootstrap { get; set; }
+        public bool? Bootstrap { get; set; }
 
-        /// <summary>
-        /// URL to the Netskope generic bootstrap script.
-        /// </summary>
         [Input("bootstrapUrl")]
-        public Input<string>? BootstrapUrl { get; set; }
+        public string? BootstrapUrl { get; set; }
 
-        /// <summary>
-        /// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-        /// </summary>
         [Input("deleteDefaultUser")]
-        public Input<bool>? DeleteDefaultUser { get; set; }
+        public bool? DeleteDefaultUser { get; set; }
 
-        /// <summary>
-        /// Optional guest OS primary interface override applied with netplan during cloud-init.
-        /// </summary>
         [Input("guestNetworkInterface")]
-        public Input<Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
+        public Input<Pulumi.NetskopePublisher.Provider.Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
 
-        /// <summary>
-        /// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
-        /// </summary>
         [Input("image", required: true)]
-        public Input<string> Image { get; set; } = null!;
+        public string Image { get; set; } = null!;
 
-        /// <summary>
-        /// Linux user that owns the Publisher install. Defaults to ubuntu.
-        /// </summary>
         [Input("installUser")]
-        public Input<string>? InstallUser { get; set; }
+        public string? InstallUser { get; set; }
 
         [Input("installUserPassword")]
-        private Input<string>? _installUserPassword;
-
-        /// <summary>
-        /// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-        /// </summary>
-        public Input<string>? InstallUserPassword
+        private string? _installUserPassword;
+        public string? InstallUserPassword
         {
             get => _installUserPassword;
-            set
-            {
-                var emptySecret = Output.CreateSecret(0);
-                _installUserPassword = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
-            }
+            set => _installUserPassword = value;
         }
 
-        /// <summary>
-        /// Set true when installUserPassword is already a crypt(3) hash.
-        /// </summary>
         [Input("installUserPasswordIsHash")]
-        public Input<bool>? InstallUserPasswordIsHash { get; set; }
+        public bool? InstallUserPasswordIsHash { get; set; }
 
         [Input("installUserSshAuthorizedKeys")]
         private InputList<string>? _installUserSshAuthorizedKeys;
-
-        /// <summary>
-        /// Public SSH keys installed in the install user's authorized_keys file.
-        /// </summary>
         public InputList<string> InstallUserSshAuthorizedKeys
         {
             get => _installUserSshAuthorizedKeys ?? (_installUserSshAuthorizedKeys = new InputList<string>());
             set => _installUserSshAuthorizedKeys = value;
         }
 
-        /// <summary>
-        /// Compute Engine machine type.
-        /// </summary>
         [Input("machineType")]
-        public Input<string>? MachineType { get; set; }
+        public string? MachineType { get; set; }
 
-        /// <summary>
-        /// Prefix used to derive publisher names when explicit names are not supplied.
-        /// </summary>
         [Input("namePrefix")]
-        public Input<string>? NamePrefix { get; set; }
+        public string? NamePrefix { get; set; }
 
         [Input("names")]
         private InputList<string>? _names;
-
-        /// <summary>
-        /// Explicit publisher names to create.
-        /// </summary>
         public InputList<string> Names
         {
             get => _names ?? (_names = new InputList<string>());
             set => _names = value;
         }
 
-        /// <summary>
-        /// GCP VPC network self link or name.
-        /// </summary>
         [Input("network", required: true)]
-        public Input<string> Network { get; set; } = null!;
+        public string Network { get; set; } = null!;
 
         [Input("networkTags")]
         private InputList<string>? _networkTags;
-
-        /// <summary>
-        /// Network tags attached to instances.
-        /// </summary>
         public InputList<string> NetworkTags
         {
             get => _networkTags ?? (_networkTags = new InputList<string>());
             set => _networkTags = value;
         }
 
-        /// <summary>
-        /// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU.
-        /// </summary>
         [Input("nonat")]
-        public Input<bool>? Nonat { get; set; }
+        public bool? Nonat { get; set; }
 
-        /// <summary>
-        /// GCP project ID.
-        /// </summary>
         [Input("project", required: true)]
-        public Input<string> Project { get; set; } = null!;
+        public string Project { get; set; } = null!;
 
-        /// <summary>
-        /// Pre-created Netskope publisher registrations keyed by publisher name.
-        /// </summary>
         [Input("registrations")]
-        public Input<Inputs.PublisherRegistrationMapArgs>? Registrations { get; set; }
+        private InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>? _registrations;
+        public InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs> Registrations
+        {
+            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>());
+            set => _registrations = value;
+        }
 
-        /// <summary>
-        /// Number of publishers to create when names are not supplied.
-        /// </summary>
         [Input("replicas")]
-        public Input<int>? Replicas { get; set; }
+        public int? Replicas { get; set; }
 
-        /// <summary>
-        /// Optional service account assignment.
-        /// </summary>
         [Input("serviceAccount")]
-        public Input<Inputs.GcpServiceAccountArgs>? ServiceAccount { get; set; }
+        public Input<Pulumi.NetskopePublisher.Provider.Inputs.GcpServiceAccountArgs>? ServiceAccount { get; set; }
 
-        /// <summary>
-        /// GCP subnetwork self link or name.
-        /// </summary>
         [Input("subnetwork", required: true)]
-        public Input<string> Subnetwork { get; set; } = null!;
+        public string Subnetwork { get; set; } = null!;
 
         [Input("tags")]
         private InputMap<string>? _tags;
-
-        /// <summary>
-        /// Tags applied to supported provider resources.
-        /// </summary>
         public InputMap<string> Tags
         {
             get => _tags ?? (_tags = new InputMap<string>());
             set => _tags = value;
         }
 
-        /// <summary>
-        /// Netskope tenant URL used for publisher registration.
-        /// </summary>
         [Input("tenantUrl")]
-        public Input<string>? TenantUrl { get; set; }
+        public string? TenantUrl { get; set; }
 
-        /// <summary>
-        /// Netskope publisher registration wizard API path.
-        /// </summary>
         [Input("wizardPath")]
-        public Input<string>? WizardPath { get; set; }
+        public string? WizardPath { get; set; }
 
-        /// <summary>
-        /// GCP zone.
-        /// </summary>
         [Input("zone", required: true)]
-        public Input<string> Zone { get; set; } = null!;
+        public string Zone { get; set; } = null!;
 
         public GcpPublisherArgs()
         {

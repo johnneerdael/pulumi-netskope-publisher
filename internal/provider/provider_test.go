@@ -238,6 +238,114 @@ func TestVsphereConstructCreatesVirtualMachineChild(t *testing.T) {
 	}
 }
 
+func TestAdditionalProviderConstructsCreateProviderChildren(t *testing.T) {
+	cases := []struct {
+		name     string
+		token    string
+		inputs   property.Map
+		expected string
+	}{
+		{
+			name:  "ESXi",
+			token: "netskope-publisher:index:EsxiPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":          property.New([]property.Value{property.New("pub-1")}),
+				"registrations":  registrationMap("pub-1"),
+				"diskStore":      property.New("datastore1"),
+				"virtualNetwork": property.New("VM Network"),
+			}),
+			expected: "esxi-native:index:VirtualMachine",
+		},
+		{
+			name:  "Hcloud",
+			token: "netskope-publisher:index:HcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+			}),
+			expected: "hcloud:index/server:Server",
+		},
+		{
+			name:  "Nutanix",
+			token: "netskope-publisher:index:NutanixPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"clusterUuid":   property.New("cluster-uuid"),
+			}),
+			expected: "nutanix:index/virtualMachine:VirtualMachine",
+		},
+		{
+			name:  "OpenStack",
+			token: "netskope-publisher:index:OpenstackPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"imageName":     property.New("Ubuntu 22.04"),
+				"flavorName":    property.New("m1.medium"),
+				"networkName":   property.New("private"),
+			}),
+			expected: "openstack:compute/instance:Instance",
+		},
+		{
+			name:  "OVH",
+			token: "netskope-publisher:index:OvhPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"serviceName":   property.New("project-id"),
+				"region":        property.New("GRA11"),
+				"imageId":       property.New("image-id"),
+				"flavorId":      property.New("flavor-id"),
+			}),
+			expected: "ovh:CloudProject/instance:Instance",
+		},
+		{
+			name:  "Scaleway",
+			token: "netskope-publisher:index:ScalewayPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+			}),
+			expected: "scaleway:instance/server:Server",
+		},
+		{
+			name:  "OCI",
+			token: "netskope-publisher:index:OciPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":              property.New([]property.Value{property.New("pub-1")}),
+				"registrations":      registrationMap("pub-1"),
+				"compartmentId":      property.New("ocid1.compartment.oc1..example"),
+				"availabilityDomain": property.New("AD-1"),
+				"subnetId":           property.New("ocid1.subnet.oc1..example"),
+				"imageId":            property.New("ocid1.image.oc1..example"),
+			}),
+			expected: "oci:Core/instance:Instance",
+		},
+		{
+			name:  "Alicloud",
+			token: "netskope-publisher:index:AlicloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":            property.New([]property.Value{property.New("pub-1")}),
+				"registrations":    registrationMap("pub-1"),
+				"imageId":          property.New("ubuntu_22_04_x64_20G_alibase.vhd"),
+				"vswitchId":        property.New("vsw-123"),
+				"securityGroupIds": property.New([]property.Value{property.New("sg-123")}),
+			}),
+			expected: "alicloud:ecs/instance:Instance",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			createdTypes := constructAndCollectTypes(t, tc.token, tc.inputs)
+			if !contains(createdTypes, tc.expected) {
+				t.Fatalf("expected %s construct to create %s child, got %v", tc.name, tc.expected, createdTypes)
+			}
+		})
+	}
+}
+
 func constructAndCollectTypes(t *testing.T, token string, inputs property.Map) []string {
 	t.Helper()
 

@@ -9,23 +9,71 @@ using Pulumi.Serialization;
 
 namespace Pulumi.NetskopePublisher
 {
-    /// <summary>
-    /// Experimental component for creating one or more Netskope Private Access Publisher Hyper-V virtual machines.
-    /// </summary>
     [NetskopePublisherResourceType("netskope-publisher:index:HypervPublisher")]
     public partial class HypervPublisher : global::Pulumi.ComponentResource
     {
-        /// <summary>
-        /// Created publisher names.
-        /// </summary>
+        [Output("apiToken")]
+        public Output<string?> ApiToken { get; private set; } = null!;
+
+        [Output("autoStartAction")]
+        public Output<string?> AutoStartAction { get; private set; } = null!;
+
+        [Output("autoStopAction")]
+        public Output<string?> AutoStopAction { get; private set; } = null!;
+
+        [Output("dynamicMemory")]
+        public Output<bool?> DynamicMemory { get; private set; } = null!;
+
+        [Output("enableExperimentalHyperv")]
+        public Output<bool?> EnableExperimentalHyperv { get; private set; } = null!;
+
+        [Output("generation")]
+        public Output<int?> Generation { get; private set; } = null!;
+
+        [Output("hardDrives")]
+        public Output<ImmutableArray<Pulumi.NetskopePublisher.Provider.Outputs.HypervHardDrive>> HardDrives { get; private set; } = null!;
+
+        [Output("maximumMemory")]
+        public Output<int?> MaximumMemory { get; private set; } = null!;
+
+        [Output("memorySize")]
+        public Output<int?> MemorySize { get; private set; } = null!;
+
+        [Output("minimumMemory")]
+        public Output<int?> MinimumMemory { get; private set; } = null!;
+
+        [Output("namePrefix")]
+        public Output<string?> NamePrefix { get; private set; } = null!;
+
+        [Output("names")]
+        public Output<ImmutableArray<string>> Names { get; private set; } = null!;
+
+        [Output("processorCount")]
+        public Output<int?> ProcessorCount { get; private set; } = null!;
+
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
-        /// <summary>
-        /// Publisher registration and VM details keyed by name.
-        /// </summary>
         [Output("publishers")]
-        public Output<Outputs.PublisherOutputMap?> Publishers { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, object>> Publishers { get; private set; } = null!;
+
+        [Output("registrations")]
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
+
+        [Output("replicas")]
+        public Output<int?> Replicas { get; private set; } = null!;
+
+        [Output("switchName")]
+        public Output<string> SwitchName { get; private set; } = null!;
+
+        [Output("tags")]
+        public Output<ImmutableDictionary<string, string>?> Tags { get; private set; } = null!;
+
+        [Output("tenantUrl")]
+        public Output<string?> TenantUrl { get; private set; } = null!;
+
+        [Output("wizardPath")]
+        public Output<string?> WizardPath { get; private set; } = null!;
 
 
         /// <summary>
@@ -46,6 +94,11 @@ namespace Pulumi.NetskopePublisher
             {
                 Version = Utilities.Version,
                 PluginDownloadURL = "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
+                AdditionalSecretOutputs =
+                {
+                    "apiToken",
+                    "publishers",
+                },
             };
             var merged = ComponentResourceOptions.Merge(defaultOptions, options);
             // Override the ID if one was specified for consistency with other language SDKs.
@@ -57,134 +110,86 @@ namespace Pulumi.NetskopePublisher
     public sealed class HypervPublisherArgs : global::Pulumi.ResourceArgs
     {
         [Input("apiToken")]
-        private Input<string>? _apiToken;
-
-        /// <summary>
-        /// Netskope API token used for publisher registration.
-        /// </summary>
-        public Input<string>? ApiToken
+        private string? _apiToken;
+        public string? ApiToken
         {
             get => _apiToken;
-            set
-            {
-                var emptySecret = Output.CreateSecret(0);
-                _apiToken = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
-            }
+            set => _apiToken = value;
         }
 
-        /// <summary>
-        /// Hyper-V automatic start action.
-        /// </summary>
         [Input("autoStartAction")]
-        public Input<string>? AutoStartAction { get; set; }
+        public string? AutoStartAction { get; set; }
 
-        /// <summary>
-        /// Hyper-V automatic stop action.
-        /// </summary>
         [Input("autoStopAction")]
-        public Input<string>? AutoStopAction { get; set; }
+        public string? AutoStopAction { get; set; }
 
-        /// <summary>
-        /// Whether to enable dynamic memory.
-        /// </summary>
         [Input("dynamicMemory")]
-        public Input<bool>? DynamicMemory { get; set; }
+        public bool? DynamicMemory { get; set; }
 
-        /// <summary>
-        /// Required opt-in gate for the experimental Hyper-V component.
-        /// </summary>
         [Input("enableExperimentalHyperv")]
-        public Input<bool>? EnableExperimentalHyperv { get; set; }
+        public bool? EnableExperimentalHyperv { get; set; }
 
-        /// <summary>
-        /// Hyper-V VM generation.
-        /// </summary>
         [Input("generation")]
-        public Input<int>? Generation { get; set; }
+        public int? Generation { get; set; }
 
         [Input("hardDrives", required: true)]
-        private InputList<Inputs.HypervHardDriveArgs>? _hardDrives;
-
-        /// <summary>
-        /// Virtual hard disks attached to each VM.
-        /// </summary>
-        public InputList<Inputs.HypervHardDriveArgs> HardDrives
+        private InputList<Pulumi.NetskopePublisher.Provider.Inputs.HypervHardDriveArgs>? _hardDrives;
+        public InputList<Pulumi.NetskopePublisher.Provider.Inputs.HypervHardDriveArgs> HardDrives
         {
-            get => _hardDrives ?? (_hardDrives = new InputList<Inputs.HypervHardDriveArgs>());
+            get => _hardDrives ?? (_hardDrives = new InputList<Pulumi.NetskopePublisher.Provider.Inputs.HypervHardDriveArgs>());
             set => _hardDrives = value;
         }
 
-        /// <summary>
-        /// Maximum dynamic memory in bytes.
-        /// </summary>
         [Input("maximumMemory")]
-        public Input<int>? MaximumMemory { get; set; }
+        public int? MaximumMemory { get; set; }
 
-        /// <summary>
-        /// Startup memory in bytes.
-        /// </summary>
         [Input("memorySize")]
-        public Input<int>? MemorySize { get; set; }
+        public int? MemorySize { get; set; }
 
-        /// <summary>
-        /// Minimum dynamic memory in bytes.
-        /// </summary>
         [Input("minimumMemory")]
-        public Input<int>? MinimumMemory { get; set; }
+        public int? MinimumMemory { get; set; }
 
-        /// <summary>
-        /// Prefix used to derive publisher names when explicit names are not supplied.
-        /// </summary>
         [Input("namePrefix")]
-        public Input<string>? NamePrefix { get; set; }
+        public string? NamePrefix { get; set; }
 
         [Input("names")]
         private InputList<string>? _names;
-
-        /// <summary>
-        /// Explicit publisher names to create.
-        /// </summary>
         public InputList<string> Names
         {
             get => _names ?? (_names = new InputList<string>());
             set => _names = value;
         }
 
-        /// <summary>
-        /// Virtual processor count.
-        /// </summary>
         [Input("processorCount")]
-        public Input<int>? ProcessorCount { get; set; }
+        public int? ProcessorCount { get; set; }
 
-        /// <summary>
-        /// Pre-created Netskope publisher registrations keyed by publisher name.
-        /// </summary>
         [Input("registrations")]
-        public Input<Inputs.PublisherRegistrationMapArgs>? Registrations { get; set; }
+        private InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>? _registrations;
+        public InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs> Registrations
+        {
+            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>());
+            set => _registrations = value;
+        }
 
-        /// <summary>
-        /// Number of publishers to create when names are not supplied.
-        /// </summary>
         [Input("replicas")]
-        public Input<int>? Replicas { get; set; }
+        public int? Replicas { get; set; }
 
-        /// <summary>
-        /// Hyper-V virtual switch name.
-        /// </summary>
         [Input("switchName", required: true)]
-        public Input<string> SwitchName { get; set; } = null!;
+        public string SwitchName { get; set; } = null!;
 
-        /// <summary>
-        /// Netskope tenant URL used for publisher registration.
-        /// </summary>
+        [Input("tags")]
+        private InputMap<string>? _tags;
+        public InputMap<string> Tags
+        {
+            get => _tags ?? (_tags = new InputMap<string>());
+            set => _tags = value;
+        }
+
         [Input("tenantUrl")]
-        public Input<string>? TenantUrl { get; set; }
+        public string? TenantUrl { get; set; }
 
-        /// <summary>
-        /// Netskope publisher registration wizard API path.
-        /// </summary>
         [Input("wizardPath")]
-        public Input<string>? WizardPath { get; set; }
+        public string? WizardPath { get; set; }
 
         public HypervPublisherArgs()
         {

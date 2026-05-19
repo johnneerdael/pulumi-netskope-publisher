@@ -15,47 +15,23 @@ public final class NetskopeRegistrationArgs extends com.pulumi.resources.Resourc
 
     public static final NetskopeRegistrationArgs Empty = new NetskopeRegistrationArgs();
 
-    /**
-     * Netskope API token used for publisher registration.
-     * 
-     */
     @Import(name="apiToken", required=true)
     private Output<String> apiToken;
 
-    /**
-     * @return Netskope API token used for publisher registration.
-     * 
-     */
     public Output<String> apiToken() {
         return this.apiToken;
     }
 
-    /**
-     * Publisher names to register or reuse in Netskope.
-     * 
-     */
     @Import(name="publisherNames", required=true)
     private Output<List<String>> publisherNames;
 
-    /**
-     * @return Publisher names to register or reuse in Netskope.
-     * 
-     */
     public Output<List<String>> publisherNames() {
         return this.publisherNames;
     }
 
-    /**
-     * Netskope tenant URL used for publisher registration.
-     * 
-     */
     @Import(name="tenantUrl", required=true)
     private Output<String> tenantUrl;
 
-    /**
-     * @return Netskope tenant URL used for publisher registration.
-     * 
-     */
     public Output<String> tenantUrl() {
         return this.tenantUrl;
     }
@@ -86,75 +62,33 @@ public final class NetskopeRegistrationArgs extends com.pulumi.resources.Resourc
             $ = new NetskopeRegistrationArgs(Objects.requireNonNull(defaults));
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
         public Builder apiToken(Output<String> apiToken) {
             $.apiToken = apiToken;
             return this;
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
         public Builder apiToken(String apiToken) {
             return apiToken(Output.of(apiToken));
         }
 
-        /**
-         * @param publisherNames Publisher names to register or reuse in Netskope.
-         * 
-         * @return builder
-         * 
-         */
         public Builder publisherNames(Output<List<String>> publisherNames) {
             $.publisherNames = publisherNames;
             return this;
         }
 
-        /**
-         * @param publisherNames Publisher names to register or reuse in Netskope.
-         * 
-         * @return builder
-         * 
-         */
         public Builder publisherNames(List<String> publisherNames) {
             return publisherNames(Output.of(publisherNames));
         }
 
-        /**
-         * @param publisherNames Publisher names to register or reuse in Netskope.
-         * 
-         * @return builder
-         * 
-         */
         public Builder publisherNames(String... publisherNames) {
             return publisherNames(List.of(publisherNames));
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tenantUrl(Output<String> tenantUrl) {
             $.tenantUrl = tenantUrl;
             return this;
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tenantUrl(String tenantUrl) {
             return tenantUrl(Output.of(tenantUrl));
         }

@@ -9,17 +9,44 @@ import (
 
 	"errors"
 	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/internal"
+	"github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher/provider"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-// Creates one or more Netskope Private Access Publisher Azure virtual machines and registers them with a Netskope tenant.
 type AzurePublisher struct {
 	pulumi.ResourceState
 
-	// Created publisher names.
-	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
-	// Publisher registration and VM details keyed by name.
-	Publishers PublisherOutputMapPtrOutput `pulumi:"publishers"`
+	AcceptMarketplaceTerms       pulumi.BoolPtrOutput                         `pulumi:"acceptMarketplaceTerms"`
+	AdminSshPublicKey            pulumi.StringOutput                          `pulumi:"adminSshPublicKey"`
+	AdminUsername                pulumi.StringPtrOutput                       `pulumi:"adminUsername"`
+	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AssignPublicIp               pulumi.BoolPtrOutput                         `pulumi:"assignPublicIp"`
+	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
+	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
+	DeleteDefaultUser            pulumi.BoolPtrOutput                         `pulumi:"deleteDefaultUser"`
+	GuestNetworkInterface        provider.GuestNetworkInterfacePtrOutput      `pulumi:"guestNetworkInterface"`
+	ImageId                      pulumi.StringPtrOutput                       `pulumi:"imageId"`
+	InstallUser                  pulumi.StringPtrOutput                       `pulumi:"installUser"`
+	InstallUserPassword          pulumi.StringPtrOutput                       `pulumi:"installUserPassword"`
+	InstallUserPasswordIsHash    pulumi.BoolPtrOutput                         `pulumi:"installUserPasswordIsHash"`
+	InstallUserSshAuthorizedKeys pulumi.StringArrayOutput                     `pulumi:"installUserSshAuthorizedKeys"`
+	Location                     pulumi.StringOutput                          `pulumi:"location"`
+	Marketplace                  provider.AzureMarketplaceImagePtrOutput      `pulumi:"marketplace"`
+	NamePrefix                   pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
+	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
+	NetworkSecurityGroupId       pulumi.StringPtrOutput                       `pulumi:"networkSecurityGroupId"`
+	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	OsDisk                       provider.AzureOsDiskPtrOutput                `pulumi:"osDisk"`
+	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
+	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
+	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
+	Replicas                     pulumi.IntPtrOutput                          `pulumi:"replicas"`
+	ResourceGroupName            pulumi.StringOutput                          `pulumi:"resourceGroupName"`
+	SubnetId                     pulumi.StringOutput                          `pulumi:"subnetId"`
+	Tags                         pulumi.StringMapOutput                       `pulumi:"tags"`
+	TenantUrl                    pulumi.StringPtrOutput                       `pulumi:"tenantUrl"`
+	VmSize                       pulumi.StringPtrOutput                       `pulumi:"vmSize"`
+	WizardPath                   pulumi.StringPtrOutput                       `pulumi:"wizardPath"`
 }
 
 // NewAzurePublisher registers a new resource with the given unique name, arguments, and options.
@@ -29,24 +56,18 @@ func NewAzurePublisher(ctx *pulumi.Context,
 		return nil, errors.New("missing one or more required arguments")
 	}
 
-	if args.AdminSshPublicKey == nil {
-		return nil, errors.New("invalid value for required argument 'AdminSshPublicKey'")
-	}
-	if args.Location == nil {
-		return nil, errors.New("invalid value for required argument 'Location'")
-	}
-	if args.ResourceGroupName == nil {
-		return nil, errors.New("invalid value for required argument 'ResourceGroupName'")
-	}
-	if args.SubnetId == nil {
-		return nil, errors.New("invalid value for required argument 'SubnetId'")
-	}
 	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
+		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
 	if args.InstallUserPassword != nil {
-		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(pulumi.StringPtrInput)
+		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
+	secrets := pulumi.AdditionalSecretOutputs([]string{
+		"apiToken",
+		"installUserPassword",
+		"publishers",
+	})
+	opts = append(opts, secrets)
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource AzurePublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:AzurePublisher", name, args, &resource, opts...)
@@ -57,126 +78,68 @@ func NewAzurePublisher(ctx *pulumi.Context,
 }
 
 type azurePublisherArgs struct {
-	// Whether to accept marketplace image plan terms.
-	AcceptMarketplaceTerms *bool `pulumi:"acceptMarketplaceTerms"`
-	// SSH public key for the admin user.
-	AdminSshPublicKey string `pulumi:"adminSshPublicKey"`
-	// Admin username configured for the VM.
-	AdminUsername *string `pulumi:"adminUsername"`
-	// Netskope API token used for publisher registration.
-	ApiToken *string `pulumi:"apiToken"`
-	// Whether to assign public IP addresses.
-	AssignPublicIp *bool `pulumi:"assignPublicIp"`
-	// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
-	Bootstrap *bool `pulumi:"bootstrap"`
-	// URL to the Netskope generic bootstrap script.
-	BootstrapUrl *string `pulumi:"bootstrapUrl"`
-	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-	DeleteDefaultUser *bool `pulumi:"deleteDefaultUser"`
-	// Optional guest OS primary interface override applied with netplan during cloud-init.
-	GuestNetworkInterface *GuestNetworkInterface `pulumi:"guestNetworkInterface"`
-	// Custom image resource ID.
-	ImageId *string `pulumi:"imageId"`
-	// Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
-	InstallUser *string `pulumi:"installUser"`
-	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-	InstallUserPassword *string `pulumi:"installUserPassword"`
-	// Set true when installUserPassword is already a crypt(3) hash.
-	InstallUserPasswordIsHash *bool `pulumi:"installUserPasswordIsHash"`
-	// Extra public SSH keys installed in the install user's authorized_keys file.
-	InstallUserSshAuthorizedKeys []string `pulumi:"installUserSshAuthorizedKeys"`
-	// Azure region.
-	Location string `pulumi:"location"`
-	// Marketplace image reference.
-	Marketplace *AzureMarketplaceImage `pulumi:"marketplace"`
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix *string `pulumi:"namePrefix"`
-	// Explicit publisher names to create.
-	Names []string `pulumi:"names"`
-	// Optional network security group resource ID.
-	NetworkSecurityGroupId *string `pulumi:"networkSecurityGroupId"`
-	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
-	Nonat *bool `pulumi:"nonat"`
-	// Managed OS disk options.
-	OsDisk *AzureOsDisk `pulumi:"osDisk"`
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations *PublisherRegistrationMap `pulumi:"registrations"`
-	// Number of publishers to create when names are not supplied.
-	Replicas *int `pulumi:"replicas"`
-	// Azure resource group name.
-	ResourceGroupName string `pulumi:"resourceGroupName"`
-	// Azure subnet resource ID.
-	SubnetId string `pulumi:"subnetId"`
-	// Tags applied to supported provider resources.
-	Tags map[string]string `pulumi:"tags"`
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl *string `pulumi:"tenantUrl"`
-	// Azure VM size.
-	VmSize *string `pulumi:"vmSize"`
-	// Netskope publisher registration wizard API path.
-	WizardPath *string `pulumi:"wizardPath"`
+	AcceptMarketplaceTerms       *bool                                          `pulumi:"acceptMarketplaceTerms"`
+	AdminSshPublicKey            string                                         `pulumi:"adminSshPublicKey"`
+	AdminUsername                *string                                        `pulumi:"adminUsername"`
+	ApiToken                     *string                                        `pulumi:"apiToken"`
+	AssignPublicIp               *bool                                          `pulumi:"assignPublicIp"`
+	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
+	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
+	DeleteDefaultUser            *bool                                          `pulumi:"deleteDefaultUser"`
+	GuestNetworkInterface        *provider.GuestNetworkInterface                `pulumi:"guestNetworkInterface"`
+	ImageId                      *string                                        `pulumi:"imageId"`
+	InstallUser                  *string                                        `pulumi:"installUser"`
+	InstallUserPassword          *string                                        `pulumi:"installUserPassword"`
+	InstallUserPasswordIsHash    *bool                                          `pulumi:"installUserPasswordIsHash"`
+	InstallUserSshAuthorizedKeys []string                                       `pulumi:"installUserSshAuthorizedKeys"`
+	Location                     string                                         `pulumi:"location"`
+	Marketplace                  *provider.AzureMarketplaceImage                `pulumi:"marketplace"`
+	NamePrefix                   *string                                        `pulumi:"namePrefix"`
+	Names                        []string                                       `pulumi:"names"`
+	NetworkSecurityGroupId       *string                                        `pulumi:"networkSecurityGroupId"`
+	Nonat                        *bool                                          `pulumi:"nonat"`
+	OsDisk                       *provider.AzureOsDisk                          `pulumi:"osDisk"`
+	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
+	Replicas                     *int                                           `pulumi:"replicas"`
+	ResourceGroupName            string                                         `pulumi:"resourceGroupName"`
+	SubnetId                     string                                         `pulumi:"subnetId"`
+	Tags                         map[string]string                              `pulumi:"tags"`
+	TenantUrl                    *string                                        `pulumi:"tenantUrl"`
+	VmSize                       *string                                        `pulumi:"vmSize"`
+	WizardPath                   *string                                        `pulumi:"wizardPath"`
 }
 
 // The set of arguments for constructing a AzurePublisher resource.
 type AzurePublisherArgs struct {
-	// Whether to accept marketplace image plan terms.
-	AcceptMarketplaceTerms pulumi.BoolPtrInput
-	// SSH public key for the admin user.
-	AdminSshPublicKey pulumi.StringInput
-	// Admin username configured for the VM.
-	AdminUsername pulumi.StringPtrInput
-	// Netskope API token used for publisher registration.
-	ApiToken pulumi.StringPtrInput
-	// Whether to assign public IP addresses.
-	AssignPublicIp pulumi.BoolPtrInput
-	// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
-	Bootstrap pulumi.BoolPtrInput
-	// URL to the Netskope generic bootstrap script.
-	BootstrapUrl pulumi.StringPtrInput
-	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-	DeleteDefaultUser pulumi.BoolPtrInput
-	// Optional guest OS primary interface override applied with netplan during cloud-init.
-	GuestNetworkInterface GuestNetworkInterfacePtrInput
-	// Custom image resource ID.
-	ImageId pulumi.StringPtrInput
-	// Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
-	InstallUser pulumi.StringPtrInput
-	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-	InstallUserPassword pulumi.StringPtrInput
-	// Set true when installUserPassword is already a crypt(3) hash.
-	InstallUserPasswordIsHash pulumi.BoolPtrInput
-	// Extra public SSH keys installed in the install user's authorized_keys file.
+	AcceptMarketplaceTerms       *bool
+	AdminSshPublicKey            string
+	AdminUsername                *string
+	ApiToken                     *string
+	AssignPublicIp               *bool
+	Bootstrap                    *bool
+	BootstrapUrl                 *string
+	DeleteDefaultUser            *bool
+	GuestNetworkInterface        provider.GuestNetworkInterfacePtrInput
+	ImageId                      *string
+	InstallUser                  *string
+	InstallUserPassword          *string
+	InstallUserPasswordIsHash    *bool
 	InstallUserSshAuthorizedKeys pulumi.StringArrayInput
-	// Azure region.
-	Location pulumi.StringInput
-	// Marketplace image reference.
-	Marketplace AzureMarketplaceImagePtrInput
-	// Prefix used to derive publisher names when explicit names are not supplied.
-	NamePrefix pulumi.StringPtrInput
-	// Explicit publisher names to create.
-	Names pulumi.StringArrayInput
-	// Optional network security group resource ID.
-	NetworkSecurityGroupId pulumi.StringPtrInput
-	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
-	Nonat pulumi.BoolPtrInput
-	// Managed OS disk options.
-	OsDisk AzureOsDiskPtrInput
-	// Pre-created Netskope publisher registrations keyed by publisher name.
-	Registrations PublisherRegistrationMapPtrInput
-	// Number of publishers to create when names are not supplied.
-	Replicas pulumi.IntPtrInput
-	// Azure resource group name.
-	ResourceGroupName pulumi.StringInput
-	// Azure subnet resource ID.
-	SubnetId pulumi.StringInput
-	// Tags applied to supported provider resources.
-	Tags pulumi.StringMapInput
-	// Netskope tenant URL used for publisher registration.
-	TenantUrl pulumi.StringPtrInput
-	// Azure VM size.
-	VmSize pulumi.StringPtrInput
-	// Netskope publisher registration wizard API path.
-	WizardPath pulumi.StringPtrInput
+	Location                     string
+	Marketplace                  provider.AzureMarketplaceImagePtrInput
+	NamePrefix                   *string
+	Names                        pulumi.StringArrayInput
+	NetworkSecurityGroupId       *string
+	Nonat                        *bool
+	OsDisk                       provider.AzureOsDiskPtrInput
+	Registrations                provider.PublisherRegistrationInputMapInput
+	Replicas                     *int
+	ResourceGroupName            string
+	SubnetId                     string
+	Tags                         pulumi.StringMapInput
+	TenantUrl                    *string
+	VmSize                       *string
+	WizardPath                   *string
 }
 
 func (AzurePublisherArgs) ElementType() reflect.Type {
@@ -216,14 +179,128 @@ func (o AzurePublisherOutput) ToAzurePublisherOutputWithContext(ctx context.Cont
 	return o
 }
 
-// Created publisher names.
+func (o AzurePublisherOutput) AcceptMarketplaceTerms() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.BoolPtrOutput { return v.AcceptMarketplaceTerms }).(pulumi.BoolPtrOutput)
+}
+
+func (o AzurePublisherOutput) AdminSshPublicKey() pulumi.StringOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringOutput { return v.AdminSshPublicKey }).(pulumi.StringOutput)
+}
+
+func (o AzurePublisherOutput) AdminUsername() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.AdminUsername }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) ApiToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) AssignPublicIp() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.BoolPtrOutput { return v.AssignPublicIp }).(pulumi.BoolPtrOutput)
+}
+
+func (o AzurePublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.BoolPtrOutput { return v.Bootstrap }).(pulumi.BoolPtrOutput)
+}
+
+func (o AzurePublisherOutput) BootstrapUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.BootstrapUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) DeleteDefaultUser() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.BoolPtrOutput { return v.DeleteDefaultUser }).(pulumi.BoolPtrOutput)
+}
+
+func (o AzurePublisherOutput) GuestNetworkInterface() provider.GuestNetworkInterfacePtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) provider.GuestNetworkInterfacePtrOutput { return v.GuestNetworkInterface }).(provider.GuestNetworkInterfacePtrOutput)
+}
+
+func (o AzurePublisherOutput) ImageId() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.ImageId }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) InstallUser() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.InstallUser }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) InstallUserPassword() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.InstallUserPassword }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) InstallUserPasswordIsHash() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.BoolPtrOutput { return v.InstallUserPasswordIsHash }).(pulumi.BoolPtrOutput)
+}
+
+func (o AzurePublisherOutput) InstallUserSshAuthorizedKeys() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringArrayOutput { return v.InstallUserSshAuthorizedKeys }).(pulumi.StringArrayOutput)
+}
+
+func (o AzurePublisherOutput) Location() pulumi.StringOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringOutput { return v.Location }).(pulumi.StringOutput)
+}
+
+func (o AzurePublisherOutput) Marketplace() provider.AzureMarketplaceImagePtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) provider.AzureMarketplaceImagePtrOutput { return v.Marketplace }).(provider.AzureMarketplaceImagePtrOutput)
+}
+
+func (o AzurePublisherOutput) NamePrefix() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.NamePrefix }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) Names() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringArrayOutput { return v.Names }).(pulumi.StringArrayOutput)
+}
+
+func (o AzurePublisherOutput) NetworkSecurityGroupId() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.NetworkSecurityGroupId }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) Nonat() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o AzurePublisherOutput) OsDisk() provider.AzureOsDiskPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) provider.AzureOsDiskPtrOutput { return v.OsDisk }).(provider.AzureOsDiskPtrOutput)
+}
+
 func (o AzurePublisherOutput) PublisherNames() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *AzurePublisher) pulumi.StringArrayOutput { return v.PublisherNames }).(pulumi.StringArrayOutput)
 }
 
-// Publisher registration and VM details keyed by name.
-func (o AzurePublisherOutput) Publishers() PublisherOutputMapPtrOutput {
-	return o.ApplyT(func(v *AzurePublisher) PublisherOutputMapPtrOutput { return v.Publishers }).(PublisherOutputMapPtrOutput)
+func (o AzurePublisherOutput) Publishers() pulumi.MapOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.MapOutput { return v.Publishers }).(pulumi.MapOutput)
+}
+
+func (o AzurePublisherOutput) Registrations() provider.PublisherRegistrationInputMapOutput {
+	return o.ApplyT(func(v *AzurePublisher) provider.PublisherRegistrationInputMapOutput { return v.Registrations }).(provider.PublisherRegistrationInputMapOutput)
+}
+
+func (o AzurePublisherOutput) Replicas() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.IntPtrOutput { return v.Replicas }).(pulumi.IntPtrOutput)
+}
+
+func (o AzurePublisherOutput) ResourceGroupName() pulumi.StringOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringOutput { return v.ResourceGroupName }).(pulumi.StringOutput)
+}
+
+func (o AzurePublisherOutput) SubnetId() pulumi.StringOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringOutput { return v.SubnetId }).(pulumi.StringOutput)
+}
+
+func (o AzurePublisherOutput) Tags() pulumi.StringMapOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringMapOutput { return v.Tags }).(pulumi.StringMapOutput)
+}
+
+func (o AzurePublisherOutput) TenantUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.TenantUrl }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) VmSize() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.VmSize }).(pulumi.StringPtrOutput)
+}
+
+func (o AzurePublisherOutput) WizardPath() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringPtrOutput { return v.WizardPath }).(pulumi.StringPtrOutput)
 }
 
 func init() {

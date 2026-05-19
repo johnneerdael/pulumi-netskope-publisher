@@ -9,29 +9,74 @@ using Pulumi.Serialization;
 
 namespace Pulumi.NetskopePublisher
 {
-    /// <summary>
-    /// Installs Netskope Private Access Publishers on Kubernetes with the kubernetes-netskope-publisher Helm chart.
-    /// </summary>
     [NetskopePublisherResourceType("netskope-publisher:index:KubernetesPublisher")]
     public partial class KubernetesPublisher : global::Pulumi.ComponentResource
     {
-        /// <summary>
-        /// Helm release names created in the cluster.
-        /// </summary>
+        [Output("apiToken")]
+        public Output<string?> ApiToken { get; private set; } = null!;
+
+        [Output("chartRepository")]
+        public Output<string?> ChartRepository { get; private set; } = null!;
+
+        [Output("chartValues")]
+        public Output<ImmutableDictionary<string, object>?> ChartValues { get; private set; } = null!;
+
+        [Output("chartVersion")]
+        public Output<string?> ChartVersion { get; private set; } = null!;
+
+        [Output("enrollmentMode")]
+        public Output<string?> EnrollmentMode { get; private set; } = null!;
+
         [Output("helmReleaseNames")]
         public Output<ImmutableArray<string>> HelmReleaseNames { get; private set; } = null!;
 
-        /// <summary>
-        /// Derived publisher names.
-        /// </summary>
+        [Output("hpaEnabled")]
+        public Output<bool?> HpaEnabled { get; private set; } = null!;
+
+        [Output("hpaMaxReplicas")]
+        public Output<int?> HpaMaxReplicas { get; private set; } = null!;
+
+        [Output("hpaMinReplicas")]
+        public Output<int?> HpaMinReplicas { get; private set; } = null!;
+
+        [Output("imageRepository")]
+        public Output<string?> ImageRepository { get; private set; } = null!;
+
+        [Output("imageTag")]
+        public Output<string?> ImageTag { get; private set; } = null!;
+
+        [Output("namePrefix")]
+        public Output<string?> NamePrefix { get; private set; } = null!;
+
+        [Output("names")]
+        public Output<ImmutableArray<string>> Names { get; private set; } = null!;
+
+        [Output("namespace")]
+        public Output<string?> Namespace { get; private set; } = null!;
+
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
-        /// <summary>
-        /// Publisher registration and Helm release details keyed by publisher or release name.
-        /// </summary>
         [Output("publishers")]
-        public Output<Outputs.KubernetesPublisherOutputMap?> Publishers { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, object>> Publishers { get; private set; } = null!;
+
+        [Output("registrations")]
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
+
+        [Output("replicas")]
+        public Output<int?> Replicas { get; private set; } = null!;
+
+        [Output("tags")]
+        public Output<ImmutableDictionary<string, string>?> Tags { get; private set; } = null!;
+
+        [Output("tenantUrl")]
+        public Output<string?> TenantUrl { get; private set; } = null!;
+
+        [Output("wizardPath")]
+        public Output<string?> WizardPath { get; private set; } = null!;
+
+        [Output("workloadType")]
+        public Output<string?> WorkloadType { get; private set; } = null!;
 
 
         /// <summary>
@@ -52,6 +97,11 @@ namespace Pulumi.NetskopePublisher
             {
                 Version = Utilities.Version,
                 PluginDownloadURL = "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
+                AdditionalSecretOutputs =
+                {
+                    "apiToken",
+                    "publishers",
+                },
             };
             var merged = ComponentResourceOptions.Merge(defaultOptions, options);
             // Override the ID if one was specified for consistency with other language SDKs.
@@ -63,146 +113,86 @@ namespace Pulumi.NetskopePublisher
     public sealed class KubernetesPublisherArgs : global::Pulumi.ResourceArgs
     {
         [Input("apiToken")]
-        private Input<string>? _apiToken;
-
-        /// <summary>
-        /// Netskope API token used for publisher registration.
-        /// </summary>
-        public Input<string>? ApiToken
+        private string? _apiToken;
+        public string? ApiToken
         {
             get => _apiToken;
-            set
-            {
-                var emptySecret = Output.CreateSecret(0);
-                _apiToken = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
-            }
+            set => _apiToken = value;
         }
 
-        /// <summary>
-        /// Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts.
-        /// </summary>
         [Input("chartRepository")]
-        public Input<string>? ChartRepository { get; set; }
+        public string? ChartRepository { get; set; }
 
         [Input("chartValues")]
         private InputMap<object>? _chartValues;
-
-        /// <summary>
-        /// Free-form Helm values merged last.
-        /// </summary>
         public InputMap<object> ChartValues
         {
             get => _chartValues ?? (_chartValues = new InputMap<object>());
             set => _chartValues = value;
         }
 
-        /// <summary>
-        /// Helm chart version constraint. Defaults to ~&gt; 1.4.
-        /// </summary>
         [Input("chartVersion")]
-        public Input<string>? ChartVersion { get; set; }
+        public string? ChartVersion { get; set; }
 
-        /// <summary>
-        /// Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration.
-        /// </summary>
         [Input("enrollmentMode")]
-        public Input<string>? EnrollmentMode { get; set; }
+        public string? EnrollmentMode { get; set; }
 
-        /// <summary>
-        /// Whether to enable chart HPA when workloadType is statefulset.
-        /// </summary>
         [Input("hpaEnabled")]
-        public Input<bool>? HpaEnabled { get; set; }
+        public bool? HpaEnabled { get; set; }
 
-        /// <summary>
-        /// Maximum HPA replicas.
-        /// </summary>
         [Input("hpaMaxReplicas")]
-        public Input<int>? HpaMaxReplicas { get; set; }
+        public int? HpaMaxReplicas { get; set; }
 
-        /// <summary>
-        /// Minimum HPA replicas.
-        /// </summary>
         [Input("hpaMinReplicas")]
-        public Input<int>? HpaMinReplicas { get; set; }
+        public int? HpaMinReplicas { get; set; }
 
-        /// <summary>
-        /// Override publisher container image repository.
-        /// </summary>
         [Input("imageRepository")]
-        public Input<string>? ImageRepository { get; set; }
+        public string? ImageRepository { get; set; }
 
-        /// <summary>
-        /// Override publisher container image tag.
-        /// </summary>
         [Input("imageTag")]
-        public Input<string>? ImageTag { get; set; }
+        public string? ImageTag { get; set; }
 
-        /// <summary>
-        /// Prefix used to derive publisher names when explicit names are not supplied.
-        /// </summary>
         [Input("namePrefix")]
-        public Input<string>? NamePrefix { get; set; }
+        public string? NamePrefix { get; set; }
 
         [Input("names")]
         private InputList<string>? _names;
-
-        /// <summary>
-        /// Explicit publisher names to create.
-        /// </summary>
         public InputList<string> Names
         {
             get => _names ?? (_names = new InputList<string>());
             set => _names = value;
         }
 
-        /// <summary>
-        /// Kubernetes namespace to create and install into. Defaults to netskope.
-        /// </summary>
         [Input("namespace")]
-        public Input<string>? Namespace { get; set; }
+        public string? Namespace { get; set; }
 
-        /// <summary>
-        /// Pre-created Netskope publisher registrations keyed by publisher name.
-        /// </summary>
         [Input("registrations")]
-        public Input<Inputs.PublisherRegistrationMapArgs>? Registrations { get; set; }
+        private InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>? _registrations;
+        public InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs> Registrations
+        {
+            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>());
+            set => _registrations = value;
+        }
 
-        /// <summary>
-        /// Number of publishers to create when names are not supplied.
-        /// </summary>
         [Input("replicas")]
-        public Input<int>? Replicas { get; set; }
+        public int? Replicas { get; set; }
 
         [Input("tags")]
         private InputMap<string>? _tags;
-
-        /// <summary>
-        /// Tags or labels applied to supported provider resources.
-        /// </summary>
         public InputMap<string> Tags
         {
             get => _tags ?? (_tags = new InputMap<string>());
             set => _tags = value;
         }
 
-        /// <summary>
-        /// Netskope tenant URL used for publisher registration.
-        /// </summary>
         [Input("tenantUrl")]
-        public Input<string>? TenantUrl { get; set; }
+        public string? TenantUrl { get; set; }
 
-        /// <summary>
-        /// Netskope publisher registration wizard API path.
-        /// </summary>
         [Input("wizardPath")]
-        public Input<string>? WizardPath { get; set; }
+        public string? WizardPath { get; set; }
 
-        /// <summary>
-        /// Chart workload type: daemonset or statefulset.
-        /// </summary>
         [Input("workloadType")]
-        public Input<string>? WorkloadType { get; set; }
+        public string? WorkloadType { get; set; }
 
         public KubernetesPublisherArgs()
         {

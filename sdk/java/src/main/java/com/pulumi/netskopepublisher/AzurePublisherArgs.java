@@ -6,10 +6,10 @@ package com.pulumi.netskopepublisher;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
-import com.pulumi.netskopepublisher.inputs.AzureMarketplaceImageArgs;
-import com.pulumi.netskopepublisher.inputs.AzureOsDiskArgs;
-import com.pulumi.netskopepublisher.inputs.GuestNetworkInterfaceArgs;
-import com.pulumi.netskopepublisher.inputs.PublisherRegistrationMapArgs;
+import com.pulumi.netskopepublisher.provider.inputs.AzureMarketplaceImageArgs;
+import com.pulumi.netskopepublisher.provider.inputs.AzureOsDiskArgs;
+import com.pulumi.netskopepublisher.provider.inputs.GuestNetworkInterfaceArgs;
+import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
@@ -24,438 +24,206 @@ public final class AzurePublisherArgs extends com.pulumi.resources.ResourceArgs 
 
     public static final AzurePublisherArgs Empty = new AzurePublisherArgs();
 
-    /**
-     * Whether to accept marketplace image plan terms.
-     * 
-     */
     @Import(name="acceptMarketplaceTerms")
-    private @Nullable Output<Boolean> acceptMarketplaceTerms;
+    private @Nullable Boolean acceptMarketplaceTerms;
 
-    /**
-     * @return Whether to accept marketplace image plan terms.
-     * 
-     */
-    public Optional<Output<Boolean>> acceptMarketplaceTerms() {
+    public Optional<Boolean> acceptMarketplaceTerms() {
         return Optional.ofNullable(this.acceptMarketplaceTerms);
     }
 
-    /**
-     * SSH public key for the admin user.
-     * 
-     */
     @Import(name="adminSshPublicKey", required=true)
-    private Output<String> adminSshPublicKey;
+    private String adminSshPublicKey;
 
-    /**
-     * @return SSH public key for the admin user.
-     * 
-     */
-    public Output<String> adminSshPublicKey() {
+    public String adminSshPublicKey() {
         return this.adminSshPublicKey;
     }
 
-    /**
-     * Admin username configured for the VM.
-     * 
-     */
     @Import(name="adminUsername")
-    private @Nullable Output<String> adminUsername;
+    private @Nullable String adminUsername;
 
-    /**
-     * @return Admin username configured for the VM.
-     * 
-     */
-    public Optional<Output<String>> adminUsername() {
+    public Optional<String> adminUsername() {
         return Optional.ofNullable(this.adminUsername);
     }
 
-    /**
-     * Netskope API token used for publisher registration.
-     * 
-     */
     @Import(name="apiToken")
-    private @Nullable Output<String> apiToken;
+    private @Nullable String apiToken;
 
-    /**
-     * @return Netskope API token used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> apiToken() {
+    public Optional<String> apiToken() {
         return Optional.ofNullable(this.apiToken);
     }
 
-    /**
-     * Whether to assign public IP addresses.
-     * 
-     */
     @Import(name="assignPublicIp")
-    private @Nullable Output<Boolean> assignPublicIp;
+    private @Nullable Boolean assignPublicIp;
 
-    /**
-     * @return Whether to assign public IP addresses.
-     * 
-     */
-    public Optional<Output<Boolean>> assignPublicIp() {
+    public Optional<Boolean> assignPublicIp() {
         return Optional.ofNullable(this.assignPublicIp);
     }
 
-    /**
-     * Run Netskope&#39;s generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
-     * 
-     */
     @Import(name="bootstrap")
-    private @Nullable Output<Boolean> bootstrap;
+    private @Nullable Boolean bootstrap;
 
-    /**
-     * @return Run Netskope&#39;s generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
-     * 
-     */
-    public Optional<Output<Boolean>> bootstrap() {
+    public Optional<Boolean> bootstrap() {
         return Optional.ofNullable(this.bootstrap);
     }
 
-    /**
-     * URL to the Netskope generic bootstrap script.
-     * 
-     */
     @Import(name="bootstrapUrl")
-    private @Nullable Output<String> bootstrapUrl;
+    private @Nullable String bootstrapUrl;
 
-    /**
-     * @return URL to the Netskope generic bootstrap script.
-     * 
-     */
-    public Optional<Output<String>> bootstrapUrl() {
+    public Optional<String> bootstrapUrl() {
         return Optional.ofNullable(this.bootstrapUrl);
     }
 
-    /**
-     * When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-     * 
-     */
     @Import(name="deleteDefaultUser")
-    private @Nullable Output<Boolean> deleteDefaultUser;
+    private @Nullable Boolean deleteDefaultUser;
 
-    /**
-     * @return When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-     * 
-     */
-    public Optional<Output<Boolean>> deleteDefaultUser() {
+    public Optional<Boolean> deleteDefaultUser() {
         return Optional.ofNullable(this.deleteDefaultUser);
     }
 
-    /**
-     * Optional guest OS primary interface override applied with netplan during cloud-init.
-     * 
-     */
     @Import(name="guestNetworkInterface")
     private @Nullable Output<GuestNetworkInterfaceArgs> guestNetworkInterface;
 
-    /**
-     * @return Optional guest OS primary interface override applied with netplan during cloud-init.
-     * 
-     */
     public Optional<Output<GuestNetworkInterfaceArgs>> guestNetworkInterface() {
         return Optional.ofNullable(this.guestNetworkInterface);
     }
 
-    /**
-     * Custom image resource ID.
-     * 
-     */
     @Import(name="imageId")
-    private @Nullable Output<String> imageId;
+    private @Nullable String imageId;
 
-    /**
-     * @return Custom image resource ID.
-     * 
-     */
-    public Optional<Output<String>> imageId() {
+    public Optional<String> imageId() {
         return Optional.ofNullable(this.imageId);
     }
 
-    /**
-     * Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
-     * 
-     */
     @Import(name="installUser")
-    private @Nullable Output<String> installUser;
+    private @Nullable String installUser;
 
-    /**
-     * @return Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
-     * 
-     */
-    public Optional<Output<String>> installUser() {
+    public Optional<String> installUser() {
         return Optional.ofNullable(this.installUser);
     }
 
-    /**
-     * Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-     * 
-     */
     @Import(name="installUserPassword")
-    private @Nullable Output<String> installUserPassword;
+    private @Nullable String installUserPassword;
 
-    /**
-     * @return Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-     * 
-     */
-    public Optional<Output<String>> installUserPassword() {
+    public Optional<String> installUserPassword() {
         return Optional.ofNullable(this.installUserPassword);
     }
 
-    /**
-     * Set true when installUserPassword is already a crypt(3) hash.
-     * 
-     */
     @Import(name="installUserPasswordIsHash")
-    private @Nullable Output<Boolean> installUserPasswordIsHash;
+    private @Nullable Boolean installUserPasswordIsHash;
 
-    /**
-     * @return Set true when installUserPassword is already a crypt(3) hash.
-     * 
-     */
-    public Optional<Output<Boolean>> installUserPasswordIsHash() {
+    public Optional<Boolean> installUserPasswordIsHash() {
         return Optional.ofNullable(this.installUserPasswordIsHash);
     }
 
-    /**
-     * Extra public SSH keys installed in the install user&#39;s authorized_keys file.
-     * 
-     */
     @Import(name="installUserSshAuthorizedKeys")
     private @Nullable Output<List<String>> installUserSshAuthorizedKeys;
 
-    /**
-     * @return Extra public SSH keys installed in the install user&#39;s authorized_keys file.
-     * 
-     */
     public Optional<Output<List<String>>> installUserSshAuthorizedKeys() {
         return Optional.ofNullable(this.installUserSshAuthorizedKeys);
     }
 
-    /**
-     * Azure region.
-     * 
-     */
     @Import(name="location", required=true)
-    private Output<String> location;
+    private String location;
 
-    /**
-     * @return Azure region.
-     * 
-     */
-    public Output<String> location() {
+    public String location() {
         return this.location;
     }
 
-    /**
-     * Marketplace image reference.
-     * 
-     */
     @Import(name="marketplace")
     private @Nullable Output<AzureMarketplaceImageArgs> marketplace;
 
-    /**
-     * @return Marketplace image reference.
-     * 
-     */
     public Optional<Output<AzureMarketplaceImageArgs>> marketplace() {
         return Optional.ofNullable(this.marketplace);
     }
 
-    /**
-     * Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
     @Import(name="namePrefix")
-    private @Nullable Output<String> namePrefix;
+    private @Nullable String namePrefix;
 
-    /**
-     * @return Prefix used to derive publisher names when explicit names are not supplied.
-     * 
-     */
-    public Optional<Output<String>> namePrefix() {
+    public Optional<String> namePrefix() {
         return Optional.ofNullable(this.namePrefix);
     }
 
-    /**
-     * Explicit publisher names to create.
-     * 
-     */
     @Import(name="names")
     private @Nullable Output<List<String>> names;
 
-    /**
-     * @return Explicit publisher names to create.
-     * 
-     */
     public Optional<Output<List<String>>> names() {
         return Optional.ofNullable(this.names);
     }
 
-    /**
-     * Optional network security group resource ID.
-     * 
-     */
     @Import(name="networkSecurityGroupId")
-    private @Nullable Output<String> networkSecurityGroupId;
+    private @Nullable String networkSecurityGroupId;
 
-    /**
-     * @return Optional network security group resource ID.
-     * 
-     */
-    public Optional<Output<String>> networkSecurityGroupId() {
+    public Optional<String> networkSecurityGroupId() {
         return Optional.ofNullable(this.networkSecurityGroupId);
     }
 
-    /**
-     * Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
-     * 
-     */
     @Import(name="nonat")
-    private @Nullable Output<Boolean> nonat;
+    private @Nullable Boolean nonat;
 
-    /**
-     * @return Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
-     * 
-     */
-    public Optional<Output<Boolean>> nonat() {
+    public Optional<Boolean> nonat() {
         return Optional.ofNullable(this.nonat);
     }
 
-    /**
-     * Managed OS disk options.
-     * 
-     */
     @Import(name="osDisk")
     private @Nullable Output<AzureOsDiskArgs> osDisk;
 
-    /**
-     * @return Managed OS disk options.
-     * 
-     */
     public Optional<Output<AzureOsDiskArgs>> osDisk() {
         return Optional.ofNullable(this.osDisk);
     }
 
-    /**
-     * Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
     @Import(name="registrations")
-    private @Nullable Output<PublisherRegistrationMapArgs> registrations;
+    private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
-    /**
-     * @return Pre-created Netskope publisher registrations keyed by publisher name.
-     * 
-     */
-    public Optional<Output<PublisherRegistrationMapArgs>> registrations() {
+    public Optional<Output<Map<String,PublisherRegistrationInputArgs>>> registrations() {
         return Optional.ofNullable(this.registrations);
     }
 
-    /**
-     * Number of publishers to create when names are not supplied.
-     * 
-     */
     @Import(name="replicas")
-    private @Nullable Output<Integer> replicas;
+    private @Nullable Integer replicas;
 
-    /**
-     * @return Number of publishers to create when names are not supplied.
-     * 
-     */
-    public Optional<Output<Integer>> replicas() {
+    public Optional<Integer> replicas() {
         return Optional.ofNullable(this.replicas);
     }
 
-    /**
-     * Azure resource group name.
-     * 
-     */
     @Import(name="resourceGroupName", required=true)
-    private Output<String> resourceGroupName;
+    private String resourceGroupName;
 
-    /**
-     * @return Azure resource group name.
-     * 
-     */
-    public Output<String> resourceGroupName() {
+    public String resourceGroupName() {
         return this.resourceGroupName;
     }
 
-    /**
-     * Azure subnet resource ID.
-     * 
-     */
     @Import(name="subnetId", required=true)
-    private Output<String> subnetId;
+    private String subnetId;
 
-    /**
-     * @return Azure subnet resource ID.
-     * 
-     */
-    public Output<String> subnetId() {
+    public String subnetId() {
         return this.subnetId;
     }
 
-    /**
-     * Tags applied to supported provider resources.
-     * 
-     */
     @Import(name="tags")
     private @Nullable Output<Map<String,String>> tags;
 
-    /**
-     * @return Tags applied to supported provider resources.
-     * 
-     */
     public Optional<Output<Map<String,String>>> tags() {
         return Optional.ofNullable(this.tags);
     }
 
-    /**
-     * Netskope tenant URL used for publisher registration.
-     * 
-     */
     @Import(name="tenantUrl")
-    private @Nullable Output<String> tenantUrl;
+    private @Nullable String tenantUrl;
 
-    /**
-     * @return Netskope tenant URL used for publisher registration.
-     * 
-     */
-    public Optional<Output<String>> tenantUrl() {
+    public Optional<String> tenantUrl() {
         return Optional.ofNullable(this.tenantUrl);
     }
 
-    /**
-     * Azure VM size.
-     * 
-     */
     @Import(name="vmSize")
-    private @Nullable Output<String> vmSize;
+    private @Nullable String vmSize;
 
-    /**
-     * @return Azure VM size.
-     * 
-     */
-    public Optional<Output<String>> vmSize() {
+    public Optional<String> vmSize() {
         return Optional.ofNullable(this.vmSize);
     }
 
-    /**
-     * Netskope publisher registration wizard API path.
-     * 
-     */
     @Import(name="wizardPath")
-    private @Nullable Output<String> wizardPath;
+    private @Nullable String wizardPath;
 
-    /**
-     * @return Netskope publisher registration wizard API path.
-     * 
-     */
-    public Optional<Output<String>> wizardPath() {
+    public Optional<String> wizardPath() {
         return Optional.ofNullable(this.wizardPath);
     }
 
@@ -511,633 +279,185 @@ public final class AzurePublisherArgs extends com.pulumi.resources.ResourceArgs 
             $ = new AzurePublisherArgs(Objects.requireNonNull(defaults));
         }
 
-        /**
-         * @param acceptMarketplaceTerms Whether to accept marketplace image plan terms.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder acceptMarketplaceTerms(@Nullable Output<Boolean> acceptMarketplaceTerms) {
+        public Builder acceptMarketplaceTerms(@Nullable Boolean acceptMarketplaceTerms) {
             $.acceptMarketplaceTerms = acceptMarketplaceTerms;
             return this;
         }
 
-        /**
-         * @param acceptMarketplaceTerms Whether to accept marketplace image plan terms.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder acceptMarketplaceTerms(Boolean acceptMarketplaceTerms) {
-            return acceptMarketplaceTerms(Output.of(acceptMarketplaceTerms));
-        }
-
-        /**
-         * @param adminSshPublicKey SSH public key for the admin user.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder adminSshPublicKey(Output<String> adminSshPublicKey) {
+        public Builder adminSshPublicKey(String adminSshPublicKey) {
             $.adminSshPublicKey = adminSshPublicKey;
             return this;
         }
 
-        /**
-         * @param adminSshPublicKey SSH public key for the admin user.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder adminSshPublicKey(String adminSshPublicKey) {
-            return adminSshPublicKey(Output.of(adminSshPublicKey));
-        }
-
-        /**
-         * @param adminUsername Admin username configured for the VM.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder adminUsername(@Nullable Output<String> adminUsername) {
+        public Builder adminUsername(@Nullable String adminUsername) {
             $.adminUsername = adminUsername;
             return this;
         }
 
-        /**
-         * @param adminUsername Admin username configured for the VM.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder adminUsername(String adminUsername) {
-            return adminUsername(Output.of(adminUsername));
-        }
-
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(@Nullable Output<String> apiToken) {
+        public Builder apiToken(@Nullable String apiToken) {
             $.apiToken = apiToken;
             return this;
         }
 
-        /**
-         * @param apiToken Netskope API token used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder apiToken(String apiToken) {
-            return apiToken(Output.of(apiToken));
-        }
-
-        /**
-         * @param assignPublicIp Whether to assign public IP addresses.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder assignPublicIp(@Nullable Output<Boolean> assignPublicIp) {
+        public Builder assignPublicIp(@Nullable Boolean assignPublicIp) {
             $.assignPublicIp = assignPublicIp;
             return this;
         }
 
-        /**
-         * @param assignPublicIp Whether to assign public IP addresses.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder assignPublicIp(Boolean assignPublicIp) {
-            return assignPublicIp(Output.of(assignPublicIp));
-        }
-
-        /**
-         * @param bootstrap Run Netskope&#39;s generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrap(@Nullable Output<Boolean> bootstrap) {
+        public Builder bootstrap(@Nullable Boolean bootstrap) {
             $.bootstrap = bootstrap;
             return this;
         }
 
-        /**
-         * @param bootstrap Run Netskope&#39;s generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrap(Boolean bootstrap) {
-            return bootstrap(Output.of(bootstrap));
-        }
-
-        /**
-         * @param bootstrapUrl URL to the Netskope generic bootstrap script.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrapUrl(@Nullable Output<String> bootstrapUrl) {
+        public Builder bootstrapUrl(@Nullable String bootstrapUrl) {
             $.bootstrapUrl = bootstrapUrl;
             return this;
         }
 
-        /**
-         * @param bootstrapUrl URL to the Netskope generic bootstrap script.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder bootstrapUrl(String bootstrapUrl) {
-            return bootstrapUrl(Output.of(bootstrapUrl));
-        }
-
-        /**
-         * @param deleteDefaultUser When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder deleteDefaultUser(@Nullable Output<Boolean> deleteDefaultUser) {
+        public Builder deleteDefaultUser(@Nullable Boolean deleteDefaultUser) {
             $.deleteDefaultUser = deleteDefaultUser;
             return this;
         }
 
-        /**
-         * @param deleteDefaultUser When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder deleteDefaultUser(Boolean deleteDefaultUser) {
-            return deleteDefaultUser(Output.of(deleteDefaultUser));
-        }
-
-        /**
-         * @param guestNetworkInterface Optional guest OS primary interface override applied with netplan during cloud-init.
-         * 
-         * @return builder
-         * 
-         */
         public Builder guestNetworkInterface(@Nullable Output<GuestNetworkInterfaceArgs> guestNetworkInterface) {
             $.guestNetworkInterface = guestNetworkInterface;
             return this;
         }
 
-        /**
-         * @param guestNetworkInterface Optional guest OS primary interface override applied with netplan during cloud-init.
-         * 
-         * @return builder
-         * 
-         */
         public Builder guestNetworkInterface(GuestNetworkInterfaceArgs guestNetworkInterface) {
             return guestNetworkInterface(Output.of(guestNetworkInterface));
         }
 
-        /**
-         * @param imageId Custom image resource ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder imageId(@Nullable Output<String> imageId) {
+        public Builder imageId(@Nullable String imageId) {
             $.imageId = imageId;
             return this;
         }
 
-        /**
-         * @param imageId Custom image resource ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder imageId(String imageId) {
-            return imageId(Output.of(imageId));
-        }
-
-        /**
-         * @param installUser Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUser(@Nullable Output<String> installUser) {
+        public Builder installUser(@Nullable String installUser) {
             $.installUser = installUser;
             return this;
         }
 
-        /**
-         * @param installUser Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUser(String installUser) {
-            return installUser(Output.of(installUser));
-        }
-
-        /**
-         * @param installUserPassword Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUserPassword(@Nullable Output<String> installUserPassword) {
+        public Builder installUserPassword(@Nullable String installUserPassword) {
             $.installUserPassword = installUserPassword;
             return this;
         }
 
-        /**
-         * @param installUserPassword Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUserPassword(String installUserPassword) {
-            return installUserPassword(Output.of(installUserPassword));
-        }
-
-        /**
-         * @param installUserPasswordIsHash Set true when installUserPassword is already a crypt(3) hash.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUserPasswordIsHash(@Nullable Output<Boolean> installUserPasswordIsHash) {
+        public Builder installUserPasswordIsHash(@Nullable Boolean installUserPasswordIsHash) {
             $.installUserPasswordIsHash = installUserPasswordIsHash;
             return this;
         }
 
-        /**
-         * @param installUserPasswordIsHash Set true when installUserPassword is already a crypt(3) hash.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder installUserPasswordIsHash(Boolean installUserPasswordIsHash) {
-            return installUserPasswordIsHash(Output.of(installUserPasswordIsHash));
-        }
-
-        /**
-         * @param installUserSshAuthorizedKeys Extra public SSH keys installed in the install user&#39;s authorized_keys file.
-         * 
-         * @return builder
-         * 
-         */
         public Builder installUserSshAuthorizedKeys(@Nullable Output<List<String>> installUserSshAuthorizedKeys) {
             $.installUserSshAuthorizedKeys = installUserSshAuthorizedKeys;
             return this;
         }
 
-        /**
-         * @param installUserSshAuthorizedKeys Extra public SSH keys installed in the install user&#39;s authorized_keys file.
-         * 
-         * @return builder
-         * 
-         */
         public Builder installUserSshAuthorizedKeys(List<String> installUserSshAuthorizedKeys) {
             return installUserSshAuthorizedKeys(Output.of(installUserSshAuthorizedKeys));
         }
 
-        /**
-         * @param installUserSshAuthorizedKeys Extra public SSH keys installed in the install user&#39;s authorized_keys file.
-         * 
-         * @return builder
-         * 
-         */
         public Builder installUserSshAuthorizedKeys(String... installUserSshAuthorizedKeys) {
             return installUserSshAuthorizedKeys(List.of(installUserSshAuthorizedKeys));
         }
 
-        /**
-         * @param location Azure region.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder location(Output<String> location) {
+        public Builder location(String location) {
             $.location = location;
             return this;
         }
 
-        /**
-         * @param location Azure region.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder location(String location) {
-            return location(Output.of(location));
-        }
-
-        /**
-         * @param marketplace Marketplace image reference.
-         * 
-         * @return builder
-         * 
-         */
         public Builder marketplace(@Nullable Output<AzureMarketplaceImageArgs> marketplace) {
             $.marketplace = marketplace;
             return this;
         }
 
-        /**
-         * @param marketplace Marketplace image reference.
-         * 
-         * @return builder
-         * 
-         */
         public Builder marketplace(AzureMarketplaceImageArgs marketplace) {
             return marketplace(Output.of(marketplace));
         }
 
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(@Nullable Output<String> namePrefix) {
+        public Builder namePrefix(@Nullable String namePrefix) {
             $.namePrefix = namePrefix;
             return this;
         }
 
-        /**
-         * @param namePrefix Prefix used to derive publisher names when explicit names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder namePrefix(String namePrefix) {
-            return namePrefix(Output.of(namePrefix));
-        }
-
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(@Nullable Output<List<String>> names) {
             $.names = names;
             return this;
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(List<String> names) {
             return names(Output.of(names));
         }
 
-        /**
-         * @param names Explicit publisher names to create.
-         * 
-         * @return builder
-         * 
-         */
         public Builder names(String... names) {
             return names(List.of(names));
         }
 
-        /**
-         * @param networkSecurityGroupId Optional network security group resource ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder networkSecurityGroupId(@Nullable Output<String> networkSecurityGroupId) {
+        public Builder networkSecurityGroupId(@Nullable String networkSecurityGroupId) {
             $.networkSecurityGroupId = networkSecurityGroupId;
             return this;
         }
 
-        /**
-         * @param networkSecurityGroupId Optional network security group resource ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder networkSecurityGroupId(String networkSecurityGroupId) {
-            return networkSecurityGroupId(Output.of(networkSecurityGroupId));
-        }
-
-        /**
-         * @param nonat Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nonat(@Nullable Output<Boolean> nonat) {
+        public Builder nonat(@Nullable Boolean nonat) {
             $.nonat = nonat;
             return this;
         }
 
-        /**
-         * @param nonat Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder nonat(Boolean nonat) {
-            return nonat(Output.of(nonat));
-        }
-
-        /**
-         * @param osDisk Managed OS disk options.
-         * 
-         * @return builder
-         * 
-         */
         public Builder osDisk(@Nullable Output<AzureOsDiskArgs> osDisk) {
             $.osDisk = osDisk;
             return this;
         }
 
-        /**
-         * @param osDisk Managed OS disk options.
-         * 
-         * @return builder
-         * 
-         */
         public Builder osDisk(AzureOsDiskArgs osDisk) {
             return osDisk(Output.of(osDisk));
         }
 
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(@Nullable Output<PublisherRegistrationMapArgs> registrations) {
+        public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {
             $.registrations = registrations;
             return this;
         }
 
-        /**
-         * @param registrations Pre-created Netskope publisher registrations keyed by publisher name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder registrations(PublisherRegistrationMapArgs registrations) {
+        public Builder registrations(Map<String,PublisherRegistrationInputArgs> registrations) {
             return registrations(Output.of(registrations));
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(@Nullable Output<Integer> replicas) {
+        public Builder replicas(@Nullable Integer replicas) {
             $.replicas = replicas;
             return this;
         }
 
-        /**
-         * @param replicas Number of publishers to create when names are not supplied.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder replicas(Integer replicas) {
-            return replicas(Output.of(replicas));
-        }
-
-        /**
-         * @param resourceGroupName Azure resource group name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder resourceGroupName(Output<String> resourceGroupName) {
+        public Builder resourceGroupName(String resourceGroupName) {
             $.resourceGroupName = resourceGroupName;
             return this;
         }
 
-        /**
-         * @param resourceGroupName Azure resource group name.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder resourceGroupName(String resourceGroupName) {
-            return resourceGroupName(Output.of(resourceGroupName));
-        }
-
-        /**
-         * @param subnetId Azure subnet resource ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder subnetId(Output<String> subnetId) {
+        public Builder subnetId(String subnetId) {
             $.subnetId = subnetId;
             return this;
         }
 
-        /**
-         * @param subnetId Azure subnet resource ID.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder subnetId(String subnetId) {
-            return subnetId(Output.of(subnetId));
-        }
-
-        /**
-         * @param tags Tags applied to supported provider resources.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tags(@Nullable Output<Map<String,String>> tags) {
             $.tags = tags;
             return this;
         }
 
-        /**
-         * @param tags Tags applied to supported provider resources.
-         * 
-         * @return builder
-         * 
-         */
         public Builder tags(Map<String,String> tags) {
             return tags(Output.of(tags));
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(@Nullable Output<String> tenantUrl) {
+        public Builder tenantUrl(@Nullable String tenantUrl) {
             $.tenantUrl = tenantUrl;
             return this;
         }
 
-        /**
-         * @param tenantUrl Netskope tenant URL used for publisher registration.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder tenantUrl(String tenantUrl) {
-            return tenantUrl(Output.of(tenantUrl));
-        }
-
-        /**
-         * @param vmSize Azure VM size.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder vmSize(@Nullable Output<String> vmSize) {
+        public Builder vmSize(@Nullable String vmSize) {
             $.vmSize = vmSize;
             return this;
         }
 
-        /**
-         * @param vmSize Azure VM size.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder vmSize(String vmSize) {
-            return vmSize(Output.of(vmSize));
-        }
-
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(@Nullable Output<String> wizardPath) {
+        public Builder wizardPath(@Nullable String wizardPath) {
             $.wizardPath = wizardPath;
             return this;
-        }
-
-        /**
-         * @param wizardPath Netskope publisher registration wizard API path.
-         * 
-         * @return builder
-         * 
-         */
-        public Builder wizardPath(String wizardPath) {
-            return wizardPath(Output.of(wizardPath));
         }
 
         public AzurePublisherArgs build() {
