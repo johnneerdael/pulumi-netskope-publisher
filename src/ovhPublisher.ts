@@ -1,0 +1,57 @@
+import * as ovh from "@ovhcloud/pulumi-ovh";
+import * as pulumi from "@pulumi/pulumi";
+import { createVmPublishers } from "./vmPublisherCore";
+import { OvhPublisherArgs, PublisherOutput } from "./types";
+
+export class OvhPublisher extends pulumi.ComponentResource {
+  public readonly publisherNames: pulumi.Output<string[]>;
+  public readonly publishers: pulumi.Output<Record<string, PublisherOutput>>;
+
+  constructor(name: string, args: OvhPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
+    super("netskope-publisher:index:OvhPublisher", name, {}, opts);
+
+    const outputs = createVmPublishers({
+      parent: this,
+      componentName: name,
+      args,
+      forceBootstrap: true,
+    }, ({ publisherName, userData }) => {
+      const instance = new ovh.cloudproject.Instance(`${name}-${publisherName}`, {
+        serviceName: args.serviceName,
+        name: publisherName,
+        region: args.region,
+        billingPeriod: "hourly",
+        bootFrom: {
+          imageId: args.imageId,
+        },
+        flavor: {
+          flavorId: args.flavorId,
+        },
+        network: args.networkId === undefined ? {
+          public: true,
+        } : {
+          public: true,
+          private: {
+            network: {
+              id: args.networkId,
+            },
+          },
+        },
+        sshKey: args.sshKeyName === undefined ? undefined : {
+          name: args.sshKeyName,
+        },
+        userData,
+      }, { parent: this });
+
+      return {
+        vmId: instance.id,
+        privateIp: pulumi.output(""),
+        publicIp: pulumi.output(""),
+      };
+    });
+
+    this.publisherNames = outputs.publisherNames;
+    this.publishers = outputs.publishers;
+    this.registerOutputs({ publisherNames: this.publisherNames, publishers: this.publishers });
+  }
+}

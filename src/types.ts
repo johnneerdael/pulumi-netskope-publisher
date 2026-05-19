@@ -114,6 +114,82 @@ export interface VspherePublisherArgs extends CommonPublisherArgs {
   memory?: pulumi.Input<number>;
 }
 
+export interface EsxiPublisherArgs extends CommonPublisherArgs {
+  diskStore: pulumi.Input<string>;
+  virtualNetwork: pulumi.Input<string>;
+  os?: pulumi.Input<string>;
+  memory?: pulumi.Input<number>;
+  numVCpus?: pulumi.Input<number>;
+  diskSize?: pulumi.Input<number>;
+}
+
+export interface HcloudPublisherArgs extends CommonPublisherArgs {
+  serverType?: pulumi.Input<string>;
+  image?: pulumi.Input<string>;
+  location?: pulumi.Input<string>;
+  datacenter?: pulumi.Input<string>;
+  sshKeys?: pulumi.Input<pulumi.Input<string>[]>;
+  firewallIds?: pulumi.Input<pulumi.Input<number>[]>;
+  networkId?: pulumi.Input<number>;
+  assignPublicIp?: pulumi.Input<boolean>;
+}
+
+export interface NutanixPublisherArgs extends CommonPublisherArgs {
+  clusterUuid: pulumi.Input<string>;
+  imageUuid?: pulumi.Input<string>;
+  subnetUuid?: pulumi.Input<string>;
+  numVCpus?: pulumi.Input<number>;
+  numCoresPerVcpu?: pulumi.Input<number>;
+  memorySizeMib?: pulumi.Input<number>;
+}
+
+export interface OpenstackPublisherArgs extends CommonPublisherArgs {
+  imageName: pulumi.Input<string>;
+  flavorName: pulumi.Input<string>;
+  networkName: pulumi.Input<string>;
+  keyPair?: pulumi.Input<string>;
+  securityGroups?: pulumi.Input<pulumi.Input<string>[]>;
+  availabilityZone?: pulumi.Input<string>;
+  assignFloatingIp?: pulumi.Input<boolean>;
+  floatingIpPool?: pulumi.Input<string>;
+}
+
+export interface OvhPublisherArgs extends CommonPublisherArgs {
+  serviceName: pulumi.Input<string>;
+  region: pulumi.Input<string>;
+  imageId: pulumi.Input<string>;
+  flavorId: pulumi.Input<string>;
+  sshKeyName?: pulumi.Input<string>;
+  networkId?: pulumi.Input<string>;
+}
+
+export interface ScalewayPublisherArgs extends CommonPublisherArgs {
+  type?: pulumi.Input<string>;
+  image?: pulumi.Input<string>;
+  zone?: pulumi.Input<string>;
+  securityGroupId?: pulumi.Input<string>;
+  enableDynamicIp?: pulumi.Input<boolean>;
+}
+
+export interface OciPublisherArgs extends CommonPublisherArgs {
+  compartmentId: pulumi.Input<string>;
+  availabilityDomain: pulumi.Input<string>;
+  shape?: pulumi.Input<string>;
+  subnetId: pulumi.Input<string>;
+  imageId: pulumi.Input<string>;
+  sshPublicKey?: pulumi.Input<string>;
+  assignPublicIp?: pulumi.Input<boolean>;
+}
+
+export interface AlicloudPublisherArgs extends CommonPublisherArgs {
+  instanceType?: pulumi.Input<string>;
+  imageId: pulumi.Input<string>;
+  vswitchId: pulumi.Input<string>;
+  securityGroupIds: pulumi.Input<pulumi.Input<string>[]>;
+  keyName?: pulumi.Input<string>;
+  allocatePublicIp?: pulumi.Input<boolean>;
+}
+
 export interface HypervHardDrive {
   path: pulumi.Input<string>;
   controllerType?: pulumi.Input<string>;
