@@ -4,7 +4,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>johnneerdael</Authors>
     <Company>johnneerdael</Company>
-    <Description>Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, vSphere, and experimental Hyper-V.</Description>
+    <Description>Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, and experimental Hyper-V.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://johnneerdael.github.io/pulumi-netskope-publisher/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/johnneerdael/pulumi-netskope-publisher</RepositoryUrl>

@@ -10,6 +10,7 @@ from .aws_publisher import *
 from .azure_publisher import *
 from .gcp_publisher import *
 from .hyperv_publisher import *
+from .kubernetes_publisher import *
 from .netskope_registration import *
 from .provider import *
 from .vsphere_publisher import *
@@ -27,6 +28,7 @@ _utilities.register(
    "netskope-publisher:index:AzurePublisher": "AzurePublisher",
    "netskope-publisher:index:GcpPublisher": "GcpPublisher",
    "netskope-publisher:index:HypervPublisher": "HypervPublisher",
+   "netskope-publisher:index:KubernetesPublisher": "KubernetesPublisher",
    "netskope-publisher:index:NetskopeRegistration": "NetskopeRegistration",
    "netskope-publisher:index:VspherePublisher": "VspherePublisher"
   }

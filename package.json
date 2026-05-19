@@ -55,6 +55,7 @@
     "aws",
     "azure",
     "gcp",
+    "kubernetes",
     "vsphere"
   ],
   "author": "John Neerdael",
@@ -63,6 +64,7 @@
     "@pulumi/aws": "^6.0.0",
     "@pulumi/azure-native": "^3.18.0",
     "@pulumi/gcp": "^9.23.0",
+    "@pulumi/kubernetes": "^4.31.0",
     "@pulumi/pulumi": "^3.0.0",
     "@pulumi/vsphere": "^4.16.5"
   },

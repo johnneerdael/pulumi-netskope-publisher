@@ -30,7 +30,7 @@ Before requesting public Registry listing:
 - Confirm the tag release uploaded the plugin archives to GitHub
   Releases, matching `pluginDownloadURL` in `schema.json`.
 - Confirm the Go provider schema includes `NetskopeRegistration` plus
-  the AWS, Azure, GCP, vSphere, and Hyper-V resources.
+  the AWS, Azure, GCP, Kubernetes, vSphere, and Hyper-V resources.
 - Confirm the generated Go SDK is available at
   `github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher`.
 - Use `docs/registry-pr-body.md` for the public Pulumi Registry PR body.

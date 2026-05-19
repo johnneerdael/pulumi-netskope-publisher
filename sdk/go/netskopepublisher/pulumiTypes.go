@@ -655,6 +655,69 @@ func (o HypervHardDriveArrayOutput) Index(i pulumi.IntInput) HypervHardDriveOutp
 	}).(HypervHardDriveOutput)
 }
 
+// Kubernetes publisher registration and Helm release details.
+type KubernetesPublisherOutputType struct {
+	// Helm release name.
+	HelmReleaseName string `pulumi:"helmReleaseName"`
+	// Kubernetes namespace.
+	Namespace string `pulumi:"namespace"`
+	// Unused VM-style compatibility field.
+	PrivateIp *string `pulumi:"privateIp"`
+	// Unused VM-style compatibility field.
+	PublicIp *string `pulumi:"publicIp"`
+	// Netskope publisher ID in token mode.
+	PublisherId *int `pulumi:"publisherId"`
+	// Netskope publisher registration token in token mode.
+	RegistrationToken *string `pulumi:"registrationToken"`
+	// Helm release status.
+	Status string `pulumi:"status"`
+	// Unused VM-style compatibility field.
+	VmId *string `pulumi:"vmId"`
+}
+
+// Kubernetes publisher outputs keyed by publisher name in token mode or release name in api mode.
+type KubernetesPublisherOutputMap struct {
+}
+
+// Kubernetes publisher outputs keyed by publisher name in token mode or release name in api mode.
+type KubernetesPublisherOutputMapOutput struct{ *pulumi.OutputState }
+
+func (KubernetesPublisherOutputMapOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*KubernetesPublisherOutputMap)(nil)).Elem()
+}
+
+func (o KubernetesPublisherOutputMapOutput) ToKubernetesPublisherOutputMapOutput() KubernetesPublisherOutputMapOutput {
+	return o
+}
+
+func (o KubernetesPublisherOutputMapOutput) ToKubernetesPublisherOutputMapOutputWithContext(ctx context.Context) KubernetesPublisherOutputMapOutput {
+	return o
+}
+
+type KubernetesPublisherOutputMapPtrOutput struct{ *pulumi.OutputState }
+
+func (KubernetesPublisherOutputMapPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**KubernetesPublisherOutputMap)(nil)).Elem()
+}
+
+func (o KubernetesPublisherOutputMapPtrOutput) ToKubernetesPublisherOutputMapPtrOutput() KubernetesPublisherOutputMapPtrOutput {
+	return o
+}
+
+func (o KubernetesPublisherOutputMapPtrOutput) ToKubernetesPublisherOutputMapPtrOutputWithContext(ctx context.Context) KubernetesPublisherOutputMapPtrOutput {
+	return o
+}
+
+func (o KubernetesPublisherOutputMapPtrOutput) Elem() KubernetesPublisherOutputMapOutput {
+	return o.ApplyT(func(v *KubernetesPublisherOutputMap) KubernetesPublisherOutputMap {
+		if v != nil {
+			return *v
+		}
+		var ret KubernetesPublisherOutputMap
+		return ret
+	}).(KubernetesPublisherOutputMapOutput)
+}
+
 // AWS EC2 instance metadata service options.
 type MetadataOptions struct {
 	// Whether the metadata service endpoint is enabled.
@@ -1023,6 +1086,8 @@ func init() {
 	pulumi.RegisterOutputType(GcpServiceAccountPtrOutput{})
 	pulumi.RegisterOutputType(HypervHardDriveOutput{})
 	pulumi.RegisterOutputType(HypervHardDriveArrayOutput{})
+	pulumi.RegisterOutputType(KubernetesPublisherOutputMapOutput{})
+	pulumi.RegisterOutputType(KubernetesPublisherOutputMapPtrOutput{})
 	pulumi.RegisterOutputType(MetadataOptionsOutput{})
 	pulumi.RegisterOutputType(MetadataOptionsPtrOutput{})
 	pulumi.RegisterOutputType(PublisherOutputMapOutput{})

@@ -10,12 +10,15 @@ Pulumi components for provisioning Netskope Private Access Publishers.
 The package mirrors the Terraform modules from
 `terraform-netskope-publisher`: register or reuse Netskope publisher
 records, generate per-publisher cloud-init, and create platform VMs.
+For Kubernetes, it installs the `kubernetes-netskope-publisher` Helm
+chart and supports both token and API enrollment modes.
 
 ## Current scope
 
 - AWS publisher component: `AwsPublisher`
 - Azure publisher component: `AzurePublisher`
 - GCP publisher component: `GcpPublisher`
+- Kubernetes publisher component: `KubernetesPublisher`
 - vSphere publisher component: `VspherePublisher`
 - Experimental Hyper-V gate: `HypervPublisher`
 - Netskope publisher registration by name
@@ -63,8 +66,9 @@ export const publishers = pulumi.secret(publisher.publishers);
 ## Examples
 
 See `examples/aws-single`, `examples/azure-single`,
-`examples/gcp-single`, and `examples/vsphere-single` for Pulumi programs
-that deploy one or more publishers.
+`examples/gcp-single`, `examples/kubernetes-kind`, and
+`examples/vsphere-single` for Pulumi programs that deploy one or more
+publishers.
 
 ## Documentation
 
@@ -90,10 +94,10 @@ PyPI, the C# SDK to NuGet, and the Go SDK through the tagged GitHub
 module path
 `github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher`.
 
-The Go provider constructs AWS, Azure, GCP, and vSphere child resources
-and includes a stateful `NetskopeRegistration` resource for creating or
-reusing Netskope publisher records. Pre-created `registrations` remain
-available as an escape hatch.
+The Go provider constructs AWS, Azure, GCP, Kubernetes, and vSphere
+child resources and includes a stateful `NetskopeRegistration` resource
+for creating or reusing Netskope publisher records. Pre-created
+`registrations` remain available as an escape hatch.
 
 ## Release automation
 

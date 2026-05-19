@@ -15,9 +15,22 @@ else:
 from . import _utilities
 
 __all__ = [
+    'KubernetesPublisherOutputMap',
     'PublisherOutputMap',
     'PublisherRegistrationMap',
 ]
+
+@pulumi.output_type
+class KubernetesPublisherOutputMap(dict):
+    """
+    Kubernetes publisher outputs keyed by publisher name in token mode or release name in api mode.
+    """
+    def __init__(__self__):
+        """
+        Kubernetes publisher outputs keyed by publisher name in token mode or release name in api mode.
+        """
+        pass
+
 
 @pulumi.output_type
 class PublisherOutputMap(dict):

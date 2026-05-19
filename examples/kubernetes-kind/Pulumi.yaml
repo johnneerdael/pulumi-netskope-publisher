@@ -1,0 +1,3 @@
+name: kubernetes-kind
+description: Deploy Netskope Private Access Publishers on Kubernetes with the Helm chart.
+runtime: nodejs

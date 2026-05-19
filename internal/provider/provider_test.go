@@ -132,6 +132,24 @@ func TestGcpConstructCreatesComputeInstanceChild(t *testing.T) {
 	}
 }
 
+func TestKubernetesConstructCreatesNamespaceSecretsAndHelmReleaseChildren(t *testing.T) {
+	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:KubernetesPublisher", property.NewMap(map[string]property.Value{
+		"names":         property.New([]property.Value{property.New("pub-1")}),
+		"registrations": registrationMap("pub-1"),
+		"namespace":     property.New("netskope"),
+	}))
+
+	for _, expected := range []string{
+		"kubernetes:core/v1:Namespace",
+		"kubernetes:core/v1:Secret",
+		"kubernetes:helm.sh/v3:Release",
+	} {
+		if !contains(createdTypes, expected) {
+			t.Fatalf("expected Kubernetes construct to create %s child, got %v", expected, createdTypes)
+		}
+	}
+}
+
 func TestRenderUserDataBootstrapsPublisherByDefault(t *testing.T) {
 	userData := renderUserData("pub-1", "token-123", nil)
 

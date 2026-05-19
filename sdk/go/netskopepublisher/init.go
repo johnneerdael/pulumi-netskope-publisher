@@ -29,6 +29,8 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &GcpPublisher{}
 	case "netskope-publisher:index:HypervPublisher":
 		r = &HypervPublisher{}
+	case "netskope-publisher:index:KubernetesPublisher":
+		r = &KubernetesPublisher{}
 	case "netskope-publisher:index:NetskopeRegistration":
 		r = &NetskopeRegistration{}
 	case "netskope-publisher:index:VspherePublisher":

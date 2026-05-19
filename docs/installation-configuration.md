@@ -45,7 +45,7 @@ The Java SDK is optional and not currently published.
 Install the cloud provider packages used by the component you deploy:
 
 ```bash
-npm install @pulumi/aws @pulumi/azure-native @pulumi/gcp @pulumi/vsphere
+npm install @pulumi/aws @pulumi/azure-native @pulumi/gcp @pulumi/kubernetes @pulumi/vsphere
 ```
 
 ## Netskope configuration
@@ -69,7 +69,7 @@ Each entry is keyed by the publisher name and must include
 
 Configure the cloud provider used by the selected component with the
 standard Pulumi provider configuration for AWS, Azure Native, Google
-Cloud, or vSphere.
+Cloud, Kubernetes, or vSphere.
 
 Each component also requires provider-specific network and image inputs.
 See the component API docs and the examples directory for complete
@@ -77,6 +77,11 @@ programs. On GCP, use a standard Linux image such as Ubuntu 22.04; the
 `GcpPublisher` component runs the Netskope generic bootstrap script from
 cloud-init by default because there is no public Netskope Publisher GCE
 image.
+
+On Kubernetes, configure the Pulumi Kubernetes provider for the target
+cluster. `KubernetesPublisher` creates the namespace, required Secrets,
+and Helm release resources for the
+`kubernetes-netskope-publisher` chart.
 
 ## Publisher images
 

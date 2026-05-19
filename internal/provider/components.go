@@ -11,6 +11,9 @@ import (
 	gcpcompute "github.com/pulumi/pulumi-gcp/sdk/v9/go/gcp/compute"
 	p "github.com/pulumi/pulumi-go-provider"
 	"github.com/pulumi/pulumi-go-provider/infer"
+	k8score "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/core/v1"
+	k8shelm "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/helm/v3"
+	k8smeta "github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes/meta/v1"
 	"github.com/pulumi/pulumi-vsphere/sdk/v4/go/vsphere"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -369,6 +372,176 @@ func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, op
 	})
 }
 
+type KubernetesPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Namespace       *string                `pulumi:"namespace,optional"`
+	EnrollmentMode  *string                `pulumi:"enrollmentMode,optional"`
+	ChartRepository *string                `pulumi:"chartRepository,optional"`
+	ChartVersion    *string                `pulumi:"chartVersion,optional"`
+	ChartValues     map[string]interface{} `pulumi:"chartValues,optional"`
+	WorkloadType    *string                `pulumi:"workloadType,optional"`
+	HPAEnabled      *bool                  `pulumi:"hpaEnabled,optional"`
+	HPAMinReplicas  *int                   `pulumi:"hpaMinReplicas,optional"`
+	HPAMaxReplicas  *int                   `pulumi:"hpaMaxReplicas,optional"`
+	ImageRepository *string                `pulumi:"imageRepository,optional"`
+	ImageTag        *string                `pulumi:"imageTag,optional"`
+}
+
+type KubernetesPublisher struct {
+	pulumi.ResourceState
+	KubernetesPublisherArgs
+	PublisherNames   pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	HelmReleaseNames pulumi.StringArrayOutput `pulumi:"helmReleaseNames"`
+	Publishers       pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*KubernetesPublisher) Annotate(a infer.Annotator) {
+	a.SetToken("index", "KubernetesPublisher")
+}
+
+func NewKubernetesPublisher(ctx *pulumi.Context, name string, args KubernetesPublisherArgs, opts ...pulumi.ResourceOption) (*KubernetesPublisher, error) {
+	component := &KubernetesPublisher{KubernetesPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+
+	mode := defaultString(args.EnrollmentMode, "token")
+	if mode != "token" && mode != "api" {
+		return nil, fmt.Errorf("enrollmentMode must be \"token\" or \"api\"")
+	}
+	workloadType := defaultString(args.WorkloadType, "daemonset")
+	if workloadType != "daemonset" && workloadType != "statefulset" {
+		return nil, fmt.Errorf("workloadType must be \"daemonset\" or \"statefulset\"")
+	}
+
+	publisherNames, err := derivePublisherNames(args.common())
+	if err != nil {
+		return nil, err
+	}
+	namespaceName := defaultString(args.Namespace, "netskope")
+
+	namespace, err := k8score.NewNamespace(ctx, name+"-namespace", &k8score.NamespaceArgs{
+		Metadata: &k8smeta.ObjectMetaArgs{
+			Name: pulumi.StringPtr(namespaceName),
+		},
+	}, pulumi.Parent(component))
+	if err != nil {
+		return nil, err
+	}
+
+	outputs := pulumi.Map{}
+	releaseNames := []string{}
+
+	if mode == "api" {
+		if args.TenantURL == nil || args.APIToken == nil {
+			return nil, fmt.Errorf("tenantUrl and apiToken are required in api enrollment mode")
+		}
+		apiSecret, err := k8score.NewSecret(ctx, name+"-api-token", &k8score.SecretArgs{
+			Metadata: &k8smeta.ObjectMetaArgs{
+				Name:      pulumi.StringPtr("npa-api-token"),
+				Namespace: pulumi.StringPtr(namespaceName),
+			},
+			StringData: pulumi.StringMap{
+				"api-token": pulumi.ToSecret(pulumi.String(*args.APIToken)).(pulumi.StringOutput),
+			},
+			Type: pulumi.StringPtr("Opaque"),
+		}, pulumi.Parent(component), pulumi.DependsOn([]pulumi.Resource{namespace}))
+		if err != nil {
+			return nil, err
+		}
+
+		releaseName := "npa-publisher"
+		release, err := newKubernetesRelease(ctx, component, name, releaseName, namespaceName, args, kubernetesValues(args, pulumi.Map{
+			"enrollment": pulumi.Map{
+				"mode": pulumi.String("api"),
+				"api": pulumi.Map{
+					"baseUrl":         pulumi.String(*args.TenantURL),
+					"existingSecret":  pulumi.String("npa-api-token"),
+					"tokenKey":        pulumi.String("api-token"),
+					"cleanupOnDelete": pulumi.Bool(false),
+				},
+			},
+		}), []pulumi.Resource{apiSecret})
+		if err != nil {
+			return nil, err
+		}
+		releaseNames = []string{releaseName}
+		outputs[releaseName] = pulumi.Map{
+			"helmReleaseName": pulumi.String(releaseName),
+			"namespace":       pulumi.String(namespaceName),
+			"status":          release.Status.Status(),
+			"vmId":            pulumi.String(""),
+			"privateIp":       pulumi.String(""),
+			"publicIp":        pulumi.String(""),
+		}.ToMapOutput()
+	} else {
+		publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
+		if err != nil {
+			return nil, err
+		}
+		releaseNames = publisherNames
+		for _, publisherName := range publisherNames {
+			registration := registrations[publisherName]
+			secretName := publisherName + "-registration-token"
+			tokenSecret, err := k8score.NewSecret(ctx, name+"-"+publisherName+"-registration-token", &k8score.SecretArgs{
+				Metadata: &k8smeta.ObjectMetaArgs{
+					Name:      pulumi.StringPtr(secretName),
+					Namespace: pulumi.StringPtr(namespaceName),
+				},
+				StringData: pulumi.StringMap{
+					"token": registration.RegistrationToken,
+				},
+				Type: pulumi.StringPtr("Opaque"),
+			}, pulumi.Parent(component), pulumi.DependsOn([]pulumi.Resource{namespace}))
+			if err != nil {
+				return nil, err
+			}
+
+			release, err := newKubernetesRelease(ctx, component, name, publisherName, namespaceName, args, kubernetesValues(args, pulumi.Map{
+				"enrollment": pulumi.Map{
+					"mode":       pulumi.String("token"),
+					"commonName": pulumi.String(publisherName),
+				},
+				"registrationToken": pulumi.Map{
+					"existingSecret":    pulumi.String(secretName),
+					"existingSecretKey": pulumi.String("token"),
+				},
+			}), []pulumi.Resource{tokenSecret})
+			if err != nil {
+				return nil, err
+			}
+
+			outputs[publisherName] = pulumi.Map{
+				"publisherId":       registration.PublisherID,
+				"registrationToken": registration.RegistrationToken,
+				"helmReleaseName":   pulumi.String(publisherName),
+				"namespace":         pulumi.String(namespaceName),
+				"status":            release.Status.Status(),
+				"vmId":              pulumi.String(""),
+				"privateIp":         pulumi.String(""),
+				"publicIp":          pulumi.String(""),
+			}.ToMapOutput()
+		}
+	}
+
+	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
+	component.HelmReleaseNames = toStringArray(releaseNames).ToStringArrayOutput()
+	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{
+		"publisherNames":   component.PublisherNames,
+		"helmReleaseNames": component.HelmReleaseNames,
+		"publishers":       component.Publishers,
+	})
+}
+
 type VspherePublisherArgs struct {
 	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
 	Names         []string                              `pulumi:"names,optional"`
@@ -537,6 +710,14 @@ func (args AzurePublisherArgs) common() CommonPublisherArgs {
 }
 
 func (args GcpPublisherArgs) common() CommonPublisherArgs {
+	return CommonPublisherArgs{
+		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
+		TenantURL: args.TenantURL, APIToken: args.APIToken, WizardPath: args.WizardPath,
+		Tags: args.Tags, Registrations: args.Registrations,
+	}
+}
+
+func (args KubernetesPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
 		TenantURL: args.TenantURL, APIToken: args.APIToken, WizardPath: args.WizardPath,
@@ -803,6 +984,86 @@ func renderUserDataBase64OutputWithOptions(publisherName string, registrationTok
 
 func renderMetadata(publisherName string) string {
 	return "instance-id: " + publisherName + "\nlocal-hostname: " + publisherName + "\n"
+}
+
+func newKubernetesRelease(ctx *pulumi.Context, component pulumi.Resource, componentName string, releaseName string, namespaceName string, args KubernetesPublisherArgs, values pulumi.Map, dependsOn []pulumi.Resource) (*k8shelm.Release, error) {
+	return k8shelm.NewRelease(ctx, componentName+"-"+releaseName, &k8shelm.ReleaseArgs{
+		Name:            pulumi.StringPtr(releaseName),
+		Namespace:       pulumi.StringPtr(namespaceName),
+		Chart:           pulumi.String("kubernetes-netskope-publisher"),
+		Version:         pulumi.StringPtr(defaultString(args.ChartVersion, "~> 1.4")),
+		RepositoryOpts:  &k8shelm.RepositoryOptsArgs{Repo: pulumi.StringPtr(defaultString(args.ChartRepository, "oci://ghcr.io/johnneerdael/charts"))},
+		CreateNamespace: pulumi.BoolPtr(false),
+		Atomic:          pulumi.BoolPtr(true),
+		SkipAwait:       pulumi.BoolPtr(false),
+		Timeout:         pulumi.IntPtr(300),
+		Values:          values,
+	}, pulumi.Parent(component), pulumi.DependsOn(dependsOn))
+}
+
+func kubernetesValues(args KubernetesPublisherArgs, modeValues pulumi.Map) pulumi.Map {
+	workloadType := defaultString(args.WorkloadType, "daemonset")
+	values := pulumi.Map{
+		"workload": pulumi.Map{
+			"type": pulumi.String(workloadType),
+		},
+		"hpa": pulumi.Map{
+			"enabled":     pulumi.Bool(defaultBool(args.HPAEnabled, false) && workloadType == "statefulset"),
+			"minReplicas": pulumi.Int(defaultInt(args.HPAMinReplicas, 2)),
+			"maxReplicas": pulumi.Int(defaultInt(args.HPAMaxReplicas, 6)),
+		},
+		"commonLabels": toStringMap(args.Tags),
+	}
+	image := pulumi.Map{}
+	if args.ImageRepository != nil {
+		image["repository"] = pulumi.String(*args.ImageRepository)
+	}
+	if args.ImageTag != nil {
+		image["tag"] = pulumi.String(*args.ImageTag)
+	}
+	if len(image) > 0 {
+		values["image"] = image
+	}
+	for key, value := range modeValues {
+		values[key] = value
+	}
+	for key, value := range args.ChartValues {
+		values[key] = toPulumiInput(value)
+	}
+	return values
+}
+
+func toPulumiInput(value interface{}) pulumi.Input {
+	switch typed := value.(type) {
+	case nil:
+		return nil
+	case pulumi.Input:
+		return typed
+	case string:
+		return pulumi.String(typed)
+	case bool:
+		return pulumi.Bool(typed)
+	case int:
+		return pulumi.Int(typed)
+	case int64:
+		return pulumi.Int(int(typed))
+	case float64:
+		return pulumi.Float64(typed)
+	case []interface{}:
+		result := pulumi.Array{}
+		for _, item := range typed {
+			result = append(result, toPulumiInput(item))
+		}
+		return result
+	case map[string]interface{}:
+		result := pulumi.Map{}
+		for key, item := range typed {
+			result[key] = toPulumiInput(item)
+		}
+		return result
+	default:
+		return pulumi.String(fmt.Sprint(typed))
+	}
 }
 
 func azureStorageProfile(args AzurePublisherArgs) azurecompute.StorageProfilePtrInput {

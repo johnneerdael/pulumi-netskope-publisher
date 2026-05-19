@@ -127,3 +127,31 @@ export interface PublisherOutput {
   privateIp: string;
   publicIp?: string;
 }
+
+export type KubernetesEnrollmentMode = "token" | "api";
+export type KubernetesWorkloadType = "daemonset" | "statefulset";
+
+export interface KubernetesPublisherArgs extends CommonPublisherArgs {
+  namespace?: pulumi.Input<string>;
+  enrollmentMode?: KubernetesEnrollmentMode;
+  chartRepository?: pulumi.Input<string>;
+  chartVersion?: pulumi.Input<string>;
+  chartValues?: pulumi.Input<Record<string, any>>;
+  workloadType?: KubernetesWorkloadType;
+  hpaEnabled?: pulumi.Input<boolean>;
+  hpaMinReplicas?: pulumi.Input<number>;
+  hpaMaxReplicas?: pulumi.Input<number>;
+  imageRepository?: pulumi.Input<string>;
+  imageTag?: pulumi.Input<string>;
+}
+
+export interface KubernetesPublisherOutput {
+  publisherId?: number;
+  registrationToken?: string;
+  helmReleaseName: string;
+  namespace: string;
+  status: string;
+  vmId?: string;
+  privateIp?: string;
+  publicIp?: string;
+}

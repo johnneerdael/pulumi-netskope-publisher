@@ -9,6 +9,7 @@ Supported provider components:
 - AWS
 - Azure
 - GCP
+- Kubernetes
 - vSphere
 
 Planned follow-up:

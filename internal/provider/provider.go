@@ -13,7 +13,7 @@ import (
 const (
 	Name              = "netskope-publisher"
 	DisplayName       = "Netskope Publisher"
-	Description       = "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, vSphere, and experimental Hyper-V."
+	Description       = "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, and experimental Hyper-V."
 	Publisher         = "johnneerdael"
 	Homepage          = "https://johnneerdael.github.io/pulumi-netskope-publisher/"
 	Repository        = "https://github.com/johnneerdael/pulumi-netskope-publisher"
@@ -32,7 +32,7 @@ func New() (p.Provider, error) {
 		WithLicense(License).
 		WithLogoURL(LogoURL).
 		WithPluginDownloadURL(PluginDownloadURL).
-		WithKeywords("category/network", "kind/component", "pulumi", "netskope", "npa", "publisher", "aws", "azure", "gcp", "vsphere").
+		WithKeywords("category/network", "kind/component", "pulumi", "netskope", "npa", "publisher", "aws", "azure", "gcp", "kubernetes", "vsphere").
 		WithResources(
 			infer.Resource(&NetskopeRegistration{}),
 		).
@@ -40,6 +40,7 @@ func New() (p.Provider, error) {
 			infer.ComponentF(NewAwsPublisher),
 			infer.ComponentF(NewAzurePublisher),
 			infer.ComponentF(NewGcpPublisher),
+			infer.ComponentF(NewKubernetesPublisher),
 			infer.ComponentF(NewVspherePublisher),
 			infer.ComponentF(NewHypervPublisher),
 		).

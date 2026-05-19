@@ -6,16 +6,19 @@ layout: package
 
 The Netskope Publisher package provides Pulumi component resources for
 provisioning Netskope Private Access Publishers on AWS, Azure, Google
-Cloud, and vSphere. The package mirrors the Terraform module pattern:
+Cloud, Kubernetes, and vSphere. The package mirrors the Terraform module
+pattern:
 register or reuse Netskope publisher records, generate per-publisher
 cloud-init, and create the virtual machines that run the publisher
-appliance.
+appliance. On Kubernetes, it installs the
+`kubernetes-netskope-publisher` Helm chart.
 
 ## Components
 
 - `AwsPublisher` creates EC2-backed publishers.
 - `AzurePublisher` creates Azure virtual machine backed publishers.
 - `GcpPublisher` creates Google Compute Engine backed publishers.
+- `KubernetesPublisher` installs Helm chart backed publishers.
 - `VspherePublisher` creates vSphere virtual machine backed publishers.
 - `HypervPublisher` is experimental and remains opt-in.
 

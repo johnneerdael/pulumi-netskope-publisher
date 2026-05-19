@@ -31,6 +31,7 @@ const expectedResourceTokens = [
   "netskope-publisher:index:AwsPublisher",
   "netskope-publisher:index:AzurePublisher",
   "netskope-publisher:index:GcpPublisher",
+  "netskope-publisher:index:KubernetesPublisher",
   "netskope-publisher:index:VspherePublisher",
   "netskope-publisher:index:HypervPublisher",
   "netskope-publisher:index:NetskopeRegistration"
@@ -40,6 +41,7 @@ const sourceTokens = {
   "src/awsPublisher.ts": "netskope-publisher:index:AwsPublisher",
   "src/azurePublisher.ts": "netskope-publisher:index:AzurePublisher",
   "src/gcpPublisher.ts": "netskope-publisher:index:GcpPublisher",
+  "src/kubernetesPublisher.ts": "netskope-publisher:index:KubernetesPublisher",
   "src/vspherePublisher.ts": "netskope-publisher:index:VspherePublisher",
   "src/hypervPublisher.ts": "netskope-publisher:index:HypervPublisher"
 };

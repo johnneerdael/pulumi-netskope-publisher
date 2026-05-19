@@ -2,7 +2,7 @@
   "name": "netskope-publisher",
   "version": "0.1.7",
   "displayName": "Netskope Publisher",
-  "description": "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, vSphere, and experimental Hyper-V.",
+  "description": "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, and experimental Hyper-V.",
   "publisher": "johnneerdael",
   "keywords": [
     "category/network",
@@ -14,6 +14,7 @@
     "aws",
     "azure",
     "gcp",
+    "kubernetes",
     "vsphere"
   ],
   "homepage": "https://johnneerdael.github.io/pulumi-netskope-publisher/",
@@ -639,6 +640,118 @@
         "apiToken",
         "registrations"
       ]
+    },
+    "netskope-publisher:index:KubernetesPublisher": {
+      "isComponent": true,
+      "description": "Installs Netskope Private Access Publishers on Kubernetes with the kubernetes-netskope-publisher Helm chart.",
+      "inputProperties": {
+        "namePrefix": {
+          "type": "string",
+          "description": "Prefix used to derive publisher names when explicit names are not supplied."
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit publisher names to create."
+        },
+        "replicas": {
+          "type": "integer",
+          "description": "Number of publishers to create when names are not supplied."
+        },
+        "tenantUrl": {
+          "type": "string",
+          "description": "Netskope tenant URL used for publisher registration."
+        },
+        "apiToken": {
+          "type": "string",
+          "description": "Netskope API token used for publisher registration.",
+          "secret": true
+        },
+        "wizardPath": {
+          "type": "string",
+          "description": "Netskope publisher registration wizard API path."
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Tags or labels applied to supported provider resources."
+        },
+        "registrations": {
+          "$ref": "#/types/netskope-publisher:index:PublisherRegistrationMap",
+          "description": "Pre-created Netskope publisher registrations keyed by publisher name."
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Kubernetes namespace to create and install into. Defaults to netskope."
+        },
+        "enrollmentMode": {
+          "type": "string",
+          "description": "Enrollment mode: token for Pulumi-owned publisher records and per-publisher releases, or api for chart self-registration."
+        },
+        "chartRepository": {
+          "type": "string",
+          "description": "Helm chart repository. Defaults to oci://ghcr.io/johnneerdael/charts."
+        },
+        "chartVersion": {
+          "type": "string",
+          "description": "Helm chart version constraint. Defaults to ~> 1.4."
+        },
+        "chartValues": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "pulumi.json#/Any"
+          },
+          "description": "Free-form Helm values merged last."
+        },
+        "workloadType": {
+          "type": "string",
+          "description": "Chart workload type: daemonset or statefulset."
+        },
+        "hpaEnabled": {
+          "type": "boolean",
+          "description": "Whether to enable chart HPA when workloadType is statefulset."
+        },
+        "hpaMinReplicas": {
+          "type": "integer",
+          "description": "Minimum HPA replicas."
+        },
+        "hpaMaxReplicas": {
+          "type": "integer",
+          "description": "Maximum HPA replicas."
+        },
+        "imageRepository": {
+          "type": "string",
+          "description": "Override publisher container image repository."
+        },
+        "imageTag": {
+          "type": "string",
+          "description": "Override publisher container image tag."
+        }
+      },
+      "properties": {
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Derived publisher names."
+        },
+        "helmReleaseNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Helm release names created in the cluster."
+        },
+        "publishers": {
+          "$ref": "#/types/netskope-publisher:index:KubernetesPublisherOutputMap",
+          "description": "Publisher registration and Helm release details keyed by publisher or release name."
+        }
+      }
     }
   },
   "types": {
@@ -811,6 +924,57 @@
       "required": [
         "path"
       ]
+    },
+    "netskope-publisher:index:KubernetesPublisherOutput": {
+      "type": "object",
+      "description": "Kubernetes publisher registration and Helm release details.",
+      "properties": {
+        "publisherId": {
+          "type": "integer",
+          "description": "Netskope publisher ID in token mode."
+        },
+        "registrationToken": {
+          "type": "string",
+          "description": "Netskope publisher registration token in token mode.",
+          "secret": true
+        },
+        "helmReleaseName": {
+          "type": "string",
+          "description": "Helm release name."
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Kubernetes namespace."
+        },
+        "status": {
+          "type": "string",
+          "description": "Helm release status."
+        },
+        "vmId": {
+          "type": "string",
+          "description": "Unused VM-style compatibility field."
+        },
+        "privateIp": {
+          "type": "string",
+          "description": "Unused VM-style compatibility field."
+        },
+        "publicIp": {
+          "type": "string",
+          "description": "Unused VM-style compatibility field."
+        }
+      },
+      "required": [
+        "helmReleaseName",
+        "namespace",
+        "status"
+      ]
+    },
+    "netskope-publisher:index:KubernetesPublisherOutputMap": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/types/netskope-publisher:index:KubernetesPublisherOutput"
+      },
+      "description": "Kubernetes publisher outputs keyed by publisher name in token mode or release name in api mode."
     }
   }
 }

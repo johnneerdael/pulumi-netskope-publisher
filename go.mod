@@ -9,6 +9,7 @@ require (
 	github.com/pulumi/pulumi-azure-native-sdk/network/v3 v3.18.0
 	github.com/pulumi/pulumi-gcp/sdk/v9 v9.23.0
 	github.com/pulumi/pulumi-go-provider v1.3.2
+	github.com/pulumi/pulumi-kubernetes/sdk/v4 v4.31.0
 	github.com/pulumi/pulumi-vsphere/sdk/v4 v4.16.5
 	github.com/pulumi/pulumi/sdk/v3 v3.241.0
 )

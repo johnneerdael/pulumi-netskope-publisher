@@ -8,5 +8,6 @@ export * from "./netskopeRegistration";
 export * from "./awsPublisher";
 export * from "./azurePublisher";
 export * from "./gcpPublisher";
+export * from "./kubernetesPublisher";
 export * from "./vspherePublisher";
 export * from "./hypervPublisher";

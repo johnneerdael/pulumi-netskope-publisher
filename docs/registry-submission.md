@@ -28,7 +28,7 @@ The executable provider is implemented with `pulumi-go-provider` under
 
 The Go provider exposes the component schema, executable provider entry
 point, a stateful `NetskopeRegistration` resource, and child-resource
-graphs for AWS, Azure, GCP, and vSphere.
+graphs for AWS, Azure, GCP, Kubernetes, and vSphere.
 
 Before opening the public Registry PR:
 
