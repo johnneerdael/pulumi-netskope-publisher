@@ -27,10 +27,22 @@ as the Terraform modules: `bootstrap`, `bootstrapUrl`, `nonat`,
 - GCP publisher component: `GcpPublisher`
 - Kubernetes publisher component: `KubernetesPublisher`
 - vSphere publisher component: `VspherePublisher`
+- ESXi Native publisher component: `EsxiPublisher`
+- Hcloud publisher component: `HcloudPublisher`
+- Nutanix publisher component: `NutanixPublisher`
+- OpenStack publisher component: `OpenstackPublisher`
+- OVH Public Cloud publisher component: `OvhPublisher`
+- Scaleway publisher component: `ScalewayPublisher`
+- OCI publisher component: `OciPublisher`
+- Alicloud publisher component: `AlicloudPublisher`
 - Experimental Hyper-V gate: `HypervPublisher`
 - Netskope publisher registration by name
 - Bring-your-own registration data escape hatch
 - GitHub Pages documentation
+
+ESXi Native is direct-host ESXi support and does not replace the vSphere
+component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, and Alicloud
+use bootstrap mode on Ubuntu 22.04 images.
 
 Hyper-V depends on the upstream Pulumi Hyper-V provider becoming
 consumable from a stable package source. The official Netskope publisher
@@ -103,9 +115,10 @@ module path
 Java is generated under `sdk/java`; Rust is generated with Pulumi
 Gestalt under `sdk/rust`.
 
-The Go provider constructs AWS, Azure, GCP, Kubernetes, and vSphere
-child resources and includes a stateful `NetskopeRegistration` resource
-for creating or reusing Netskope publisher records. Pre-created
+The Go provider constructs cloud, virtualization, Kubernetes, and
+registration child resources and includes a stateful
+`NetskopeRegistration` resource for creating or reusing Netskope
+publisher records. Pre-created
 `registrations` remain available as an escape hatch.
 
 ## Release automation

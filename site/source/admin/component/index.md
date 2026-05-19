@@ -13,6 +13,14 @@ the Pulumi CLI, TypeScript, Python, C#, Go, Java, and Rust.
 - [GCP](/pulumi-netskope-publisher/admin/component/gcp/)
 - [Kubernetes](/pulumi-netskope-publisher/admin/component/kubernetes/)
 - [vSphere](/pulumi-netskope-publisher/admin/component/vsphere/)
+- [ESXi Native](/pulumi-netskope-publisher/admin/component/esxi/)
+- [Hcloud](/pulumi-netskope-publisher/admin/component/hcloud/)
+- [Nutanix](/pulumi-netskope-publisher/admin/component/nutanix/)
+- [OpenStack](/pulumi-netskope-publisher/admin/component/openstack/)
+- [OVH](/pulumi-netskope-publisher/admin/component/ovh/)
+- [Scaleway](/pulumi-netskope-publisher/admin/component/scaleway/)
+- [OCI](/pulumi-netskope-publisher/admin/component/oci/)
+- [Alicloud](/pulumi-netskope-publisher/admin/component/alicloud/)
 - [Hyper-V (experimental)](/pulumi-netskope-publisher/admin/component/hyperv/)
 - [Netskope Registration](/pulumi-netskope-publisher/admin/component/registration/)
 
@@ -33,7 +41,11 @@ deployments additionally support chart API enrollment.
 | `tags` | Platform tags or labels where supported. |
 | `wizardPath` | Absolute path to `npa_publisher_wizard`. |
 
-AWS, Azure, and GCP also accept bootstrap and install-user controls:
+ESXi Native is direct-host ESXi support and does not replace the vSphere
+component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, and Alicloud
+use bootstrap mode on Ubuntu 22.04 images.
+
+VM-backed cloud providers accept bootstrap and install-user controls:
 `bootstrap`, `bootstrapUrl`, `nonat`, `installUser`,
 `installUserPassword`, `installUserPasswordIsHash`,
 `installUserSshAuthorizedKeys`, `deleteDefaultUser`, and

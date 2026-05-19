@@ -11,10 +11,22 @@ title: Provider Matrix
 | GCP | `GcpPublisher` | Supported |
 | Kubernetes | `KubernetesPublisher` | Supported |
 | vSphere | `VspherePublisher` | Supported |
+| ESXi Native | `EsxiPublisher` | Supported direct-host ESXi |
+| Hcloud | `HcloudPublisher` | Supported bootstrap mode |
+| Nutanix | `NutanixPublisher` | Supported bootstrap mode |
+| OpenStack | `OpenstackPublisher` | Supported bootstrap mode |
+| OVH Public Cloud | `OvhPublisher` | Supported bootstrap mode |
+| Scaleway | `ScalewayPublisher` | Supported bootstrap mode |
+| OCI | `OciPublisher` | Supported bootstrap mode |
+| Alicloud | `AlicloudPublisher` | Supported bootstrap mode |
 | Hyper-V | `HypervPublisher` | Experimental gate |
 
 All supported providers share name derivation, Netskope registration,
 cloud-init generation, and secret output conventions.
+
+ESXi Native is direct-host ESXi support and does not replace the vSphere
+component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, and Alicloud
+use bootstrap mode on Ubuntu 22.04 images.
 
 Official Netskope image sources:
 
