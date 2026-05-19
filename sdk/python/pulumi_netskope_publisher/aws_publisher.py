@@ -26,14 +26,23 @@ class AwsPublisherArgs:
                  ami_id: Optional[pulumi.Input[_builtins.str]] = None,
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  associate_public_ip_address: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
                  ebs_optimized: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input['GuestNetworkInterfaceArgs']] = None,
                  iam_instance_profile: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  instance_type: Optional[pulumi.Input[_builtins.str]] = None,
                  key_name: Optional[pulumi.Input[_builtins.str]] = None,
                  metadata_options: Optional[pulumi.Input['MetadataOptionsArgs']] = None,
                  monitoring: Optional[pulumi.Input[_builtins.bool]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  registrations: Optional[pulumi.Input['PublisherRegistrationMapArgs']] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
                  tags: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
@@ -47,14 +56,23 @@ class AwsPublisherArgs:
         :param pulumi.Input[_builtins.str] ami_id: Publisher AMI ID.
         :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
         :param pulumi.Input[_builtins.bool] associate_public_ip_address: Whether to associate public IP addresses.
+        :param pulumi.Input[_builtins.bool] bootstrap: Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
+        :param pulumi.Input[_builtins.str] bootstrap_url: URL to the Netskope generic bootstrap script.
+        :param pulumi.Input[_builtins.bool] delete_default_user: When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
         :param pulumi.Input[_builtins.bool] ebs_optimized: Whether to enable EBS optimization.
+        :param pulumi.Input['GuestNetworkInterfaceArgs'] guest_network_interface: Optional guest OS primary interface override applied with netplan during cloud-init.
         :param pulumi.Input[_builtins.str] iam_instance_profile: Optional IAM instance profile name.
+        :param pulumi.Input[_builtins.str] install_user: Linux user that owns the Publisher install. Defaults to ubuntu.
+        :param pulumi.Input[_builtins.str] install_user_password: Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        :param pulumi.Input[_builtins.bool] install_user_password_is_hash: Set true when installUserPassword is already a crypt(3) hash.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] install_user_ssh_authorized_keys: Public SSH keys installed in the install user's authorized_keys file.
         :param pulumi.Input[_builtins.str] instance_type: EC2 instance type.
         :param pulumi.Input[_builtins.str] key_name: Optional EC2 key pair name.
         :param pulumi.Input['MetadataOptionsArgs'] metadata_options: EC2 instance metadata service options.
         :param pulumi.Input[_builtins.bool] monitoring: Whether to enable detailed EC2 monitoring.
         :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
+        :param pulumi.Input[_builtins.bool] nonat: Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
         :param pulumi.Input['PublisherRegistrationMapArgs'] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
         :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
         :param pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]] tags: Tags applied to supported provider resources.
@@ -69,10 +87,26 @@ class AwsPublisherArgs:
             pulumi.set(__self__, "api_token", api_token)
         if associate_public_ip_address is not None:
             pulumi.set(__self__, "associate_public_ip_address", associate_public_ip_address)
+        if bootstrap is not None:
+            pulumi.set(__self__, "bootstrap", bootstrap)
+        if bootstrap_url is not None:
+            pulumi.set(__self__, "bootstrap_url", bootstrap_url)
+        if delete_default_user is not None:
+            pulumi.set(__self__, "delete_default_user", delete_default_user)
         if ebs_optimized is not None:
             pulumi.set(__self__, "ebs_optimized", ebs_optimized)
+        if guest_network_interface is not None:
+            pulumi.set(__self__, "guest_network_interface", guest_network_interface)
         if iam_instance_profile is not None:
             pulumi.set(__self__, "iam_instance_profile", iam_instance_profile)
+        if install_user is not None:
+            pulumi.set(__self__, "install_user", install_user)
+        if install_user_password is not None:
+            pulumi.set(__self__, "install_user_password", install_user_password)
+        if install_user_password_is_hash is not None:
+            pulumi.set(__self__, "install_user_password_is_hash", install_user_password_is_hash)
+        if install_user_ssh_authorized_keys is not None:
+            pulumi.set(__self__, "install_user_ssh_authorized_keys", install_user_ssh_authorized_keys)
         if instance_type is not None:
             pulumi.set(__self__, "instance_type", instance_type)
         if key_name is not None:
@@ -85,6 +119,8 @@ class AwsPublisherArgs:
             pulumi.set(__self__, "name_prefix", name_prefix)
         if names is not None:
             pulumi.set(__self__, "names", names)
+        if nonat is not None:
+            pulumi.set(__self__, "nonat", nonat)
         if registrations is not None:
             pulumi.set(__self__, "registrations", registrations)
         if replicas is not None:
@@ -157,6 +193,42 @@ class AwsPublisherArgs:
         pulumi.set(self, "associate_public_ip_address", value)
 
     @_builtins.property
+    @pulumi.getter
+    def bootstrap(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
+        """
+        return pulumi.get(self, "bootstrap")
+
+    @bootstrap.setter
+    def bootstrap(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "bootstrap", value)
+
+    @_builtins.property
+    @pulumi.getter(name="bootstrapUrl")
+    def bootstrap_url(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        URL to the Netskope generic bootstrap script.
+        """
+        return pulumi.get(self, "bootstrap_url")
+
+    @bootstrap_url.setter
+    def bootstrap_url(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "bootstrap_url", value)
+
+    @_builtins.property
+    @pulumi.getter(name="deleteDefaultUser")
+    def delete_default_user(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        """
+        return pulumi.get(self, "delete_default_user")
+
+    @delete_default_user.setter
+    def delete_default_user(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "delete_default_user", value)
+
+    @_builtins.property
     @pulumi.getter(name="ebsOptimized")
     def ebs_optimized(self) -> Optional[pulumi.Input[_builtins.bool]]:
         """
@@ -169,6 +241,18 @@ class AwsPublisherArgs:
         pulumi.set(self, "ebs_optimized", value)
 
     @_builtins.property
+    @pulumi.getter(name="guestNetworkInterface")
+    def guest_network_interface(self) -> Optional[pulumi.Input['GuestNetworkInterfaceArgs']]:
+        """
+        Optional guest OS primary interface override applied with netplan during cloud-init.
+        """
+        return pulumi.get(self, "guest_network_interface")
+
+    @guest_network_interface.setter
+    def guest_network_interface(self, value: Optional[pulumi.Input['GuestNetworkInterfaceArgs']]):
+        pulumi.set(self, "guest_network_interface", value)
+
+    @_builtins.property
     @pulumi.getter(name="iamInstanceProfile")
     def iam_instance_profile(self) -> Optional[pulumi.Input[_builtins.str]]:
         """
@@ -179,6 +263,54 @@ class AwsPublisherArgs:
     @iam_instance_profile.setter
     def iam_instance_profile(self, value: Optional[pulumi.Input[_builtins.str]]):
         pulumi.set(self, "iam_instance_profile", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUser")
+    def install_user(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        Linux user that owns the Publisher install. Defaults to ubuntu.
+        """
+        return pulumi.get(self, "install_user")
+
+    @install_user.setter
+    def install_user(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "install_user", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserPassword")
+    def install_user_password(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        """
+        return pulumi.get(self, "install_user_password")
+
+    @install_user_password.setter
+    def install_user_password(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "install_user_password", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserPasswordIsHash")
+    def install_user_password_is_hash(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Set true when installUserPassword is already a crypt(3) hash.
+        """
+        return pulumi.get(self, "install_user_password_is_hash")
+
+    @install_user_password_is_hash.setter
+    def install_user_password_is_hash(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "install_user_password_is_hash", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserSshAuthorizedKeys")
+    def install_user_ssh_authorized_keys(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        Public SSH keys installed in the install user's authorized_keys file.
+        """
+        return pulumi.get(self, "install_user_ssh_authorized_keys")
+
+    @install_user_ssh_authorized_keys.setter
+    def install_user_ssh_authorized_keys(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "install_user_ssh_authorized_keys", value)
 
     @_builtins.property
     @pulumi.getter(name="instanceType")
@@ -254,6 +386,18 @@ class AwsPublisherArgs:
 
     @_builtins.property
     @pulumi.getter
+    def nonat(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
+        """
+        return pulumi.get(self, "nonat")
+
+    @nonat.setter
+    def nonat(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "nonat", value)
+
+    @_builtins.property
+    @pulumi.getter
     def registrations(self) -> Optional[pulumi.Input['PublisherRegistrationMapArgs']]:
         """
         Pre-created Netskope publisher registrations keyed by publisher name.
@@ -322,14 +466,23 @@ class AwsPublisher(pulumi.ComponentResource):
                  ami_id: Optional[pulumi.Input[_builtins.str]] = None,
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  associate_public_ip_address: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
                  ebs_optimized: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']]] = None,
                  iam_instance_profile: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  instance_type: Optional[pulumi.Input[_builtins.str]] = None,
                  key_name: Optional[pulumi.Input[_builtins.str]] = None,
                  metadata_options: Optional[pulumi.Input[Union['MetadataOptionsArgs', 'MetadataOptionsArgsDict']]] = None,
                  monitoring: Optional[pulumi.Input[_builtins.bool]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  registrations: Optional[pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
                  security_group_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
@@ -347,14 +500,23 @@ class AwsPublisher(pulumi.ComponentResource):
         :param pulumi.Input[_builtins.str] ami_id: Publisher AMI ID.
         :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
         :param pulumi.Input[_builtins.bool] associate_public_ip_address: Whether to associate public IP addresses.
+        :param pulumi.Input[_builtins.bool] bootstrap: Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
+        :param pulumi.Input[_builtins.str] bootstrap_url: URL to the Netskope generic bootstrap script.
+        :param pulumi.Input[_builtins.bool] delete_default_user: When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
         :param pulumi.Input[_builtins.bool] ebs_optimized: Whether to enable EBS optimization.
+        :param pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']] guest_network_interface: Optional guest OS primary interface override applied with netplan during cloud-init.
         :param pulumi.Input[_builtins.str] iam_instance_profile: Optional IAM instance profile name.
+        :param pulumi.Input[_builtins.str] install_user: Linux user that owns the Publisher install. Defaults to ubuntu.
+        :param pulumi.Input[_builtins.str] install_user_password: Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        :param pulumi.Input[_builtins.bool] install_user_password_is_hash: Set true when installUserPassword is already a crypt(3) hash.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] install_user_ssh_authorized_keys: Public SSH keys installed in the install user's authorized_keys file.
         :param pulumi.Input[_builtins.str] instance_type: EC2 instance type.
         :param pulumi.Input[_builtins.str] key_name: Optional EC2 key pair name.
         :param pulumi.Input[Union['MetadataOptionsArgs', 'MetadataOptionsArgsDict']] metadata_options: EC2 instance metadata service options.
         :param pulumi.Input[_builtins.bool] monitoring: Whether to enable detailed EC2 monitoring.
         :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
+        :param pulumi.Input[_builtins.bool] nonat: Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
         :param pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
         :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] security_group_ids: AWS security group IDs attached to publisher instances.
@@ -391,14 +553,23 @@ class AwsPublisher(pulumi.ComponentResource):
                  ami_id: Optional[pulumi.Input[_builtins.str]] = None,
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  associate_public_ip_address: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
                  ebs_optimized: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']]] = None,
                  iam_instance_profile: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  instance_type: Optional[pulumi.Input[_builtins.str]] = None,
                  key_name: Optional[pulumi.Input[_builtins.str]] = None,
                  metadata_options: Optional[pulumi.Input[Union['MetadataOptionsArgs', 'MetadataOptionsArgsDict']]] = None,
                  monitoring: Optional[pulumi.Input[_builtins.bool]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  registrations: Optional[pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
                  security_group_ids: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
@@ -420,14 +591,23 @@ class AwsPublisher(pulumi.ComponentResource):
             __props__.__dict__["ami_id"] = ami_id
             __props__.__dict__["api_token"] = None if api_token is None else pulumi.Output.secret(api_token)
             __props__.__dict__["associate_public_ip_address"] = associate_public_ip_address
+            __props__.__dict__["bootstrap"] = bootstrap
+            __props__.__dict__["bootstrap_url"] = bootstrap_url
+            __props__.__dict__["delete_default_user"] = delete_default_user
             __props__.__dict__["ebs_optimized"] = ebs_optimized
+            __props__.__dict__["guest_network_interface"] = guest_network_interface
             __props__.__dict__["iam_instance_profile"] = iam_instance_profile
+            __props__.__dict__["install_user"] = install_user
+            __props__.__dict__["install_user_password"] = None if install_user_password is None else pulumi.Output.secret(install_user_password)
+            __props__.__dict__["install_user_password_is_hash"] = install_user_password_is_hash
+            __props__.__dict__["install_user_ssh_authorized_keys"] = install_user_ssh_authorized_keys
             __props__.__dict__["instance_type"] = instance_type
             __props__.__dict__["key_name"] = key_name
             __props__.__dict__["metadata_options"] = metadata_options
             __props__.__dict__["monitoring"] = monitoring
             __props__.__dict__["name_prefix"] = name_prefix
             __props__.__dict__["names"] = names
+            __props__.__dict__["nonat"] = nonat
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas
             if security_group_ids is None and not opts.urn:

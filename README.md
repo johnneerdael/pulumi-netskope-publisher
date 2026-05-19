@@ -13,6 +13,12 @@ records, generate per-publisher cloud-init, and create platform VMs.
 For Kubernetes, it installs the `kubernetes-netskope-publisher` Helm
 chart and supports both token and API enrollment modes.
 
+AWS, Azure, and GCP support the same bootstrap-mode cloud-init controls
+as the Terraform modules: `bootstrap`, `bootstrapUrl`, `nonat`,
+`installUser`, `installUserPassword`, `installUserPasswordIsHash`,
+`installUserSshAuthorizedKeys`, `deleteDefaultUser`, and
+`guestNetworkInterface`.
+
 ## Current scope
 
 - AWS publisher component: `AwsPublisher`

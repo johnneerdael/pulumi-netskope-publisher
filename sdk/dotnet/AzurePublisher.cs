@@ -97,10 +97,74 @@ namespace Pulumi.NetskopePublisher
         public Input<bool>? AssignPublicIp { get; set; }
 
         /// <summary>
+        /// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
+        /// </summary>
+        [Input("bootstrap")]
+        public Input<bool>? Bootstrap { get; set; }
+
+        /// <summary>
+        /// URL to the Netskope generic bootstrap script.
+        /// </summary>
+        [Input("bootstrapUrl")]
+        public Input<string>? BootstrapUrl { get; set; }
+
+        /// <summary>
+        /// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        /// </summary>
+        [Input("deleteDefaultUser")]
+        public Input<bool>? DeleteDefaultUser { get; set; }
+
+        /// <summary>
+        /// Optional guest OS primary interface override applied with netplan during cloud-init.
+        /// </summary>
+        [Input("guestNetworkInterface")]
+        public Input<Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
+
+        /// <summary>
         /// Custom image resource ID.
         /// </summary>
         [Input("imageId")]
         public Input<string>? ImageId { get; set; }
+
+        /// <summary>
+        /// Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
+        /// </summary>
+        [Input("installUser")]
+        public Input<string>? InstallUser { get; set; }
+
+        [Input("installUserPassword")]
+        private Input<string>? _installUserPassword;
+
+        /// <summary>
+        /// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        /// </summary>
+        public Input<string>? InstallUserPassword
+        {
+            get => _installUserPassword;
+            set
+            {
+                var emptySecret = Output.CreateSecret(0);
+                _installUserPassword = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
+            }
+        }
+
+        /// <summary>
+        /// Set true when installUserPassword is already a crypt(3) hash.
+        /// </summary>
+        [Input("installUserPasswordIsHash")]
+        public Input<bool>? InstallUserPasswordIsHash { get; set; }
+
+        [Input("installUserSshAuthorizedKeys")]
+        private InputList<string>? _installUserSshAuthorizedKeys;
+
+        /// <summary>
+        /// Extra public SSH keys installed in the install user's authorized_keys file.
+        /// </summary>
+        public InputList<string> InstallUserSshAuthorizedKeys
+        {
+            get => _installUserSshAuthorizedKeys ?? (_installUserSshAuthorizedKeys = new InputList<string>());
+            set => _installUserSshAuthorizedKeys = value;
+        }
 
         /// <summary>
         /// Azure region.
@@ -137,6 +201,12 @@ namespace Pulumi.NetskopePublisher
         /// </summary>
         [Input("networkSecurityGroupId")]
         public Input<string>? NetworkSecurityGroupId { get; set; }
+
+        /// <summary>
+        /// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
+        /// </summary>
+        [Input("nonat")]
+        public Input<bool>? Nonat { get; set; }
 
         /// <summary>
         /// Managed OS disk options.

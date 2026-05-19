@@ -137,6 +137,46 @@
         "metadataOptions": {
           "$ref": "#/types/netskope-publisher:index:MetadataOptions",
           "description": "EC2 instance metadata service options."
+        },
+        "bootstrap": {
+          "type": "boolean",
+          "description": "Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS."
+        },
+        "bootstrapUrl": {
+          "type": "string",
+          "description": "URL to the Netskope generic bootstrap script."
+        },
+        "nonat": {
+          "type": "boolean",
+          "description": "Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS."
+        },
+        "installUser": {
+          "type": "string",
+          "description": "Linux user that owns the Publisher install. Defaults to ubuntu."
+        },
+        "installUserPassword": {
+          "type": "string",
+          "description": "Optional password for installUser. Plain text unless installUserPasswordIsHash is true.",
+          "secret": true
+        },
+        "installUserPasswordIsHash": {
+          "type": "boolean",
+          "description": "Set true when installUserPassword is already a crypt(3) hash."
+        },
+        "installUserSshAuthorizedKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Public SSH keys installed in the install user's authorized_keys file."
+        },
+        "deleteDefaultUser": {
+          "type": "boolean",
+          "description": "When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account."
+        },
+        "guestNetworkInterface": {
+          "$ref": "#/types/netskope-publisher:index:GuestNetworkInterface",
+          "description": "Optional guest OS primary interface override applied with netplan during cloud-init."
         }
       },
       "requiredInputs": [
@@ -247,6 +287,46 @@
         "acceptMarketplaceTerms": {
           "type": "boolean",
           "description": "Whether to accept marketplace image plan terms."
+        },
+        "bootstrap": {
+          "type": "boolean",
+          "description": "Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure."
+        },
+        "bootstrapUrl": {
+          "type": "string",
+          "description": "URL to the Netskope generic bootstrap script."
+        },
+        "nonat": {
+          "type": "boolean",
+          "description": "Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure."
+        },
+        "installUser": {
+          "type": "string",
+          "description": "Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value."
+        },
+        "installUserPassword": {
+          "type": "string",
+          "description": "Optional password for installUser. Plain text unless installUserPasswordIsHash is true.",
+          "secret": true
+        },
+        "installUserPasswordIsHash": {
+          "type": "boolean",
+          "description": "Set true when installUserPassword is already a crypt(3) hash."
+        },
+        "installUserSshAuthorizedKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Extra public SSH keys installed in the install user's authorized_keys file."
+        },
+        "deleteDefaultUser": {
+          "type": "boolean",
+          "description": "When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account."
+        },
+        "guestNetworkInterface": {
+          "$ref": "#/types/netskope-publisher:index:GuestNetworkInterface",
+          "description": "Optional guest OS primary interface override applied with netplan during cloud-init."
         }
       },
       "requiredInputs": [
@@ -347,6 +427,34 @@
         "nonat": {
           "type": "boolean",
           "description": "Whether cloud-init should create the Netskope No-NAT marker file. Defaults to true on GCP because of the 1460-byte MTU."
+        },
+        "installUser": {
+          "type": "string",
+          "description": "Linux user that owns the Publisher install. Defaults to ubuntu."
+        },
+        "installUserPassword": {
+          "type": "string",
+          "description": "Optional password for installUser. Plain text unless installUserPasswordIsHash is true.",
+          "secret": true
+        },
+        "installUserPasswordIsHash": {
+          "type": "boolean",
+          "description": "Set true when installUserPassword is already a crypt(3) hash."
+        },
+        "installUserSshAuthorizedKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Public SSH keys installed in the install user's authorized_keys file."
+        },
+        "deleteDefaultUser": {
+          "type": "boolean",
+          "description": "When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account."
+        },
+        "guestNetworkInterface": {
+          "$ref": "#/types/netskope-publisher:index:GuestNetworkInterface",
+          "description": "Optional guest OS primary interface override applied with netplan during cloud-init."
         },
         "assignPublicIp": {
           "type": "boolean",
@@ -768,6 +876,45 @@
           "description": "Whether IMDSv2 tokens are required."
         }
       }
+    },
+    "netskope-publisher:index:GuestNetworkInterface": {
+      "type": "object",
+      "description": "Guest OS netplan override for the primary network interface.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Guest OS interface name, such as ens160 or eth0."
+        },
+        "dhcp4": {
+          "type": "boolean",
+          "description": "Whether DHCPv4 is enabled."
+        },
+        "addresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Static CIDR addresses assigned to the interface."
+        },
+        "gateway4": {
+          "type": "string",
+          "description": "IPv4 default gateway."
+        },
+        "nameservers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "DNS nameserver addresses."
+        },
+        "mtu": {
+          "type": "integer",
+          "description": "Interface MTU."
+        }
+      },
+      "required": [
+        "name"
+      ]
     },
     "netskope-publisher:index:PublisherRegistration": {
       "type": "object",

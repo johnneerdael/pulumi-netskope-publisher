@@ -85,16 +85,80 @@ namespace Pulumi.NetskopePublisher
         public Input<bool>? AssociatePublicIpAddress { get; set; }
 
         /// <summary>
+        /// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
+        /// </summary>
+        [Input("bootstrap")]
+        public Input<bool>? Bootstrap { get; set; }
+
+        /// <summary>
+        /// URL to the Netskope generic bootstrap script.
+        /// </summary>
+        [Input("bootstrapUrl")]
+        public Input<string>? BootstrapUrl { get; set; }
+
+        /// <summary>
+        /// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        /// </summary>
+        [Input("deleteDefaultUser")]
+        public Input<bool>? DeleteDefaultUser { get; set; }
+
+        /// <summary>
         /// Whether to enable EBS optimization.
         /// </summary>
         [Input("ebsOptimized")]
         public Input<bool>? EbsOptimized { get; set; }
 
         /// <summary>
+        /// Optional guest OS primary interface override applied with netplan during cloud-init.
+        /// </summary>
+        [Input("guestNetworkInterface")]
+        public Input<Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
+
+        /// <summary>
         /// Optional IAM instance profile name.
         /// </summary>
         [Input("iamInstanceProfile")]
         public Input<string>? IamInstanceProfile { get; set; }
+
+        /// <summary>
+        /// Linux user that owns the Publisher install. Defaults to ubuntu.
+        /// </summary>
+        [Input("installUser")]
+        public Input<string>? InstallUser { get; set; }
+
+        [Input("installUserPassword")]
+        private Input<string>? _installUserPassword;
+
+        /// <summary>
+        /// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        /// </summary>
+        public Input<string>? InstallUserPassword
+        {
+            get => _installUserPassword;
+            set
+            {
+                var emptySecret = Output.CreateSecret(0);
+                _installUserPassword = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
+            }
+        }
+
+        /// <summary>
+        /// Set true when installUserPassword is already a crypt(3) hash.
+        /// </summary>
+        [Input("installUserPasswordIsHash")]
+        public Input<bool>? InstallUserPasswordIsHash { get; set; }
+
+        [Input("installUserSshAuthorizedKeys")]
+        private InputList<string>? _installUserSshAuthorizedKeys;
+
+        /// <summary>
+        /// Public SSH keys installed in the install user's authorized_keys file.
+        /// </summary>
+        public InputList<string> InstallUserSshAuthorizedKeys
+        {
+            get => _installUserSshAuthorizedKeys ?? (_installUserSshAuthorizedKeys = new InputList<string>());
+            set => _installUserSshAuthorizedKeys = value;
+        }
 
         /// <summary>
         /// EC2 instance type.
@@ -137,6 +201,12 @@ namespace Pulumi.NetskopePublisher
             get => _names ?? (_names = new InputList<string>());
             set => _names = value;
         }
+
+        /// <summary>
+        /// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
+        /// </summary>
+        [Input("nonat")]
+        public Input<bool>? Nonat { get; set; }
 
         /// <summary>
         /// Pre-created Netskope publisher registrations keyed by publisher name.

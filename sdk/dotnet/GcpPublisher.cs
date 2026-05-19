@@ -91,10 +91,62 @@ namespace Pulumi.NetskopePublisher
         public Input<string>? BootstrapUrl { get; set; }
 
         /// <summary>
+        /// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        /// </summary>
+        [Input("deleteDefaultUser")]
+        public Input<bool>? DeleteDefaultUser { get; set; }
+
+        /// <summary>
+        /// Optional guest OS primary interface override applied with netplan during cloud-init.
+        /// </summary>
+        [Input("guestNetworkInterface")]
+        public Input<Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
+
+        /// <summary>
         /// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
         /// </summary>
         [Input("image", required: true)]
         public Input<string> Image { get; set; } = null!;
+
+        /// <summary>
+        /// Linux user that owns the Publisher install. Defaults to ubuntu.
+        /// </summary>
+        [Input("installUser")]
+        public Input<string>? InstallUser { get; set; }
+
+        [Input("installUserPassword")]
+        private Input<string>? _installUserPassword;
+
+        /// <summary>
+        /// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        /// </summary>
+        public Input<string>? InstallUserPassword
+        {
+            get => _installUserPassword;
+            set
+            {
+                var emptySecret = Output.CreateSecret(0);
+                _installUserPassword = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
+            }
+        }
+
+        /// <summary>
+        /// Set true when installUserPassword is already a crypt(3) hash.
+        /// </summary>
+        [Input("installUserPasswordIsHash")]
+        public Input<bool>? InstallUserPasswordIsHash { get; set; }
+
+        [Input("installUserSshAuthorizedKeys")]
+        private InputList<string>? _installUserSshAuthorizedKeys;
+
+        /// <summary>
+        /// Public SSH keys installed in the install user's authorized_keys file.
+        /// </summary>
+        public InputList<string> InstallUserSshAuthorizedKeys
+        {
+            get => _installUserSshAuthorizedKeys ?? (_installUserSshAuthorizedKeys = new InputList<string>());
+            set => _installUserSshAuthorizedKeys = value;
+        }
 
         /// <summary>
         /// Compute Engine machine type.

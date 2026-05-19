@@ -166,6 +166,46 @@ func TestRenderUserDataBootstrapsPublisherByDefault(t *testing.T) {
 	}
 }
 
+func TestRenderUserDataSupportsInstallUserOptions(t *testing.T) {
+	password := "S3cret-Passw0rd!"
+	gateway := "10.0.0.1"
+	mtu := 1460
+	userData := renderUserDataWithOptions("pub-1", "token-123", nil, cloudInitOptions{
+		Bootstrap:                    true,
+		BootstrapURL:                 defaultBootstrapURL,
+		Nonat:                        true,
+		InstallUser:                  "npa",
+		InstallUserPassword:          &password,
+		InstallUserSSHAuthorizedKeys: []string{"ssh-ed25519 AAAA fake-key"},
+		DeleteDefaultUser:            true,
+		GuestNetworkInterface: &GuestNetworkInterface{
+			Name:        "ens160",
+			Addresses:   []string{"10.0.0.10/24"},
+			Gateway4:    &gateway,
+			Nameservers: []string{"10.0.0.2"},
+			MTU:         &mtu,
+		},
+	})
+
+	for _, expected := range []string{
+		"default_user:\n    name: npa",
+		"lock_passwd: false",
+		"ssh-ed25519 AAAA fake-key",
+		"password: \"S3cret-Passw0rd!\"",
+		"userdel -r ubuntu",
+		"/home/npa/resources/.nonat",
+		"su - npa -c 'curl -fsSL",
+		"sudo /home/npa/npa_publisher_wizard -token \"token-123\"",
+		"path: /etc/netplan/60-cloudinit-override.yaml",
+		"ens160:",
+		"mtu: 1460",
+	} {
+		if !strings.Contains(userData, expected) {
+			t.Fatalf("expected user data to contain %q, got:\n%s", expected, userData)
+		}
+	}
+}
+
 func TestAzureConstructCreatesVirtualMachineChild(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:AzurePublisher", property.NewMap(map[string]property.Value{
 		"names":             property.New([]property.Value{property.New("pub-1")}),

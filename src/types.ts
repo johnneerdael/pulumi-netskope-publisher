@@ -11,6 +11,15 @@ export interface MetadataOptions {
   httpTokens?: pulumi.Input<string>;
 }
 
+export interface GuestNetworkInterface {
+  name: pulumi.Input<string>;
+  dhcp4?: pulumi.Input<boolean>;
+  addresses?: pulumi.Input<pulumi.Input<string>[]>;
+  gateway4?: pulumi.Input<string>;
+  nameservers?: pulumi.Input<pulumi.Input<string>[]>;
+  mtu?: pulumi.Input<number>;
+}
+
 export interface PublisherRegistrationInput {
   publisherId: pulumi.Input<number>;
   registrationToken: pulumi.Input<string>;
@@ -25,6 +34,15 @@ export interface CommonPublisherArgs extends NameArgs {
   wizardPath?: pulumi.Input<string>;
   tags?: pulumi.Input<Record<string, pulumi.Input<string>>>;
   registrations?: pulumi.Input<Record<string, PublisherRegistrationInput>>;
+  bootstrap?: pulumi.Input<boolean>;
+  bootstrapUrl?: pulumi.Input<string>;
+  nonat?: pulumi.Input<boolean>;
+  installUser?: pulumi.Input<string>;
+  installUserPassword?: pulumi.Input<string>;
+  installUserPasswordIsHash?: pulumi.Input<boolean>;
+  installUserSshAuthorizedKeys?: pulumi.Input<pulumi.Input<string>[]>;
+  deleteDefaultUser?: pulumi.Input<boolean>;
+  guestNetworkInterface?: pulumi.Input<GuestNetworkInterface>;
 }
 
 export interface AwsPublisherArgs extends CommonPublisherArgs {
@@ -79,9 +97,6 @@ export interface GcpPublisherArgs extends CommonPublisherArgs {
   subnetwork: pulumi.Input<string>;
   machineType?: pulumi.Input<string>;
   image: pulumi.Input<string>;
-  bootstrap?: pulumi.Input<boolean>;
-  bootstrapUrl?: pulumi.Input<string>;
-  nonat?: pulumi.Input<boolean>;
   assignPublicIp?: pulumi.Input<boolean>;
   networkTags?: pulumi.Input<pulumi.Input<string>[]>;
   serviceAccount?: pulumi.Input<GcpServiceAccount>;

@@ -528,6 +528,241 @@ func (o GcpServiceAccountPtrOutput) Scopes() pulumi.StringArrayOutput {
 	}).(pulumi.StringArrayOutput)
 }
 
+// Guest OS netplan override for the primary network interface.
+type GuestNetworkInterface struct {
+	// Static CIDR addresses assigned to the interface.
+	Addresses []string `pulumi:"addresses"`
+	// Whether DHCPv4 is enabled.
+	Dhcp4 *bool `pulumi:"dhcp4"`
+	// IPv4 default gateway.
+	Gateway4 *string `pulumi:"gateway4"`
+	// Interface MTU.
+	Mtu *int `pulumi:"mtu"`
+	// Guest OS interface name, such as ens160 or eth0.
+	Name string `pulumi:"name"`
+	// DNS nameserver addresses.
+	Nameservers []string `pulumi:"nameservers"`
+}
+
+// GuestNetworkInterfaceInput is an input type that accepts GuestNetworkInterfaceArgs and GuestNetworkInterfaceOutput values.
+// You can construct a concrete instance of `GuestNetworkInterfaceInput` via:
+//
+//	GuestNetworkInterfaceArgs{...}
+type GuestNetworkInterfaceInput interface {
+	pulumi.Input
+
+	ToGuestNetworkInterfaceOutput() GuestNetworkInterfaceOutput
+	ToGuestNetworkInterfaceOutputWithContext(context.Context) GuestNetworkInterfaceOutput
+}
+
+// Guest OS netplan override for the primary network interface.
+type GuestNetworkInterfaceArgs struct {
+	// Static CIDR addresses assigned to the interface.
+	Addresses pulumi.StringArrayInput `pulumi:"addresses"`
+	// Whether DHCPv4 is enabled.
+	Dhcp4 pulumi.BoolPtrInput `pulumi:"dhcp4"`
+	// IPv4 default gateway.
+	Gateway4 pulumi.StringPtrInput `pulumi:"gateway4"`
+	// Interface MTU.
+	Mtu pulumi.IntPtrInput `pulumi:"mtu"`
+	// Guest OS interface name, such as ens160 or eth0.
+	Name pulumi.StringInput `pulumi:"name"`
+	// DNS nameserver addresses.
+	Nameservers pulumi.StringArrayInput `pulumi:"nameservers"`
+}
+
+func (GuestNetworkInterfaceArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*GuestNetworkInterface)(nil)).Elem()
+}
+
+func (i GuestNetworkInterfaceArgs) ToGuestNetworkInterfaceOutput() GuestNetworkInterfaceOutput {
+	return i.ToGuestNetworkInterfaceOutputWithContext(context.Background())
+}
+
+func (i GuestNetworkInterfaceArgs) ToGuestNetworkInterfaceOutputWithContext(ctx context.Context) GuestNetworkInterfaceOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(GuestNetworkInterfaceOutput)
+}
+
+func (i GuestNetworkInterfaceArgs) ToGuestNetworkInterfacePtrOutput() GuestNetworkInterfacePtrOutput {
+	return i.ToGuestNetworkInterfacePtrOutputWithContext(context.Background())
+}
+
+func (i GuestNetworkInterfaceArgs) ToGuestNetworkInterfacePtrOutputWithContext(ctx context.Context) GuestNetworkInterfacePtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(GuestNetworkInterfaceOutput).ToGuestNetworkInterfacePtrOutputWithContext(ctx)
+}
+
+// GuestNetworkInterfacePtrInput is an input type that accepts GuestNetworkInterfaceArgs, GuestNetworkInterfacePtr and GuestNetworkInterfacePtrOutput values.
+// You can construct a concrete instance of `GuestNetworkInterfacePtrInput` via:
+//
+//	        GuestNetworkInterfaceArgs{...}
+//
+//	or:
+//
+//	        nil
+type GuestNetworkInterfacePtrInput interface {
+	pulumi.Input
+
+	ToGuestNetworkInterfacePtrOutput() GuestNetworkInterfacePtrOutput
+	ToGuestNetworkInterfacePtrOutputWithContext(context.Context) GuestNetworkInterfacePtrOutput
+}
+
+type guestNetworkInterfacePtrType GuestNetworkInterfaceArgs
+
+func GuestNetworkInterfacePtr(v *GuestNetworkInterfaceArgs) GuestNetworkInterfacePtrInput {
+	return (*guestNetworkInterfacePtrType)(v)
+}
+
+func (*guestNetworkInterfacePtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**GuestNetworkInterface)(nil)).Elem()
+}
+
+func (i *guestNetworkInterfacePtrType) ToGuestNetworkInterfacePtrOutput() GuestNetworkInterfacePtrOutput {
+	return i.ToGuestNetworkInterfacePtrOutputWithContext(context.Background())
+}
+
+func (i *guestNetworkInterfacePtrType) ToGuestNetworkInterfacePtrOutputWithContext(ctx context.Context) GuestNetworkInterfacePtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(GuestNetworkInterfacePtrOutput)
+}
+
+// Guest OS netplan override for the primary network interface.
+type GuestNetworkInterfaceOutput struct{ *pulumi.OutputState }
+
+func (GuestNetworkInterfaceOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*GuestNetworkInterface)(nil)).Elem()
+}
+
+func (o GuestNetworkInterfaceOutput) ToGuestNetworkInterfaceOutput() GuestNetworkInterfaceOutput {
+	return o
+}
+
+func (o GuestNetworkInterfaceOutput) ToGuestNetworkInterfaceOutputWithContext(ctx context.Context) GuestNetworkInterfaceOutput {
+	return o
+}
+
+func (o GuestNetworkInterfaceOutput) ToGuestNetworkInterfacePtrOutput() GuestNetworkInterfacePtrOutput {
+	return o.ToGuestNetworkInterfacePtrOutputWithContext(context.Background())
+}
+
+func (o GuestNetworkInterfaceOutput) ToGuestNetworkInterfacePtrOutputWithContext(ctx context.Context) GuestNetworkInterfacePtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v GuestNetworkInterface) *GuestNetworkInterface {
+		return &v
+	}).(GuestNetworkInterfacePtrOutput)
+}
+
+// Static CIDR addresses assigned to the interface.
+func (o GuestNetworkInterfaceOutput) Addresses() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v GuestNetworkInterface) []string { return v.Addresses }).(pulumi.StringArrayOutput)
+}
+
+// Whether DHCPv4 is enabled.
+func (o GuestNetworkInterfaceOutput) Dhcp4() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v GuestNetworkInterface) *bool { return v.Dhcp4 }).(pulumi.BoolPtrOutput)
+}
+
+// IPv4 default gateway.
+func (o GuestNetworkInterfaceOutput) Gateway4() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v GuestNetworkInterface) *string { return v.Gateway4 }).(pulumi.StringPtrOutput)
+}
+
+// Interface MTU.
+func (o GuestNetworkInterfaceOutput) Mtu() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v GuestNetworkInterface) *int { return v.Mtu }).(pulumi.IntPtrOutput)
+}
+
+// Guest OS interface name, such as ens160 or eth0.
+func (o GuestNetworkInterfaceOutput) Name() pulumi.StringOutput {
+	return o.ApplyT(func(v GuestNetworkInterface) string { return v.Name }).(pulumi.StringOutput)
+}
+
+// DNS nameserver addresses.
+func (o GuestNetworkInterfaceOutput) Nameservers() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v GuestNetworkInterface) []string { return v.Nameservers }).(pulumi.StringArrayOutput)
+}
+
+type GuestNetworkInterfacePtrOutput struct{ *pulumi.OutputState }
+
+func (GuestNetworkInterfacePtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**GuestNetworkInterface)(nil)).Elem()
+}
+
+func (o GuestNetworkInterfacePtrOutput) ToGuestNetworkInterfacePtrOutput() GuestNetworkInterfacePtrOutput {
+	return o
+}
+
+func (o GuestNetworkInterfacePtrOutput) ToGuestNetworkInterfacePtrOutputWithContext(ctx context.Context) GuestNetworkInterfacePtrOutput {
+	return o
+}
+
+func (o GuestNetworkInterfacePtrOutput) Elem() GuestNetworkInterfaceOutput {
+	return o.ApplyT(func(v *GuestNetworkInterface) GuestNetworkInterface {
+		if v != nil {
+			return *v
+		}
+		var ret GuestNetworkInterface
+		return ret
+	}).(GuestNetworkInterfaceOutput)
+}
+
+// Static CIDR addresses assigned to the interface.
+func (o GuestNetworkInterfacePtrOutput) Addresses() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *GuestNetworkInterface) []string {
+		if v == nil {
+			return nil
+		}
+		return v.Addresses
+	}).(pulumi.StringArrayOutput)
+}
+
+// Whether DHCPv4 is enabled.
+func (o GuestNetworkInterfacePtrOutput) Dhcp4() pulumi.BoolPtrOutput {
+	return o.ApplyT(func(v *GuestNetworkInterface) *bool {
+		if v == nil {
+			return nil
+		}
+		return v.Dhcp4
+	}).(pulumi.BoolPtrOutput)
+}
+
+// IPv4 default gateway.
+func (o GuestNetworkInterfacePtrOutput) Gateway4() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GuestNetworkInterface) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Gateway4
+	}).(pulumi.StringPtrOutput)
+}
+
+// Interface MTU.
+func (o GuestNetworkInterfacePtrOutput) Mtu() pulumi.IntPtrOutput {
+	return o.ApplyT(func(v *GuestNetworkInterface) *int {
+		if v == nil {
+			return nil
+		}
+		return v.Mtu
+	}).(pulumi.IntPtrOutput)
+}
+
+// Guest OS interface name, such as ens160 or eth0.
+func (o GuestNetworkInterfacePtrOutput) Name() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GuestNetworkInterface) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.Name
+	}).(pulumi.StringPtrOutput)
+}
+
+// DNS nameserver addresses.
+func (o GuestNetworkInterfacePtrOutput) Nameservers() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *GuestNetworkInterface) []string {
+		if v == nil {
+			return nil
+		}
+		return v.Nameservers
+	}).(pulumi.StringArrayOutput)
+}
+
 // Hyper-V virtual hard disk attachment.
 type HypervHardDrive struct {
 	// Controller location.
@@ -1072,6 +1307,8 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*AzureOsDiskPtrInput)(nil)).Elem(), AzureOsDiskArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*GcpServiceAccountInput)(nil)).Elem(), GcpServiceAccountArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*GcpServiceAccountPtrInput)(nil)).Elem(), GcpServiceAccountArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*GuestNetworkInterfaceInput)(nil)).Elem(), GuestNetworkInterfaceArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*GuestNetworkInterfacePtrInput)(nil)).Elem(), GuestNetworkInterfaceArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*HypervHardDriveInput)(nil)).Elem(), HypervHardDriveArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*HypervHardDriveArrayInput)(nil)).Elem(), HypervHardDriveArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*MetadataOptionsInput)(nil)).Elem(), MetadataOptionsArgs{})
@@ -1084,6 +1321,8 @@ func init() {
 	pulumi.RegisterOutputType(AzureOsDiskPtrOutput{})
 	pulumi.RegisterOutputType(GcpServiceAccountOutput{})
 	pulumi.RegisterOutputType(GcpServiceAccountPtrOutput{})
+	pulumi.RegisterOutputType(GuestNetworkInterfaceOutput{})
+	pulumi.RegisterOutputType(GuestNetworkInterfacePtrOutput{})
 	pulumi.RegisterOutputType(HypervHardDriveOutput{})
 	pulumi.RegisterOutputType(HypervHardDriveArrayOutput{})
 	pulumi.RegisterOutputType(KubernetesPublisherOutputMapOutput{})

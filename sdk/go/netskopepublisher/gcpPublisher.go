@@ -47,6 +47,9 @@ func NewGcpPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
 	}
+	if args.InstallUserPassword != nil {
+		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(pulumi.StringPtrInput)
+	}
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource GcpPublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:GcpPublisher", name, args, &resource, opts...)
@@ -65,8 +68,20 @@ type gcpPublisherArgs struct {
 	Bootstrap *bool `pulumi:"bootstrap"`
 	// URL to the Netskope generic bootstrap script.
 	BootstrapUrl *string `pulumi:"bootstrapUrl"`
+	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+	DeleteDefaultUser *bool `pulumi:"deleteDefaultUser"`
+	// Optional guest OS primary interface override applied with netplan during cloud-init.
+	GuestNetworkInterface *GuestNetworkInterface `pulumi:"guestNetworkInterface"`
 	// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
 	Image string `pulumi:"image"`
+	// Linux user that owns the Publisher install. Defaults to ubuntu.
+	InstallUser *string `pulumi:"installUser"`
+	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+	InstallUserPassword *string `pulumi:"installUserPassword"`
+	// Set true when installUserPassword is already a crypt(3) hash.
+	InstallUserPasswordIsHash *bool `pulumi:"installUserPasswordIsHash"`
+	// Public SSH keys installed in the install user's authorized_keys file.
+	InstallUserSshAuthorizedKeys []string `pulumi:"installUserSshAuthorizedKeys"`
 	// Compute Engine machine type.
 	MachineType *string `pulumi:"machineType"`
 	// Prefix used to derive publisher names when explicit names are not supplied.
@@ -109,8 +124,20 @@ type GcpPublisherArgs struct {
 	Bootstrap pulumi.BoolPtrInput
 	// URL to the Netskope generic bootstrap script.
 	BootstrapUrl pulumi.StringPtrInput
+	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+	DeleteDefaultUser pulumi.BoolPtrInput
+	// Optional guest OS primary interface override applied with netplan during cloud-init.
+	GuestNetworkInterface GuestNetworkInterfacePtrInput
 	// GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
 	Image pulumi.StringInput
+	// Linux user that owns the Publisher install. Defaults to ubuntu.
+	InstallUser pulumi.StringPtrInput
+	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+	InstallUserPassword pulumi.StringPtrInput
+	// Set true when installUserPassword is already a crypt(3) hash.
+	InstallUserPasswordIsHash pulumi.BoolPtrInput
+	// Public SSH keys installed in the install user's authorized_keys file.
+	InstallUserSshAuthorizedKeys pulumi.StringArrayInput
 	// Compute Engine machine type.
 	MachineType pulumi.StringPtrInput
 	// Prefix used to derive publisher names when explicit names are not supplied.

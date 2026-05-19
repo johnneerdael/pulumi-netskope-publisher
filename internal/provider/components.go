@@ -28,16 +28,25 @@ type AwsPublisherArgs struct {
 	Tags          map[string]string                     `pulumi:"tags,optional"`
 	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
-	SubnetID                 string           `pulumi:"subnetId"`
-	SecurityGroupIDs         []string         `pulumi:"securityGroupIds"`
-	KeyName                  *string          `pulumi:"keyName,optional"`
-	InstanceType             *string          `pulumi:"instanceType,optional"`
-	AMIID                    *string          `pulumi:"amiId,optional"`
-	AssociatePublicIPAddress *bool            `pulumi:"associatePublicIpAddress,optional"`
-	IAMInstanceProfile       *string          `pulumi:"iamInstanceProfile,optional"`
-	EBSOptimized             *bool            `pulumi:"ebsOptimized,optional"`
-	Monitoring               *bool            `pulumi:"monitoring,optional"`
-	MetadataOptions          *MetadataOptions `pulumi:"metadataOptions,optional"`
+	SubnetID                     string                 `pulumi:"subnetId"`
+	SecurityGroupIDs             []string               `pulumi:"securityGroupIds"`
+	KeyName                      *string                `pulumi:"keyName,optional"`
+	InstanceType                 *string                `pulumi:"instanceType,optional"`
+	AMIID                        *string                `pulumi:"amiId,optional"`
+	AssociatePublicIPAddress     *bool                  `pulumi:"associatePublicIpAddress,optional"`
+	IAMInstanceProfile           *string                `pulumi:"iamInstanceProfile,optional"`
+	EBSOptimized                 *bool                  `pulumi:"ebsOptimized,optional"`
+	Monitoring                   *bool                  `pulumi:"monitoring,optional"`
+	MetadataOptions              *MetadataOptions       `pulumi:"metadataOptions,optional"`
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
 }
 
 type AwsPublisher struct {
@@ -64,13 +73,28 @@ func NewAwsPublisher(ctx *pulumi.Context, name string, args AwsPublisherArgs, op
 
 	amiID := args.AMIID
 	if amiID == nil {
+		owners := []string{"679593333241"}
+		filters := []awsec2.GetAmiFilter{{
+			Name:   "name",
+			Values: []string{"Netskope Private Access Publisher*"},
+		}}
+		if defaultBool(args.Bootstrap, false) {
+			owners = []string{"099720109477"}
+			filters = []awsec2.GetAmiFilter{{
+				Name:   "name",
+				Values: []string{"ubuntu-minimal/images/hvm-ssd*/ubuntu-jammy-22.04-amd64-minimal-*"},
+			}, {
+				Name:   "architecture",
+				Values: []string{"x86_64"},
+			}, {
+				Name:   "virtualization-type",
+				Values: []string{"hvm"},
+			}}
+		}
 		ami, err := awsec2.LookupAmi(ctx, &awsec2.LookupAmiArgs{
 			MostRecent: pulumi.BoolRef(true),
-			Owners:     []string{"679593333241"},
-			Filters: []awsec2.GetAmiFilter{{
-				Name:   "name",
-				Values: []string{"Netskope Private Access Publisher*"},
-			}},
+			Owners:     owners,
+			Filters:    filters,
 		}, pulumi.Parent(component))
 		if err != nil {
 			return nil, err
@@ -91,7 +115,7 @@ func NewAwsPublisher(ctx *pulumi.Context, name string, args AwsPublisherArgs, op
 			IamInstanceProfile:       stringPtrInput(args.IAMInstanceProfile),
 			EbsOptimized:             pulumi.BoolPtr(defaultBool(args.EBSOptimized, true)),
 			Monitoring:               pulumi.BoolPtr(defaultBool(args.Monitoring, true)),
-			UserDataBase64:           renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, preBakedCloudInitOptions()).ToStringPtrOutput(),
+			UserDataBase64:           renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromAws(args)).ToStringPtrOutput(),
 			MetadataOptions: &awsec2.InstanceMetadataOptionsArgs{
 				HttpEndpoint: pulumi.StringPtr(defaultMetadataValue(args.MetadataOptions, "endpoint", "enabled")),
 				HttpTokens:   pulumi.StringPtr(defaultMetadataValue(args.MetadataOptions, "tokens", "required")),
@@ -123,18 +147,27 @@ type AzurePublisherArgs struct {
 	Tags          map[string]string                     `pulumi:"tags,optional"`
 	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
-	ResourceGroupName      string                 `pulumi:"resourceGroupName"`
-	Location               string                 `pulumi:"location"`
-	SubnetID               string                 `pulumi:"subnetId"`
-	VMSize                 *string                `pulumi:"vmSize,optional"`
-	AdminUsername          *string                `pulumi:"adminUsername,optional"`
-	AdminSSHPublicKey      string                 `pulumi:"adminSshPublicKey"`
-	NetworkSecurityGroupID *string                `pulumi:"networkSecurityGroupId,optional"`
-	AssignPublicIP         *bool                  `pulumi:"assignPublicIp,optional"`
-	OSDisk                 *AzureOsDisk           `pulumi:"osDisk,optional"`
-	ImageID                *string                `pulumi:"imageId,optional"`
-	Marketplace            *AzureMarketplaceImage `pulumi:"marketplace,optional"`
-	AcceptMarketplaceTerms *bool                  `pulumi:"acceptMarketplaceTerms,optional"`
+	ResourceGroupName            string                 `pulumi:"resourceGroupName"`
+	Location                     string                 `pulumi:"location"`
+	SubnetID                     string                 `pulumi:"subnetId"`
+	VMSize                       *string                `pulumi:"vmSize,optional"`
+	AdminUsername                *string                `pulumi:"adminUsername,optional"`
+	AdminSSHPublicKey            string                 `pulumi:"adminSshPublicKey"`
+	NetworkSecurityGroupID       *string                `pulumi:"networkSecurityGroupId,optional"`
+	AssignPublicIP               *bool                  `pulumi:"assignPublicIp,optional"`
+	OSDisk                       *AzureOsDisk           `pulumi:"osDisk,optional"`
+	ImageID                      *string                `pulumi:"imageId,optional"`
+	Marketplace                  *AzureMarketplaceImage `pulumi:"marketplace,optional"`
+	AcceptMarketplaceTerms       *bool                  `pulumi:"acceptMarketplaceTerms,optional"`
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
 }
 
 type AzurePublisher struct {
@@ -149,8 +182,8 @@ func (*AzurePublisher) Annotate(a infer.Annotator) {
 }
 
 func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs, opts ...pulumi.ResourceOption) (*AzurePublisher, error) {
-	if args.ImageID == nil && args.Marketplace == nil {
-		return nil, fmt.Errorf("provide either imageId or marketplace")
+	if args.ImageID == nil && args.Marketplace == nil && !defaultBool(args.Bootstrap, false) {
+		return nil, fmt.Errorf("provide imageId, marketplace, or set bootstrap: true")
 	}
 
 	component := &AzurePublisher{AzurePublisherArgs: args}
@@ -164,6 +197,7 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 	}
 
 	outputs := pulumi.Map{}
+	adminUsername := defaultString(args.AdminUsername, defaultString(args.InstallUser, "ubuntu"))
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
 		var publicIP *azurenetwork.PublicIPAddress
@@ -231,14 +265,14 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 			},
 			OsProfile: &azurecompute.OSProfileArgs{
 				ComputerName:  pulumi.StringPtr(publisherName),
-				AdminUsername: pulumi.StringPtr(defaultString(args.AdminUsername, "ubuntu")),
-				CustomData:    renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, preBakedCloudInitOptions()).ToStringPtrOutput(),
+				AdminUsername: pulumi.StringPtr(adminUsername),
+				CustomData:    renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromAzure(args)).ToStringPtrOutput(),
 				LinuxConfiguration: &azurecompute.LinuxConfigurationArgs{
 					DisablePasswordAuthentication: pulumi.BoolPtr(true),
 					Ssh: &azurecompute.SshConfigurationArgs{
 						PublicKeys: azurecompute.SshPublicKeyTypeArray{
 							azurecompute.SshPublicKeyTypeArgs{
-								Path:    pulumi.StringPtr("/home/" + defaultString(args.AdminUsername, "ubuntu") + "/.ssh/authorized_keys"),
+								Path:    pulumi.StringPtr("/home/" + adminUsername + "/.ssh/authorized_keys"),
 								KeyData: pulumi.StringPtr(args.AdminSSHPublicKey),
 							},
 						},
@@ -277,18 +311,24 @@ type GcpPublisherArgs struct {
 	Tags          map[string]string                     `pulumi:"tags,optional"`
 	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
-	Project        string             `pulumi:"project"`
-	Zone           string             `pulumi:"zone"`
-	Network        string             `pulumi:"network"`
-	Subnetwork     string             `pulumi:"subnetwork"`
-	MachineType    *string            `pulumi:"machineType,optional"`
-	Image          string             `pulumi:"image"`
-	Bootstrap      *bool              `pulumi:"bootstrap,optional"`
-	BootstrapURL   *string            `pulumi:"bootstrapUrl,optional"`
-	Nonat          *bool              `pulumi:"nonat,optional"`
-	AssignPublicIP *bool              `pulumi:"assignPublicIp,optional"`
-	NetworkTags    []string           `pulumi:"networkTags,optional"`
-	ServiceAccount *GcpServiceAccount `pulumi:"serviceAccount,optional"`
+	Project                      string                 `pulumi:"project"`
+	Zone                         string                 `pulumi:"zone"`
+	Network                      string                 `pulumi:"network"`
+	Subnetwork                   string                 `pulumi:"subnetwork"`
+	MachineType                  *string                `pulumi:"machineType,optional"`
+	Image                        string                 `pulumi:"image"`
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+	AssignPublicIP               *bool                  `pulumi:"assignPublicIp,optional"`
+	NetworkTags                  []string               `pulumi:"networkTags,optional"`
+	ServiceAccount               *GcpServiceAccount     `pulumi:"serviceAccount,optional"`
 }
 
 type GcpPublisher struct {
@@ -339,11 +379,7 @@ func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, op
 			},
 			NetworkInterfaces: gcpcompute.InstanceNetworkInterfaceArray{networkInterface},
 			Metadata: pulumi.StringMap{
-				"user-data": renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptions{
-					Bootstrap:    defaultBool(args.Bootstrap, true),
-					BootstrapURL: defaultString(args.BootstrapURL, defaultBootstrapURL),
-					Nonat:        defaultBool(args.Nonat, true),
-				}),
+				"user-data": renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromGcp(args)),
 			},
 		}
 		if args.ServiceAccount != nil {
@@ -904,13 +940,61 @@ func publisherOutput(registration publisherRegistrationOutput, vmID pulumi.Strin
 const defaultBootstrapURL = "https://s3-us-west-2.amazonaws.com/publisher.netskope.com/latest/generic/bootstrap.sh"
 
 type cloudInitOptions struct {
-	Bootstrap    bool
-	BootstrapURL string
-	Nonat        bool
+	Bootstrap                    bool
+	BootstrapURL                 string
+	Nonat                        bool
+	InstallUser                  string
+	InstallUserPassword          *string
+	InstallUserPasswordIsHash    bool
+	InstallUserSSHAuthorizedKeys []string
+	DeleteDefaultUser            bool
+	GuestNetworkInterface        *GuestNetworkInterface
 }
 
 func preBakedCloudInitOptions() cloudInitOptions {
-	return cloudInitOptions{Bootstrap: false, Nonat: false}
+	return cloudInitOptions{Bootstrap: false, Nonat: false, InstallUser: "ubuntu", DeleteDefaultUser: true}
+}
+
+func cloudInitOptionsFromAws(args AwsPublisherArgs) cloudInitOptions {
+	return cloudInitOptions{
+		Bootstrap:                    defaultBool(args.Bootstrap, false),
+		BootstrapURL:                 defaultString(args.BootstrapURL, defaultBootstrapURL),
+		Nonat:                        defaultBool(args.Nonat, false),
+		InstallUser:                  defaultString(args.InstallUser, "ubuntu"),
+		InstallUserPassword:          args.InstallUserPassword,
+		InstallUserPasswordIsHash:    defaultBool(args.InstallUserPasswordIsHash, false),
+		InstallUserSSHAuthorizedKeys: args.InstallUserSSHAuthorizedKeys,
+		DeleteDefaultUser:            defaultBool(args.DeleteDefaultUser, true),
+		GuestNetworkInterface:        args.GuestNetworkInterface,
+	}
+}
+
+func cloudInitOptionsFromAzure(args AzurePublisherArgs) cloudInitOptions {
+	return cloudInitOptions{
+		Bootstrap:                    defaultBool(args.Bootstrap, false),
+		BootstrapURL:                 defaultString(args.BootstrapURL, defaultBootstrapURL),
+		Nonat:                        defaultBool(args.Nonat, false),
+		InstallUser:                  defaultString(args.InstallUser, "ubuntu"),
+		InstallUserPassword:          args.InstallUserPassword,
+		InstallUserPasswordIsHash:    defaultBool(args.InstallUserPasswordIsHash, false),
+		InstallUserSSHAuthorizedKeys: args.InstallUserSSHAuthorizedKeys,
+		DeleteDefaultUser:            defaultBool(args.DeleteDefaultUser, true),
+		GuestNetworkInterface:        args.GuestNetworkInterface,
+	}
+}
+
+func cloudInitOptionsFromGcp(args GcpPublisherArgs) cloudInitOptions {
+	return cloudInitOptions{
+		Bootstrap:                    defaultBool(args.Bootstrap, true),
+		BootstrapURL:                 defaultString(args.BootstrapURL, defaultBootstrapURL),
+		Nonat:                        defaultBool(args.Nonat, true),
+		InstallUser:                  defaultString(args.InstallUser, "ubuntu"),
+		InstallUserPassword:          args.InstallUserPassword,
+		InstallUserPasswordIsHash:    defaultBool(args.InstallUserPasswordIsHash, false),
+		InstallUserSSHAuthorizedKeys: args.InstallUserSSHAuthorizedKeys,
+		DeleteDefaultUser:            defaultBool(args.DeleteDefaultUser, true),
+		GuestNetworkInterface:        args.GuestNetworkInterface,
+	}
 }
 
 func renderUserData(publisherName string, registrationToken string, wizardPath *string) string {
@@ -922,8 +1006,9 @@ func renderUserData(publisherName string, registrationToken string, wizardPath *
 }
 
 func renderUserDataWithOptions(publisherName string, registrationToken string, wizardPath *string, options cloudInitOptions) string {
-	path := defaultString(wizardPath, "/home/ubuntu/npa_publisher_wizard")
-	if !options.Bootstrap && !options.Nonat {
+	installUser := defaultString(&options.InstallUser, "ubuntu")
+	path := defaultString(wizardPath, "/home/"+installUser+"/npa_publisher_wizard")
+	if !options.Bootstrap && !options.Nonat && installUser == "ubuntu" && options.InstallUserPassword == nil && len(options.InstallUserSSHAuthorizedKeys) == 0 && options.GuestNetworkInterface == nil {
 		return strings.Join([]string{
 			"#cloud-config",
 			"hostname: " + publisherName,
@@ -941,28 +1026,63 @@ func renderUserDataWithOptions(publisherName string, registrationToken string, w
 		"",
 		"system_info:",
 		"  default_user:",
-		"    name: ubuntu",
+		"    name: " + installUser,
 		"",
 		"users:",
-		"  - name: ubuntu",
+		"  - name: " + installUser,
 		"    groups: [sudo]",
 		"    sudo: \"ALL=(ALL) NOPASSWD:ALL\"",
 		"    shell: /bin/bash",
-		"    lock_passwd: true",
-		"",
-		"runcmd:",
-		"  - chmod 1777 /tmp",
+		fmt.Sprintf("    lock_passwd: %t", options.InstallUserPassword == nil),
+	}
+	if len(options.InstallUserSSHAuthorizedKeys) > 0 {
+		lines = append(lines, "    ssh_authorized_keys:")
+		for _, key := range options.InstallUserSSHAuthorizedKeys {
+			lines = append(lines, fmt.Sprintf("      - \"%s\"", escapeDoubleQuoted(key)))
+		}
+	}
+	if options.InstallUserPassword != nil {
+		lines = append(lines,
+			"",
+			"chpasswd:",
+			"  expire: false",
+			"  users:",
+			"    - name: "+installUser,
+			fmt.Sprintf("      password: \"%s\"", escapeDoubleQuoted(*options.InstallUserPassword)),
+			fmt.Sprintf("      type: %s", map[bool]string{true: "hash", false: "text"}[options.InstallUserPasswordIsHash]),
+			"ssh_pwauth: true",
+		)
+	}
+	if options.GuestNetworkInterface != nil {
+		lines = append(lines, "")
+		lines = append(lines, renderNetplan(options.GuestNetworkInterface)...)
+	}
+	lines = append(lines, "", "runcmd:")
+	if options.GuestNetworkInterface != nil {
+		lines = append(lines,
+			"  - chmod 0600 /etc/netplan/60-cloudinit-override.yaml",
+			"  - netplan apply",
+		)
+	}
+	if options.DeleteDefaultUser && installUser != "ubuntu" {
+		lines = append(lines,
+			"  - pkill -KILL -u ubuntu || true",
+			"  - userdel -r ubuntu 2>/dev/null || true",
+		)
+	}
+	if options.Bootstrap || options.Nonat {
+		lines = append(lines, "  - chmod 1777 /tmp")
 	}
 	if options.Nonat {
 		lines = append(lines,
-			"  - install -d -o ubuntu -g ubuntu -m 0755 /home/ubuntu/resources",
-			"  - install -o ubuntu -g ubuntu -m 0644 /dev/null /home/ubuntu/resources/.nonat",
+			fmt.Sprintf("  - install -d -o %s -g %s -m 0755 /home/%s/resources", installUser, installUser, installUser),
+			fmt.Sprintf("  - install -o %s -g %s -m 0644 /dev/null /home/%s/resources/.nonat", installUser, installUser, installUser),
 		)
 	}
 	if options.Bootstrap {
-		lines = append(lines, fmt.Sprintf("  - su - ubuntu -c 'curl -fsSL %s | sudo bash'", bootstrapURL))
+		lines = append(lines, fmt.Sprintf("  - su - %s -c 'curl -fsSL %s | sudo bash'", installUser, bootstrapURL))
 	}
-	lines = append(lines, fmt.Sprintf("  - su - ubuntu -c 'sudo %s -token \"%s\"'", path, escapeSingleQuoted(registrationToken)), "")
+	lines = append(lines, fmt.Sprintf("  - su - %s -c 'sudo %s -token \"%s\"'", installUser, path, escapeSingleQuoted(registrationToken)), "")
 	return strings.Join(lines, "\n")
 }
 
@@ -1085,12 +1205,22 @@ func azureStorageProfile(args AzurePublisherArgs) azurecompute.StorageProfilePtr
 	}
 	if args.ImageID != nil {
 		profile.ImageReference = &azurecompute.ImageReferenceArgs{Id: pulumi.StringPtr(*args.ImageID)}
-	} else if args.Marketplace != nil {
-		profile.ImageReference = &azurecompute.ImageReferenceArgs{
-			Publisher: pulumi.StringPtr(args.Marketplace.Publisher),
-			Offer:     pulumi.StringPtr(args.Marketplace.Offer),
-			Sku:       pulumi.StringPtr(args.Marketplace.SKU),
-			Version:   pulumi.StringPtr(defaultString(args.Marketplace.Version, "latest")),
+	} else {
+		marketplace := args.Marketplace
+		if marketplace == nil && defaultBool(args.Bootstrap, false) {
+			marketplace = &AzureMarketplaceImage{
+				Publisher: "Canonical",
+				Offer:     "0001-com-ubuntu-minimal-jammy",
+				SKU:       "minimal-22_04-lts-gen2",
+			}
+		}
+		if marketplace != nil {
+			profile.ImageReference = &azurecompute.ImageReferenceArgs{
+				Publisher: pulumi.StringPtr(marketplace.Publisher),
+				Offer:     pulumi.StringPtr(marketplace.Offer),
+				Sku:       pulumi.StringPtr(marketplace.SKU),
+				Version:   pulumi.StringPtr(defaultString(marketplace.Version, "latest")),
+			}
 		}
 	}
 	return profile
@@ -1168,6 +1298,40 @@ func nameTag(tags map[string]string, publisherName string) map[string]string {
 	}
 	result["Name"] = publisherName
 	return result
+}
+
+func renderNetplan(networkInterface *GuestNetworkInterface) []string {
+	lines := []string{
+		"write_files:",
+		"  - path: /etc/netplan/60-cloudinit-override.yaml",
+		"    owner: root:root",
+		"    permissions: \"0600\"",
+		"    content: |",
+		"      network:",
+		"        version: 2",
+		"        ethernets:",
+		"          " + networkInterface.Name + ":",
+		fmt.Sprintf("            dhcp4: %t", defaultBool(networkInterface.DHCP4, false)),
+	}
+	if len(networkInterface.Addresses) > 0 {
+		lines = append(lines, "            addresses:")
+		for _, address := range networkInterface.Addresses {
+			lines = append(lines, "              - "+address)
+		}
+	}
+	if networkInterface.Gateway4 != nil {
+		lines = append(lines, "            gateway4: "+*networkInterface.Gateway4)
+	}
+	if len(networkInterface.Nameservers) > 0 {
+		lines = append(lines, "            nameservers:", "              addresses:")
+		for _, nameserver := range networkInterface.Nameservers {
+			lines = append(lines, "                - "+nameserver)
+		}
+	}
+	if networkInterface.MTU != nil {
+		lines = append(lines, fmt.Sprintf("            mtu: %d", *networkInterface.MTU))
+	}
+	return lines
 }
 
 func escapeDoubleQuoted(value string) string {

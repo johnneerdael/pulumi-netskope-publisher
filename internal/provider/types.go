@@ -39,6 +39,15 @@ type MetadataOptions struct {
 	HTTPTokens   *string `pulumi:"httpTokens,optional"`
 }
 
+type GuestNetworkInterface struct {
+	Name        string   `pulumi:"name"`
+	DHCP4       *bool    `pulumi:"dhcp4,optional"`
+	Addresses   []string `pulumi:"addresses,optional"`
+	Gateway4    *string  `pulumi:"gateway4,optional"`
+	Nameservers []string `pulumi:"nameservers,optional"`
+	MTU         *int     `pulumi:"mtu,optional"`
+}
+
 type AzureMarketplaceImage struct {
 	Publisher string  `pulumi:"publisher"`
 	Offer     string  `pulumi:"offer"`

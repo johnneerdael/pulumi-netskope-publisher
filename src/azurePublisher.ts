@@ -16,8 +16,9 @@ export class AzurePublisher extends pulumi.ComponentResource {
   constructor(name: string, args: AzurePublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:AzurePublisher", name, {}, opts);
 
-    if (args.imageId === undefined && args.marketplace === undefined) {
-      throw new Error("Provide either imageId or marketplace.");
+    const bootstrap = args.bootstrap ?? false;
+    if (args.imageId === undefined && args.marketplace === undefined && bootstrap !== true) {
+      throw new Error("Provide imageId, marketplace, or set bootstrap: true.");
     }
 
     const parentOpts = { parent: this };
@@ -26,7 +27,13 @@ export class AzurePublisher extends pulumi.ComponentResource {
     const registrations = createRegistrations(name, publisherNames, args, parentOpts);
     const publisherOutputs: Record<string, pulumi.Output<PublisherOutput>> = {};
 
-    const adminUsername = args.adminUsername ?? "ubuntu";
+    const adminUsername = args.adminUsername ?? args.installUser ?? "ubuntu";
+    const effectiveMarketplace = args.marketplace ?? (bootstrap === true ? {
+      publisher: "Canonical",
+      offer: "0001-com-ubuntu-minimal-jammy",
+      sku: "minimal-22_04-lts-gen2",
+      version: "latest",
+    } : undefined);
     const vmSize = args.vmSize ?? "Standard_D2s_v5";
     const assignPublicIp = args.assignPublicIp ?? false;
     const osDisk = pulumi.output(args.osDisk ?? {}).apply((disk) => ({
@@ -36,13 +43,32 @@ export class AzurePublisher extends pulumi.ComponentResource {
 
     for (const publisherName of publisherNames) {
       const registration = registrations.apply((allRegistrations) => allRegistrations[publisherName]);
-      const customData = pulumi.all([registration, args.wizardPath]).apply(([record, wizardPath]) =>
+      const customData = pulumi.all({
+        registration,
+        wizardPath: args.wizardPath,
+        bootstrap,
+        bootstrapUrl: args.bootstrapUrl,
+        nonat: args.nonat ?? false,
+        installUser: args.installUser,
+        installUserPassword: args.installUserPassword,
+        installUserPasswordIsHash: args.installUserPasswordIsHash,
+        installUserSshAuthorizedKeys: args.installUserSshAuthorizedKeys,
+        deleteDefaultUser: args.deleteDefaultUser,
+        guestNetworkInterface: args.guestNetworkInterface,
+      }).apply((options: any) =>
         renderUserDataBase64({
           publisherName,
-          registrationToken: record.registrationToken,
-          wizardPath,
-          bootstrap: false,
-          nonat: false,
+          registrationToken: options.registration.registrationToken,
+          wizardPath: options.wizardPath,
+          bootstrap: options.bootstrap,
+          bootstrapUrl: options.bootstrapUrl,
+          nonat: options.nonat,
+          installUser: options.installUser,
+          installUserPassword: options.installUserPassword,
+          installUserPasswordIsHash: options.installUserPasswordIsHash,
+          installUserSshAuthorizedKeys: options.installUserSshAuthorizedKeys,
+          deleteDefaultUser: options.deleteDefaultUser,
+          guestNetworkInterface: options.guestNetworkInterface,
         }),
       );
 
@@ -95,7 +121,7 @@ export class AzurePublisher extends pulumi.ComponentResource {
           },
         },
         storageProfile: {
-          imageReference: pulumi.output(args.marketplace).apply((marketplace) =>
+          imageReference: pulumi.output(effectiveMarketplace).apply((marketplace) =>
             args.imageId ? { id: args.imageId } : marketplace ? {
               publisher: marketplace.publisher,
               offer: marketplace.offer,

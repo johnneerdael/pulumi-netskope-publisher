@@ -29,11 +29,20 @@ class AzurePublisherArgs:
                  admin_username: Optional[pulumi.Input[_builtins.str]] = None,
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input['GuestNetworkInterfaceArgs']] = None,
                  image_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  marketplace: Optional[pulumi.Input['AzureMarketplaceImageArgs']] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  network_security_group_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  os_disk: Optional[pulumi.Input['AzureOsDiskArgs']] = None,
                  registrations: Optional[pulumi.Input['PublisherRegistrationMapArgs']] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
@@ -52,11 +61,20 @@ class AzurePublisherArgs:
         :param pulumi.Input[_builtins.str] admin_username: Admin username configured for the VM.
         :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
         :param pulumi.Input[_builtins.bool] assign_public_ip: Whether to assign public IP addresses.
+        :param pulumi.Input[_builtins.bool] bootstrap: Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
+        :param pulumi.Input[_builtins.str] bootstrap_url: URL to the Netskope generic bootstrap script.
+        :param pulumi.Input[_builtins.bool] delete_default_user: When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        :param pulumi.Input['GuestNetworkInterfaceArgs'] guest_network_interface: Optional guest OS primary interface override applied with netplan during cloud-init.
         :param pulumi.Input[_builtins.str] image_id: Custom image resource ID.
+        :param pulumi.Input[_builtins.str] install_user: Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
+        :param pulumi.Input[_builtins.str] install_user_password: Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        :param pulumi.Input[_builtins.bool] install_user_password_is_hash: Set true when installUserPassword is already a crypt(3) hash.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] install_user_ssh_authorized_keys: Extra public SSH keys installed in the install user's authorized_keys file.
         :param pulumi.Input['AzureMarketplaceImageArgs'] marketplace: Marketplace image reference.
         :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
         :param pulumi.Input[_builtins.str] network_security_group_id: Optional network security group resource ID.
+        :param pulumi.Input[_builtins.bool] nonat: Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
         :param pulumi.Input['AzureOsDiskArgs'] os_disk: Managed OS disk options.
         :param pulumi.Input['PublisherRegistrationMapArgs'] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
         :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
@@ -77,8 +95,24 @@ class AzurePublisherArgs:
             pulumi.set(__self__, "api_token", api_token)
         if assign_public_ip is not None:
             pulumi.set(__self__, "assign_public_ip", assign_public_ip)
+        if bootstrap is not None:
+            pulumi.set(__self__, "bootstrap", bootstrap)
+        if bootstrap_url is not None:
+            pulumi.set(__self__, "bootstrap_url", bootstrap_url)
+        if delete_default_user is not None:
+            pulumi.set(__self__, "delete_default_user", delete_default_user)
+        if guest_network_interface is not None:
+            pulumi.set(__self__, "guest_network_interface", guest_network_interface)
         if image_id is not None:
             pulumi.set(__self__, "image_id", image_id)
+        if install_user is not None:
+            pulumi.set(__self__, "install_user", install_user)
+        if install_user_password is not None:
+            pulumi.set(__self__, "install_user_password", install_user_password)
+        if install_user_password_is_hash is not None:
+            pulumi.set(__self__, "install_user_password_is_hash", install_user_password_is_hash)
+        if install_user_ssh_authorized_keys is not None:
+            pulumi.set(__self__, "install_user_ssh_authorized_keys", install_user_ssh_authorized_keys)
         if marketplace is not None:
             pulumi.set(__self__, "marketplace", marketplace)
         if name_prefix is not None:
@@ -87,6 +121,8 @@ class AzurePublisherArgs:
             pulumi.set(__self__, "names", names)
         if network_security_group_id is not None:
             pulumi.set(__self__, "network_security_group_id", network_security_group_id)
+        if nonat is not None:
+            pulumi.set(__self__, "nonat", nonat)
         if os_disk is not None:
             pulumi.set(__self__, "os_disk", os_disk)
         if registrations is not None:
@@ -199,6 +235,54 @@ class AzurePublisherArgs:
         pulumi.set(self, "assign_public_ip", value)
 
     @_builtins.property
+    @pulumi.getter
+    def bootstrap(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
+        """
+        return pulumi.get(self, "bootstrap")
+
+    @bootstrap.setter
+    def bootstrap(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "bootstrap", value)
+
+    @_builtins.property
+    @pulumi.getter(name="bootstrapUrl")
+    def bootstrap_url(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        URL to the Netskope generic bootstrap script.
+        """
+        return pulumi.get(self, "bootstrap_url")
+
+    @bootstrap_url.setter
+    def bootstrap_url(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "bootstrap_url", value)
+
+    @_builtins.property
+    @pulumi.getter(name="deleteDefaultUser")
+    def delete_default_user(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        """
+        return pulumi.get(self, "delete_default_user")
+
+    @delete_default_user.setter
+    def delete_default_user(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "delete_default_user", value)
+
+    @_builtins.property
+    @pulumi.getter(name="guestNetworkInterface")
+    def guest_network_interface(self) -> Optional[pulumi.Input['GuestNetworkInterfaceArgs']]:
+        """
+        Optional guest OS primary interface override applied with netplan during cloud-init.
+        """
+        return pulumi.get(self, "guest_network_interface")
+
+    @guest_network_interface.setter
+    def guest_network_interface(self, value: Optional[pulumi.Input['GuestNetworkInterfaceArgs']]):
+        pulumi.set(self, "guest_network_interface", value)
+
+    @_builtins.property
     @pulumi.getter(name="imageId")
     def image_id(self) -> Optional[pulumi.Input[_builtins.str]]:
         """
@@ -209,6 +293,54 @@ class AzurePublisherArgs:
     @image_id.setter
     def image_id(self, value: Optional[pulumi.Input[_builtins.str]]):
         pulumi.set(self, "image_id", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUser")
+    def install_user(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
+        """
+        return pulumi.get(self, "install_user")
+
+    @install_user.setter
+    def install_user(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "install_user", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserPassword")
+    def install_user_password(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        """
+        return pulumi.get(self, "install_user_password")
+
+    @install_user_password.setter
+    def install_user_password(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "install_user_password", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserPasswordIsHash")
+    def install_user_password_is_hash(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Set true when installUserPassword is already a crypt(3) hash.
+        """
+        return pulumi.get(self, "install_user_password_is_hash")
+
+    @install_user_password_is_hash.setter
+    def install_user_password_is_hash(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "install_user_password_is_hash", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserSshAuthorizedKeys")
+    def install_user_ssh_authorized_keys(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        Extra public SSH keys installed in the install user's authorized_keys file.
+        """
+        return pulumi.get(self, "install_user_ssh_authorized_keys")
+
+    @install_user_ssh_authorized_keys.setter
+    def install_user_ssh_authorized_keys(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "install_user_ssh_authorized_keys", value)
 
     @_builtins.property
     @pulumi.getter
@@ -257,6 +389,18 @@ class AzurePublisherArgs:
     @network_security_group_id.setter
     def network_security_group_id(self, value: Optional[pulumi.Input[_builtins.str]]):
         pulumi.set(self, "network_security_group_id", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def nonat(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
+        """
+        return pulumi.get(self, "nonat")
+
+    @nonat.setter
+    def nonat(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "nonat", value)
 
     @_builtins.property
     @pulumi.getter(name="osDisk")
@@ -354,12 +498,21 @@ class AzurePublisher(pulumi.ComponentResource):
                  admin_username: Optional[pulumi.Input[_builtins.str]] = None,
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']]] = None,
                  image_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  location: Optional[pulumi.Input[_builtins.str]] = None,
                  marketplace: Optional[pulumi.Input[Union['AzureMarketplaceImageArgs', 'AzureMarketplaceImageArgsDict']]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  network_security_group_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  os_disk: Optional[pulumi.Input[Union['AzureOsDiskArgs', 'AzureOsDiskArgsDict']]] = None,
                  registrations: Optional[pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
@@ -381,12 +534,21 @@ class AzurePublisher(pulumi.ComponentResource):
         :param pulumi.Input[_builtins.str] admin_username: Admin username configured for the VM.
         :param pulumi.Input[_builtins.str] api_token: Netskope API token used for publisher registration.
         :param pulumi.Input[_builtins.bool] assign_public_ip: Whether to assign public IP addresses.
+        :param pulumi.Input[_builtins.bool] bootstrap: Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
+        :param pulumi.Input[_builtins.str] bootstrap_url: URL to the Netskope generic bootstrap script.
+        :param pulumi.Input[_builtins.bool] delete_default_user: When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        :param pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']] guest_network_interface: Optional guest OS primary interface override applied with netplan during cloud-init.
         :param pulumi.Input[_builtins.str] image_id: Custom image resource ID.
+        :param pulumi.Input[_builtins.str] install_user: Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
+        :param pulumi.Input[_builtins.str] install_user_password: Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        :param pulumi.Input[_builtins.bool] install_user_password_is_hash: Set true when installUserPassword is already a crypt(3) hash.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] install_user_ssh_authorized_keys: Extra public SSH keys installed in the install user's authorized_keys file.
         :param pulumi.Input[_builtins.str] location: Azure region.
         :param pulumi.Input[Union['AzureMarketplaceImageArgs', 'AzureMarketplaceImageArgsDict']] marketplace: Marketplace image reference.
         :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
         :param pulumi.Input[_builtins.str] network_security_group_id: Optional network security group resource ID.
+        :param pulumi.Input[_builtins.bool] nonat: Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
         :param pulumi.Input[Union['AzureOsDiskArgs', 'AzureOsDiskArgsDict']] os_disk: Managed OS disk options.
         :param pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']] registrations: Pre-created Netskope publisher registrations keyed by publisher name.
         :param pulumi.Input[_builtins.int] replicas: Number of publishers to create when names are not supplied.
@@ -427,12 +589,21 @@ class AzurePublisher(pulumi.ComponentResource):
                  admin_username: Optional[pulumi.Input[_builtins.str]] = None,
                  api_token: Optional[pulumi.Input[_builtins.str]] = None,
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
+                 bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']]] = None,
                  image_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  location: Optional[pulumi.Input[_builtins.str]] = None,
                  marketplace: Optional[pulumi.Input[Union['AzureMarketplaceImageArgs', 'AzureMarketplaceImageArgsDict']]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  network_security_group_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 nonat: Optional[pulumi.Input[_builtins.bool]] = None,
                  os_disk: Optional[pulumi.Input[Union['AzureOsDiskArgs', 'AzureOsDiskArgsDict']]] = None,
                  registrations: Optional[pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
                  replicas: Optional[pulumi.Input[_builtins.int]] = None,
@@ -460,7 +631,15 @@ class AzurePublisher(pulumi.ComponentResource):
             __props__.__dict__["admin_username"] = admin_username
             __props__.__dict__["api_token"] = None if api_token is None else pulumi.Output.secret(api_token)
             __props__.__dict__["assign_public_ip"] = assign_public_ip
+            __props__.__dict__["bootstrap"] = bootstrap
+            __props__.__dict__["bootstrap_url"] = bootstrap_url
+            __props__.__dict__["delete_default_user"] = delete_default_user
+            __props__.__dict__["guest_network_interface"] = guest_network_interface
             __props__.__dict__["image_id"] = image_id
+            __props__.__dict__["install_user"] = install_user
+            __props__.__dict__["install_user_password"] = None if install_user_password is None else pulumi.Output.secret(install_user_password)
+            __props__.__dict__["install_user_password_is_hash"] = install_user_password_is_hash
+            __props__.__dict__["install_user_ssh_authorized_keys"] = install_user_ssh_authorized_keys
             if location is None and not opts.urn:
                 raise TypeError("Missing required property 'location'")
             __props__.__dict__["location"] = location
@@ -468,6 +647,7 @@ class AzurePublisher(pulumi.ComponentResource):
             __props__.__dict__["name_prefix"] = name_prefix
             __props__.__dict__["names"] = names
             __props__.__dict__["network_security_group_id"] = network_security_group_id
+            __props__.__dict__["nonat"] = nonat
             __props__.__dict__["os_disk"] = os_disk
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas

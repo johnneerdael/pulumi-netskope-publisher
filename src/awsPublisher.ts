@@ -22,9 +22,23 @@ export class AwsPublisher extends pulumi.ComponentResource {
     this.publisherNames = pulumi.output(publisherNames);
     const registrations = createRegistrations(name, publisherNames, args, parentOpts);
 
+    const bootstrap = args.bootstrap ?? false;
     const ami = args.amiId
       ? pulumi.output(args.amiId)
-      : aws.ec2.getAmiOutput({
+      : aws.ec2.getAmiOutput(bootstrap === true ? {
+        mostRecent: true,
+        owners: ["099720109477"],
+        filters: [{
+          name: "name",
+          values: ["ubuntu-minimal/images/hvm-ssd*/ubuntu-jammy-22.04-amd64-minimal-*"],
+        }, {
+          name: "architecture",
+          values: ["x86_64"],
+        }, {
+          name: "virtualization-type",
+          values: ["hvm"],
+        }],
+      } : {
         mostRecent: true,
         owners: ["679593333241"],
         filters: [{
@@ -37,13 +51,32 @@ export class AwsPublisher extends pulumi.ComponentResource {
 
     for (const publisherName of publisherNames) {
       const registration = registrations.apply((allRegistrations) => allRegistrations[publisherName]);
-      const userDataBase64 = pulumi.all([registration, args.wizardPath]).apply(([record, wizardPath]) =>
+      const userDataBase64 = pulumi.all({
+        registration,
+        wizardPath: args.wizardPath,
+        bootstrap,
+        bootstrapUrl: args.bootstrapUrl,
+        nonat: args.nonat ?? false,
+        installUser: args.installUser,
+        installUserPassword: args.installUserPassword,
+        installUserPasswordIsHash: args.installUserPasswordIsHash,
+        installUserSshAuthorizedKeys: args.installUserSshAuthorizedKeys,
+        deleteDefaultUser: args.deleteDefaultUser,
+        guestNetworkInterface: args.guestNetworkInterface,
+      }).apply((options: any) =>
         renderUserDataBase64({
           publisherName,
-          registrationToken: record.registrationToken,
-          wizardPath,
-          bootstrap: false,
-          nonat: false,
+          registrationToken: options.registration.registrationToken,
+          wizardPath: options.wizardPath,
+          bootstrap: options.bootstrap,
+          bootstrapUrl: options.bootstrapUrl,
+          nonat: options.nonat,
+          installUser: options.installUser,
+          installUserPassword: options.installUserPassword,
+          installUserPasswordIsHash: options.installUserPasswordIsHash,
+          installUserSshAuthorizedKeys: options.installUserSshAuthorizedKeys,
+          deleteDefaultUser: options.deleteDefaultUser,
+          guestNetworkInterface: options.guestNetworkInterface,
         }),
       );
 

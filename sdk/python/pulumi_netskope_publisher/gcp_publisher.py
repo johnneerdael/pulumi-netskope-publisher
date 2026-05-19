@@ -30,6 +30,12 @@ class GcpPublisherArgs:
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
                  bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
                  bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input['GuestNetworkInterfaceArgs']] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  machine_type: Optional[pulumi.Input[_builtins.str]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
@@ -53,6 +59,12 @@ class GcpPublisherArgs:
         :param pulumi.Input[_builtins.bool] assign_public_ip: Whether to assign public IP addresses.
         :param pulumi.Input[_builtins.bool] bootstrap: Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
         :param pulumi.Input[_builtins.str] bootstrap_url: URL to the Netskope generic bootstrap script.
+        :param pulumi.Input[_builtins.bool] delete_default_user: When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        :param pulumi.Input['GuestNetworkInterfaceArgs'] guest_network_interface: Optional guest OS primary interface override applied with netplan during cloud-init.
+        :param pulumi.Input[_builtins.str] install_user: Linux user that owns the Publisher install. Defaults to ubuntu.
+        :param pulumi.Input[_builtins.str] install_user_password: Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        :param pulumi.Input[_builtins.bool] install_user_password_is_hash: Set true when installUserPassword is already a crypt(3) hash.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] install_user_ssh_authorized_keys: Public SSH keys installed in the install user's authorized_keys file.
         :param pulumi.Input[_builtins.str] machine_type: Compute Engine machine type.
         :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
@@ -78,6 +90,18 @@ class GcpPublisherArgs:
             pulumi.set(__self__, "bootstrap", bootstrap)
         if bootstrap_url is not None:
             pulumi.set(__self__, "bootstrap_url", bootstrap_url)
+        if delete_default_user is not None:
+            pulumi.set(__self__, "delete_default_user", delete_default_user)
+        if guest_network_interface is not None:
+            pulumi.set(__self__, "guest_network_interface", guest_network_interface)
+        if install_user is not None:
+            pulumi.set(__self__, "install_user", install_user)
+        if install_user_password is not None:
+            pulumi.set(__self__, "install_user_password", install_user_password)
+        if install_user_password_is_hash is not None:
+            pulumi.set(__self__, "install_user_password_is_hash", install_user_password_is_hash)
+        if install_user_ssh_authorized_keys is not None:
+            pulumi.set(__self__, "install_user_ssh_authorized_keys", install_user_ssh_authorized_keys)
         if machine_type is not None:
             pulumi.set(__self__, "machine_type", machine_type)
         if name_prefix is not None:
@@ -208,6 +232,78 @@ class GcpPublisherArgs:
     @bootstrap_url.setter
     def bootstrap_url(self, value: Optional[pulumi.Input[_builtins.str]]):
         pulumi.set(self, "bootstrap_url", value)
+
+    @_builtins.property
+    @pulumi.getter(name="deleteDefaultUser")
+    def delete_default_user(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        """
+        return pulumi.get(self, "delete_default_user")
+
+    @delete_default_user.setter
+    def delete_default_user(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "delete_default_user", value)
+
+    @_builtins.property
+    @pulumi.getter(name="guestNetworkInterface")
+    def guest_network_interface(self) -> Optional[pulumi.Input['GuestNetworkInterfaceArgs']]:
+        """
+        Optional guest OS primary interface override applied with netplan during cloud-init.
+        """
+        return pulumi.get(self, "guest_network_interface")
+
+    @guest_network_interface.setter
+    def guest_network_interface(self, value: Optional[pulumi.Input['GuestNetworkInterfaceArgs']]):
+        pulumi.set(self, "guest_network_interface", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUser")
+    def install_user(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        Linux user that owns the Publisher install. Defaults to ubuntu.
+        """
+        return pulumi.get(self, "install_user")
+
+    @install_user.setter
+    def install_user(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "install_user", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserPassword")
+    def install_user_password(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        """
+        return pulumi.get(self, "install_user_password")
+
+    @install_user_password.setter
+    def install_user_password(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "install_user_password", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserPasswordIsHash")
+    def install_user_password_is_hash(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Set true when installUserPassword is already a crypt(3) hash.
+        """
+        return pulumi.get(self, "install_user_password_is_hash")
+
+    @install_user_password_is_hash.setter
+    def install_user_password_is_hash(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "install_user_password_is_hash", value)
+
+    @_builtins.property
+    @pulumi.getter(name="installUserSshAuthorizedKeys")
+    def install_user_ssh_authorized_keys(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        Public SSH keys installed in the install user's authorized_keys file.
+        """
+        return pulumi.get(self, "install_user_ssh_authorized_keys")
+
+    @install_user_ssh_authorized_keys.setter
+    def install_user_ssh_authorized_keys(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "install_user_ssh_authorized_keys", value)
 
     @_builtins.property
     @pulumi.getter(name="machineType")
@@ -352,7 +448,13 @@ class GcpPublisher(pulumi.ComponentResource):
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
                  bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
                  bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  machine_type: Optional[pulumi.Input[_builtins.str]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
@@ -379,7 +481,13 @@ class GcpPublisher(pulumi.ComponentResource):
         :param pulumi.Input[_builtins.bool] assign_public_ip: Whether to assign public IP addresses.
         :param pulumi.Input[_builtins.bool] bootstrap: Whether cloud-init should run the Netskope generic bootstrap script. Defaults to true on GCP because there is no public Netskope Publisher GCE image.
         :param pulumi.Input[_builtins.str] bootstrap_url: URL to the Netskope generic bootstrap script.
+        :param pulumi.Input[_builtins.bool] delete_default_user: When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+        :param pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']] guest_network_interface: Optional guest OS primary interface override applied with netplan during cloud-init.
         :param pulumi.Input[_builtins.str] image: GCE boot image. By default this should be a Linux image such as Ubuntu 22.04; the component installs the publisher with the Netskope bootstrap script.
+        :param pulumi.Input[_builtins.str] install_user: Linux user that owns the Publisher install. Defaults to ubuntu.
+        :param pulumi.Input[_builtins.str] install_user_password: Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+        :param pulumi.Input[_builtins.bool] install_user_password_is_hash: Set true when installUserPassword is already a crypt(3) hash.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] install_user_ssh_authorized_keys: Public SSH keys installed in the install user's authorized_keys file.
         :param pulumi.Input[_builtins.str] machine_type: Compute Engine machine type.
         :param pulumi.Input[_builtins.str] name_prefix: Prefix used to derive publisher names when explicit names are not supplied.
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] names: Explicit publisher names to create.
@@ -425,7 +533,13 @@ class GcpPublisher(pulumi.ComponentResource):
                  assign_public_ip: Optional[pulumi.Input[_builtins.bool]] = None,
                  bootstrap: Optional[pulumi.Input[_builtins.bool]] = None,
                  bootstrap_url: Optional[pulumi.Input[_builtins.str]] = None,
+                 delete_default_user: Optional[pulumi.Input[_builtins.bool]] = None,
+                 guest_network_interface: Optional[pulumi.Input[Union['GuestNetworkInterfaceArgs', 'GuestNetworkInterfaceArgsDict']]] = None,
                  image: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password: Optional[pulumi.Input[_builtins.str]] = None,
+                 install_user_password_is_hash: Optional[pulumi.Input[_builtins.bool]] = None,
+                 install_user_ssh_authorized_keys: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  machine_type: Optional[pulumi.Input[_builtins.str]] = None,
                  name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
                  names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
@@ -456,9 +570,15 @@ class GcpPublisher(pulumi.ComponentResource):
             __props__.__dict__["assign_public_ip"] = assign_public_ip
             __props__.__dict__["bootstrap"] = bootstrap
             __props__.__dict__["bootstrap_url"] = bootstrap_url
+            __props__.__dict__["delete_default_user"] = delete_default_user
+            __props__.__dict__["guest_network_interface"] = guest_network_interface
             if image is None and not opts.urn:
                 raise TypeError("Missing required property 'image'")
             __props__.__dict__["image"] = image
+            __props__.__dict__["install_user"] = install_user
+            __props__.__dict__["install_user_password"] = None if install_user_password is None else pulumi.Output.secret(install_user_password)
+            __props__.__dict__["install_user_password_is_hash"] = install_user_password_is_hash
+            __props__.__dict__["install_user_ssh_authorized_keys"] = install_user_ssh_authorized_keys
             __props__.__dict__["machine_type"] = machine_type
             __props__.__dict__["name_prefix"] = name_prefix
             __props__.__dict__["names"] = names

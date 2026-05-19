@@ -29,7 +29,25 @@ export class GcpPublisher extends pulumi.ComponentResource {
         args.bootstrap ?? true,
         args.bootstrapUrl,
         args.nonat ?? true,
-      ]).apply(([record, wizardPath, bootstrap, bootstrapUrl, nonat]) =>
+        args.installUser,
+        args.installUserPassword,
+        args.installUserPasswordIsHash,
+        args.installUserSshAuthorizedKeys,
+        args.deleteDefaultUser,
+        args.guestNetworkInterface,
+      ]).apply(([
+        record,
+        wizardPath,
+        bootstrap,
+        bootstrapUrl,
+        nonat,
+        installUser,
+        installUserPassword,
+        installUserPasswordIsHash,
+        installUserSshAuthorizedKeys,
+        deleteDefaultUser,
+        guestNetworkInterface,
+      ]: any[]) =>
         renderUserData({
           publisherName,
           registrationToken: record.registrationToken,
@@ -37,6 +55,12 @@ export class GcpPublisher extends pulumi.ComponentResource {
           bootstrap,
           bootstrapUrl,
           nonat,
+          installUser,
+          installUserPassword,
+          installUserPasswordIsHash,
+          installUserSshAuthorizedKeys,
+          deleteDefaultUser,
+          guestNetworkInterface,
         }),
       );
 

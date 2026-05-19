@@ -21,6 +21,8 @@ __all__ = [
     'AzureOsDiskArgsDict',
     'GcpServiceAccountArgs',
     'GcpServiceAccountArgsDict',
+    'GuestNetworkInterfaceArgs',
+    'GuestNetworkInterfaceArgsDict',
     'HypervHardDriveArgs',
     'HypervHardDriveArgsDict',
     'MetadataOptionsArgs',
@@ -225,6 +227,139 @@ class GcpServiceAccountArgs:
     @scopes.setter
     def scopes(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "scopes", value)
+
+
+class GuestNetworkInterfaceArgsDict(TypedDict):
+    """
+    Guest OS netplan override for the primary network interface.
+    """
+    name: pulumi.Input[_builtins.str]
+    """
+    Guest OS interface name, such as ens160 or eth0.
+    """
+    addresses: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    """
+    Static CIDR addresses assigned to the interface.
+    """
+    dhcp4: NotRequired[pulumi.Input[_builtins.bool]]
+    """
+    Whether DHCPv4 is enabled.
+    """
+    gateway4: NotRequired[pulumi.Input[_builtins.str]]
+    """
+    IPv4 default gateway.
+    """
+    mtu: NotRequired[pulumi.Input[_builtins.int]]
+    """
+    Interface MTU.
+    """
+    nameservers: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    """
+    DNS nameserver addresses.
+    """
+
+@pulumi.input_type
+class GuestNetworkInterfaceArgs:
+    def __init__(__self__, *,
+                 name: pulumi.Input[_builtins.str],
+                 addresses: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 dhcp4: Optional[pulumi.Input[_builtins.bool]] = None,
+                 gateway4: Optional[pulumi.Input[_builtins.str]] = None,
+                 mtu: Optional[pulumi.Input[_builtins.int]] = None,
+                 nameservers: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+        """
+        Guest OS netplan override for the primary network interface.
+
+        :param pulumi.Input[_builtins.str] name: Guest OS interface name, such as ens160 or eth0.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] addresses: Static CIDR addresses assigned to the interface.
+        :param pulumi.Input[_builtins.bool] dhcp4: Whether DHCPv4 is enabled.
+        :param pulumi.Input[_builtins.str] gateway4: IPv4 default gateway.
+        :param pulumi.Input[_builtins.int] mtu: Interface MTU.
+        :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] nameservers: DNS nameserver addresses.
+        """
+        pulumi.set(__self__, "name", name)
+        if addresses is not None:
+            pulumi.set(__self__, "addresses", addresses)
+        if dhcp4 is not None:
+            pulumi.set(__self__, "dhcp4", dhcp4)
+        if gateway4 is not None:
+            pulumi.set(__self__, "gateway4", gateway4)
+        if mtu is not None:
+            pulumi.set(__self__, "mtu", mtu)
+        if nameservers is not None:
+            pulumi.set(__self__, "nameservers", nameservers)
+
+    @_builtins.property
+    @pulumi.getter
+    def name(self) -> pulumi.Input[_builtins.str]:
+        """
+        Guest OS interface name, such as ens160 or eth0.
+        """
+        return pulumi.get(self, "name")
+
+    @name.setter
+    def name(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "name", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def addresses(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        Static CIDR addresses assigned to the interface.
+        """
+        return pulumi.get(self, "addresses")
+
+    @addresses.setter
+    def addresses(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "addresses", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def dhcp4(self) -> Optional[pulumi.Input[_builtins.bool]]:
+        """
+        Whether DHCPv4 is enabled.
+        """
+        return pulumi.get(self, "dhcp4")
+
+    @dhcp4.setter
+    def dhcp4(self, value: Optional[pulumi.Input[_builtins.bool]]):
+        pulumi.set(self, "dhcp4", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def gateway4(self) -> Optional[pulumi.Input[_builtins.str]]:
+        """
+        IPv4 default gateway.
+        """
+        return pulumi.get(self, "gateway4")
+
+    @gateway4.setter
+    def gateway4(self, value: Optional[pulumi.Input[_builtins.str]]):
+        pulumi.set(self, "gateway4", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def mtu(self) -> Optional[pulumi.Input[_builtins.int]]:
+        """
+        Interface MTU.
+        """
+        return pulumi.get(self, "mtu")
+
+    @mtu.setter
+    def mtu(self, value: Optional[pulumi.Input[_builtins.int]]):
+        pulumi.set(self, "mtu", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def nameservers(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+        """
+        DNS nameserver addresses.
+        """
+        return pulumi.get(self, "nameservers")
+
+    @nameservers.setter
+    def nameservers(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "nameservers", value)
 
 
 class HypervHardDriveArgsDict(TypedDict):

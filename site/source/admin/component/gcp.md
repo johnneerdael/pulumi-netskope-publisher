@@ -19,10 +19,16 @@ and then runs the publisher wizard with the generated registration
 token.
 
 Optional inputs include `machineType`, `assignPublicIp`, `networkTags`,
-`serviceAccount`, `bootstrap`, `bootstrapUrl`, `nonat`, `tags`,
-`namePrefix`, `names`, and `replicas`.
+`serviceAccount`, `bootstrap`, `bootstrapUrl`, `nonat`, `installUser`,
+`installUserPassword`, `installUserPasswordIsHash`,
+`installUserSshAuthorizedKeys`, `deleteDefaultUser`,
+`guestNetworkInterface`, `tags`, `namePrefix`, `names`, and `replicas`.
 
 Set `bootstrap: false` only when booting a custom image that already has
 the publisher software and `npa_publisher_wizard` installed.
+
+Bootstrap mode also lets cloud-init manage the Linux install user,
+authorized SSH keys, an optional password, and an optional netplan
+override for the guest's primary interface.
 
 Outputs: `publisherNames` and secret `publishers`.

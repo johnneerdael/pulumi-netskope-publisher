@@ -44,6 +44,9 @@ func NewAzurePublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
 	}
+	if args.InstallUserPassword != nil {
+		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(pulumi.StringPtrInput)
+	}
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource AzurePublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:AzurePublisher", name, args, &resource, opts...)
@@ -64,8 +67,24 @@ type azurePublisherArgs struct {
 	ApiToken *string `pulumi:"apiToken"`
 	// Whether to assign public IP addresses.
 	AssignPublicIp *bool `pulumi:"assignPublicIp"`
+	// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
+	Bootstrap *bool `pulumi:"bootstrap"`
+	// URL to the Netskope generic bootstrap script.
+	BootstrapUrl *string `pulumi:"bootstrapUrl"`
+	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+	DeleteDefaultUser *bool `pulumi:"deleteDefaultUser"`
+	// Optional guest OS primary interface override applied with netplan during cloud-init.
+	GuestNetworkInterface *GuestNetworkInterface `pulumi:"guestNetworkInterface"`
 	// Custom image resource ID.
 	ImageId *string `pulumi:"imageId"`
+	// Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
+	InstallUser *string `pulumi:"installUser"`
+	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+	InstallUserPassword *string `pulumi:"installUserPassword"`
+	// Set true when installUserPassword is already a crypt(3) hash.
+	InstallUserPasswordIsHash *bool `pulumi:"installUserPasswordIsHash"`
+	// Extra public SSH keys installed in the install user's authorized_keys file.
+	InstallUserSshAuthorizedKeys []string `pulumi:"installUserSshAuthorizedKeys"`
 	// Azure region.
 	Location string `pulumi:"location"`
 	// Marketplace image reference.
@@ -76,6 +95,8 @@ type azurePublisherArgs struct {
 	Names []string `pulumi:"names"`
 	// Optional network security group resource ID.
 	NetworkSecurityGroupId *string `pulumi:"networkSecurityGroupId"`
+	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
+	Nonat *bool `pulumi:"nonat"`
 	// Managed OS disk options.
 	OsDisk *AzureOsDisk `pulumi:"osDisk"`
 	// Pre-created Netskope publisher registrations keyed by publisher name.
@@ -108,8 +129,24 @@ type AzurePublisherArgs struct {
 	ApiToken pulumi.StringPtrInput
 	// Whether to assign public IP addresses.
 	AssignPublicIp pulumi.BoolPtrInput
+	// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on Azure.
+	Bootstrap pulumi.BoolPtrInput
+	// URL to the Netskope generic bootstrap script.
+	BootstrapUrl pulumi.StringPtrInput
+	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+	DeleteDefaultUser pulumi.BoolPtrInput
+	// Optional guest OS primary interface override applied with netplan during cloud-init.
+	GuestNetworkInterface GuestNetworkInterfacePtrInput
 	// Custom image resource ID.
 	ImageId pulumi.StringPtrInput
+	// Linux user that owns the Publisher install. Defaults to ubuntu; adminUsername defaults to this value.
+	InstallUser pulumi.StringPtrInput
+	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+	InstallUserPassword pulumi.StringPtrInput
+	// Set true when installUserPassword is already a crypt(3) hash.
+	InstallUserPasswordIsHash pulumi.BoolPtrInput
+	// Extra public SSH keys installed in the install user's authorized_keys file.
+	InstallUserSshAuthorizedKeys pulumi.StringArrayInput
 	// Azure region.
 	Location pulumi.StringInput
 	// Marketplace image reference.
@@ -120,6 +157,8 @@ type AzurePublisherArgs struct {
 	Names pulumi.StringArrayInput
 	// Optional network security group resource ID.
 	NetworkSecurityGroupId pulumi.StringPtrInput
+	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on Azure.
+	Nonat pulumi.BoolPtrInput
 	// Managed OS disk options.
 	OsDisk AzureOsDiskPtrInput
 	// Pre-created Netskope publisher registrations keyed by publisher name.

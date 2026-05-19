@@ -38,6 +38,9 @@ func NewAwsPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
 	}
+	if args.InstallUserPassword != nil {
+		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(pulumi.StringPtrInput)
+	}
 	opts = internal.PkgResourceDefaultOpts(opts)
 	var resource AwsPublisher
 	err := ctx.RegisterRemoteComponentResource("netskope-publisher:index:AwsPublisher", name, args, &resource, opts...)
@@ -54,10 +57,26 @@ type awsPublisherArgs struct {
 	ApiToken *string `pulumi:"apiToken"`
 	// Whether to associate public IP addresses.
 	AssociatePublicIpAddress *bool `pulumi:"associatePublicIpAddress"`
+	// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
+	Bootstrap *bool `pulumi:"bootstrap"`
+	// URL to the Netskope generic bootstrap script.
+	BootstrapUrl *string `pulumi:"bootstrapUrl"`
+	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+	DeleteDefaultUser *bool `pulumi:"deleteDefaultUser"`
 	// Whether to enable EBS optimization.
 	EbsOptimized *bool `pulumi:"ebsOptimized"`
+	// Optional guest OS primary interface override applied with netplan during cloud-init.
+	GuestNetworkInterface *GuestNetworkInterface `pulumi:"guestNetworkInterface"`
 	// Optional IAM instance profile name.
 	IamInstanceProfile *string `pulumi:"iamInstanceProfile"`
+	// Linux user that owns the Publisher install. Defaults to ubuntu.
+	InstallUser *string `pulumi:"installUser"`
+	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+	InstallUserPassword *string `pulumi:"installUserPassword"`
+	// Set true when installUserPassword is already a crypt(3) hash.
+	InstallUserPasswordIsHash *bool `pulumi:"installUserPasswordIsHash"`
+	// Public SSH keys installed in the install user's authorized_keys file.
+	InstallUserSshAuthorizedKeys []string `pulumi:"installUserSshAuthorizedKeys"`
 	// EC2 instance type.
 	InstanceType *string `pulumi:"instanceType"`
 	// Optional EC2 key pair name.
@@ -70,6 +89,8 @@ type awsPublisherArgs struct {
 	NamePrefix *string `pulumi:"namePrefix"`
 	// Explicit publisher names to create.
 	Names []string `pulumi:"names"`
+	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
+	Nonat *bool `pulumi:"nonat"`
 	// Pre-created Netskope publisher registrations keyed by publisher name.
 	Registrations *PublisherRegistrationMap `pulumi:"registrations"`
 	// Number of publishers to create when names are not supplied.
@@ -94,10 +115,26 @@ type AwsPublisherArgs struct {
 	ApiToken pulumi.StringPtrInput
 	// Whether to associate public IP addresses.
 	AssociatePublicIpAddress pulumi.BoolPtrInput
+	// Run Netskope's generic bootstrap script during cloud-init on a stock Ubuntu image. Defaults to false on AWS.
+	Bootstrap pulumi.BoolPtrInput
+	// URL to the Netskope generic bootstrap script.
+	BootstrapUrl pulumi.StringPtrInput
+	// When true and installUser is not ubuntu, cloud-init removes the image default ubuntu account.
+	DeleteDefaultUser pulumi.BoolPtrInput
 	// Whether to enable EBS optimization.
 	EbsOptimized pulumi.BoolPtrInput
+	// Optional guest OS primary interface override applied with netplan during cloud-init.
+	GuestNetworkInterface GuestNetworkInterfacePtrInput
 	// Optional IAM instance profile name.
 	IamInstanceProfile pulumi.StringPtrInput
+	// Linux user that owns the Publisher install. Defaults to ubuntu.
+	InstallUser pulumi.StringPtrInput
+	// Optional password for installUser. Plain text unless installUserPasswordIsHash is true.
+	InstallUserPassword pulumi.StringPtrInput
+	// Set true when installUserPassword is already a crypt(3) hash.
+	InstallUserPasswordIsHash pulumi.BoolPtrInput
+	// Public SSH keys installed in the install user's authorized_keys file.
+	InstallUserSshAuthorizedKeys pulumi.StringArrayInput
 	// EC2 instance type.
 	InstanceType pulumi.StringPtrInput
 	// Optional EC2 key pair name.
@@ -110,6 +147,8 @@ type AwsPublisherArgs struct {
 	NamePrefix pulumi.StringPtrInput
 	// Explicit publisher names to create.
 	Names pulumi.StringArrayInput
+	// Whether cloud-init should create the Netskope No-NAT marker file. Defaults to false on AWS.
+	Nonat pulumi.BoolPtrInput
 	// Pre-created Netskope publisher registrations keyed by publisher name.
 	Registrations PublisherRegistrationMapPtrInput
 	// Number of publishers to create when names are not supplied.

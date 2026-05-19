@@ -21,6 +21,24 @@ title: AWS Component
 - `instanceType`
 - `keyName`
 - `tags`
+- `bootstrap`
+- `bootstrapUrl`
+- `nonat`
+- `installUser`
+- `installUserPassword`
+- `installUserPasswordIsHash`
+- `installUserSshAuthorizedKeys`
+- `deleteDefaultUser`
+- `guestNetworkInterface`
+
+When `bootstrap: true` and `amiId` is omitted, the component resolves a
+Canonical Ubuntu 22.04 Minimal AMI and installs the publisher through
+Netskope's generic bootstrap script. Leave `bootstrap` unset or false to
+use the Netskope Publisher AMI path.
+
+Bootstrap mode also lets cloud-init manage the Linux install user,
+authorized SSH keys, an optional password, and an optional netplan
+override for the guest's primary interface.
 
 ## Outputs
 
