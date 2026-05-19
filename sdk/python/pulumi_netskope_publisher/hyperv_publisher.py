@@ -23,22 +23,22 @@ class HypervPublisherArgs:
     def __init__(__self__, *,
                  hard_drives: pulumi.Input[Sequence[pulumi.Input['HypervHardDriveArgs']]],
                  switch_name: pulumi.Input[_builtins.str],
-                 api_token: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_start_action: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_stop_action: Optional[pulumi.Input[_builtins.str]] = None,
-                 dynamic_memory: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_experimental_hyperv: Optional[pulumi.Input[_builtins.bool]] = None,
-                 generation: Optional[pulumi.Input[_builtins.int]] = None,
-                 maximum_memory: Optional[pulumi.Input[_builtins.int]] = None,
-                 memory_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 minimum_memory: Optional[pulumi.Input[_builtins.int]] = None,
-                 name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-                 names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 processor_count: Optional[pulumi.Input[_builtins.int]] = None,
-                 registrations: Optional[pulumi.Input['PublisherRegistrationMapArgs']] = None,
-                 replicas: Optional[pulumi.Input[_builtins.int]] = None,
-                 tenant_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 wizard_path: Optional[pulumi.Input[_builtins.str]] = None):
+                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_start_action: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_stop_action: pulumi.Input[Optional[_builtins.str]] = None,
+                 dynamic_memory: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_experimental_hyperv: pulumi.Input[Optional[_builtins.bool]] = None,
+                 generation: pulumi.Input[Optional[_builtins.int]] = None,
+                 maximum_memory: pulumi.Input[Optional[_builtins.int]] = None,
+                 memory_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 minimum_memory: pulumi.Input[Optional[_builtins.int]] = None,
+                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 processor_count: pulumi.Input[Optional[_builtins.int]] = None,
+                 registrations: pulumi.Input[Optional['PublisherRegistrationMapArgs']] = None,
+                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
+                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a HypervPublisher resource.
 
@@ -122,194 +122,194 @@ class HypervPublisherArgs:
 
     @_builtins.property
     @pulumi.getter(name="apiToken")
-    def api_token(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def api_token(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Netskope API token used for publisher registration.
         """
         return pulumi.get(self, "api_token")
 
     @api_token.setter
-    def api_token(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def api_token(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "api_token", value)
 
     @_builtins.property
     @pulumi.getter(name="autoStartAction")
-    def auto_start_action(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def auto_start_action(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Hyper-V automatic start action.
         """
         return pulumi.get(self, "auto_start_action")
 
     @auto_start_action.setter
-    def auto_start_action(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def auto_start_action(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "auto_start_action", value)
 
     @_builtins.property
     @pulumi.getter(name="autoStopAction")
-    def auto_stop_action(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def auto_stop_action(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Hyper-V automatic stop action.
         """
         return pulumi.get(self, "auto_stop_action")
 
     @auto_stop_action.setter
-    def auto_stop_action(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def auto_stop_action(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "auto_stop_action", value)
 
     @_builtins.property
     @pulumi.getter(name="dynamicMemory")
-    def dynamic_memory(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def dynamic_memory(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether to enable dynamic memory.
         """
         return pulumi.get(self, "dynamic_memory")
 
     @dynamic_memory.setter
-    def dynamic_memory(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def dynamic_memory(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "dynamic_memory", value)
 
     @_builtins.property
     @pulumi.getter(name="enableExperimentalHyperv")
-    def enable_experimental_hyperv(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enable_experimental_hyperv(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Required opt-in gate for the experimental Hyper-V component.
         """
         return pulumi.get(self, "enable_experimental_hyperv")
 
     @enable_experimental_hyperv.setter
-    def enable_experimental_hyperv(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enable_experimental_hyperv(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enable_experimental_hyperv", value)
 
     @_builtins.property
     @pulumi.getter
-    def generation(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def generation(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Hyper-V VM generation.
         """
         return pulumi.get(self, "generation")
 
     @generation.setter
-    def generation(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def generation(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "generation", value)
 
     @_builtins.property
     @pulumi.getter(name="maximumMemory")
-    def maximum_memory(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def maximum_memory(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Maximum dynamic memory in bytes.
         """
         return pulumi.get(self, "maximum_memory")
 
     @maximum_memory.setter
-    def maximum_memory(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def maximum_memory(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "maximum_memory", value)
 
     @_builtins.property
     @pulumi.getter(name="memorySize")
-    def memory_size(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def memory_size(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Startup memory in bytes.
         """
         return pulumi.get(self, "memory_size")
 
     @memory_size.setter
-    def memory_size(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def memory_size(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "memory_size", value)
 
     @_builtins.property
     @pulumi.getter(name="minimumMemory")
-    def minimum_memory(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def minimum_memory(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Minimum dynamic memory in bytes.
         """
         return pulumi.get(self, "minimum_memory")
 
     @minimum_memory.setter
-    def minimum_memory(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def minimum_memory(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "minimum_memory", value)
 
     @_builtins.property
     @pulumi.getter(name="namePrefix")
-    def name_prefix(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name_prefix(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Prefix used to derive publisher names when explicit names are not supplied.
         """
         return pulumi.get(self, "name_prefix")
 
     @name_prefix.setter
-    def name_prefix(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name_prefix(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name_prefix", value)
 
     @_builtins.property
     @pulumi.getter
-    def names(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def names(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Explicit publisher names to create.
         """
         return pulumi.get(self, "names")
 
     @names.setter
-    def names(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def names(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "names", value)
 
     @_builtins.property
     @pulumi.getter(name="processorCount")
-    def processor_count(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def processor_count(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Virtual processor count.
         """
         return pulumi.get(self, "processor_count")
 
     @processor_count.setter
-    def processor_count(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def processor_count(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "processor_count", value)
 
     @_builtins.property
     @pulumi.getter
-    def registrations(self) -> Optional[pulumi.Input['PublisherRegistrationMapArgs']]:
+    def registrations(self) -> pulumi.Input[Optional['PublisherRegistrationMapArgs']]:
         """
         Pre-created Netskope publisher registrations keyed by publisher name.
         """
         return pulumi.get(self, "registrations")
 
     @registrations.setter
-    def registrations(self, value: Optional[pulumi.Input['PublisherRegistrationMapArgs']]):
+    def registrations(self, value: pulumi.Input[Optional['PublisherRegistrationMapArgs']]):
         pulumi.set(self, "registrations", value)
 
     @_builtins.property
     @pulumi.getter
-    def replicas(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def replicas(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Number of publishers to create when names are not supplied.
         """
         return pulumi.get(self, "replicas")
 
     @replicas.setter
-    def replicas(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def replicas(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "replicas", value)
 
     @_builtins.property
     @pulumi.getter(name="tenantUrl")
-    def tenant_url(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def tenant_url(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Netskope tenant URL used for publisher registration.
         """
         return pulumi.get(self, "tenant_url")
 
     @tenant_url.setter
-    def tenant_url(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def tenant_url(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "tenant_url", value)
 
     @_builtins.property
     @pulumi.getter(name="wizardPath")
-    def wizard_path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def wizard_path(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Netskope publisher registration wizard API path.
         """
         return pulumi.get(self, "wizard_path")
 
     @wizard_path.setter
-    def wizard_path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def wizard_path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "wizard_path", value)
 
 
@@ -319,24 +319,24 @@ class HypervPublisher(pulumi.ComponentResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 api_token: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_start_action: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_stop_action: Optional[pulumi.Input[_builtins.str]] = None,
-                 dynamic_memory: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_experimental_hyperv: Optional[pulumi.Input[_builtins.bool]] = None,
-                 generation: Optional[pulumi.Input[_builtins.int]] = None,
-                 hard_drives: Optional[pulumi.Input[Sequence[pulumi.Input[Union['HypervHardDriveArgs', 'HypervHardDriveArgsDict']]]]] = None,
-                 maximum_memory: Optional[pulumi.Input[_builtins.int]] = None,
-                 memory_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 minimum_memory: Optional[pulumi.Input[_builtins.int]] = None,
-                 name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-                 names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 processor_count: Optional[pulumi.Input[_builtins.int]] = None,
-                 registrations: Optional[pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
-                 replicas: Optional[pulumi.Input[_builtins.int]] = None,
-                 switch_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 tenant_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 wizard_path: Optional[pulumi.Input[_builtins.str]] = None,
+                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_start_action: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_stop_action: pulumi.Input[Optional[_builtins.str]] = None,
+                 dynamic_memory: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_experimental_hyperv: pulumi.Input[Optional[_builtins.bool]] = None,
+                 generation: pulumi.Input[Optional[_builtins.int]] = None,
+                 hard_drives: pulumi.Input[Optional[Sequence[pulumi.Input[Union['HypervHardDriveArgs', 'HypervHardDriveArgsDict']]]]] = None,
+                 maximum_memory: pulumi.Input[Optional[_builtins.int]] = None,
+                 memory_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 minimum_memory: pulumi.Input[Optional[_builtins.int]] = None,
+                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 processor_count: pulumi.Input[Optional[_builtins.int]] = None,
+                 registrations: pulumi.Input[Optional[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
+                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
+                 switch_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Experimental component for creating one or more Netskope Private Access Publisher Hyper-V virtual machines.
@@ -388,24 +388,24 @@ class HypervPublisher(pulumi.ComponentResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 api_token: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_start_action: Optional[pulumi.Input[_builtins.str]] = None,
-                 auto_stop_action: Optional[pulumi.Input[_builtins.str]] = None,
-                 dynamic_memory: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enable_experimental_hyperv: Optional[pulumi.Input[_builtins.bool]] = None,
-                 generation: Optional[pulumi.Input[_builtins.int]] = None,
-                 hard_drives: Optional[pulumi.Input[Sequence[pulumi.Input[Union['HypervHardDriveArgs', 'HypervHardDriveArgsDict']]]]] = None,
-                 maximum_memory: Optional[pulumi.Input[_builtins.int]] = None,
-                 memory_size: Optional[pulumi.Input[_builtins.int]] = None,
-                 minimum_memory: Optional[pulumi.Input[_builtins.int]] = None,
-                 name_prefix: Optional[pulumi.Input[_builtins.str]] = None,
-                 names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 processor_count: Optional[pulumi.Input[_builtins.int]] = None,
-                 registrations: Optional[pulumi.Input[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
-                 replicas: Optional[pulumi.Input[_builtins.int]] = None,
-                 switch_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 tenant_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 wizard_path: Optional[pulumi.Input[_builtins.str]] = None,
+                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_start_action: pulumi.Input[Optional[_builtins.str]] = None,
+                 auto_stop_action: pulumi.Input[Optional[_builtins.str]] = None,
+                 dynamic_memory: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enable_experimental_hyperv: pulumi.Input[Optional[_builtins.bool]] = None,
+                 generation: pulumi.Input[Optional[_builtins.int]] = None,
+                 hard_drives: pulumi.Input[Optional[Sequence[pulumi.Input[Union['HypervHardDriveArgs', 'HypervHardDriveArgsDict']]]]] = None,
+                 maximum_memory: pulumi.Input[Optional[_builtins.int]] = None,
+                 memory_size: pulumi.Input[Optional[_builtins.int]] = None,
+                 minimum_memory: pulumi.Input[Optional[_builtins.int]] = None,
+                 name_prefix: pulumi.Input[Optional[_builtins.str]] = None,
+                 names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 processor_count: pulumi.Input[Optional[_builtins.int]] = None,
+                 registrations: pulumi.Input[Optional[Union['PublisherRegistrationMapArgs', 'PublisherRegistrationMapArgsDict']]] = None,
+                 replicas: pulumi.Input[Optional[_builtins.int]] = None,
+                 switch_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 wizard_path: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):

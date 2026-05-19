@@ -47,7 +47,7 @@ class AzureMarketplaceImageArgsDict(TypedDict):
     """
     Marketplace SKU.
     """
-    version: NotRequired[pulumi.Input[_builtins.str]]
+    version: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Marketplace image version.
     """
@@ -58,7 +58,7 @@ class AzureMarketplaceImageArgs:
                  offer: pulumi.Input[_builtins.str],
                  publisher: pulumi.Input[_builtins.str],
                  sku: pulumi.Input[_builtins.str],
-                 version: Optional[pulumi.Input[_builtins.str]] = None):
+                 version: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Azure marketplace image reference.
 
@@ -111,14 +111,14 @@ class AzureMarketplaceImageArgs:
 
     @_builtins.property
     @pulumi.getter
-    def version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Marketplace image version.
         """
         return pulumi.get(self, "version")
 
     @version.setter
-    def version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "version", value)
 
 
@@ -126,11 +126,11 @@ class AzureOsDiskArgsDict(TypedDict):
     """
     Azure managed OS disk options.
     """
-    size_gb: NotRequired[pulumi.Input[_builtins.int]]
+    size_gb: NotRequired[pulumi.Input[Optional[_builtins.int]]]
     """
     OS disk size in GiB.
     """
-    type: NotRequired[pulumi.Input[_builtins.str]]
+    type: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Managed disk storage account type.
     """
@@ -138,8 +138,8 @@ class AzureOsDiskArgsDict(TypedDict):
 @pulumi.input_type
 class AzureOsDiskArgs:
     def __init__(__self__, *,
-                 size_gb: Optional[pulumi.Input[_builtins.int]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None):
+                 size_gb: pulumi.Input[Optional[_builtins.int]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Azure managed OS disk options.
 
@@ -153,26 +153,26 @@ class AzureOsDiskArgs:
 
     @_builtins.property
     @pulumi.getter(name="sizeGb")
-    def size_gb(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def size_gb(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         OS disk size in GiB.
         """
         return pulumi.get(self, "size_gb")
 
     @size_gb.setter
-    def size_gb(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def size_gb(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "size_gb", value)
 
     @_builtins.property
     @pulumi.getter
-    def type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Managed disk storage account type.
         """
         return pulumi.get(self, "type")
 
     @type.setter
-    def type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "type", value)
 
 
@@ -184,7 +184,7 @@ class GcpServiceAccountArgsDict(TypedDict):
     """
     Service account email.
     """
-    scopes: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    scopes: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     OAuth scopes.
     """
@@ -193,7 +193,7 @@ class GcpServiceAccountArgsDict(TypedDict):
 class GcpServiceAccountArgs:
     def __init__(__self__, *,
                  email: pulumi.Input[_builtins.str],
-                 scopes: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 scopes: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         GCP service account assignment.
 
@@ -218,14 +218,14 @@ class GcpServiceAccountArgs:
 
     @_builtins.property
     @pulumi.getter
-    def scopes(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def scopes(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         OAuth scopes.
         """
         return pulumi.get(self, "scopes")
 
     @scopes.setter
-    def scopes(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def scopes(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "scopes", value)
 
 
@@ -237,23 +237,23 @@ class GuestNetworkInterfaceArgsDict(TypedDict):
     """
     Guest OS interface name, such as ens160 or eth0.
     """
-    addresses: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    addresses: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     Static CIDR addresses assigned to the interface.
     """
-    dhcp4: NotRequired[pulumi.Input[_builtins.bool]]
+    dhcp4: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
     """
     Whether DHCPv4 is enabled.
     """
-    gateway4: NotRequired[pulumi.Input[_builtins.str]]
+    gateway4: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     IPv4 default gateway.
     """
-    mtu: NotRequired[pulumi.Input[_builtins.int]]
+    mtu: NotRequired[pulumi.Input[Optional[_builtins.int]]]
     """
     Interface MTU.
     """
-    nameservers: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
+    nameservers: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
     """
     DNS nameserver addresses.
     """
@@ -262,11 +262,11 @@ class GuestNetworkInterfaceArgsDict(TypedDict):
 class GuestNetworkInterfaceArgs:
     def __init__(__self__, *,
                  name: pulumi.Input[_builtins.str],
-                 addresses: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 dhcp4: Optional[pulumi.Input[_builtins.bool]] = None,
-                 gateway4: Optional[pulumi.Input[_builtins.str]] = None,
-                 mtu: Optional[pulumi.Input[_builtins.int]] = None,
-                 nameservers: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None):
+                 addresses: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 dhcp4: pulumi.Input[Optional[_builtins.bool]] = None,
+                 gateway4: pulumi.Input[Optional[_builtins.str]] = None,
+                 mtu: pulumi.Input[Optional[_builtins.int]] = None,
+                 nameservers: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         Guest OS netplan override for the primary network interface.
 
@@ -303,62 +303,62 @@ class GuestNetworkInterfaceArgs:
 
     @_builtins.property
     @pulumi.getter
-    def addresses(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def addresses(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Static CIDR addresses assigned to the interface.
         """
         return pulumi.get(self, "addresses")
 
     @addresses.setter
-    def addresses(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def addresses(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "addresses", value)
 
     @_builtins.property
     @pulumi.getter
-    def dhcp4(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def dhcp4(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether DHCPv4 is enabled.
         """
         return pulumi.get(self, "dhcp4")
 
     @dhcp4.setter
-    def dhcp4(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def dhcp4(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "dhcp4", value)
 
     @_builtins.property
     @pulumi.getter
-    def gateway4(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def gateway4(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         IPv4 default gateway.
         """
         return pulumi.get(self, "gateway4")
 
     @gateway4.setter
-    def gateway4(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def gateway4(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "gateway4", value)
 
     @_builtins.property
     @pulumi.getter
-    def mtu(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def mtu(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Interface MTU.
         """
         return pulumi.get(self, "mtu")
 
     @mtu.setter
-    def mtu(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def mtu(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "mtu", value)
 
     @_builtins.property
     @pulumi.getter
-    def nameservers(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def nameservers(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         DNS nameserver addresses.
         """
         return pulumi.get(self, "nameservers")
 
     @nameservers.setter
-    def nameservers(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def nameservers(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "nameservers", value)
 
 
@@ -370,15 +370,15 @@ class HypervHardDriveArgsDict(TypedDict):
     """
     VHDX path.
     """
-    controller_location: NotRequired[pulumi.Input[_builtins.int]]
+    controller_location: NotRequired[pulumi.Input[Optional[_builtins.int]]]
     """
     Controller location.
     """
-    controller_number: NotRequired[pulumi.Input[_builtins.int]]
+    controller_number: NotRequired[pulumi.Input[Optional[_builtins.int]]]
     """
     Controller number.
     """
-    controller_type: NotRequired[pulumi.Input[_builtins.str]]
+    controller_type: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Controller type.
     """
@@ -387,9 +387,9 @@ class HypervHardDriveArgsDict(TypedDict):
 class HypervHardDriveArgs:
     def __init__(__self__, *,
                  path: pulumi.Input[_builtins.str],
-                 controller_location: Optional[pulumi.Input[_builtins.int]] = None,
-                 controller_number: Optional[pulumi.Input[_builtins.int]] = None,
-                 controller_type: Optional[pulumi.Input[_builtins.str]] = None):
+                 controller_location: pulumi.Input[Optional[_builtins.int]] = None,
+                 controller_number: pulumi.Input[Optional[_builtins.int]] = None,
+                 controller_type: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Hyper-V virtual hard disk attachment.
 
@@ -420,38 +420,38 @@ class HypervHardDriveArgs:
 
     @_builtins.property
     @pulumi.getter(name="controllerLocation")
-    def controller_location(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def controller_location(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Controller location.
         """
         return pulumi.get(self, "controller_location")
 
     @controller_location.setter
-    def controller_location(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def controller_location(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "controller_location", value)
 
     @_builtins.property
     @pulumi.getter(name="controllerNumber")
-    def controller_number(self) -> Optional[pulumi.Input[_builtins.int]]:
+    def controller_number(self) -> pulumi.Input[Optional[_builtins.int]]:
         """
         Controller number.
         """
         return pulumi.get(self, "controller_number")
 
     @controller_number.setter
-    def controller_number(self, value: Optional[pulumi.Input[_builtins.int]]):
+    def controller_number(self, value: pulumi.Input[Optional[_builtins.int]]):
         pulumi.set(self, "controller_number", value)
 
     @_builtins.property
     @pulumi.getter(name="controllerType")
-    def controller_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def controller_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Controller type.
         """
         return pulumi.get(self, "controller_type")
 
     @controller_type.setter
-    def controller_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def controller_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "controller_type", value)
 
 
@@ -459,11 +459,11 @@ class MetadataOptionsArgsDict(TypedDict):
     """
     AWS EC2 instance metadata service options.
     """
-    http_endpoint: NotRequired[pulumi.Input[_builtins.str]]
+    http_endpoint: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Whether the metadata service endpoint is enabled.
     """
-    http_tokens: NotRequired[pulumi.Input[_builtins.str]]
+    http_tokens: NotRequired[pulumi.Input[Optional[_builtins.str]]]
     """
     Whether IMDSv2 tokens are required.
     """
@@ -471,8 +471,8 @@ class MetadataOptionsArgsDict(TypedDict):
 @pulumi.input_type
 class MetadataOptionsArgs:
     def __init__(__self__, *,
-                 http_endpoint: Optional[pulumi.Input[_builtins.str]] = None,
-                 http_tokens: Optional[pulumi.Input[_builtins.str]] = None):
+                 http_endpoint: pulumi.Input[Optional[_builtins.str]] = None,
+                 http_tokens: pulumi.Input[Optional[_builtins.str]] = None):
         """
         AWS EC2 instance metadata service options.
 
@@ -486,26 +486,26 @@ class MetadataOptionsArgs:
 
     @_builtins.property
     @pulumi.getter(name="httpEndpoint")
-    def http_endpoint(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def http_endpoint(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Whether the metadata service endpoint is enabled.
         """
         return pulumi.get(self, "http_endpoint")
 
     @http_endpoint.setter
-    def http_endpoint(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def http_endpoint(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "http_endpoint", value)
 
     @_builtins.property
     @pulumi.getter(name="httpTokens")
-    def http_tokens(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def http_tokens(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Whether IMDSv2 tokens are required.
         """
         return pulumi.get(self, "http_tokens")
 
     @http_tokens.setter
-    def http_tokens(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def http_tokens(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "http_tokens", value)
 
 
