@@ -1,6 +1,6 @@
 {
   "name": "@johninnl/pulumi-netskope-publisher",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Pulumi components for Netskope Private Access Publishers.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
