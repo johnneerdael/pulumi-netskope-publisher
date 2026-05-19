@@ -104,3 +104,31 @@ if err != nil {
 }
 ctx.Export("registrations", pulumi.ToSecret(registration.Registrations))
 ```
+
+## Java
+
+```java
+var registration = new NetskopeRegistration("registration", NetskopeRegistrationArgs.builder()
+    .publisherNames("pub-eu-1", "pub-eu-2")
+    .tenantUrl(netskope.require("tenantUrl"))
+    .apiToken(netskope.requireSecret("apiToken"))
+    .build());
+
+ctx.export("registrations", Output.secret(registration.registrations()));
+```
+
+## Rust
+
+```rust
+let registration = netskope::netskope_registration::create(
+    ctx,
+    "registration",
+    netskope::netskope_registration::NetskopeRegistrationArgs::builder()
+        .publisher_names(vec!["pub-eu-1".to_string(), "pub-eu-2".to_string()])
+        .tenant_url("https://tenant.goskope.com")
+        .api_token("secret-token")
+        .build_struct(),
+);
+
+add_export("registrations", &registration.registrations);
+```

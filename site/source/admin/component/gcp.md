@@ -176,3 +176,51 @@ if err != nil {
 ctx.Export("publisherNames", publisher.PublisherNames)
 ctx.Export("publishers", pulumi.ToSecret(publisher.Publishers))
 ```
+
+## Java
+
+```java
+var publisher = new GcpPublisher("publisher", GcpPublisherArgs.builder()
+    .namePrefix("pub-gcp")
+    .replicas(2)
+    .tenantUrl(netskope.require("tenantUrl"))
+    .apiToken(netskope.requireSecret("apiToken"))
+    .project(config.require("project"))
+    .zone(config.require("zone"))
+    .network(config.require("network"))
+    .subnetwork(config.require("subnetwork"))
+    .image(config.require("image"))
+    .machineType("e2-medium")
+    .assignPublicIp(false)
+    .nonat(true)
+    .build());
+
+ctx.export("publisherNames", publisher.publisherNames());
+ctx.export("publishers", Output.secret(publisher.publishers()));
+```
+
+## Rust
+
+```rust
+let publisher = netskope::gcp_publisher::create(
+    ctx,
+    "publisher",
+    netskope::gcp_publisher::GcpPublisherArgs::builder()
+        .name_prefix("pub-gcp")
+        .replicas(2)
+        .tenant_url("https://tenant.goskope.com")
+        .api_token("secret-token")
+        .project("my-gcp-project")
+        .zone("europe-west4-a")
+        .network("default")
+        .subnetwork("default")
+        .image("projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts")
+        .machine_type("e2-medium")
+        .assign_public_ip(false)
+        .nonat(true)
+        .build_struct(),
+);
+
+add_export("publisherNames", &publisher.publisher_names);
+add_export("publishers", &publisher.publishers);
+```

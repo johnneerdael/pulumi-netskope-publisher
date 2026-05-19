@@ -187,3 +187,49 @@ func main() {
 	})
 }
 ```
+
+## Java
+
+```java
+var publisher = new AzurePublisher("publisher", AzurePublisherArgs.builder()
+    .namePrefix("pub-az")
+    .replicas(2)
+    .tenantUrl(netskope.require("tenantUrl"))
+    .apiToken(netskope.requireSecret("apiToken"))
+    .resourceGroupName(config.require("resourceGroupName"))
+    .location(config.require("location"))
+    .subnetId(config.require("subnetId"))
+    .adminSshPublicKey(config.require("adminSshPublicKey"))
+    .vmSize("Standard_D2s_v5")
+    .assignPublicIp(false)
+    .bootstrap(true)
+    .build());
+
+ctx.export("publisherNames", publisher.publisherNames());
+ctx.export("publishers", Output.secret(publisher.publishers()));
+```
+
+## Rust
+
+```rust
+let publisher = netskope::azure_publisher::create(
+    ctx,
+    "publisher",
+    netskope::azure_publisher::AzurePublisherArgs::builder()
+        .name_prefix("pub-az")
+        .replicas(2)
+        .tenant_url("https://tenant.goskope.com")
+        .api_token("secret-token")
+        .resource_group_name("rg-npa")
+        .location("westeurope")
+        .subnet_id("/subscriptions/.../subnets/npa")
+        .admin_ssh_public_key("ssh-rsa AAAA...")
+        .vm_size("Standard_D2s_v5")
+        .assign_public_ip(false)
+        .bootstrap(true)
+        .build_struct(),
+);
+
+add_export("publisherNames", &publisher.publisher_names);
+add_export("publishers", &publisher.publishers);
+```

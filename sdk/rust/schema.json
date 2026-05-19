@@ -1,6 +1,6 @@
 {
   "name": "netskope-publisher",
-  "version": "0.1.10",
+  "version": "0.1.9",
   "displayName": "Netskope Publisher",
   "description": "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, and experimental Hyper-V.",
   "publisher": "johnneerdael",

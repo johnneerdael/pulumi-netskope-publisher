@@ -152,3 +152,50 @@ if err != nil {
 ctx.Export("publisherNames", publisher.PublisherNames)
 ctx.Export("publishers", pulumi.ToSecret(publisher.Publishers))
 ```
+
+## Java
+
+```java
+var publisher = new VspherePublisher("publisher", VspherePublisherArgs.builder()
+    .namePrefix("pub-vsphere")
+    .replicas(2)
+    .tenantUrl(netskope.require("tenantUrl"))
+    .apiToken(netskope.requireSecret("apiToken"))
+    .datacenter(config.require("datacenter"))
+    .datastore(config.require("datastore"))
+    .networkName(config.require("networkName"))
+    .templateName(config.require("templateName"))
+    .cluster(config.require("cluster"))
+    .folder(config.get("folder").orElse(null))
+    .numCpus(2)
+    .memory(4096)
+    .build());
+
+ctx.export("publisherNames", publisher.publisherNames());
+ctx.export("publishers", Output.secret(publisher.publishers()));
+```
+
+## Rust
+
+```rust
+let publisher = netskope::vsphere_publisher::create(
+    ctx,
+    "publisher",
+    netskope::vsphere_publisher::VspherePublisherArgs::builder()
+        .name_prefix("pub-vsphere")
+        .replicas(2)
+        .tenant_url("https://tenant.goskope.com")
+        .api_token("secret-token")
+        .datacenter("Lab")
+        .datastore("datastore1")
+        .network_name("VM Network")
+        .template_name("npa-publisher-template")
+        .cluster("Cluster")
+        .num_cpus(2)
+        .memory(4096)
+        .build_struct(),
+);
+
+add_export("publisherNames", &publisher.publisher_names);
+add_export("publishers", &publisher.publishers);
+```

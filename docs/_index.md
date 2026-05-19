@@ -26,6 +26,10 @@ Each component accepts either Netskope tenant credentials for automatic
 publisher registration or pre-created registration tokens keyed by
 publisher name.
 
+Java and Rust SDKs are also generated. Java uses Pulumi's standard
+package SDK generator. Rust uses Pulumi Gestalt and requires the Gestalt
+Rust language plugin in Rust Pulumi programs.
+
 ## TypeScript example
 
 ```typescript
@@ -104,6 +108,64 @@ func main() {
 		}
 		return nil
 	})
+}
+```
+
+## Java example
+
+```java
+package myproject;
+
+import com.pulumi.Pulumi;
+import com.pulumi.netskopepublisher.AwsPublisher;
+import com.pulumi.netskopepublisher.AwsPublisherArgs;
+
+public class App {
+    public static void main(String[] args) {
+        Pulumi.run(ctx -> {
+            new AwsPublisher("publisher", AwsPublisherArgs.builder()
+                .namePrefix("pub-eu")
+                .replicas(2)
+                .tenantUrl("https://example.goskope.com")
+                .apiToken("ns-api-token")
+                .subnetId("subnet-0123456789abcdef0")
+                .securityGroupIds("sg-0123456789abcdef0")
+                .build());
+        });
+    }
+}
+```
+
+## Rust example
+
+```rust
+mod netskope {
+    pulumi_gestalt_rust::include_provider!("netskope-publisher");
+}
+
+use anyhow::Result;
+use pulumi_gestalt_rust::*;
+
+fn main() {
+    run(pulumi_main).unwrap();
+}
+
+fn pulumi_main(ctx: &Context) -> Result<()> {
+    let publisher = netskope::aws_publisher::create(
+        ctx,
+        "publisher",
+        netskope::aws_publisher::AwsPublisherArgs::builder()
+            .name_prefix("pub-eu")
+            .replicas(2)
+            .tenant_url("https://example.goskope.com")
+            .api_token("ns-api-token")
+            .subnet_id("subnet-0123456789abcdef0")
+            .security_group_ids(vec!["sg-0123456789abcdef0".to_string()])
+            .build_struct(),
+    );
+
+    add_export("publisherNames", &publisher.publisher_names);
+    Ok(())
 }
 ```
 

@@ -147,3 +147,49 @@ ctx.Export("publisherNames", publisher.PublisherNames)
 ctx.Export("helmReleaseNames", publisher.HelmReleaseNames)
 ctx.Export("publishers", pulumi.ToSecret(publisher.Publishers))
 ```
+
+## Java
+
+```java
+var publisher = new KubernetesPublisher("publisher", KubernetesPublisherArgs.builder()
+    .namePrefix("pub-k8s")
+    .replicas(2)
+    .tenantUrl(netskope.require("tenantUrl"))
+    .apiToken(netskope.requireSecret("apiToken"))
+    .namespace("npa")
+    .enrollmentMode("token")
+    .workloadType("deployment")
+    .hpaEnabled(true)
+    .hpaMinReplicas(1)
+    .hpaMaxReplicas(3)
+    .build());
+
+ctx.export("publisherNames", publisher.publisherNames());
+ctx.export("helmReleaseNames", publisher.helmReleaseNames());
+ctx.export("publishers", Output.secret(publisher.publishers()));
+```
+
+## Rust
+
+```rust
+let publisher = netskope::kubernetes_publisher::create(
+    ctx,
+    "publisher",
+    netskope::kubernetes_publisher::KubernetesPublisherArgs::builder()
+        .name_prefix("pub-k8s")
+        .replicas(2)
+        .tenant_url("https://tenant.goskope.com")
+        .api_token("secret-token")
+        .namespace("npa")
+        .enrollment_mode("token")
+        .workload_type("deployment")
+        .hpa_enabled(true)
+        .hpa_min_replicas(1)
+        .hpa_max_replicas(3)
+        .build_struct(),
+);
+
+add_export("publisherNames", &publisher.publisher_names);
+add_export("helmReleaseNames", &publisher.helm_release_names);
+add_export("publishers", &publisher.publishers);
+```

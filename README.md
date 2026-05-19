@@ -5,7 +5,8 @@
 [![NuGet](https://img.shields.io/nuget/v/JohninNL.Pulumi.NetskopePublisher?logo=nuget)](https://www.nuget.org/packages/JohninNL.Pulumi.NetskopePublisher)
 [![Go Reference](https://pkg.go.dev/badge/github.com/johnneerdael/pulumi-netskope-publisher.svg)](https://pkg.go.dev/github.com/johnneerdael/pulumi-netskope-publisher)
 
-Pulumi components for provisioning Netskope Private Access Publishers.
+Pulumi components for provisioning Netskope Private Access Publishers
+with TypeScript, Python, C#, Go, Java, and Rust SDKs.
 
 The package mirrors the Terraform modules from
 `terraform-netskope-publisher`: register or reuse Netskope publisher
@@ -99,6 +100,8 @@ The release also publishes the TypeScript SDK to npm, the Python SDK to
 PyPI, the C# SDK to NuGet, and the Go SDK through the tagged GitHub
 module path
 `github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher`.
+Java is generated under `sdk/java`; Rust is generated with Pulumi
+Gestalt under `sdk/rust`.
 
 The Go provider constructs AWS, Azure, GCP, Kubernetes, and vSphere
 child resources and includes a stateful `NetskopeRegistration` resource

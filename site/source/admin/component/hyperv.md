@@ -69,3 +69,23 @@ _, err := netskopepublisher.NewHypervPublisher(ctx, "publisher", &netskopepublis
 	EnableExperimentalHyperv: pulumi.Bool(true),
 })
 ```
+
+## Java
+
+```java
+new HypervPublisher("publisher", HypervPublisherArgs.builder()
+    .enableExperimentalHyperv(true)
+    .build());
+```
+
+## Rust
+
+```rust
+let publisher = netskope::hyperv_publisher::create(
+    ctx,
+    "publisher",
+    netskope::hyperv_publisher::HypervPublisherArgs::builder()
+        .enable_experimental_hyperv(true)
+        .build_struct(),
+);
+```

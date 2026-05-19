@@ -196,3 +196,77 @@ func main() {
 	})
 }
 ```
+
+## Java
+
+```java
+package myproject;
+
+import com.pulumi.Pulumi;
+import com.pulumi.core.Output;
+import com.pulumi.netskopepublisher.AwsPublisher;
+import com.pulumi.netskopepublisher.AwsPublisherArgs;
+import com.pulumi.Config;
+
+public class App {
+    public static void main(String[] args) {
+        Pulumi.run(ctx -> {
+            var netskope = new Config("netskope");
+            var config = new Config();
+
+            var publisher = new AwsPublisher("publisher", AwsPublisherArgs.builder()
+                .namePrefix("pub-eu")
+                .replicas(2)
+                .tenantUrl(netskope.require("tenantUrl"))
+                .apiToken(netskope.requireSecret("apiToken"))
+                .subnetId(config.require("subnetId"))
+                .securityGroupIds(config.require("securityGroupId"))
+                .keyName(config.get("keyName").orElse(null))
+                .instanceType("t3.medium")
+                .associatePublicIpAddress(false)
+                .bootstrap(true)
+                .build());
+
+            ctx.export("publisherNames", publisher.publisherNames());
+            ctx.export("publishers", Output.secret(publisher.publishers()));
+        });
+    }
+}
+```
+
+## Rust
+
+```rust
+mod netskope {
+    pulumi_gestalt_rust::include_provider!("netskope-publisher");
+}
+
+use anyhow::Result;
+use pulumi_gestalt_rust::*;
+
+fn main() {
+    run(pulumi_main).unwrap();
+}
+
+fn pulumi_main(ctx: &Context) -> Result<()> {
+    let publisher = netskope::aws_publisher::create(
+        ctx,
+        "publisher",
+        netskope::aws_publisher::AwsPublisherArgs::builder()
+            .name_prefix("pub-eu")
+            .replicas(2)
+            .tenant_url("https://tenant.goskope.com")
+            .api_token("secret-token")
+            .subnet_id("subnet-0123456789abcdef0")
+            .security_group_ids(vec!["sg-0123456789abcdef0".to_string()])
+            .instance_type("t3.medium")
+            .associate_public_ip_address(false)
+            .bootstrap(true)
+            .build_struct(),
+    );
+
+    add_export("publisherNames", &publisher.publisher_names);
+    add_export("publishers", &publisher.publishers);
+    Ok(())
+}
+```

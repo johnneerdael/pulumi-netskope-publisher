@@ -1,10 +1,10 @@
-import { copyFileSync, existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const languages = process.argv.slice(2);
-const selectedLanguages = languages.length > 0 ? languages : ["python", "dotnet", "go"];
+const selectedLanguages = languages.length > 0 ? languages : ["python", "dotnet", "go", "java", "rust"];
 
-const supportedLanguages = new Set(["python", "dotnet", "go"]);
+const supportedLanguages = new Set(["python", "dotnet", "go", "java", "rust"]);
 for (const language of selectedLanguages) {
   if (!supportedLanguages.has(language)) {
     console.error(`Unsupported SDK language: ${language}`);
@@ -14,6 +14,11 @@ for (const language of selectedLanguages) {
 
 for (const language of selectedLanguages) {
   rmSync(`sdk/${language}`, { recursive: true, force: true });
+
+  if (language === "rust") {
+    generateRustSdk();
+    continue;
+  }
 
   const result = spawnSync(
     "npm",
@@ -58,4 +63,74 @@ for (const language of selectedLanguages) {
     }
     writeFileSync(project, contents);
   }
+}
+
+function generateRustSdk() {
+  const schema = JSON.parse(readFileSync("schema.json", "utf8"));
+  const version = schema.version;
+  const sdkDir = "sdk/rust";
+  const srcDir = `${sdkDir}/src`;
+
+  mkdirSync(srcDir, { recursive: true });
+  copyFileSync("schema.json", `${sdkDir}/schema.json`);
+
+  writeFileSync(`${sdkDir}/Cargo.toml`, `[package]
+name = "pulumi-netskope-publisher"
+version = "${version}"
+edition = "2021"
+description = "Pulumi Gestalt Rust SDK for Netskope Private Access Publishers."
+license = "Apache-2.0"
+repository = "https://github.com/johnneerdael/pulumi-netskope-publisher"
+include = [
+  "Cargo.toml",
+  "README.md",
+  "build.rs",
+  "schema.json",
+  "src/**/*.rs"
+]
+
+[dependencies]
+anyhow = "1"
+bon = "3"
+pulumi_gestalt_rust = "0.0.10"
+serde = { version = "1", features = ["derive"] }
+wit-bindgen = "0.46"
+
+[build-dependencies]
+pulumi_gestalt_build = "0.0.10"
+`);
+
+  writeFileSync(`${sdkDir}/build.rs`, `use std::error::Error;
+use std::path::PathBuf;
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let schema = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR")?).join("schema.json");
+    pulumi_gestalt_build::generate_from_schema(&schema)?;
+    Ok(())
+}
+`);
+
+  writeFileSync(`${srcDir}/lib.rs`, `//! Pulumi Gestalt Rust SDK for Netskope Private Access Publishers.
+//!
+//! The provider glue is generated at build time from the packaged Pulumi schema.
+
+pub mod netskope_publisher {
+    pulumi_gestalt_rust::include_provider!("netskope-publisher");
+}
+`);
+
+  writeFileSync(`${sdkDir}/README.md`, `# pulumi-netskope-publisher Rust SDK
+
+Rust SDK for \`pulumi-netskope-publisher\` built with Pulumi Gestalt.
+
+This crate generates provider glue from the packaged Pulumi schema during
+\`cargo build\`. Pulumi programs that use it must install the Pulumi Gestalt
+Rust language plugin:
+
+\`\`\`bash
+pulumi plugin install language rust "0.0.10" --server github://api.github.com/andrzejressel/pulumi-gestalt
+\`\`\`
+
+Use \`runtime: rust\` in \`Pulumi.yaml\`.
+`);
 }

@@ -42,6 +42,28 @@ const sdkPackages = [
       }
     ],
     missingToolHint: "Install Go before validating the generated Go SDK."
+  },
+  {
+    name: "java",
+    commands: [
+      {
+        command: "gradle",
+        args: ["build"],
+        cwd: "sdk/java"
+      }
+    ],
+    missingToolHint: "Install Gradle before validating the generated Java SDK."
+  },
+  {
+    name: "rust",
+    commands: [
+      {
+        command: "cargo",
+        args: ["check"],
+        cwd: "sdk/rust"
+      }
+    ],
+    missingToolHint: "Install Rust before validating the generated Rust SDK."
   }
 ];
 

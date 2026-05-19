@@ -6,7 +6,7 @@ title: Components
 
 The package exposes provider-specific publisher components. Each page
 lists required inputs, common optional inputs, outputs, and examples for
-the Pulumi CLI, TypeScript, Python, C#, and Go.
+the Pulumi CLI, TypeScript, Python, C#, Go, Java, and Rust.
 
 - [AWS](/pulumi-netskope-publisher/admin/component/aws/)
 - [Azure](/pulumi-netskope-publisher/admin/component/azure/)
