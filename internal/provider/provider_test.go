@@ -150,6 +150,32 @@ func TestNetskopeRegistrationSupportsOAuth2ClientCredentials(t *testing.T) {
 	}
 }
 
+func TestNetskopeClientReportsHTTPStatusAndBody(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, `{"status":"error","message":"bad token"}`, http.StatusUnauthorized)
+	}))
+	defer server.Close()
+
+	client := newNetskopeClient(netskopeClientConfig{
+		TenantURL:   server.URL,
+		BearerToken: "bad-token",
+		AuthMode:    "token",
+		HTTPClient:  server.Client(),
+	})
+
+	var output map[string]any
+	err := client.request(t.Context(), "Test operation", http.MethodGet, "/api/v2/test", nil, &output)
+	if err == nil {
+		t.Fatalf("expected request error")
+	}
+	if !strings.Contains(err.Error(), "Test operation failed (status=401)") {
+		t.Fatalf("expected status in error, got %v", err)
+	}
+	if !strings.Contains(err.Error(), "bad token") {
+		t.Fatalf("expected response body in error, got %v", err)
+	}
+}
+
 func TestAwsConstructCreatesRegistrationChildWhenRegistrationsOmitted(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:AwsPublisher", property.NewMap(map[string]property.Value{
 		"names":            property.New([]property.Value{property.New("pub-1")}),
