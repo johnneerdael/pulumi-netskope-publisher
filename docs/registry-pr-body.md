@@ -18,17 +18,14 @@ community package list with schema path `schema.json`.
 - [x] Published Java SDK:
   [`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
   in the configured Maven-compatible package repository
-- [x] Published Rust SDK:
-  [`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
 - [x] Checked in `schema.json` at the same path used by the Registry package entry
 - [x] Added `docs/_index.md`
 - [x] Added `docs/installation-configuration.md`
-- [x] `docs/installation-configuration.md` documents the published TypeScript, Python, Go, C#, Java, and Rust SDKs
-- [x] `docs/_index.md` shows usage for the published TypeScript, Python, Go, C#, Java, and Rust SDKs
+- [x] `docs/installation-configuration.md` documents the published TypeScript, Python, Go, C#, and Java SDKs
+- [x] `docs/_index.md` shows usage for the published TypeScript, Python, Go, C#, and Java SDKs
 
 ## Notes for reviewers
 
-The package publishes TypeScript, Python, Go, C#, Java, and Rust SDKs
-plus compiled executable provider plugin archives through GitHub
-Releases. The provider schema is implemented by the Go executable
-provider.
+The package publishes TypeScript, Python, Go, C#, and Java SDKs plus
+compiled executable provider plugin archives through GitHub Releases.
+The provider schema is implemented by the Go executable provider.

@@ -31,13 +31,9 @@ Each component accepts either Netskope tenant credentials for automatic
 publisher registration or pre-created registration tokens keyed by
 publisher name.
 
-Java and Rust SDKs are also published. Java is available as
-`com.pulumi:netskope-publisher` from the configured Maven-compatible
-repository, defaulting to GitHub Packages for this repository. Rust is
-available as
-[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
-on crates.io and requires the Gestalt Rust language plugin in Rust
-Pulumi programs.
+The Java SDK is also published as `com.pulumi:netskope-publisher` from
+the configured Maven-compatible repository, defaulting to GitHub
+Packages for this repository.
 
 ## TypeScript example
 
@@ -142,39 +138,6 @@ public class App {
                 .build());
         });
     }
-}
-```
-
-## Rust example
-
-```rust
-mod netskope {
-    pulumi_gestalt_rust::include_provider!("netskope-publisher");
-}
-
-use anyhow::Result;
-use pulumi_gestalt_rust::*;
-
-fn main() {
-    run(pulumi_main).unwrap();
-}
-
-fn pulumi_main(ctx: &Context) -> Result<()> {
-    let publisher = netskope::aws_publisher::create(
-        ctx,
-        "publisher",
-        netskope::aws_publisher::AwsPublisherArgs::builder()
-            .name_prefix("pub-eu")
-            .replicas(2)
-            .tenant_url("https://example.goskope.com")
-            .api_token("ns-api-token")
-            .subnet_id("subnet-0123456789abcdef0")
-            .security_group_ids(vec!["sg-0123456789abcdef0".to_string()])
-            .build_struct(),
-    );
-
-    add_export("publisherNames", &publisher.publisher_names);
-    Ok(())
 }
 ```
 

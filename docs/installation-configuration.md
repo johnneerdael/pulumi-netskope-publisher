@@ -55,21 +55,6 @@ default, or to the Maven-compatible repository configured through
 `JAVA_MAVEN_REPOSITORY_URL`. Configure the matching Maven repository in
 Gradle or Maven before resolving this dependency.
 
-Install the Rust SDK from crates.io:
-
-```toml
-pulumi-netskope-publisher = "<version>"
-```
-
-Published Rust SDK:
-[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher).
-
-Rust programs also require the Pulumi Gestalt Rust language plugin:
-
-```bash
-pulumi plugin install language rust "0.0.10" --server github://api.github.com/andrzejressel/pulumi-gestalt
-```
-
 Install the cloud provider packages used by the component you deploy:
 
 ```bash

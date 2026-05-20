@@ -35,9 +35,6 @@ Before requesting public Registry listing:
   `JAVA_SIGNING_PASSWORD` are configured and the Maven namespace is
   verified. `JAVA_MAVEN_AUTH_BASE64` is sent as a bearer token for Maven
   Central's OSSRH staging API.
-- Publish the Rust SDK as
-  [`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
-  to crates.io.
 - Confirm the tag release uploaded the plugin archives to GitHub
   Releases, matching `pluginDownloadURL` in `schema.json`.
 - Confirm the Go provider schema includes `NetskopeRegistration` plus
