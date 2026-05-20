@@ -19,14 +19,15 @@ title: Provider Matrix
 | Scaleway | `ScalewayPublisher` | Supported bootstrap mode |
 | OCI | `OciPublisher` | Supported bootstrap mode |
 | Alicloud | `AlicloudPublisher` | Supported bootstrap mode |
+| Proxmox VE | `ProxmoxvePublisher` | Supported bootstrap mode from template clone |
 | Hyper-V | `HypervPublisher` | Experimental gate |
 
 All supported providers share name derivation, Netskope registration,
 cloud-init generation, and secret output conventions.
 
 ESXi Native is direct-host ESXi support and does not replace the vSphere
-component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, and Alicloud
-use bootstrap mode on Ubuntu 22.04 images.
+component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, and
+Proxmox VE use bootstrap mode on Ubuntu 22.04 images or templates.
 
 Official Netskope image sources:
 

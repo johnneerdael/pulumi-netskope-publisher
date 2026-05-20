@@ -58,7 +58,7 @@ Gradle or Maven before resolving this dependency.
 Install the cloud provider packages used by the component you deploy:
 
 ```bash
-npm install @pulumi/aws @pulumi/azure-native @pulumi/gcp @pulumi/kubernetes @pulumi/vsphere
+npm install @pulumi/aws @pulumi/azure-native @pulumi/gcp @pulumi/kubernetes @pulumi/vsphere @pulumiverse/esxi-native @pulumi/hcloud @pierskarsenbarg/nutanix @pulumi/openstack @ovhcloud/pulumi-ovh @pulumiverse/scaleway @pulumi/oci @pulumi/alicloud @muhlba91/pulumi-proxmoxve
 ```
 
 ## Netskope configuration
@@ -82,7 +82,8 @@ Each entry is keyed by the publisher name and must include
 
 Configure the cloud provider used by the selected component with the
 standard Pulumi provider configuration for AWS, Azure Native, Google
-Cloud, Kubernetes, or vSphere.
+Cloud, Kubernetes, vSphere, ESXi Native, Hcloud, Nutanix, OpenStack,
+OVH, Scaleway, OCI, Alicloud, or Proxmox VE.
 
 Each component also requires provider-specific network and image inputs.
 See the component API docs and the examples directory for complete
@@ -90,6 +91,11 @@ programs. On GCP, use a standard Linux image such as Ubuntu 22.04; the
 `GcpPublisher` component runs the Netskope generic bootstrap script from
 cloud-init by default because there is no public Netskope Publisher GCE
 image.
+
+On Proxmox VE, prepare an Ubuntu 22.04 cloud-init template and enable
+`snippets` on the datastore used by `datastoreId`; `ProxmoxvePublisher`
+uploads bootstrap user data as a snippet and attaches it to the cloned
+VM.
 
 On Kubernetes, configure the Pulumi Kubernetes provider for the target
 cluster. `KubernetesPublisher` creates the namespace, required Secrets,

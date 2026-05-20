@@ -399,6 +399,18 @@ func TestAdditionalProviderConstructsCreateProviderChildren(t *testing.T) {
 			}),
 			expected: "alicloud:ecs/instance:Instance",
 		},
+		{
+			name:  "Proxmox VE",
+			token: "netskope-publisher:index:ProxmoxvePublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"nodeName":      property.New("pve-1"),
+				"datastoreId":   property.New("local"),
+				"templateVmId":  property.New(9000.0),
+			}),
+			expected: "proxmoxve:index/vmLegacy:VmLegacy",
+		},
 	}
 
 	for _, tc := range cases {
@@ -537,6 +549,25 @@ func TestAdditionalProviderConstructsBootstrapWithRegistryFields(t *testing.T) {
 				assertBootstrapUserData(t, decodeRequiredBase64(t, inputs.Get("userData").AsString()))
 			},
 		},
+		{
+			name:  "Proxmox VE",
+			token: "netskope-publisher:index:ProxmoxvePublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"nodeName":      property.New("pve-1"),
+				"datastoreId":   property.New("local"),
+				"templateVmId":  property.New(9000.0),
+			}),
+			childType: "proxmoxve:index/fileLegacy:FileLegacy",
+			validate: func(t *testing.T, inputs property.Map) {
+				sourceRaw := inputs.Get("sourceRaw").AsMap()
+				assertBootstrapUserData(t, sourceRaw.Get("data").AsString())
+				if sourceRaw.Get("fileName").AsString() != "pub-1-user-data.yaml" {
+					t.Fatalf("expected Proxmox VE cloud-init file name to be stable")
+				}
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -545,6 +576,40 @@ func TestAdditionalProviderConstructsBootstrapWithRegistryFields(t *testing.T) {
 			child := findResourceByType(t, resources, tc.childType)
 			tc.validate(t, child.Inputs)
 		})
+	}
+}
+
+func TestProxmoxveConstructCreatesSnippetBackedVmClone(t *testing.T) {
+	resources := constructAndCollectResources(t, "netskope-publisher:index:ProxmoxvePublisher", property.NewMap(map[string]property.Value{
+		"names":         property.New([]property.Value{property.New("pub-1")}),
+		"registrations": registrationMap("pub-1"),
+		"nodeName":      property.New("pve-1"),
+		"datastoreId":   property.New("local"),
+		"templateVmId":  property.New(9000.0),
+		"vmId":          property.New(101.0),
+		"networkBridge": property.New("vmbr1"),
+		"ipAddress":     property.New("10.10.0.50/24"),
+		"gateway":       property.New("10.10.0.1"),
+	}))
+
+	file := findResourceByType(t, resources, "proxmoxve:index/fileLegacy:FileLegacy")
+	if file.Inputs.Get("contentType").AsString() != "snippets" {
+		t.Fatalf("expected Proxmox VE user data to be uploaded as a snippet")
+	}
+
+	vm := findResourceByType(t, resources, "proxmoxve:index/vmLegacy:VmLegacy")
+	if vm.Inputs.Get("clone").AsMap().Get("vmId").AsNumber() != 9000 {
+		t.Fatalf("expected Proxmox VE VM to clone from template VM 9000")
+	}
+	if vm.Inputs.Get("initialization").AsMap().Get("userDataFileId").IsNull() {
+		t.Fatalf("expected Proxmox VE VM to reference the cloud-init snippet")
+	}
+	ipConfig := vm.Inputs.Get("initialization").AsMap().Get("ipConfigs").AsArray().AsSlice()[0].AsMap()
+	if ipConfig.Get("ipv4").AsMap().Get("address").AsString() != "10.10.0.50/24" {
+		t.Fatalf("expected Proxmox VE VM to set cloud-init IPv4 config")
+	}
+	if vm.Inputs.Get("networkDevices").AsArray().AsSlice()[0].AsMap().Get("bridge").AsString() != "vmbr1" {
+		t.Fatalf("expected Proxmox VE VM to use requested bridge")
 	}
 }
 

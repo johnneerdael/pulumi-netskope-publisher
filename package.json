@@ -56,11 +56,14 @@
     "azure",
     "gcp",
     "kubernetes",
-    "vsphere"
+    "vsphere",
+    "proxmoxve",
+    "proxmox"
   ],
   "author": "John Neerdael",
   "license": "Apache-2.0",
   "dependencies": {
+    "@muhlba91/pulumi-proxmoxve": "^8.2.1",
     "@ovhcloud/pulumi-ovh": "^2.13.0",
     "@pierskarsenbarg/nutanix": "^0.11.0",
     "@pulumi/alicloud": "^3.102.0",

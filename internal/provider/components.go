@@ -1107,12 +1107,64 @@ type AlicloudPublisher struct {
 
 func (*AlicloudPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "AlicloudPublisher") }
 
+type ProxmoxvePublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+	NodeName                     string                 `pulumi:"nodeName"`
+	DatastoreID                  string                 `pulumi:"datastoreId"`
+	TemplateVMID                 int                    `pulumi:"templateVmId"`
+	CloneNodeName                *string                `pulumi:"cloneNodeName,optional"`
+	VMID                         *int                   `pulumi:"vmId,optional"`
+	PoolID                       *string                `pulumi:"poolId,optional"`
+	CPUCores                     *int                   `pulumi:"cpuCores,optional"`
+	Memory                       *int                   `pulumi:"memory,optional"`
+	DiskSize                     *int                   `pulumi:"diskSize,optional"`
+	NetworkBridge                *string                `pulumi:"networkBridge,optional"`
+	NetworkModel                 *string                `pulumi:"networkModel,optional"`
+	VlanID                       *int                   `pulumi:"vlanId,optional"`
+	Started                      *bool                  `pulumi:"started,optional"`
+	OnBoot                       *bool                  `pulumi:"onBoot,optional"`
+	FullClone                    *bool                  `pulumi:"fullClone,optional"`
+	IPAddress                    *string                `pulumi:"ipAddress,optional"`
+	Gateway                      *string                `pulumi:"gateway,optional"`
+	Nameservers                  []string               `pulumi:"nameservers,optional"`
+}
+
+type ProxmoxvePublisher struct {
+	pulumi.ResourceState
+	ProxmoxvePublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*ProxmoxvePublisher) Annotate(a infer.Annotator) { a.SetToken("index", "ProxmoxvePublisher") }
+
 type rawVMResource struct {
 	pulumi.CustomResourceState
 
 	AccessIPV4       pulumi.StringOutput `pulumi:"accessIpV4"`
 	Address          pulumi.StringOutput `pulumi:"address"`
 	Ipv4Address      pulumi.StringOutput `pulumi:"ipv4Address"`
+	Ipv4Addresses    pulumi.ArrayOutput  `pulumi:"ipv4Addresses"`
 	Networks         pulumi.ArrayOutput  `pulumi:"networks"`
 	PrimaryIPAddress pulumi.StringOutput `pulumi:"primaryIpAddress"`
 	PrivateIP        pulumi.StringOutput `pulumi:"privateIp"`
@@ -1458,6 +1510,96 @@ func NewAlicloudPublisher(ctx *pulumi.Context, name string, args AlicloudPublish
 	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
 }
 
+func NewProxmoxvePublisher(ctx *pulumi.Context, name string, args ProxmoxvePublisherArgs, opts ...pulumi.ResourceOption) (*ProxmoxvePublisher, error) {
+	component := &ProxmoxvePublisher{ProxmoxvePublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
+	if err != nil {
+		return nil, err
+	}
+	outputs := pulumi.Map{}
+	for _, publisherName := range publisherNames {
+		registration := registrations[publisherName]
+		userDataFile := &rawVMResource{}
+		err := ctx.RegisterResource("proxmoxve:index/fileLegacy:FileLegacy", name+"-"+publisherName+"-user-data", pulumi.Map{
+			"contentType": pulumi.String("snippets"),
+			"datastoreId": pulumi.String(args.DatastoreID),
+			"nodeName":    pulumi.String(args.NodeName),
+			"sourceRaw": pulumi.Map{
+				"data":     renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)).ApplyT(decodeBase64String).(pulumi.StringOutput),
+				"fileName": pulumi.String(publisherName + "-user-data.yaml"),
+			},
+		}, userDataFile, pulumi.Parent(component))
+		if err != nil {
+			return nil, err
+		}
+
+		vmInputs := pulumi.Map{
+			"name":     pulumi.String(publisherName),
+			"nodeName": pulumi.String(args.NodeName),
+			"clone": pulumi.Map{
+				"vmId":        pulumi.Int(args.TemplateVMID),
+				"nodeName":    stringPtrInput(args.CloneNodeName),
+				"datastoreId": pulumi.String(args.DatastoreID),
+				"full":        pulumi.Bool(defaultBool(args.FullClone, true)),
+			},
+			"agent": pulumi.Map{
+				"enabled": pulumi.Bool(true),
+			},
+			"cpu": pulumi.Map{
+				"cores": pulumi.Int(defaultInt(args.CPUCores, 2)),
+			},
+			"memory": pulumi.Map{
+				"dedicated": pulumi.Int(defaultInt(args.Memory, 4096)),
+			},
+			"networkDevices": pulumi.Array{pulumi.Map{
+				"bridge": pulumi.String(defaultString(args.NetworkBridge, "vmbr0")),
+				"model":  pulumi.String(defaultString(args.NetworkModel, "virtio")),
+				"vlanId": intPtrInput(args.VlanID),
+			}},
+			"initialization": pulumi.Map{
+				"datastoreId":    pulumi.String(args.DatastoreID),
+				"userDataFileId": userDataFile.ID().ToStringOutput(),
+				"ipConfigs": pulumi.Array{pulumi.Map{
+					"ipv4": pulumi.Map{
+						"address": pulumi.String(defaultString(args.IPAddress, "dhcp")),
+						"gateway": stringPtrInput(args.Gateway),
+					},
+				}},
+				"dns": pulumi.Map{
+					"servers": toStringArray(args.Nameservers),
+				},
+			},
+			"onBoot":          pulumi.Bool(defaultBool(args.OnBoot, true)),
+			"operatingSystem": pulumi.Map{"type": pulumi.String("l26")},
+			"poolId":          stringPtrInput(args.PoolID),
+			"started":         pulumi.Bool(defaultBool(args.Started, true)),
+			"tags":            stringMapToTagArray(args.Tags),
+		}
+		if args.VMID != nil {
+			vmInputs["vmId"] = pulumi.Int(*args.VMID)
+		}
+		if args.DiskSize != nil {
+			vmInputs["disks"] = pulumi.Array{pulumi.Map{
+				"datastoreId": pulumi.String(args.DatastoreID),
+				"interface":   pulumi.String("scsi0"),
+				"size":        pulumi.Int(*args.DiskSize),
+			}}
+		}
+
+		vm := &rawVMResource{}
+		if err := ctx.RegisterResource("proxmoxve:index/vmLegacy:VmLegacy", name+"-"+publisherName, vmInputs, vm, pulumi.Parent(component)); err != nil {
+			return nil, err
+		}
+		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), firstNestedString(vm.Ipv4Addresses), pulumi.String("").ToStringOutput())
+	}
+	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
+	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
 func (args AwsPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
@@ -1602,6 +1744,20 @@ func (args OciPublisherArgs) common() CommonPublisherArgs {
 }
 
 func (args AlicloudPublisherArgs) common() CommonPublisherArgs {
+	return CommonPublisherArgs{
+		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
+		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
+		Tags: args.Tags, Registrations: args.Registrations,
+		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
+		InstallUser: args.InstallUser, InstallUserPassword: args.InstallUserPassword,
+		InstallUserPasswordIsHash:    args.InstallUserPasswordIsHash,
+		InstallUserSSHAuthorizedKeys: args.InstallUserSSHAuthorizedKeys,
+		DeleteDefaultUser:            args.DeleteDefaultUser, GuestNetworkInterface: args.GuestNetworkInterface,
+	}
+}
+
+func (args ProxmoxvePublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
 		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
@@ -2172,6 +2328,13 @@ func stringPtrInput(value *string) pulumi.StringPtrInput {
 	return pulumi.StringPtr(*value)
 }
 
+func intPtrInput(value *int) pulumi.IntPtrInput {
+	if value == nil {
+		return nil
+	}
+	return pulumi.IntPtr(*value)
+}
+
 func decodeBase64String(value string) string {
 	decoded, err := base64.StdEncoding.DecodeString(value)
 	if err != nil {
@@ -2217,6 +2380,28 @@ func stringMapToTagArray(values map[string]string) pulumi.StringArray {
 		result = append(result, pulumi.String(key+"="+value))
 	}
 	return result
+}
+
+func firstNestedString(values pulumi.ArrayOutput) pulumi.StringOutput {
+	return values.ApplyT(func(values []interface{}) string {
+		if len(values) == 0 {
+			return ""
+		}
+		switch first := values[0].(type) {
+		case []interface{}:
+			if len(first) == 0 {
+				return ""
+			}
+			return fmt.Sprint(first[0])
+		case []string:
+			if len(first) == 0 {
+				return ""
+			}
+			return first[0]
+		default:
+			return fmt.Sprint(first)
+		}
+	}).(pulumi.StringOutput)
 }
 
 func nameTag(tags map[string]string, publisherName string) map[string]string {

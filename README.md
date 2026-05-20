@@ -37,14 +37,15 @@ as the Terraform modules: `bootstrap`, `bootstrapUrl`, `nonat`,
 - Scaleway publisher component: `ScalewayPublisher`
 - OCI publisher component: `OciPublisher`
 - Alicloud publisher component: `AlicloudPublisher`
+- Proxmox VE publisher component: `ProxmoxvePublisher`
 - Experimental Hyper-V gate: `HypervPublisher`
 - Netskope publisher registration by name
 - Bring-your-own registration data escape hatch
 - GitHub Pages documentation
 
 ESXi Native is direct-host ESXi support and does not replace the vSphere
-component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, and Alicloud
-use bootstrap mode on Ubuntu 22.04 images.
+component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, and
+Proxmox VE use bootstrap mode on Ubuntu 22.04 images.
 
 Hyper-V depends on the upstream Pulumi Hyper-V provider becoming
 consumable from a stable package source. The official Netskope publisher

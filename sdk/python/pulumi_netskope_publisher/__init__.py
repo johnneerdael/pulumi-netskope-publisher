@@ -20,6 +20,7 @@ from .oci_publisher import *
 from .openstack_publisher import *
 from .ovh_publisher import *
 from .provider_ import *
+from .proxmoxve_publisher import *
 from .scaleway_publisher import *
 from .vsphere_publisher import *
 
@@ -51,6 +52,7 @@ _utilities.register(
    "netskope-publisher:index:OciPublisher": "OciPublisher",
    "netskope-publisher:index:OpenstackPublisher": "OpenstackPublisher",
    "netskope-publisher:index:OvhPublisher": "OvhPublisher",
+   "netskope-publisher:index:ProxmoxvePublisher": "ProxmoxvePublisher",
    "netskope-publisher:index:ScalewayPublisher": "ScalewayPublisher",
    "netskope-publisher:index:VspherePublisher": "VspherePublisher"
   }

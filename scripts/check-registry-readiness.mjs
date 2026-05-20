@@ -41,6 +41,7 @@ const expectedResourceTokens = [
   "netskope-publisher:index:ScalewayPublisher",
   "netskope-publisher:index:OciPublisher",
   "netskope-publisher:index:AlicloudPublisher",
+  "netskope-publisher:index:ProxmoxvePublisher",
   "netskope-publisher:index:HypervPublisher",
   "netskope-publisher:index:NetskopeRegistration"
 ];
@@ -59,6 +60,7 @@ const sourceTokens = {
   "src/scalewayPublisher.ts": "netskope-publisher:index:ScalewayPublisher",
   "src/ociPublisher.ts": "netskope-publisher:index:OciPublisher",
   "src/alicloudPublisher.ts": "netskope-publisher:index:AlicloudPublisher",
+  "src/proxmoxvePublisher.ts": "netskope-publisher:index:ProxmoxvePublisher",
   "src/hypervPublisher.ts": "netskope-publisher:index:HypervPublisher"
 };
 

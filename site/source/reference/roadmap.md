@@ -11,6 +11,15 @@ Supported provider components:
 - GCP
 - Kubernetes
 - vSphere
+- ESXi Native
+- Hcloud
+- Nutanix
+- OpenStack
+- OVH Public Cloud
+- Scaleway
+- OCI
+- Alicloud
+- Proxmox VE
 
 Planned follow-up:
 

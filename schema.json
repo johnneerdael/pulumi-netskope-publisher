@@ -2,7 +2,7 @@
   "name": "netskope-publisher",
   "displayName": "Netskope Publisher",
   "version": "0.1.11",
-  "description": "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, ESXi, Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, and experimental Hyper-V.",
+  "description": "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, ESXi, Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, Proxmox VE, and experimental Hyper-V.",
   "keywords": [
     "category/network",
     "kind/component",
@@ -22,7 +22,9 @@
     "ovh",
     "scaleway",
     "oci",
-    "alicloud"
+    "alicloud",
+    "proxmoxve",
+    "proxmox"
   ],
   "homepage": "https://johnneerdael.github.io/pulumi-netskope-publisher/",
   "license": "Apache-2.0",
@@ -3583,6 +3585,373 @@
         "region",
         "imageId",
         "flavorId"
+      ],
+      "isComponent": true
+    },
+    "netskope-publisher:index:ProxmoxvePublisher": {
+      "properties": {
+        "apiToken": {
+          "type": "string",
+          "plain": true,
+          "secret": true
+        },
+        "authMode": {
+          "type": "string",
+          "plain": true
+        },
+        "bearerToken": {
+          "type": "string",
+          "plain": true,
+          "secret": true
+        },
+        "bootstrap": {
+          "type": "boolean",
+          "plain": true
+        },
+        "bootstrapUrl": {
+          "type": "string",
+          "plain": true
+        },
+        "cloneNodeName": {
+          "type": "string",
+          "plain": true
+        },
+        "cpuCores": {
+          "type": "integer",
+          "plain": true
+        },
+        "datastoreId": {
+          "type": "string",
+          "plain": true
+        },
+        "deleteDefaultUser": {
+          "type": "boolean",
+          "plain": true
+        },
+        "diskSize": {
+          "type": "integer",
+          "plain": true
+        },
+        "fullClone": {
+          "type": "boolean",
+          "plain": true
+        },
+        "gateway": {
+          "type": "string",
+          "plain": true
+        },
+        "guestNetworkInterface": {
+          "$ref": "#/types/netskope-publisher:provider:GuestNetworkInterface"
+        },
+        "installUser": {
+          "type": "string",
+          "plain": true
+        },
+        "installUserPassword": {
+          "type": "string",
+          "plain": true,
+          "secret": true
+        },
+        "installUserPasswordIsHash": {
+          "type": "boolean",
+          "plain": true
+        },
+        "installUserSshAuthorizedKeys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "ipAddress": {
+          "type": "string",
+          "plain": true
+        },
+        "memory": {
+          "type": "integer",
+          "plain": true
+        },
+        "namePrefix": {
+          "type": "string",
+          "plain": true
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "nameservers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "networkBridge": {
+          "type": "string",
+          "plain": true
+        },
+        "networkModel": {
+          "type": "string",
+          "plain": true
+        },
+        "nodeName": {
+          "type": "string",
+          "plain": true
+        },
+        "nonat": {
+          "type": "boolean",
+          "plain": true
+        },
+        "oauth2": {
+          "$ref": "#/types/netskope-publisher:provider:NetskopeOAuth2Args"
+        },
+        "onBoot": {
+          "type": "boolean",
+          "plain": true
+        },
+        "poolId": {
+          "type": "string",
+          "plain": true
+        },
+        "publisherNames": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "publishers": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "pulumi.json#/Any"
+          },
+          "secret": true
+        },
+        "registrations": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/types/netskope-publisher:provider:PublisherRegistrationInput"
+          }
+        },
+        "replicas": {
+          "type": "integer",
+          "plain": true
+        },
+        "started": {
+          "type": "boolean",
+          "plain": true
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "templateVmId": {
+          "type": "integer",
+          "plain": true
+        },
+        "tenantUrl": {
+          "type": "string",
+          "plain": true
+        },
+        "vlanId": {
+          "type": "integer",
+          "plain": true
+        },
+        "vmId": {
+          "type": "integer",
+          "plain": true
+        },
+        "wizardPath": {
+          "type": "string",
+          "plain": true
+        }
+      },
+      "required": [
+        "nodeName",
+        "datastoreId",
+        "templateVmId",
+        "publisherNames",
+        "publishers"
+      ],
+      "inputProperties": {
+        "apiToken": {
+          "type": "string",
+          "plain": true,
+          "secret": true
+        },
+        "authMode": {
+          "type": "string",
+          "plain": true
+        },
+        "bearerToken": {
+          "type": "string",
+          "plain": true,
+          "secret": true
+        },
+        "bootstrap": {
+          "type": "boolean",
+          "plain": true
+        },
+        "bootstrapUrl": {
+          "type": "string",
+          "plain": true
+        },
+        "cloneNodeName": {
+          "type": "string",
+          "plain": true
+        },
+        "cpuCores": {
+          "type": "integer",
+          "plain": true
+        },
+        "datastoreId": {
+          "type": "string",
+          "plain": true
+        },
+        "deleteDefaultUser": {
+          "type": "boolean",
+          "plain": true
+        },
+        "diskSize": {
+          "type": "integer",
+          "plain": true
+        },
+        "fullClone": {
+          "type": "boolean",
+          "plain": true
+        },
+        "gateway": {
+          "type": "string",
+          "plain": true
+        },
+        "guestNetworkInterface": {
+          "$ref": "#/types/netskope-publisher:provider:GuestNetworkInterface"
+        },
+        "installUser": {
+          "type": "string",
+          "plain": true
+        },
+        "installUserPassword": {
+          "type": "string",
+          "plain": true,
+          "secret": true
+        },
+        "installUserPasswordIsHash": {
+          "type": "boolean",
+          "plain": true
+        },
+        "installUserSshAuthorizedKeys": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "ipAddress": {
+          "type": "string",
+          "plain": true
+        },
+        "memory": {
+          "type": "integer",
+          "plain": true
+        },
+        "namePrefix": {
+          "type": "string",
+          "plain": true
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "nameservers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "networkBridge": {
+          "type": "string",
+          "plain": true
+        },
+        "networkModel": {
+          "type": "string",
+          "plain": true
+        },
+        "nodeName": {
+          "type": "string",
+          "plain": true
+        },
+        "nonat": {
+          "type": "boolean",
+          "plain": true
+        },
+        "oauth2": {
+          "$ref": "#/types/netskope-publisher:provider:NetskopeOAuth2Args"
+        },
+        "onBoot": {
+          "type": "boolean",
+          "plain": true
+        },
+        "poolId": {
+          "type": "string",
+          "plain": true
+        },
+        "registrations": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/types/netskope-publisher:provider:PublisherRegistrationInput"
+          }
+        },
+        "replicas": {
+          "type": "integer",
+          "plain": true
+        },
+        "started": {
+          "type": "boolean",
+          "plain": true
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "plain": true
+          }
+        },
+        "templateVmId": {
+          "type": "integer",
+          "plain": true
+        },
+        "tenantUrl": {
+          "type": "string",
+          "plain": true
+        },
+        "vlanId": {
+          "type": "integer",
+          "plain": true
+        },
+        "vmId": {
+          "type": "integer",
+          "plain": true
+        },
+        "wizardPath": {
+          "type": "string",
+          "plain": true
+        }
+      },
+      "requiredInputs": [
+        "nodeName",
+        "datastoreId",
+        "templateVmId"
       ],
       "isComponent": true
     },

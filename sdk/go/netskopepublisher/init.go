@@ -47,6 +47,8 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &OpenstackPublisher{}
 	case "netskope-publisher:index:OvhPublisher":
 		r = &OvhPublisher{}
+	case "netskope-publisher:index:ProxmoxvePublisher":
+		r = &ProxmoxvePublisher{}
 	case "netskope-publisher:index:ScalewayPublisher":
 		r = &ScalewayPublisher{}
 	case "netskope-publisher:index:VspherePublisher":

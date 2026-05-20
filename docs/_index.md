@@ -7,8 +7,8 @@ layout: package
 The Netskope Publisher package provides Pulumi component resources for
 provisioning Netskope Private Access Publishers on AWS, Azure, Google
 Cloud, Kubernetes, vSphere, ESXi, Hcloud, Nutanix, OpenStack, OVH,
-Scaleway, OCI, and Alicloud. The package mirrors the Terraform module
-pattern:
+Scaleway, OCI, Alicloud, and Proxmox VE. The package mirrors the
+Terraform module pattern:
 register or reuse Netskope publisher records, generate per-publisher
 cloud-init, and create the virtual machines that run the publisher
 appliance. On Kubernetes, it installs the
@@ -25,6 +25,8 @@ appliance. On Kubernetes, it installs the
 - `HcloudPublisher`, `NutanixPublisher`, `OpenstackPublisher`,
   `OvhPublisher`, `ScalewayPublisher`, `OciPublisher`, and
   `AlicloudPublisher` create Ubuntu 22.04 bootstrap-mode publishers.
+- `ProxmoxvePublisher` clones a Proxmox VE Ubuntu template and attaches
+  bootstrap cloud-init through a snippets datastore.
 - `HypervPublisher` is experimental and remains opt-in.
 
 Each component accepts either Netskope tenant credentials for automatic

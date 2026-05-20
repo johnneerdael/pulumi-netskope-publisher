@@ -28,6 +28,7 @@ Reference, how-tos, and operational guidance for operators running
 - [Scaleway](/pulumi-netskope-publisher/admin/component/scaleway/)
 - [OCI](/pulumi-netskope-publisher/admin/component/oci/)
 - [Alicloud](/pulumi-netskope-publisher/admin/component/alicloud/)
+- [Proxmox VE](/pulumi-netskope-publisher/admin/component/proxmoxve/)
 - [Hyper-V (experimental)](/pulumi-netskope-publisher/admin/component/hyperv/)
 - [Netskope Registration](/pulumi-netskope-publisher/admin/component/registration/)
 

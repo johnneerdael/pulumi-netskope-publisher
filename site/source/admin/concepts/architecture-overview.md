@@ -34,6 +34,8 @@ AWS and Azure support both paths. GCP uses bootstrap mode by default
 because there is no public Netskope Publisher image. vSphere clones an
 existing template, Hyper-V is currently an experimental gate, and
 Kubernetes installs the publisher Helm chart instead of booting a VM.
+Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, and Proxmox
+VE use bootstrap mode.
 
 ## What each component owns
 
@@ -44,6 +46,15 @@ Kubernetes installs the publisher Helm chart instead of booting a VM.
 | `AzurePublisher` | NICs, optional public IPs, Linux VMs, custom data | `@pulumi/azure-native` |
 | `GcpPublisher` | Compute Engine instances and metadata user-data | `@pulumi/gcp` |
 | `VspherePublisher` | VM clones with guestinfo cloud-init | `@pulumi/vsphere` |
+| `EsxiPublisher` | Direct ESXi VM creation with guestinfo cloud-init | `@pulumiverse/esxi-native` |
+| `HcloudPublisher` | Hetzner Cloud servers and user data | `@pulumi/hcloud` |
+| `NutanixPublisher` | Nutanix VMs and guest customization cloud-init | `@pierskarsenbarg/nutanix` |
+| `OpenstackPublisher` | OpenStack instances and optional floating IPs | `@pulumi/openstack` |
+| `OvhPublisher` | OVH Public Cloud instances and user data | `@ovhcloud/pulumi-ovh` |
+| `ScalewayPublisher` | Scaleway instances and cloud-init | `@pulumiverse/scaleway` |
+| `OciPublisher` | OCI instances and metadata user data | `@pulumi/oci` |
+| `AlicloudPublisher` | Alibaba Cloud ECS instances and user data | `@pulumi/alicloud` |
+| `ProxmoxvePublisher` | Proxmox VE cloud-init snippets and VM template clones | `@muhlba91/pulumi-proxmoxve` |
 | `KubernetesPublisher` | Helm chart releases and token/API Secrets | `@pulumi/kubernetes` |
 | `HypervPublisher` | Experimental placeholder until `@pulumi/hyperv` is published | none |
 

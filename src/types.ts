@@ -203,6 +203,27 @@ export interface AlicloudPublisherArgs extends CommonPublisherArgs {
   allocatePublicIp?: pulumi.Input<boolean>;
 }
 
+export interface ProxmoxvePublisherArgs extends CommonPublisherArgs {
+  nodeName: pulumi.Input<string>;
+  datastoreId: pulumi.Input<string>;
+  templateVmId: pulumi.Input<number>;
+  cloneNodeName?: pulumi.Input<string>;
+  vmId?: pulumi.Input<number>;
+  poolId?: pulumi.Input<string>;
+  cpuCores?: pulumi.Input<number>;
+  memory?: pulumi.Input<number>;
+  diskSize?: pulumi.Input<number>;
+  networkBridge?: pulumi.Input<string>;
+  networkModel?: pulumi.Input<string>;
+  vlanId?: pulumi.Input<number>;
+  started?: pulumi.Input<boolean>;
+  onBoot?: pulumi.Input<boolean>;
+  fullClone?: pulumi.Input<boolean>;
+  ipAddress?: pulumi.Input<string>;
+  gateway?: pulumi.Input<string>;
+  nameservers?: pulumi.Input<pulumi.Input<string>[]>;
+}
+
 export interface HypervHardDrive {
   path: pulumi.Input<string>;
   controllerType?: pulumi.Input<string>;

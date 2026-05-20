@@ -18,4 +18,5 @@ export * from "./ovhPublisher";
 export * from "./scalewayPublisher";
 export * from "./ociPublisher";
 export * from "./alicloudPublisher";
+export * from "./proxmoxvePublisher";
 export * from "./hypervPublisher";
