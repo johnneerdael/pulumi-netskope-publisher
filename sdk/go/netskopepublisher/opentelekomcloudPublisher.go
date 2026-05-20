@@ -38,6 +38,7 @@ type OpentelekomcloudPublisher struct {
 	Networks                     pulumi.MapArrayOutput                        `pulumi:"networks"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -97,6 +98,7 @@ type opentelekomcloudPublisherArgs struct {
 	Networks                     []map[string]interface{}                       `pulumi:"networks"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	SecurityGroups               []string                                       `pulumi:"securityGroups"`
@@ -129,6 +131,7 @@ type OpentelekomcloudPublisherArgs struct {
 	Networks                     pulumi.MapArrayInput
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	SecurityGroups               pulumi.StringArrayInput
@@ -262,6 +265,10 @@ func (o OpentelekomcloudPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o OpentelekomcloudPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *OpentelekomcloudPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o OpentelekomcloudPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *OpentelekomcloudPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o OpentelekomcloudPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

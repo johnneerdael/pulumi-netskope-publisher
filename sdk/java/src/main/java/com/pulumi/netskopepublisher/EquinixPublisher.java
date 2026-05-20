@@ -131,6 +131,12 @@ public class EquinixPublisher extends com.pulumi.resources.ComponentResource {
     public Output<Optional<String>> operatingSystem() {
         return Codegen.optional(this.operatingSystem);
     }
+    @Export(name="placementLabels", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> placementLabels;
+
+    public Output<Optional<List<String>>> placementLabels() {
+        return Codegen.optional(this.placementLabels);
+    }
     @Export(name="plan", refs={String.class}, tree="[0]")
     private Output<String> plan;
 

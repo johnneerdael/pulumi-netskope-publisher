@@ -191,6 +191,12 @@ public class ProxmoxvePublisher extends com.pulumi.resources.ComponentResource {
     public Output<Optional<Boolean>> onBoot() {
         return Codegen.optional(this.onBoot);
     }
+    @Export(name="placementLabels", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> placementLabels;
+
+    public Output<Optional<List<String>>> placementLabels() {
+        return Codegen.optional(this.placementLabels);
+    }
     @Export(name="poolId", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> poolId;
 

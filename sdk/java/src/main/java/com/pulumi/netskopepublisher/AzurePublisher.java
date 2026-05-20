@@ -169,6 +169,12 @@ public class AzurePublisher extends com.pulumi.resources.ComponentResource {
     public Output<Optional<AzureOsDisk>> osDisk() {
         return Codegen.optional(this.osDisk);
     }
+    @Export(name="placementLabels", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> placementLabels;
+
+    public Output<Optional<List<String>>> placementLabels() {
+        return Codegen.optional(this.placementLabels);
+    }
     @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
     private Output<List<String>> publisherNames;
 

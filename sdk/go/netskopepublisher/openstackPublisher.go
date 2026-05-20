@@ -38,6 +38,7 @@ type OpenstackPublisher struct {
 	NetworkName                  pulumi.StringOutput                          `pulumi:"networkName"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -94,6 +95,7 @@ type openstackPublisherArgs struct {
 	NetworkName                  string                                         `pulumi:"networkName"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	SecurityGroups               []string                                       `pulumi:"securityGroups"`
@@ -126,6 +128,7 @@ type OpenstackPublisherArgs struct {
 	NetworkName                  string
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	SecurityGroups               pulumi.StringArrayInput
@@ -257,6 +260,10 @@ func (o OpenstackPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o OpenstackPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *OpenstackPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o OpenstackPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *OpenstackPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o OpenstackPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

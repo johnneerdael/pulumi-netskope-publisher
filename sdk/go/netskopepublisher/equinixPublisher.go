@@ -34,6 +34,7 @@ type EquinixPublisher struct {
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	OperatingSystem              pulumi.StringPtrOutput                       `pulumi:"operatingSystem"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	Plan                         pulumi.StringOutput                          `pulumi:"plan"`
 	ProjectId                    pulumi.StringOutput                          `pulumi:"projectId"`
 	ProjectSshKeyIds             pulumi.StringArrayOutput                     `pulumi:"projectSshKeyIds"`
@@ -89,6 +90,7 @@ type equinixPublisherArgs struct {
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	OperatingSystem              *string                                        `pulumi:"operatingSystem"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Plan                         string                                         `pulumi:"plan"`
 	ProjectId                    string                                         `pulumi:"projectId"`
 	ProjectSshKeyIds             []string                                       `pulumi:"projectSshKeyIds"`
@@ -120,6 +122,7 @@ type EquinixPublisherArgs struct {
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	OperatingSystem              *string
+	PlacementLabels              pulumi.StringArrayInput
 	Plan                         string
 	ProjectId                    string
 	ProjectSshKeyIds             pulumi.StringArrayInput
@@ -238,6 +241,10 @@ func (o EquinixPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 
 func (o EquinixPublisherOutput) OperatingSystem() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *EquinixPublisher) pulumi.StringPtrOutput { return v.OperatingSystem }).(pulumi.StringPtrOutput)
+}
+
+func (o EquinixPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *EquinixPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o EquinixPublisherOutput) Plan() pulumi.StringOutput {

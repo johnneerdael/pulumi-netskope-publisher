@@ -40,6 +40,7 @@ class EquinixPublisherArgs:
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  operating_system: Optional[_builtins.str] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  project_ssh_key_ids: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -87,6 +88,8 @@ class EquinixPublisherArgs:
             pulumi.set(__self__, "oauth2", oauth2)
         if operating_system is not None:
             pulumi.set(__self__, "operating_system", operating_system)
+        if placement_labels is not None:
+            pulumi.set(__self__, "placement_labels", placement_labels)
         if project_ssh_key_ids is not None:
             pulumi.set(__self__, "project_ssh_key_ids", project_ssh_key_ids)
         if registrations is not None:
@@ -283,6 +286,15 @@ class EquinixPublisherArgs:
         pulumi.set(self, "operating_system", value)
 
     @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
+
+    @placement_labels.setter
+    def placement_labels(self, value: pulumi.Input[Optional[Sequence[_builtins.str]]]):
+        pulumi.set(self, "placement_labels", value)
+
+    @_builtins.property
     @pulumi.getter(name="projectSshKeyIds")
     def project_ssh_key_ids(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
         return pulumi.get(self, "project_ssh_key_ids")
@@ -370,6 +382,7 @@ class EquinixPublisher(pulumi.ComponentResource):
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  operating_system: Optional[_builtins.str] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  plan: Optional[_builtins.str] = None,
                  project_id: Optional[_builtins.str] = None,
                  project_ssh_key_ids: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
@@ -428,6 +441,7 @@ class EquinixPublisher(pulumi.ComponentResource):
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  operating_system: Optional[_builtins.str] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  plan: Optional[_builtins.str] = None,
                  project_id: Optional[_builtins.str] = None,
                  project_ssh_key_ids: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
@@ -468,6 +482,7 @@ class EquinixPublisher(pulumi.ComponentResource):
             __props__.__dict__["nonat"] = nonat
             __props__.__dict__["oauth2"] = oauth2
             __props__.__dict__["operating_system"] = operating_system
+            __props__.__dict__["placement_labels"] = placement_labels
             if plan is None and not opts.urn:
                 raise TypeError("Missing required property 'plan'")
             __props__.__dict__["plan"] = plan
@@ -581,6 +596,11 @@ class EquinixPublisher(pulumi.ComponentResource):
     @pulumi.getter(name="operatingSystem")
     def operating_system(self) -> pulumi.Output[Optional[_builtins.str]]:
         return pulumi.get(self, "operating_system")
+
+    @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
 
     @_builtins.property
     @pulumi.getter

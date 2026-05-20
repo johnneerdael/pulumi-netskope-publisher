@@ -78,6 +78,7 @@ export function createVmPublishers(
       vmId: vm.vmId,
       privateIp: vm.privateIp,
       publicIp: vm.publicIp,
+      placementLabels: runtime.args.placementLabels,
     });
   }
 

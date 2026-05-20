@@ -1,0 +1,12 @@
+{
+  "name": "npa-application",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@johninnl/pulumi-netskope-publisher": "file:../..",
+    "@pulumi/pulumi": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -219,6 +219,13 @@ public final class ProxmoxvePublisherArgs extends com.pulumi.resources.ResourceA
         return Optional.ofNullable(this.onBoot);
     }
 
+    @Import(name="placementLabels")
+    private @Nullable Output<List<String>> placementLabels;
+
+    public Optional<Output<List<String>>> placementLabels() {
+        return Optional.ofNullable(this.placementLabels);
+    }
+
     @Import(name="poolId")
     private @Nullable String poolId;
 
@@ -320,6 +327,7 @@ public final class ProxmoxvePublisherArgs extends com.pulumi.resources.ResourceA
         this.nonat = $.nonat;
         this.oauth2 = $.oauth2;
         this.onBoot = $.onBoot;
+        this.placementLabels = $.placementLabels;
         this.poolId = $.poolId;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
@@ -520,6 +528,19 @@ public final class ProxmoxvePublisherArgs extends com.pulumi.resources.ResourceA
         public Builder onBoot(@Nullable Boolean onBoot) {
             $.onBoot = onBoot;
             return this;
+        }
+
+        public Builder placementLabels(@Nullable Output<List<String>> placementLabels) {
+            $.placementLabels = placementLabels;
+            return this;
+        }
+
+        public Builder placementLabels(List<String> placementLabels) {
+            return placementLabels(Output.of(placementLabels));
+        }
+
+        public Builder placementLabels(String... placementLabels) {
+            return placementLabels(List.of(placementLabels));
         }
 
         public Builder poolId(@Nullable String poolId) {

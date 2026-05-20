@@ -156,6 +156,13 @@ public final class VultrPublisherArgs extends com.pulumi.resources.ResourceArgs 
         return Optional.ofNullable(this.osId);
     }
 
+    @Import(name="placementLabels")
+    private @Nullable Output<List<String>> placementLabels;
+
+    public Optional<Output<List<String>>> placementLabels() {
+        return Optional.ofNullable(this.placementLabels);
+    }
+
     @Import(name="plan", required=true)
     private String plan;
 
@@ -241,6 +248,7 @@ public final class VultrPublisherArgs extends com.pulumi.resources.ResourceArgs 
         this.nonat = $.nonat;
         this.oauth2 = $.oauth2;
         this.osId = $.osId;
+        this.placementLabels = $.placementLabels;
         this.plan = $.plan;
         this.region = $.region;
         this.registrations = $.registrations;
@@ -387,6 +395,19 @@ public final class VultrPublisherArgs extends com.pulumi.resources.ResourceArgs 
         public Builder osId(@Nullable Integer osId) {
             $.osId = osId;
             return this;
+        }
+
+        public Builder placementLabels(@Nullable Output<List<String>> placementLabels) {
+            $.placementLabels = placementLabels;
+            return this;
+        }
+
+        public Builder placementLabels(List<String> placementLabels) {
+            return placementLabels(Output.of(placementLabels));
+        }
+
+        public Builder placementLabels(String... placementLabels) {
+            return placementLabels(List.of(placementLabels));
         }
 
         public Builder plan(String plan) {

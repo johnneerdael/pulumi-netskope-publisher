@@ -29,6 +29,10 @@ __all__ = [
     'MetadataOptionsArgsDict',
     'NetskopeOAuth2ArgsArgs',
     'NetskopeOAuth2ArgsArgsDict',
+    'PrivateAppProtocolArgs',
+    'PrivateAppProtocolArgsDict',
+    'PublisherAssignmentInputArgs',
+    'PublisherAssignmentInputArgsDict',
     'PublisherRegistrationInputArgs',
     'PublisherRegistrationInputArgsDict',
 ]
@@ -383,6 +387,69 @@ class NetskopeOAuth2ArgsArgs:
     @scope.setter
     def scope(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "scope", value)
+
+
+class PrivateAppProtocolArgsDict(TypedDict):
+    ports: pulumi.Input[_builtins.str]
+    type: pulumi.Input[_builtins.str]
+
+@pulumi.input_type
+class PrivateAppProtocolArgs:
+    def __init__(__self__, *,
+                 ports: pulumi.Input[_builtins.str],
+                 type: pulumi.Input[_builtins.str]):
+        pulumi.set(__self__, "ports", ports)
+        pulumi.set(__self__, "type", type)
+
+    @_builtins.property
+    @pulumi.getter
+    def ports(self) -> pulumi.Input[_builtins.str]:
+        return pulumi.get(self, "ports")
+
+    @ports.setter
+    def ports(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "ports", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def type(self) -> pulumi.Input[_builtins.str]:
+        return pulumi.get(self, "type")
+
+    @type.setter
+    def type(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "type", value)
+
+
+class PublisherAssignmentInputArgsDict(TypedDict):
+    publisher_id: pulumi.Input[_builtins.int]
+    placement_labels: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+
+@pulumi.input_type
+class PublisherAssignmentInputArgs:
+    def __init__(__self__, *,
+                 publisher_id: pulumi.Input[_builtins.int],
+                 placement_labels: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
+        pulumi.set(__self__, "publisher_id", publisher_id)
+        if placement_labels is not None:
+            pulumi.set(__self__, "placement_labels", placement_labels)
+
+    @_builtins.property
+    @pulumi.getter(name="publisherId")
+    def publisher_id(self) -> pulumi.Input[_builtins.int]:
+        return pulumi.get(self, "publisher_id")
+
+    @publisher_id.setter
+    def publisher_id(self, value: pulumi.Input[_builtins.int]):
+        pulumi.set(self, "publisher_id", value)
+
+    @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
+        return pulumi.get(self, "placement_labels")
+
+    @placement_labels.setter
+    def placement_labels(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
+        pulumi.set(self, "placement_labels", value)
 
 
 class PublisherRegistrationInputArgsDict(TypedDict):

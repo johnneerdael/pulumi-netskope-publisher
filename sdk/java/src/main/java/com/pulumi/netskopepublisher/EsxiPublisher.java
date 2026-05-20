@@ -143,6 +143,12 @@ public class EsxiPublisher extends com.pulumi.resources.ComponentResource {
     public Output<Optional<String>> os() {
         return Codegen.optional(this.os);
     }
+    @Export(name="placementLabels", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> placementLabels;
+
+    public Output<Optional<List<String>>> placementLabels() {
+        return Codegen.optional(this.placementLabels);
+    }
     @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
     private Output<List<String>> publisherNames;
 

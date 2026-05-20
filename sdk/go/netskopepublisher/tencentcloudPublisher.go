@@ -35,6 +35,7 @@ type TencentcloudPublisher struct {
 	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -92,6 +93,7 @@ type tencentcloudPublisherArgs struct {
 	Names                        []string                                       `pulumi:"names"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	SecurityGroups               []string                                       `pulumi:"securityGroups"`
@@ -125,6 +127,7 @@ type TencentcloudPublisherArgs struct {
 	Names                        pulumi.StringArrayInput
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	SecurityGroups               pulumi.StringArrayInput
@@ -248,6 +251,10 @@ func (o TencentcloudPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o TencentcloudPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *TencentcloudPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o TencentcloudPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *TencentcloudPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o TencentcloudPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

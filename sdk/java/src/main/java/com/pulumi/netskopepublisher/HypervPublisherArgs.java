@@ -128,6 +128,13 @@ public final class HypervPublisherArgs extends com.pulumi.resources.ResourceArgs
         return Optional.ofNullable(this.oauth2);
     }
 
+    @Import(name="placementLabels")
+    private @Nullable Output<List<String>> placementLabels;
+
+    public Optional<Output<List<String>>> placementLabels() {
+        return Optional.ofNullable(this.placementLabels);
+    }
+
     @Import(name="processorCount")
     private @Nullable Integer processorCount;
 
@@ -195,6 +202,7 @@ public final class HypervPublisherArgs extends com.pulumi.resources.ResourceArgs
         this.namePrefix = $.namePrefix;
         this.names = $.names;
         this.oauth2 = $.oauth2;
+        this.placementLabels = $.placementLabels;
         this.processorCount = $.processorCount;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
@@ -315,6 +323,19 @@ public final class HypervPublisherArgs extends com.pulumi.resources.ResourceArgs
 
         public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
             return oauth2(Output.of(oauth2));
+        }
+
+        public Builder placementLabels(@Nullable Output<List<String>> placementLabels) {
+            $.placementLabels = placementLabels;
+            return this;
+        }
+
+        public Builder placementLabels(List<String> placementLabels) {
+            return placementLabels(Output.of(placementLabels));
+        }
+
+        public Builder placementLabels(String... placementLabels) {
+            return placementLabels(List.of(placementLabels));
         }
 
         public Builder processorCount(@Nullable Integer processorCount) {

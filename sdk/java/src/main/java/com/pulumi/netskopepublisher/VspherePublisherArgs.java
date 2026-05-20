@@ -119,6 +119,13 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
         return Optional.ofNullable(this.oauth2);
     }
 
+    @Import(name="placementLabels")
+    private @Nullable Output<List<String>> placementLabels;
+
+    public Optional<Output<List<String>>> placementLabels() {
+        return Optional.ofNullable(this.placementLabels);
+    }
+
     @Import(name="registrations")
     private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
@@ -178,6 +185,7 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
         this.networkName = $.networkName;
         this.numCpus = $.numCpus;
         this.oauth2 = $.oauth2;
+        this.placementLabels = $.placementLabels;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
         this.tags = $.tags;
@@ -284,6 +292,19 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
 
         public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
             return oauth2(Output.of(oauth2));
+        }
+
+        public Builder placementLabels(@Nullable Output<List<String>> placementLabels) {
+            $.placementLabels = placementLabels;
+            return this;
+        }
+
+        public Builder placementLabels(List<String> placementLabels) {
+            return placementLabels(Output.of(placementLabels));
+        }
+
+        public Builder placementLabels(String... placementLabels) {
+            return placementLabels(List.of(placementLabels));
         }
 
         public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {

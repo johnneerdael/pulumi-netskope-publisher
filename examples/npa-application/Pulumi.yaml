@@ -1,0 +1,3 @@
+name: npa-application
+runtime: nodejs
+description: Register a private app and reconcile it to a placement-labeled publisher pool.

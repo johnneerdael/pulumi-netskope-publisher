@@ -22,6 +22,8 @@ __all__ = [
     'HypervHardDrive',
     'MetadataOptions',
     'NetskopeOAuth2Args',
+    'PrivateAppProtocol',
+    'PublisherAssignmentInput',
     'PublisherRegistrationInput',
     'RegistrationRecord',
 ]
@@ -320,6 +322,64 @@ class NetskopeOAuth2Args(dict):
     @pulumi.getter
     def scope(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "scope")
+
+
+@pulumi.output_type
+class PrivateAppProtocol(dict):
+    def __init__(__self__, *,
+                 ports: _builtins.str,
+                 type: _builtins.str):
+        pulumi.set(__self__, "ports", ports)
+        pulumi.set(__self__, "type", type)
+
+    @_builtins.property
+    @pulumi.getter
+    def ports(self) -> _builtins.str:
+        return pulumi.get(self, "ports")
+
+    @_builtins.property
+    @pulumi.getter
+    def type(self) -> _builtins.str:
+        return pulumi.get(self, "type")
+
+
+@pulumi.output_type
+class PublisherAssignmentInput(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "publisherId":
+            suggest = "publisher_id"
+        elif key == "placementLabels":
+            suggest = "placement_labels"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in PublisherAssignmentInput. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        PublisherAssignmentInput.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        PublisherAssignmentInput.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 publisher_id: _builtins.int,
+                 placement_labels: Optional[Sequence[_builtins.str]] = None):
+        pulumi.set(__self__, "publisher_id", publisher_id)
+        if placement_labels is not None:
+            pulumi.set(__self__, "placement_labels", placement_labels)
+
+    @_builtins.property
+    @pulumi.getter(name="publisherId")
+    def publisher_id(self) -> _builtins.int:
+        return pulumi.get(self, "publisher_id")
+
+    @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> Optional[Sequence[_builtins.str]]:
+        return pulumi.get(self, "placement_labels")
 
 
 @pulumi.output_type

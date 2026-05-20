@@ -36,6 +36,7 @@ type StackitPublisher struct {
 	NetworkInterfaces            pulumi.MapArrayOutput                        `pulumi:"networkInterfaces"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	ProjectId                    pulumi.StringOutput                          `pulumi:"projectId"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
@@ -90,6 +91,7 @@ type stackitPublisherArgs struct {
 	NetworkInterfaces            []map[string]interface{}                       `pulumi:"networkInterfaces"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	ProjectId                    string                                         `pulumi:"projectId"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -120,6 +122,7 @@ type StackitPublisherArgs struct {
 	NetworkInterfaces            pulumi.MapArrayInput
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	ProjectId                    string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -243,6 +246,10 @@ func (o StackitPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o StackitPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *StackitPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o StackitPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *StackitPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o StackitPublisherOutput) ProjectId() pulumi.StringOutput {

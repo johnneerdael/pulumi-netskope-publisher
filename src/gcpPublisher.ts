@@ -97,6 +97,7 @@ export class GcpPublisher extends pulumi.ComponentResource {
         vmId: instance.instanceId,
         privateIp: firstInterface.apply((networkInterface) => networkInterface.networkIp ?? ""),
         publicIp: firstInterface.apply((networkInterface) => networkInterface.accessConfigs?.[0]?.natIp),
+        placementLabels: args.placementLabels,
       });
     }
 

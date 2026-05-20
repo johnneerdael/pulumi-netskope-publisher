@@ -93,17 +93,20 @@ export function createPublisherOutput(args: {
   vmId: pulumi.Input<string>;
   privateIp: pulumi.Input<string>;
   publicIp: pulumi.Input<string | undefined>;
+  placementLabels?: pulumi.Input<pulumi.Input<string>[]>;
 }): pulumi.Output<PublisherOutput> {
   return pulumi.all([
     args.registration,
     args.vmId,
     args.privateIp,
     args.publicIp,
-  ]).apply(([registration, vmId, privateIp, publicIp]) => ({
+    args.placementLabels ?? [],
+  ]).apply(([registration, vmId, privateIp, publicIp, placementLabels]) => ({
     publisherId: registration.publisherId,
     registrationToken: registration.registrationToken,
     vmId,
     privateIp,
     publicIp,
+    placementLabels,
   }));
 }

@@ -36,6 +36,7 @@ type GcpPublisher struct {
 	NetworkTags                  pulumi.StringArrayOutput                     `pulumi:"networkTags"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	Project                      pulumi.StringOutput                          `pulumi:"project"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
@@ -93,6 +94,7 @@ type gcpPublisherArgs struct {
 	NetworkTags                  []string                                       `pulumi:"networkTags"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Project                      string                                         `pulumi:"project"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -126,6 +128,7 @@ type GcpPublisherArgs struct {
 	NetworkTags                  pulumi.StringArrayInput
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Project                      string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -252,6 +255,10 @@ func (o GcpPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o GcpPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *GcpPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o GcpPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o GcpPublisherOutput) Project() pulumi.StringOutput {

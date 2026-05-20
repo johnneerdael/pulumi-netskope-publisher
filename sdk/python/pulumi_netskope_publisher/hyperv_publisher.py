@@ -36,6 +36,7 @@ class HypervPublisherArgs:
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  processor_count: Optional[_builtins.int] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -75,6 +76,8 @@ class HypervPublisherArgs:
             pulumi.set(__self__, "names", names)
         if oauth2 is not None:
             pulumi.set(__self__, "oauth2", oauth2)
+        if placement_labels is not None:
+            pulumi.set(__self__, "placement_labels", placement_labels)
         if processor_count is not None:
             pulumi.set(__self__, "processor_count", processor_count)
         if registrations is not None:
@@ -233,6 +236,15 @@ class HypervPublisherArgs:
         pulumi.set(self, "oauth2", value)
 
     @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
+
+    @placement_labels.setter
+    def placement_labels(self, value: pulumi.Input[Optional[Sequence[_builtins.str]]]):
+        pulumi.set(self, "placement_labels", value)
+
+    @_builtins.property
     @pulumi.getter(name="processorCount")
     def processor_count(self) -> Optional[_builtins.int]:
         return pulumi.get(self, "processor_count")
@@ -308,6 +320,7 @@ class HypervPublisher(pulumi.ComponentResource):
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  processor_count: Optional[_builtins.int] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -361,6 +374,7 @@ class HypervPublisher(pulumi.ComponentResource):
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  processor_count: Optional[_builtins.int] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -396,6 +410,7 @@ class HypervPublisher(pulumi.ComponentResource):
             __props__.__dict__["name_prefix"] = name_prefix
             __props__.__dict__["names"] = names
             __props__.__dict__["oauth2"] = oauth2
+            __props__.__dict__["placement_labels"] = placement_labels
             __props__.__dict__["processor_count"] = processor_count
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas
@@ -490,6 +505,11 @@ class HypervPublisher(pulumi.ComponentResource):
     @pulumi.getter
     def oauth2(self) -> pulumi.Output[Optional['_provider.outputs.NetskopeOAuth2Args']]:
         return pulumi.get(self, "oauth2")
+
+    @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
 
     @_builtins.property
     @pulumi.getter(name="processorCount")

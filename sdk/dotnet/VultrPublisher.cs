@@ -69,6 +69,9 @@ namespace Pulumi.NetskopePublisher
         [Output("osId")]
         public Output<int?> OsId { get; private set; } = null!;
 
+        [Output("placementLabels")]
+        public Output<ImmutableArray<string>> PlacementLabels { get; private set; } = null!;
+
         [Output("plan")]
         public Output<string> Plan { get; private set; } = null!;
 
@@ -212,6 +215,14 @@ namespace Pulumi.NetskopePublisher
 
         [Input("osId")]
         public int? OsId { get; set; }
+
+        [Input("placementLabels")]
+        private InputList<string>? _placementLabels;
+        public InputList<string> PlacementLabels
+        {
+            get => _placementLabels ?? (_placementLabels = new InputList<string>());
+            set => _placementLabels = value;
+        }
 
         [Input("plan", required: true)]
         public string Plan { get; set; } = null!;

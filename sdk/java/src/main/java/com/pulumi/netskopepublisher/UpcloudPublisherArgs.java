@@ -143,6 +143,13 @@ public final class UpcloudPublisherArgs extends com.pulumi.resources.ResourceArg
         return Optional.ofNullable(this.oauth2);
     }
 
+    @Import(name="placementLabels")
+    private @Nullable Output<List<String>> placementLabels;
+
+    public Optional<Output<List<String>>> placementLabels() {
+        return Optional.ofNullable(this.placementLabels);
+    }
+
     @Import(name="plan")
     private @Nullable String plan;
 
@@ -219,6 +226,7 @@ public final class UpcloudPublisherArgs extends com.pulumi.resources.ResourceArg
         this.networkInterfaces = $.networkInterfaces;
         this.nonat = $.nonat;
         this.oauth2 = $.oauth2;
+        this.placementLabels = $.placementLabels;
         this.plan = $.plan;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
@@ -362,6 +370,19 @@ public final class UpcloudPublisherArgs extends com.pulumi.resources.ResourceArg
 
         public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
             return oauth2(Output.of(oauth2));
+        }
+
+        public Builder placementLabels(@Nullable Output<List<String>> placementLabels) {
+            $.placementLabels = placementLabels;
+            return this;
+        }
+
+        public Builder placementLabels(List<String> placementLabels) {
+            return placementLabels(Output.of(placementLabels));
+        }
+
+        public Builder placementLabels(String... placementLabels) {
+            return placementLabels(List.of(placementLabels));
         }
 
         public Builder plan(@Nullable String plan) {

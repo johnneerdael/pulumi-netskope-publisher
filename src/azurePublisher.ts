@@ -150,6 +150,7 @@ export class AzurePublisher extends pulumi.ComponentResource {
         vmId: vm.id,
         privateIp: pulumi.output(nic.ipConfigurations).apply((configs) => configs?.[0]?.privateIPAddress ?? ""),
         publicIp: publicIp?.ipAddress,
+        placementLabels: args.placementLabels,
       });
     }
 

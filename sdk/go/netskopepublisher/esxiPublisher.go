@@ -36,6 +36,7 @@ type EsxiPublisher struct {
 	NumVCpus                     pulumi.IntPtrOutput                          `pulumi:"numVCpus"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	Os                           pulumi.StringPtrOutput                       `pulumi:"os"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -90,6 +91,7 @@ type esxiPublisherArgs struct {
 	NumVCpus                     *int                                           `pulumi:"numVCpus"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Os                           *string                                        `pulumi:"os"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	Tags                         map[string]string                              `pulumi:"tags"`
@@ -120,6 +122,7 @@ type EsxiPublisherArgs struct {
 	NumVCpus                     *int
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Os                           *string
+	PlacementLabels              pulumi.StringArrayInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	Tags                         pulumi.StringMapInput
@@ -243,6 +246,10 @@ func (o EsxiPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 
 func (o EsxiPublisherOutput) Os() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *EsxiPublisher) pulumi.StringPtrOutput { return v.Os }).(pulumi.StringPtrOutput)
+}
+
+func (o EsxiPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *EsxiPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o EsxiPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

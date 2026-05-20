@@ -36,6 +36,7 @@ type NutanixPublisher struct {
 	NumCoresPerVcpu              pulumi.IntPtrOutput                          `pulumi:"numCoresPerVcpu"`
 	NumVCpus                     pulumi.IntPtrOutput                          `pulumi:"numVCpus"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -90,6 +91,7 @@ type nutanixPublisherArgs struct {
 	NumCoresPerVcpu              *int                                           `pulumi:"numCoresPerVcpu"`
 	NumVCpus                     *int                                           `pulumi:"numVCpus"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	SubnetUuid                   *string                                        `pulumi:"subnetUuid"`
@@ -120,6 +122,7 @@ type NutanixPublisherArgs struct {
 	NumCoresPerVcpu              *int
 	NumVCpus                     *int
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	SubnetUuid                   *string
@@ -243,6 +246,10 @@ func (o NutanixPublisherOutput) NumVCpus() pulumi.IntPtrOutput {
 
 func (o NutanixPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *NutanixPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o NutanixPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *NutanixPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o NutanixPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

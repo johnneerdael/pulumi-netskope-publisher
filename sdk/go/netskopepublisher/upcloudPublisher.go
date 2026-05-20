@@ -33,6 +33,7 @@ type UpcloudPublisher struct {
 	NetworkInterfaces            pulumi.MapArrayOutput                        `pulumi:"networkInterfaces"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	Plan                         pulumi.StringPtrOutput                       `pulumi:"plan"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
@@ -86,6 +87,7 @@ type upcloudPublisherArgs struct {
 	NetworkInterfaces            []map[string]interface{}                       `pulumi:"networkInterfaces"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Plan                         *string                                        `pulumi:"plan"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -115,6 +117,7 @@ type UpcloudPublisherArgs struct {
 	NetworkInterfaces            pulumi.MapArrayInput
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Plan                         *string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -228,6 +231,10 @@ func (o UpcloudPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o UpcloudPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *UpcloudPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o UpcloudPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *UpcloudPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o UpcloudPublisherOutput) Plan() pulumi.StringPtrOutput {

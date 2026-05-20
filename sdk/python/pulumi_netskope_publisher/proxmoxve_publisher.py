@@ -49,6 +49,7 @@ class ProxmoxvePublisherArgs:
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  on_boot: Optional[_builtins.bool] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  pool_id: Optional[_builtins.str] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -116,6 +117,8 @@ class ProxmoxvePublisherArgs:
             pulumi.set(__self__, "oauth2", oauth2)
         if on_boot is not None:
             pulumi.set(__self__, "on_boot", on_boot)
+        if placement_labels is not None:
+            pulumi.set(__self__, "placement_labels", placement_labels)
         if pool_id is not None:
             pulumi.set(__self__, "pool_id", pool_id)
         if registrations is not None:
@@ -397,6 +400,15 @@ class ProxmoxvePublisherArgs:
         pulumi.set(self, "on_boot", value)
 
     @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
+
+    @placement_labels.setter
+    def placement_labels(self, value: pulumi.Input[Optional[Sequence[_builtins.str]]]):
+        pulumi.set(self, "placement_labels", value)
+
+    @_builtins.property
     @pulumi.getter(name="poolId")
     def pool_id(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "pool_id")
@@ -512,6 +524,7 @@ class ProxmoxvePublisher(pulumi.ComponentResource):
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  on_boot: Optional[_builtins.bool] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  pool_id: Optional[_builtins.str] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -581,6 +594,7 @@ class ProxmoxvePublisher(pulumi.ComponentResource):
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  on_boot: Optional[_builtins.bool] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  pool_id: Optional[_builtins.str] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -634,6 +648,7 @@ class ProxmoxvePublisher(pulumi.ComponentResource):
             __props__.__dict__["nonat"] = nonat
             __props__.__dict__["oauth2"] = oauth2
             __props__.__dict__["on_boot"] = on_boot
+            __props__.__dict__["placement_labels"] = placement_labels
             __props__.__dict__["pool_id"] = pool_id
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas
@@ -796,6 +811,11 @@ class ProxmoxvePublisher(pulumi.ComponentResource):
     @pulumi.getter(name="onBoot")
     def on_boot(self) -> pulumi.Output[Optional[_builtins.bool]]:
         return pulumi.get(self, "on_boot")
+
+    @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
 
     @_builtins.property
     @pulumi.getter(name="poolId")

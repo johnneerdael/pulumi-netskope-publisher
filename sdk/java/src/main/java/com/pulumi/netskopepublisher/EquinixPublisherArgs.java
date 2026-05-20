@@ -149,6 +149,13 @@ public final class EquinixPublisherArgs extends com.pulumi.resources.ResourceArg
         return Optional.ofNullable(this.operatingSystem);
     }
 
+    @Import(name="placementLabels")
+    private @Nullable Output<List<String>> placementLabels;
+
+    public Optional<Output<List<String>>> placementLabels() {
+        return Optional.ofNullable(this.placementLabels);
+    }
+
     @Import(name="plan", required=true)
     private String plan;
 
@@ -233,6 +240,7 @@ public final class EquinixPublisherArgs extends com.pulumi.resources.ResourceArg
         this.nonat = $.nonat;
         this.oauth2 = $.oauth2;
         this.operatingSystem = $.operatingSystem;
+        this.placementLabels = $.placementLabels;
         this.plan = $.plan;
         this.projectId = $.projectId;
         this.projectSshKeyIds = $.projectSshKeyIds;
@@ -374,6 +382,19 @@ public final class EquinixPublisherArgs extends com.pulumi.resources.ResourceArg
         public Builder operatingSystem(@Nullable String operatingSystem) {
             $.operatingSystem = operatingSystem;
             return this;
+        }
+
+        public Builder placementLabels(@Nullable Output<List<String>> placementLabels) {
+            $.placementLabels = placementLabels;
+            return this;
+        }
+
+        public Builder placementLabels(List<String> placementLabels) {
+            return placementLabels(Output.of(placementLabels));
+        }
+
+        public Builder placementLabels(String... placementLabels) {
+            return placementLabels(List.of(placementLabels));
         }
 
         public Builder plan(String plan) {

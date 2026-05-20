@@ -34,6 +34,7 @@ type OvhPublisher struct {
 	NetworkId                    pulumi.StringPtrOutput                       `pulumi:"networkId"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Region                       pulumi.StringOutput                          `pulumi:"region"`
@@ -88,6 +89,7 @@ type ovhPublisherArgs struct {
 	NetworkId                    *string                                        `pulumi:"networkId"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Region                       string                                         `pulumi:"region"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -118,6 +120,7 @@ type OvhPublisherArgs struct {
 	NetworkId                    *string
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Region                       string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -235,6 +238,10 @@ func (o OvhPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o OvhPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *OvhPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o OvhPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *OvhPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o OvhPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

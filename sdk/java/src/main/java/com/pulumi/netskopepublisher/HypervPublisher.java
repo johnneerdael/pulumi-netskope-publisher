@@ -113,6 +113,12 @@ public class HypervPublisher extends com.pulumi.resources.ComponentResource {
     public Output<Optional<NetskopeOAuth2Args>> oauth2() {
         return Codegen.optional(this.oauth2);
     }
+    @Export(name="placementLabels", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> placementLabels;
+
+    public Output<Optional<List<String>>> placementLabels() {
+        return Codegen.optional(this.placementLabels);
+    }
     @Export(name="processorCount", refs={Integer.class}, tree="[0]")
     private Output</* @Nullable */ Integer> processorCount;
 

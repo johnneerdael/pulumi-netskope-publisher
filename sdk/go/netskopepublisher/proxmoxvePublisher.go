@@ -44,6 +44,7 @@ type ProxmoxvePublisher struct {
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	OnBoot                       pulumi.BoolPtrOutput                         `pulumi:"onBoot"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PoolId                       pulumi.StringPtrOutput                       `pulumi:"poolId"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
@@ -110,6 +111,7 @@ type proxmoxvePublisherArgs struct {
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	OnBoot                       *bool                                          `pulumi:"onBoot"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	PoolId                       *string                                        `pulumi:"poolId"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -152,6 +154,7 @@ type ProxmoxvePublisherArgs struct {
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	OnBoot                       *bool
+	PlacementLabels              pulumi.StringArrayInput
 	PoolId                       *string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -311,6 +314,10 @@ func (o ProxmoxvePublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput 
 
 func (o ProxmoxvePublisherOutput) OnBoot() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *ProxmoxvePublisher) pulumi.BoolPtrOutput { return v.OnBoot }).(pulumi.BoolPtrOutput)
+}
+
+func (o ProxmoxvePublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *ProxmoxvePublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o ProxmoxvePublisherOutput) PoolId() pulumi.StringPtrOutput {

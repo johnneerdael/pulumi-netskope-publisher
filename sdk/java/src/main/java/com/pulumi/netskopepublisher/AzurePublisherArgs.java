@@ -193,6 +193,13 @@ public final class AzurePublisherArgs extends com.pulumi.resources.ResourceArgs 
         return Optional.ofNullable(this.osDisk);
     }
 
+    @Import(name="placementLabels")
+    private @Nullable Output<List<String>> placementLabels;
+
+    public Optional<Output<List<String>>> placementLabels() {
+        return Optional.ofNullable(this.placementLabels);
+    }
+
     @Import(name="registrations")
     private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
@@ -276,6 +283,7 @@ public final class AzurePublisherArgs extends com.pulumi.resources.ResourceArgs 
         this.nonat = $.nonat;
         this.oauth2 = $.oauth2;
         this.osDisk = $.osDisk;
+        this.placementLabels = $.placementLabels;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
         this.resourceGroupName = $.resourceGroupName;
@@ -454,6 +462,19 @@ public final class AzurePublisherArgs extends com.pulumi.resources.ResourceArgs 
 
         public Builder osDisk(AzureOsDiskArgs osDisk) {
             return osDisk(Output.of(osDisk));
+        }
+
+        public Builder placementLabels(@Nullable Output<List<String>> placementLabels) {
+            $.placementLabels = placementLabels;
+            return this;
+        }
+
+        public Builder placementLabels(List<String> placementLabels) {
+            return placementLabels(Output.of(placementLabels));
+        }
+
+        public Builder placementLabels(String... placementLabels) {
+            return placementLabels(List.of(placementLabels));
         }
 
         public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {

@@ -51,6 +51,10 @@ as the Terraform modules: `bootstrap`, `bootstrapUrl`, `nonat`,
 - Experimental Hyper-V gate: `HypervPublisher`
 - Netskope publisher registration by name
 - Bring-your-own registration data escape hatch
+- Private application registration: `PrivateApp`
+- NPA realtime protection policy rule: `RealtimeProtectionPolicy`
+- App-tag to publisher-pool reconciliation: `TagPublisherAssignment`
+- Publisher placement labels for Pulumi-side pool selection
 - GitHub Pages documentation
 
 ESXi Native is direct-host ESXi support and does not replace the vSphere
@@ -105,12 +109,21 @@ export const publisherNames = publisher.publisherNames;
 export const publishers = pulumi.secret(publisher.publishers);
 ```
 
+## Private application access path
+
+Publisher components accept `placementLabels` so Pulumi can group deployed
+publishers by logical network or placement. `PrivateApp` registers applications
+with Netskope app tags, and `TagPublisherAssignment` reconciles apps with a
+matching tag to publishers with the matching placement label.
+
 ## Examples
 
 See `examples/aws-single`, `examples/azure-single`,
 `examples/gcp-single`, `examples/kubernetes-kind`, and
 `examples/vsphere-single` for Pulumi programs that deploy one or more
-publishers.
+publishers. See `examples/npa-application` for a deployment flow that
+registers a private app, reconciles tag-based publisher assignment, and creates
+an NPA realtime protection policy.
 
 ## Documentation
 

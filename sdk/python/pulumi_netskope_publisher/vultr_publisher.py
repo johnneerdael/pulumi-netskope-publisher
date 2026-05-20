@@ -41,6 +41,7 @@ class VultrPublisherArgs:
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  os_id: Optional[_builtins.int] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  ssh_key_ids: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
@@ -91,6 +92,8 @@ class VultrPublisherArgs:
             pulumi.set(__self__, "oauth2", oauth2)
         if os_id is not None:
             pulumi.set(__self__, "os_id", os_id)
+        if placement_labels is not None:
+            pulumi.set(__self__, "placement_labels", placement_labels)
         if registrations is not None:
             pulumi.set(__self__, "registrations", registrations)
         if replicas is not None:
@@ -296,6 +299,15 @@ class VultrPublisherArgs:
         pulumi.set(self, "os_id", value)
 
     @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
+
+    @placement_labels.setter
+    def placement_labels(self, value: pulumi.Input[Optional[Sequence[_builtins.str]]]):
+        pulumi.set(self, "placement_labels", value)
+
+    @_builtins.property
     @pulumi.getter
     def registrations(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]:
         return pulumi.get(self, "registrations")
@@ -384,6 +396,7 @@ class VultrPublisher(pulumi.ComponentResource):
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  os_id: Optional[_builtins.int] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  plan: Optional[_builtins.str] = None,
                  region: Optional[_builtins.str] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
@@ -443,6 +456,7 @@ class VultrPublisher(pulumi.ComponentResource):
                  nonat: Optional[_builtins.bool] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  os_id: Optional[_builtins.int] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  plan: Optional[_builtins.str] = None,
                  region: Optional[_builtins.str] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
@@ -482,6 +496,7 @@ class VultrPublisher(pulumi.ComponentResource):
             __props__.__dict__["nonat"] = nonat
             __props__.__dict__["oauth2"] = oauth2
             __props__.__dict__["os_id"] = os_id
+            __props__.__dict__["placement_labels"] = placement_labels
             if plan is None and not opts.urn:
                 raise TypeError("Missing required property 'plan'")
             __props__.__dict__["plan"] = plan
@@ -600,6 +615,11 @@ class VultrPublisher(pulumi.ComponentResource):
     @pulumi.getter(name="osId")
     def os_id(self) -> pulumi.Output[Optional[_builtins.int]]:
         return pulumi.get(self, "os_id")
+
+    @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
 
     @_builtins.property
     @pulumi.getter

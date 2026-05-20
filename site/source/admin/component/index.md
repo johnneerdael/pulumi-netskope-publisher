@@ -43,6 +43,12 @@ for package manager setup.
 - [Hyper-V (experimental)](/pulumi-netskope-publisher/admin/component/hyperv/)
 - [Netskope Registration](/pulumi-netskope-publisher/admin/component/registration/)
 
+NPA application resources:
+
+- `PrivateApp` registers a Netskope Private Access private application.
+- `TagPublisherAssignment` reconciles private app tags to placement-labeled publisher pools.
+- `RealtimeProtectionPolicy` manages one NPA realtime protection rule for app access.
+
 The TypeScript package and Go executable provider both support managed
 Netskope registration or pre-created registration tokens. Kubernetes
 deployments additionally support chart API enrollment.
@@ -57,6 +63,7 @@ deployments additionally support chart API enrollment.
 | `namePrefix` | Prefix used when deriving names. Defaults to `npa-publisher`. |
 | `names` | Explicit publisher names. Overrides `namePrefix` and `replicas`. |
 | `replicas` | Number of derived names when `names` is omitted. |
+| `placementLabels` | Pulumi-side labels used to select publisher pools for private app assignment. |
 | `tags` | Platform tags or labels where supported. |
 | `wizardPath` | Absolute path to `npa_publisher_wizard`. |
 
@@ -75,6 +82,6 @@ VM-backed cloud providers accept bootstrap and install-user controls:
 | Output | Description |
 |---|---|
 | `publisherNames` | Resolved publisher names. |
-| `publishers` | Secret map keyed by publisher name. Includes `publisherId`, `registrationToken`, `vmId`, `privateIp`, and `publicIp` when applicable. |
+| `publishers` | Secret map keyed by publisher name. Includes `publisherId`, `registrationToken`, `vmId`, `privateIp`, `publicIp`, and `placementLabels` when applicable. |
 
 Kubernetes also returns `helmReleaseNames`.

@@ -32,6 +32,7 @@ type KubernetesPublisher struct {
 	Names            pulumi.StringArrayOutput                     `pulumi:"names"`
 	Namespace        pulumi.StringPtrOutput                       `pulumi:"namespace"`
 	Oauth2           provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels  pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames   pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers       pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations    provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -81,6 +82,7 @@ type kubernetesPublisherArgs struct {
 	Names           []string                                       `pulumi:"names"`
 	Namespace       *string                                        `pulumi:"namespace"`
 	Oauth2          *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels []string                                       `pulumi:"placementLabels"`
 	Registrations   map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas        *int                                           `pulumi:"replicas"`
 	Tags            map[string]string                              `pulumi:"tags"`
@@ -107,6 +109,7 @@ type KubernetesPublisherArgs struct {
 	Names           pulumi.StringArrayInput
 	Namespace       *string
 	Oauth2          provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels pulumi.StringArrayInput
 	Registrations   provider.PublisherRegistrationInputMapInput
 	Replicas        *int
 	Tags            pulumi.StringMapInput
@@ -218,6 +221,10 @@ func (o KubernetesPublisherOutput) Namespace() pulumi.StringPtrOutput {
 
 func (o KubernetesPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *KubernetesPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o KubernetesPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

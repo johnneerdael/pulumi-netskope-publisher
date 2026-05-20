@@ -1133,6 +1133,206 @@ func (o NetskopeOAuth2ArgsPtrOutput) TokenUrl() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
+type PrivateAppProtocol struct {
+	Ports string `pulumi:"ports"`
+	Type  string `pulumi:"type"`
+}
+
+// PrivateAppProtocolInput is an input type that accepts PrivateAppProtocolArgs and PrivateAppProtocolOutput values.
+// You can construct a concrete instance of `PrivateAppProtocolInput` via:
+//
+//	PrivateAppProtocolArgs{...}
+type PrivateAppProtocolInput interface {
+	pulumi.Input
+
+	ToPrivateAppProtocolOutput() PrivateAppProtocolOutput
+	ToPrivateAppProtocolOutputWithContext(context.Context) PrivateAppProtocolOutput
+}
+
+type PrivateAppProtocolArgs struct {
+	Ports pulumi.StringInput `pulumi:"ports"`
+	Type  pulumi.StringInput `pulumi:"type"`
+}
+
+func (PrivateAppProtocolArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*PrivateAppProtocol)(nil)).Elem()
+}
+
+func (i PrivateAppProtocolArgs) ToPrivateAppProtocolOutput() PrivateAppProtocolOutput {
+	return i.ToPrivateAppProtocolOutputWithContext(context.Background())
+}
+
+func (i PrivateAppProtocolArgs) ToPrivateAppProtocolOutputWithContext(ctx context.Context) PrivateAppProtocolOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(PrivateAppProtocolOutput)
+}
+
+// PrivateAppProtocolArrayInput is an input type that accepts PrivateAppProtocolArray and PrivateAppProtocolArrayOutput values.
+// You can construct a concrete instance of `PrivateAppProtocolArrayInput` via:
+//
+//	PrivateAppProtocolArray{ PrivateAppProtocolArgs{...} }
+type PrivateAppProtocolArrayInput interface {
+	pulumi.Input
+
+	ToPrivateAppProtocolArrayOutput() PrivateAppProtocolArrayOutput
+	ToPrivateAppProtocolArrayOutputWithContext(context.Context) PrivateAppProtocolArrayOutput
+}
+
+type PrivateAppProtocolArray []PrivateAppProtocolInput
+
+func (PrivateAppProtocolArray) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]PrivateAppProtocol)(nil)).Elem()
+}
+
+func (i PrivateAppProtocolArray) ToPrivateAppProtocolArrayOutput() PrivateAppProtocolArrayOutput {
+	return i.ToPrivateAppProtocolArrayOutputWithContext(context.Background())
+}
+
+func (i PrivateAppProtocolArray) ToPrivateAppProtocolArrayOutputWithContext(ctx context.Context) PrivateAppProtocolArrayOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(PrivateAppProtocolArrayOutput)
+}
+
+type PrivateAppProtocolOutput struct{ *pulumi.OutputState }
+
+func (PrivateAppProtocolOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*PrivateAppProtocol)(nil)).Elem()
+}
+
+func (o PrivateAppProtocolOutput) ToPrivateAppProtocolOutput() PrivateAppProtocolOutput {
+	return o
+}
+
+func (o PrivateAppProtocolOutput) ToPrivateAppProtocolOutputWithContext(ctx context.Context) PrivateAppProtocolOutput {
+	return o
+}
+
+func (o PrivateAppProtocolOutput) Ports() pulumi.StringOutput {
+	return o.ApplyT(func(v PrivateAppProtocol) string { return v.Ports }).(pulumi.StringOutput)
+}
+
+func (o PrivateAppProtocolOutput) Type() pulumi.StringOutput {
+	return o.ApplyT(func(v PrivateAppProtocol) string { return v.Type }).(pulumi.StringOutput)
+}
+
+type PrivateAppProtocolArrayOutput struct{ *pulumi.OutputState }
+
+func (PrivateAppProtocolArrayOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*[]PrivateAppProtocol)(nil)).Elem()
+}
+
+func (o PrivateAppProtocolArrayOutput) ToPrivateAppProtocolArrayOutput() PrivateAppProtocolArrayOutput {
+	return o
+}
+
+func (o PrivateAppProtocolArrayOutput) ToPrivateAppProtocolArrayOutputWithContext(ctx context.Context) PrivateAppProtocolArrayOutput {
+	return o
+}
+
+func (o PrivateAppProtocolArrayOutput) Index(i pulumi.IntInput) PrivateAppProtocolOutput {
+	return pulumi.All(o, i).ApplyT(func(vs []interface{}) PrivateAppProtocol {
+		return vs[0].([]PrivateAppProtocol)[vs[1].(int)]
+	}).(PrivateAppProtocolOutput)
+}
+
+type PublisherAssignmentInput struct {
+	PlacementLabels []string `pulumi:"placementLabels"`
+	PublisherId     int      `pulumi:"publisherId"`
+}
+
+// PublisherAssignmentInputInput is an input type that accepts PublisherAssignmentInputArgs and PublisherAssignmentInputOutput values.
+// You can construct a concrete instance of `PublisherAssignmentInputInput` via:
+//
+//	PublisherAssignmentInputArgs{...}
+type PublisherAssignmentInputInput interface {
+	pulumi.Input
+
+	ToPublisherAssignmentInputOutput() PublisherAssignmentInputOutput
+	ToPublisherAssignmentInputOutputWithContext(context.Context) PublisherAssignmentInputOutput
+}
+
+type PublisherAssignmentInputArgs struct {
+	PlacementLabels pulumi.StringArrayInput `pulumi:"placementLabels"`
+	PublisherId     pulumi.IntInput         `pulumi:"publisherId"`
+}
+
+func (PublisherAssignmentInputArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*PublisherAssignmentInput)(nil)).Elem()
+}
+
+func (i PublisherAssignmentInputArgs) ToPublisherAssignmentInputOutput() PublisherAssignmentInputOutput {
+	return i.ToPublisherAssignmentInputOutputWithContext(context.Background())
+}
+
+func (i PublisherAssignmentInputArgs) ToPublisherAssignmentInputOutputWithContext(ctx context.Context) PublisherAssignmentInputOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(PublisherAssignmentInputOutput)
+}
+
+// PublisherAssignmentInputMapInput is an input type that accepts PublisherAssignmentInputMap and PublisherAssignmentInputMapOutput values.
+// You can construct a concrete instance of `PublisherAssignmentInputMapInput` via:
+//
+//	PublisherAssignmentInputMap{ "key": PublisherAssignmentInputArgs{...} }
+type PublisherAssignmentInputMapInput interface {
+	pulumi.Input
+
+	ToPublisherAssignmentInputMapOutput() PublisherAssignmentInputMapOutput
+	ToPublisherAssignmentInputMapOutputWithContext(context.Context) PublisherAssignmentInputMapOutput
+}
+
+type PublisherAssignmentInputMap map[string]PublisherAssignmentInputInput
+
+func (PublisherAssignmentInputMap) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]PublisherAssignmentInput)(nil)).Elem()
+}
+
+func (i PublisherAssignmentInputMap) ToPublisherAssignmentInputMapOutput() PublisherAssignmentInputMapOutput {
+	return i.ToPublisherAssignmentInputMapOutputWithContext(context.Background())
+}
+
+func (i PublisherAssignmentInputMap) ToPublisherAssignmentInputMapOutputWithContext(ctx context.Context) PublisherAssignmentInputMapOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(PublisherAssignmentInputMapOutput)
+}
+
+type PublisherAssignmentInputOutput struct{ *pulumi.OutputState }
+
+func (PublisherAssignmentInputOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*PublisherAssignmentInput)(nil)).Elem()
+}
+
+func (o PublisherAssignmentInputOutput) ToPublisherAssignmentInputOutput() PublisherAssignmentInputOutput {
+	return o
+}
+
+func (o PublisherAssignmentInputOutput) ToPublisherAssignmentInputOutputWithContext(ctx context.Context) PublisherAssignmentInputOutput {
+	return o
+}
+
+func (o PublisherAssignmentInputOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v PublisherAssignmentInput) []string { return v.PlacementLabels }).(pulumi.StringArrayOutput)
+}
+
+func (o PublisherAssignmentInputOutput) PublisherId() pulumi.IntOutput {
+	return o.ApplyT(func(v PublisherAssignmentInput) int { return v.PublisherId }).(pulumi.IntOutput)
+}
+
+type PublisherAssignmentInputMapOutput struct{ *pulumi.OutputState }
+
+func (PublisherAssignmentInputMapOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*map[string]PublisherAssignmentInput)(nil)).Elem()
+}
+
+func (o PublisherAssignmentInputMapOutput) ToPublisherAssignmentInputMapOutput() PublisherAssignmentInputMapOutput {
+	return o
+}
+
+func (o PublisherAssignmentInputMapOutput) ToPublisherAssignmentInputMapOutputWithContext(ctx context.Context) PublisherAssignmentInputMapOutput {
+	return o
+}
+
+func (o PublisherAssignmentInputMapOutput) MapIndex(k pulumi.StringInput) PublisherAssignmentInputOutput {
+	return pulumi.All(o, k).ApplyT(func(vs []interface{}) PublisherAssignmentInput {
+		return vs[0].(map[string]PublisherAssignmentInput)[vs[1].(string)]
+	}).(PublisherAssignmentInputOutput)
+}
+
 type PublisherRegistrationInput struct {
 	ExistedBefore     *bool  `pulumi:"existedBefore"`
 	PublisherId       int    `pulumi:"publisherId"`
@@ -1306,6 +1506,10 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*MetadataOptionsPtrInput)(nil)).Elem(), MetadataOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*NetskopeOAuth2ArgsInput)(nil)).Elem(), NetskopeOAuth2ArgsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*NetskopeOAuth2ArgsPtrInput)(nil)).Elem(), NetskopeOAuth2ArgsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*PrivateAppProtocolInput)(nil)).Elem(), PrivateAppProtocolArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*PrivateAppProtocolArrayInput)(nil)).Elem(), PrivateAppProtocolArray{})
+	pulumi.RegisterInputType(reflect.TypeOf((*PublisherAssignmentInputInput)(nil)).Elem(), PublisherAssignmentInputArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*PublisherAssignmentInputMapInput)(nil)).Elem(), PublisherAssignmentInputMap{})
 	pulumi.RegisterInputType(reflect.TypeOf((*PublisherRegistrationInputInput)(nil)).Elem(), PublisherRegistrationInputArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*PublisherRegistrationInputMapInput)(nil)).Elem(), PublisherRegistrationInputMap{})
 	pulumi.RegisterOutputType(AzureMarketplaceImageOutput{})
@@ -1322,6 +1526,10 @@ func init() {
 	pulumi.RegisterOutputType(MetadataOptionsPtrOutput{})
 	pulumi.RegisterOutputType(NetskopeOAuth2ArgsOutput{})
 	pulumi.RegisterOutputType(NetskopeOAuth2ArgsPtrOutput{})
+	pulumi.RegisterOutputType(PrivateAppProtocolOutput{})
+	pulumi.RegisterOutputType(PrivateAppProtocolArrayOutput{})
+	pulumi.RegisterOutputType(PublisherAssignmentInputOutput{})
+	pulumi.RegisterOutputType(PublisherAssignmentInputMapOutput{})
 	pulumi.RegisterOutputType(PublisherRegistrationInputOutput{})
 	pulumi.RegisterOutputType(PublisherRegistrationInputMapOutput{})
 	pulumi.RegisterOutputType(RegistrationRecordOutput{})

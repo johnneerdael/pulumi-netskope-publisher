@@ -96,6 +96,7 @@ export class VspherePublisher extends pulumi.ComponentResource {
         vmId: vm.id,
         privateIp: vm.defaultIpAddress,
         publicIp: pulumi.output(undefined),
+        placementLabels: args.placementLabels,
       });
     }
 

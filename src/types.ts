@@ -38,6 +38,7 @@ export interface CommonPublisherArgs extends NameArgs {
   namePrefix?: string;
   names?: string[];
   replicas?: number;
+  placementLabels?: pulumi.Input<pulumi.Input<string>[]>;
   tenantUrl?: pulumi.Input<string>;
   bearerToken?: pulumi.Input<string>;
   authMode?: pulumi.Input<NetskopeAuthMode>;
@@ -353,6 +354,7 @@ export interface PublisherOutput {
   vmId: string;
   privateIp: string;
   publicIp?: string;
+  placementLabels: string[];
 }
 
 export type KubernetesEnrollmentMode = "token" | "api";

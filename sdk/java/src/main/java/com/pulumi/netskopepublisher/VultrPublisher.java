@@ -137,6 +137,12 @@ public class VultrPublisher extends com.pulumi.resources.ComponentResource {
     public Output<Optional<Integer>> osId() {
         return Codegen.optional(this.osId);
     }
+    @Export(name="placementLabels", refs={List.class,String.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<String>> placementLabels;
+
+    public Output<Optional<List<String>>> placementLabels() {
+        return Codegen.optional(this.placementLabels);
+    }
     @Export(name="plan", refs={String.class}, tree="[0]")
     private Output<String> plan;
 

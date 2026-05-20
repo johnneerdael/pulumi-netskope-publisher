@@ -41,6 +41,7 @@ class EsxiPublisherArgs:
                  num_v_cpus: Optional[_builtins.int] = None,
                  oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  os: Optional[_builtins.str] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -89,6 +90,8 @@ class EsxiPublisherArgs:
             pulumi.set(__self__, "oauth2", oauth2)
         if os is not None:
             pulumi.set(__self__, "os", os)
+        if placement_labels is not None:
+            pulumi.set(__self__, "placement_labels", placement_labels)
         if registrations is not None:
             pulumi.set(__self__, "registrations", registrations)
         if replicas is not None:
@@ -290,6 +293,15 @@ class EsxiPublisherArgs:
         pulumi.set(self, "os", value)
 
     @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
+
+    @placement_labels.setter
+    def placement_labels(self, value: pulumi.Input[Optional[Sequence[_builtins.str]]]):
+        pulumi.set(self, "placement_labels", value)
+
+    @_builtins.property
     @pulumi.getter
     def registrations(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]:
         return pulumi.get(self, "registrations")
@@ -361,6 +373,7 @@ class EsxiPublisher(pulumi.ComponentResource):
                  num_v_cpus: Optional[_builtins.int] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  os: Optional[_builtins.str] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -418,6 +431,7 @@ class EsxiPublisher(pulumi.ComponentResource):
                  num_v_cpus: Optional[_builtins.int] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  os: Optional[_builtins.str] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -457,6 +471,7 @@ class EsxiPublisher(pulumi.ComponentResource):
             __props__.__dict__["num_v_cpus"] = num_v_cpus
             __props__.__dict__["oauth2"] = oauth2
             __props__.__dict__["os"] = os
+            __props__.__dict__["placement_labels"] = placement_labels
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas
             __props__.__dict__["tags"] = tags
@@ -575,6 +590,11 @@ class EsxiPublisher(pulumi.ComponentResource):
     @pulumi.getter
     def os(self) -> pulumi.Output[Optional[_builtins.str]]:
         return pulumi.get(self, "os")
+
+    @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
 
     @_builtins.property
     @pulumi.getter(name="publisherNames")

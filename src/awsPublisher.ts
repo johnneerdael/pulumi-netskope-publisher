@@ -105,6 +105,7 @@ export class AwsPublisher extends pulumi.ComponentResource {
         vmId: instance.id,
         privateIp: instance.privateIp,
         publicIp: instance.publicIp,
+        placementLabels: args.placementLabels,
       });
     }
 

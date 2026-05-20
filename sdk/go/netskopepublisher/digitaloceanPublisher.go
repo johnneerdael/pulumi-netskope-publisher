@@ -34,6 +34,7 @@ type DigitaloceanPublisher struct {
 	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Region                       pulumi.StringOutput                          `pulumi:"region"`
@@ -89,6 +90,7 @@ type digitaloceanPublisherArgs struct {
 	Names                        []string                                       `pulumi:"names"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Region                       string                                         `pulumi:"region"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -120,6 +122,7 @@ type DigitaloceanPublisherArgs struct {
 	Names                        pulumi.StringArrayInput
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Region                       string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -238,6 +241,10 @@ func (o DigitaloceanPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o DigitaloceanPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *DigitaloceanPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o DigitaloceanPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *DigitaloceanPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o DigitaloceanPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

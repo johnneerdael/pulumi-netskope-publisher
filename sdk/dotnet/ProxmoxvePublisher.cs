@@ -96,6 +96,9 @@ namespace Pulumi.NetskopePublisher
         [Output("onBoot")]
         public Output<bool?> OnBoot { get; private set; } = null!;
 
+        [Output("placementLabels")]
+        public Output<ImmutableArray<string>> PlacementLabels { get; private set; } = null!;
+
         [Output("poolId")]
         public Output<string?> PoolId { get; private set; } = null!;
 
@@ -274,6 +277,14 @@ namespace Pulumi.NetskopePublisher
 
         [Input("onBoot")]
         public bool? OnBoot { get; set; }
+
+        [Input("placementLabels")]
+        private InputList<string>? _placementLabels;
+        public InputList<string> PlacementLabels
+        {
+            get => _placementLabels ?? (_placementLabels = new InputList<string>());
+            set => _placementLabels = value;
+        }
 
         [Input("poolId")]
         public string? PoolId { get; set; }

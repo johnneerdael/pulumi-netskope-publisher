@@ -31,6 +31,7 @@ type HypervPublisher struct {
 	NamePrefix               pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
 	Names                    pulumi.StringArrayOutput                     `pulumi:"names"`
 	Oauth2                   provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels          pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	ProcessorCount           pulumi.IntPtrOutput                          `pulumi:"processorCount"`
 	PublisherNames           pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers               pulumi.MapOutput                             `pulumi:"publishers"`
@@ -83,6 +84,7 @@ type hypervPublisherArgs struct {
 	NamePrefix               *string                                        `pulumi:"namePrefix"`
 	Names                    []string                                       `pulumi:"names"`
 	Oauth2                   *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels          []string                                       `pulumi:"placementLabels"`
 	ProcessorCount           *int                                           `pulumi:"processorCount"`
 	Registrations            map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                 *int                                           `pulumi:"replicas"`
@@ -109,6 +111,7 @@ type HypervPublisherArgs struct {
 	NamePrefix               *string
 	Names                    pulumi.StringArrayInput
 	Oauth2                   provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels          pulumi.StringArrayInput
 	ProcessorCount           *int
 	Registrations            provider.PublisherRegistrationInputMapInput
 	Replicas                 *int
@@ -213,6 +216,10 @@ func (o HypervPublisherOutput) Names() pulumi.StringArrayOutput {
 
 func (o HypervPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *HypervPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o HypervPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o HypervPublisherOutput) ProcessorCount() pulumi.IntPtrOutput {

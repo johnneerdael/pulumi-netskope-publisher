@@ -36,6 +36,7 @@ type YandexPublisher struct {
 	Nat                          pulumi.BoolPtrOutput                         `pulumi:"nat"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PlatformId                   pulumi.StringPtrOutput                       `pulumi:"platformId"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
@@ -93,6 +94,7 @@ type yandexPublisherArgs struct {
 	Nat                          *bool                                          `pulumi:"nat"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	PlatformId                   *string                                        `pulumi:"platformId"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -126,6 +128,7 @@ type YandexPublisherArgs struct {
 	Nat                          *bool
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	PlatformId                   *string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -252,6 +255,10 @@ func (o YandexPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 
 func (o YandexPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *YandexPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o YandexPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *YandexPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o YandexPublisherOutput) PlatformId() pulumi.StringPtrOutput {

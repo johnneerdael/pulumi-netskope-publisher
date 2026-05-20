@@ -57,12 +57,18 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &OutscalePublisher{}
 	case "netskope-publisher:index:OvhPublisher":
 		r = &OvhPublisher{}
+	case "netskope-publisher:index:PrivateApp":
+		r = &PrivateApp{}
 	case "netskope-publisher:index:ProxmoxvePublisher":
 		r = &ProxmoxvePublisher{}
+	case "netskope-publisher:index:RealtimeProtectionPolicy":
+		r = &RealtimeProtectionPolicy{}
 	case "netskope-publisher:index:ScalewayPublisher":
 		r = &ScalewayPublisher{}
 	case "netskope-publisher:index:StackitPublisher":
 		r = &StackitPublisher{}
+	case "netskope-publisher:index:TagPublisherAssignment":
+		r = &TagPublisherAssignment{}
 	case "netskope-publisher:index:TencentcloudPublisher":
 		r = &TencentcloudPublisher{}
 	case "netskope-publisher:index:UpcloudPublisher":

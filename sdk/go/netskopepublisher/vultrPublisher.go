@@ -35,6 +35,7 @@ type VultrPublisher struct {
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	OsId                         pulumi.IntPtrOutput                          `pulumi:"osId"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	Plan                         pulumi.StringOutput                          `pulumi:"plan"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
@@ -91,6 +92,7 @@ type vultrPublisherArgs struct {
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	OsId                         *int                                           `pulumi:"osId"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Plan                         string                                         `pulumi:"plan"`
 	Region                       string                                         `pulumi:"region"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
@@ -123,6 +125,7 @@ type VultrPublisherArgs struct {
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	OsId                         *int
+	PlacementLabels              pulumi.StringArrayInput
 	Plan                         string
 	Region                       string
 	Registrations                provider.PublisherRegistrationInputMapInput
@@ -245,6 +248,10 @@ func (o VultrPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 
 func (o VultrPublisherOutput) OsId() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *VultrPublisher) pulumi.IntPtrOutput { return v.OsId }).(pulumi.IntPtrOutput)
+}
+
+func (o VultrPublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *VultrPublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o VultrPublisherOutput) Plan() pulumi.StringOutput {

@@ -40,6 +40,7 @@ type AzurePublisher struct {
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	OsDisk                       provider.AzureOsDiskPtrOutput                `pulumi:"osDisk"`
+	PlacementLabels              pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -100,6 +101,7 @@ type azurePublisherArgs struct {
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	OsDisk                       *provider.AzureOsDisk                          `pulumi:"osDisk"`
+	PlacementLabels              []string                                       `pulumi:"placementLabels"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	ResourceGroupName            string                                         `pulumi:"resourceGroupName"`
@@ -136,6 +138,7 @@ type AzurePublisherArgs struct {
 	Nonat                        *bool
 	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	OsDisk                       provider.AzureOsDiskPtrInput
+	PlacementLabels              pulumi.StringArrayInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	ResourceGroupName            string
@@ -277,6 +280,10 @@ func (o AzurePublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 
 func (o AzurePublisherOutput) OsDisk() provider.AzureOsDiskPtrOutput {
 	return o.ApplyT(func(v *AzurePublisher) provider.AzureOsDiskPtrOutput { return v.OsDisk }).(provider.AzureOsDiskPtrOutput)
+}
+
+func (o AzurePublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *AzurePublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o AzurePublisherOutput) PublisherNames() pulumi.StringArrayOutput {

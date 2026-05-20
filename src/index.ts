@@ -24,6 +24,9 @@ export type {
 export * from "./providerValidation";
 export * from "./netskopeClient";
 export * from "./netskopeRegistration";
+export * from "./privateApp";
+export * from "./tagPublisherAssignment";
+export * from "./realtimeProtectionPolicy";
 export * from "./awsPublisher";
 export * from "./azurePublisher";
 export * from "./gcpPublisher";

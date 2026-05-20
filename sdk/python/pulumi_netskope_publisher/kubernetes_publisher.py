@@ -36,6 +36,7 @@ class KubernetesPublisherArgs:
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  namespace: Optional[_builtins.str] = None,
                  oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -77,6 +78,8 @@ class KubernetesPublisherArgs:
             pulumi.set(__self__, "namespace", namespace)
         if oauth2 is not None:
             pulumi.set(__self__, "oauth2", oauth2)
+        if placement_labels is not None:
+            pulumi.set(__self__, "placement_labels", placement_labels)
         if registrations is not None:
             pulumi.set(__self__, "registrations", registrations)
         if replicas is not None:
@@ -235,6 +238,15 @@ class KubernetesPublisherArgs:
         pulumi.set(self, "oauth2", value)
 
     @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Input[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
+
+    @placement_labels.setter
+    def placement_labels(self, value: pulumi.Input[Optional[Sequence[_builtins.str]]]):
+        pulumi.set(self, "placement_labels", value)
+
+    @_builtins.property
     @pulumi.getter
     def registrations(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]:
         return pulumi.get(self, "registrations")
@@ -311,6 +323,7 @@ class KubernetesPublisher(pulumi.ComponentResource):
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  namespace: Optional[_builtins.str] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -364,6 +377,7 @@ class KubernetesPublisher(pulumi.ComponentResource):
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  namespace: Optional[_builtins.str] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
+                 placement_labels: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -397,6 +411,7 @@ class KubernetesPublisher(pulumi.ComponentResource):
             __props__.__dict__["names"] = names
             __props__.__dict__["namespace"] = namespace
             __props__.__dict__["oauth2"] = oauth2
+            __props__.__dict__["placement_labels"] = placement_labels
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas
             __props__.__dict__["tags"] = tags
@@ -499,6 +514,11 @@ class KubernetesPublisher(pulumi.ComponentResource):
     @pulumi.getter
     def oauth2(self) -> pulumi.Output[Optional['_provider.outputs.NetskopeOAuth2Args']]:
         return pulumi.get(self, "oauth2")
+
+    @_builtins.property
+    @pulumi.getter(name="placementLabels")
+    def placement_labels(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
+        return pulumi.get(self, "placement_labels")
 
     @_builtins.property
     @pulumi.getter(name="publisherNames")

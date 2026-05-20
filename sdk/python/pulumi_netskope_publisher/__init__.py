@@ -24,10 +24,13 @@ from .openstack_publisher import *
 from .opentelekomcloud_publisher import *
 from .outscale_publisher import *
 from .ovh_publisher import *
+from .private_app import *
 from .provider_ import *
 from .proxmoxve_publisher import *
+from .realtime_protection_policy import *
 from .scaleway_publisher import *
 from .stackit_publisher import *
+from .tag_publisher_assignment import *
 from .tencentcloud_publisher import *
 from .upcloud_publisher import *
 from .vsphere_publisher import *
@@ -67,9 +70,12 @@ _utilities.register(
    "netskope-publisher:index:OpentelekomcloudPublisher": "OpentelekomcloudPublisher",
    "netskope-publisher:index:OutscalePublisher": "OutscalePublisher",
    "netskope-publisher:index:OvhPublisher": "OvhPublisher",
+   "netskope-publisher:index:PrivateApp": "PrivateApp",
    "netskope-publisher:index:ProxmoxvePublisher": "ProxmoxvePublisher",
+   "netskope-publisher:index:RealtimeProtectionPolicy": "RealtimeProtectionPolicy",
    "netskope-publisher:index:ScalewayPublisher": "ScalewayPublisher",
    "netskope-publisher:index:StackitPublisher": "StackitPublisher",
+   "netskope-publisher:index:TagPublisherAssignment": "TagPublisherAssignment",
    "netskope-publisher:index:TencentcloudPublisher": "TencentcloudPublisher",
    "netskope-publisher:index:UpcloudPublisher": "UpcloudPublisher",
    "netskope-publisher:index:VspherePublisher": "VspherePublisher",

@@ -72,6 +72,9 @@ namespace Pulumi.NetskopePublisher
         [Output("os")]
         public Output<string?> Os { get; private set; } = null!;
 
+        [Output("placementLabels")]
+        public Output<ImmutableArray<string>> PlacementLabels { get; private set; } = null!;
+
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
@@ -209,6 +212,14 @@ namespace Pulumi.NetskopePublisher
 
         [Input("os")]
         public string? Os { get; set; }
+
+        [Input("placementLabels")]
+        private InputList<string>? _placementLabels;
+        public InputList<string> PlacementLabels
+        {
+            get => _placementLabels ?? (_placementLabels = new InputList<string>());
+            set => _placementLabels = value;
+        }
 
         [Input("registrations")]
         private InputMap<Pulumi.NetskopePublisher.Types.Inputs.PublisherRegistrationInputArgs>? _registrations;

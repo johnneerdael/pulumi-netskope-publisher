@@ -63,6 +63,9 @@ namespace Pulumi.NetskopePublisher
         [Output("oauth2")]
         public Output<Pulumi.NetskopePublisher.Types.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
 
+        [Output("placementLabels")]
+        public Output<ImmutableArray<string>> PlacementLabels { get; private set; } = null!;
+
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
@@ -183,6 +186,14 @@ namespace Pulumi.NetskopePublisher
 
         [Input("oauth2")]
         public Input<Pulumi.NetskopePublisher.Types.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
+
+        [Input("placementLabels")]
+        private InputList<string>? _placementLabels;
+        public InputList<string> PlacementLabels
+        {
+            get => _placementLabels ?? (_placementLabels = new InputList<string>());
+            set => _placementLabels = value;
+        }
 
         [Input("registrations")]
         private InputMap<Pulumi.NetskopePublisher.Types.Inputs.PublisherRegistrationInputArgs>? _registrations;

@@ -16,28 +16,29 @@ import (
 type VspherePublisher struct {
 	pulumi.ResourceState
 
-	ApiToken       pulumi.StringPtrOutput                       `pulumi:"apiToken"`
-	AuthMode       pulumi.StringPtrOutput                       `pulumi:"authMode"`
-	BearerToken    pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
-	Cluster        pulumi.StringPtrOutput                       `pulumi:"cluster"`
-	Datacenter     pulumi.StringOutput                          `pulumi:"datacenter"`
-	Datastore      pulumi.StringOutput                          `pulumi:"datastore"`
-	Folder         pulumi.StringPtrOutput                       `pulumi:"folder"`
-	Host           pulumi.StringPtrOutput                       `pulumi:"host"`
-	Memory         pulumi.IntPtrOutput                          `pulumi:"memory"`
-	NamePrefix     pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
-	Names          pulumi.StringArrayOutput                     `pulumi:"names"`
-	NetworkName    pulumi.StringOutput                          `pulumi:"networkName"`
-	NumCpus        pulumi.IntPtrOutput                          `pulumi:"numCpus"`
-	Oauth2         provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
-	PublisherNames pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
-	Publishers     pulumi.MapOutput                             `pulumi:"publishers"`
-	Registrations  provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
-	Replicas       pulumi.IntPtrOutput                          `pulumi:"replicas"`
-	Tags           pulumi.StringMapOutput                       `pulumi:"tags"`
-	TemplateName   pulumi.StringOutput                          `pulumi:"templateName"`
-	TenantUrl      pulumi.StringPtrOutput                       `pulumi:"tenantUrl"`
-	WizardPath     pulumi.StringPtrOutput                       `pulumi:"wizardPath"`
+	ApiToken        pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AuthMode        pulumi.StringPtrOutput                       `pulumi:"authMode"`
+	BearerToken     pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
+	Cluster         pulumi.StringPtrOutput                       `pulumi:"cluster"`
+	Datacenter      pulumi.StringOutput                          `pulumi:"datacenter"`
+	Datastore       pulumi.StringOutput                          `pulumi:"datastore"`
+	Folder          pulumi.StringPtrOutput                       `pulumi:"folder"`
+	Host            pulumi.StringPtrOutput                       `pulumi:"host"`
+	Memory          pulumi.IntPtrOutput                          `pulumi:"memory"`
+	NamePrefix      pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
+	Names           pulumi.StringArrayOutput                     `pulumi:"names"`
+	NetworkName     pulumi.StringOutput                          `pulumi:"networkName"`
+	NumCpus         pulumi.IntPtrOutput                          `pulumi:"numCpus"`
+	Oauth2          provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
+	PlacementLabels pulumi.StringArrayOutput                     `pulumi:"placementLabels"`
+	PublisherNames  pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
+	Publishers      pulumi.MapOutput                             `pulumi:"publishers"`
+	Registrations   provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
+	Replicas        pulumi.IntPtrOutput                          `pulumi:"replicas"`
+	Tags            pulumi.StringMapOutput                       `pulumi:"tags"`
+	TemplateName    pulumi.StringOutput                          `pulumi:"templateName"`
+	TenantUrl       pulumi.StringPtrOutput                       `pulumi:"tenantUrl"`
+	WizardPath      pulumi.StringPtrOutput                       `pulumi:"wizardPath"`
 }
 
 // NewVspherePublisher registers a new resource with the given unique name, arguments, and options.
@@ -63,50 +64,52 @@ func NewVspherePublisher(ctx *pulumi.Context,
 }
 
 type vspherePublisherArgs struct {
-	ApiToken      *string                                        `pulumi:"apiToken"`
-	AuthMode      *string                                        `pulumi:"authMode"`
-	BearerToken   *string                                        `pulumi:"bearerToken"`
-	Cluster       *string                                        `pulumi:"cluster"`
-	Datacenter    string                                         `pulumi:"datacenter"`
-	Datastore     string                                         `pulumi:"datastore"`
-	Folder        *string                                        `pulumi:"folder"`
-	Host          *string                                        `pulumi:"host"`
-	Memory        *int                                           `pulumi:"memory"`
-	NamePrefix    *string                                        `pulumi:"namePrefix"`
-	Names         []string                                       `pulumi:"names"`
-	NetworkName   string                                         `pulumi:"networkName"`
-	NumCpus       *int                                           `pulumi:"numCpus"`
-	Oauth2        *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
-	Registrations map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
-	Replicas      *int                                           `pulumi:"replicas"`
-	Tags          map[string]string                              `pulumi:"tags"`
-	TemplateName  string                                         `pulumi:"templateName"`
-	TenantUrl     *string                                        `pulumi:"tenantUrl"`
-	WizardPath    *string                                        `pulumi:"wizardPath"`
+	ApiToken        *string                                        `pulumi:"apiToken"`
+	AuthMode        *string                                        `pulumi:"authMode"`
+	BearerToken     *string                                        `pulumi:"bearerToken"`
+	Cluster         *string                                        `pulumi:"cluster"`
+	Datacenter      string                                         `pulumi:"datacenter"`
+	Datastore       string                                         `pulumi:"datastore"`
+	Folder          *string                                        `pulumi:"folder"`
+	Host            *string                                        `pulumi:"host"`
+	Memory          *int                                           `pulumi:"memory"`
+	NamePrefix      *string                                        `pulumi:"namePrefix"`
+	Names           []string                                       `pulumi:"names"`
+	NetworkName     string                                         `pulumi:"networkName"`
+	NumCpus         *int                                           `pulumi:"numCpus"`
+	Oauth2          *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
+	PlacementLabels []string                                       `pulumi:"placementLabels"`
+	Registrations   map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
+	Replicas        *int                                           `pulumi:"replicas"`
+	Tags            map[string]string                              `pulumi:"tags"`
+	TemplateName    string                                         `pulumi:"templateName"`
+	TenantUrl       *string                                        `pulumi:"tenantUrl"`
+	WizardPath      *string                                        `pulumi:"wizardPath"`
 }
 
 // The set of arguments for constructing a VspherePublisher resource.
 type VspherePublisherArgs struct {
-	ApiToken      *string
-	AuthMode      *string
-	BearerToken   *string
-	Cluster       *string
-	Datacenter    string
-	Datastore     string
-	Folder        *string
-	Host          *string
-	Memory        *int
-	NamePrefix    *string
-	Names         pulumi.StringArrayInput
-	NetworkName   string
-	NumCpus       *int
-	Oauth2        provider.NetskopeOAuth2ArgsPtrInput
-	Registrations provider.PublisherRegistrationInputMapInput
-	Replicas      *int
-	Tags          pulumi.StringMapInput
-	TemplateName  string
-	TenantUrl     *string
-	WizardPath    *string
+	ApiToken        *string
+	AuthMode        *string
+	BearerToken     *string
+	Cluster         *string
+	Datacenter      string
+	Datastore       string
+	Folder          *string
+	Host            *string
+	Memory          *int
+	NamePrefix      *string
+	Names           pulumi.StringArrayInput
+	NetworkName     string
+	NumCpus         *int
+	Oauth2          provider.NetskopeOAuth2ArgsPtrInput
+	PlacementLabels pulumi.StringArrayInput
+	Registrations   provider.PublisherRegistrationInputMapInput
+	Replicas        *int
+	Tags            pulumi.StringMapInput
+	TemplateName    string
+	TenantUrl       *string
+	WizardPath      *string
 }
 
 func (VspherePublisherArgs) ElementType() reflect.Type {
@@ -200,6 +203,10 @@ func (o VspherePublisherOutput) NumCpus() pulumi.IntPtrOutput {
 
 func (o VspherePublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 	return o.ApplyT(func(v *VspherePublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o VspherePublisherOutput) PlacementLabels() pulumi.StringArrayOutput {
+	return o.ApplyT(func(v *VspherePublisher) pulumi.StringArrayOutput { return v.PlacementLabels }).(pulumi.StringArrayOutput)
 }
 
 func (o VspherePublisherOutput) PublisherNames() pulumi.StringArrayOutput {
