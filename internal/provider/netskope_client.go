@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -247,6 +248,42 @@ func (client *netskopeClient) updatePrivateApp(ctx context.Context, id int, payl
 func (client *netskopeClient) deletePrivateApp(ctx context.Context, id int) error {
 	path := fmt.Sprintf("/api/v2/steering/apps/private/%d", id)
 	return client.request(ctx, fmt.Sprintf("Delete private app %d", id), http.MethodDelete, path, nil, nil)
+}
+
+type privateAppPublisherAssignment struct {
+	PublisherID int `json:"publisher_id"`
+}
+
+type privateAppRecordWithPublishers struct {
+	AppID                       int                             `json:"app_id"`
+	ID                          int                             `json:"id"`
+	AppName                     string                          `json:"app_name"`
+	Name                        string                          `json:"name"`
+	Tags                        []privateAppTag                 `json:"tags"`
+	ServicePublisherAssignments []privateAppPublisherAssignment `json:"service_publisher_assignments"`
+}
+
+func (client *netskopeClient) listPrivateAppsWithPublishers(ctx context.Context) ([]privateAppRecordWithPublishers, error) {
+	var response struct {
+		Status string                           `json:"status"`
+		Data   []privateAppRecordWithPublishers `json:"data"`
+	}
+	if err := client.request(ctx, "List private apps", http.MethodGet, "/api/v2/steering/apps/private", nil, &response); err != nil {
+		return nil, err
+	}
+	return response.Data, nil
+}
+
+func (client *netskopeClient) replacePrivateAppPublishers(ctx context.Context, appNames []string, publisherIDs []int) error {
+	ids := make([]string, 0, len(publisherIDs))
+	for _, id := range publisherIDs {
+		ids = append(ids, strconv.Itoa(id))
+	}
+	body := map[string]any{
+		"private_app_names": appNames,
+		"publisher_ids":     ids,
+	}
+	return client.request(ctx, "Replace private app publishers", http.MethodPut, "/api/v2/steering/apps/private/publishers", body, nil)
 }
 
 func (client *netskopeClient) resolveAccessToken(ctx context.Context) (string, error) {

@@ -37,6 +37,7 @@ func New() (p.Provider, error) {
 		WithResources(
 			infer.Resource(&NetskopeRegistration{}),
 			infer.Resource(&PrivateApp{}),
+			infer.Resource(&TagPublisherAssignment{}),
 		).
 		WithComponents(
 			infer.ComponentF(NewAwsPublisher),

@@ -312,6 +312,74 @@ func TestAwsConstructIncludesPublisherPlacementLabels(t *testing.T) {
 	}
 }
 
+func TestTagPublisherAssignmentAddsAndRemovesOnlySelectedPublishers(t *testing.T) {
+	var putBodies []map[string]any
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private":
+			writeJSON(t, w, map[string]any{
+				"status": "success",
+				"data": []map[string]any{
+					{
+						"app_id":   10,
+						"app_name": "orders",
+						"tags":     []map[string]any{{"tag_name": "vpc-a"}},
+						"service_publisher_assignments": []map[string]any{
+							{"publisher_id": 99},
+						},
+					},
+					{
+						"app_id":   20,
+						"app_name": "billing",
+						"tags":     []map[string]any{{"tag_name": "vpc-b"}},
+						"service_publisher_assignments": []map[string]any{
+							{"publisher_id": 101},
+							{"publisher_id": 99},
+						},
+					},
+				},
+			})
+		case r.Method == http.MethodPut && r.URL.Path == "/api/v2/steering/apps/private/publishers":
+			var body map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				t.Fatal(err)
+			}
+			putBodies = append(putBodies, body)
+			writeJSON(t, w, map[string]any{"status": "success", "data": body})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	response, err := createTagPublisherAssignmentResource(t, property.NewMap(map[string]property.Value{
+		"tenantUrl":                property.New(server.URL),
+		"bearerToken":              property.New("api-token"),
+		"appTags":                  property.New([]property.Value{property.New("vpc-a")}),
+		"publisherPlacementLabels": property.New([]property.Value{property.New("vpc-a")}),
+		"publishers": property.New(map[string]property.Value{
+			"pub-a": property.New(map[string]property.Value{
+				"publisherId":     property.New(101.0),
+				"placementLabels": property.New([]property.Value{property.New("vpc-a")}),
+			}),
+			"pub-b": property.New(map[string]property.Value{
+				"publisherId":     property.New(202.0),
+				"placementLabels": property.New([]property.Value{property.New("vpc-b")}),
+			}),
+		}),
+	}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(putBodies) != 2 {
+		t.Fatalf("expected two publisher association updates, got %#v", putBodies)
+	}
+	matchedApps := response.Properties.Get("matchedApps").AsArray()
+	if matchedApps.Len() != 1 || matchedApps.Get(0).AsString() != "orders" {
+		t.Fatalf("expected matched app orders, got %#v", matchedApps)
+	}
+}
+
 func TestGcpConstructCreatesComputeInstanceChild(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:GcpPublisher", property.NewMap(map[string]property.Value{
 		"names":         property.New([]property.Value{property.New("pub-1")}),
@@ -1128,6 +1196,30 @@ func createPrivateAppResource(t *testing.T, inputs property.Map) (p.CreateRespon
 
 	return server.Create(p.CreateRequest{
 		Urn:        presource.URN("urn:pulumi:stack::project::netskope-publisher:index:PrivateApp::app"),
+		Properties: inputs,
+	})
+}
+
+func createTagPublisherAssignmentResource(t *testing.T, inputs property.Map) (p.CreateResponse, error) {
+	t.Helper()
+
+	provider, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server, err := integration.NewServer(
+		t.Context(),
+		Name,
+		semver.MustParse("0.2.0"),
+		integration.WithProvider(provider),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return server.Create(p.CreateRequest{
+		Urn:        presource.URN("urn:pulumi:stack::project::netskope-publisher:index:TagPublisherAssignment::assignment"),
 		Properties: inputs,
 	})
 }
