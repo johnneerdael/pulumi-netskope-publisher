@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const languages = process.argv.slice(2);
@@ -41,6 +41,8 @@ for (const language of selectedLanguages) {
   }
 
   if (language === "dotnet") {
+    normalizeDotnetProviderCase();
+
     const project = "sdk/dotnet/Pulumi.NetskopePublisher.csproj";
     let contents = readFileSync(project, "utf8");
     if (!contents.includes("<PackageId>JohninNL.Pulumi.NetskopePublisher</PackageId>")) {
@@ -178,4 +180,19 @@ pulumi plugin install language rust "0.0.10" --server github://api.github.com/an
 
 Use \`runtime: rust\` in \`Pulumi.yaml\`.
 `);
+}
+
+function normalizeDotnetProviderCase() {
+  const lowerProvider = "sdk/dotnet/provider.cs";
+  const canonicalProvider = "sdk/dotnet/Provider.cs";
+  const temporaryProvider = "sdk/dotnet/Provider.cs.tmp";
+
+  if (!existsSync(lowerProvider)) {
+    return;
+  }
+
+  rmSync(temporaryProvider, { force: true });
+  renameSync(lowerProvider, temporaryProvider);
+  rmSync(canonicalProvider, { force: true });
+  renameSync(temporaryProvider, canonicalProvider);
 }
