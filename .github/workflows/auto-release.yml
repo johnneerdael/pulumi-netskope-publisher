@@ -103,8 +103,10 @@ jobs:
 
       - name: Publish npm package
         run: |
-          if npm view "${npm_package_name}@${npm_package_version}" version >/dev/null 2>&1; then
-            echo "npm package ${npm_package_name}@${npm_package_version} already exists; skipping."
+          package_name="$(node -p "require('./package.json').name")"
+          package_version="$(node -p "require('./package.json').version")"
+          if npm view "${package_name}@${package_version}" version --registry https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "npm package ${package_name}@${package_version} already exists; skipping."
             exit 0
           fi
           npm publish --provenance --access public
