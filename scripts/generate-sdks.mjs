@@ -248,7 +248,8 @@ function removeDotnetComponentSecretOutputOptions() {
 }
 
 function removeGoPointerSecretAssertions() {
-  for (const file of listFiles("sdk/go/netskopepublisher", ".go")) {
+  const goPackageDir = existsSync("sdk/go/netskopepublisher") ? "sdk/go/netskopepublisher" : "sdk/go/netskope-publisher";
+  for (const file of listFiles(goPackageDir, ".go")) {
     const contents = readFileSync(file, "utf8");
     const updated = contents.replace(
       /\n\tif args\.(ApiToken|BearerToken|InstallUserPassword) != nil \{\n\t\targs\.\1 = pulumi\.ToSecret\(args\.\1\)\.\(\*string\)\n\t\}/g,

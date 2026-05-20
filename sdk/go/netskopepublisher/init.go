@@ -27,8 +27,14 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &AwsPublisher{}
 	case "netskope-publisher:index:AzurePublisher":
 		r = &AzurePublisher{}
+	case "netskope-publisher:index:DigitaloceanPublisher":
+		r = &DigitaloceanPublisher{}
+	case "netskope-publisher:index:EquinixPublisher":
+		r = &EquinixPublisher{}
 	case "netskope-publisher:index:EsxiPublisher":
 		r = &EsxiPublisher{}
+	case "netskope-publisher:index:ExoscalePublisher":
+		r = &ExoscalePublisher{}
 	case "netskope-publisher:index:GcpPublisher":
 		r = &GcpPublisher{}
 	case "netskope-publisher:index:HcloudPublisher":
@@ -45,14 +51,28 @@ func (m *module) Construct(ctx *pulumi.Context, name, typ, urn string) (r pulumi
 		r = &OciPublisher{}
 	case "netskope-publisher:index:OpenstackPublisher":
 		r = &OpenstackPublisher{}
+	case "netskope-publisher:index:OpentelekomcloudPublisher":
+		r = &OpentelekomcloudPublisher{}
+	case "netskope-publisher:index:OutscalePublisher":
+		r = &OutscalePublisher{}
 	case "netskope-publisher:index:OvhPublisher":
 		r = &OvhPublisher{}
 	case "netskope-publisher:index:ProxmoxvePublisher":
 		r = &ProxmoxvePublisher{}
 	case "netskope-publisher:index:ScalewayPublisher":
 		r = &ScalewayPublisher{}
+	case "netskope-publisher:index:StackitPublisher":
+		r = &StackitPublisher{}
+	case "netskope-publisher:index:TencentcloudPublisher":
+		r = &TencentcloudPublisher{}
+	case "netskope-publisher:index:UpcloudPublisher":
+		r = &UpcloudPublisher{}
 	case "netskope-publisher:index:VspherePublisher":
 		r = &VspherePublisher{}
+	case "netskope-publisher:index:VultrPublisher":
+		r = &VultrPublisher{}
+	case "netskope-publisher:index:YandexPublisher":
+		r = &YandexPublisher{}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", typ)
 	}

@@ -9,7 +9,10 @@ import typing
 from .alicloud_publisher import *
 from .aws_publisher import *
 from .azure_publisher import *
+from .digitalocean_publisher import *
+from .equinix_publisher import *
 from .esxi_publisher import *
+from .exoscale_publisher import *
 from .gcp_publisher import *
 from .hcloud_publisher import *
 from .hyperv_publisher import *
@@ -18,11 +21,18 @@ from .netskope_registration import *
 from .nutanix_publisher import *
 from .oci_publisher import *
 from .openstack_publisher import *
+from .opentelekomcloud_publisher import *
+from .outscale_publisher import *
 from .ovh_publisher import *
 from .provider_ import *
 from .proxmoxve_publisher import *
 from .scaleway_publisher import *
+from .stackit_publisher import *
+from .tencentcloud_publisher import *
+from .upcloud_publisher import *
 from .vsphere_publisher import *
+from .vultr_publisher import *
+from .yandex_publisher import *
 
 # Make subpackages available:
 if typing.TYPE_CHECKING:
@@ -42,7 +52,10 @@ _utilities.register(
    "netskope-publisher:index:AlicloudPublisher": "AlicloudPublisher",
    "netskope-publisher:index:AwsPublisher": "AwsPublisher",
    "netskope-publisher:index:AzurePublisher": "AzurePublisher",
+   "netskope-publisher:index:DigitaloceanPublisher": "DigitaloceanPublisher",
+   "netskope-publisher:index:EquinixPublisher": "EquinixPublisher",
    "netskope-publisher:index:EsxiPublisher": "EsxiPublisher",
+   "netskope-publisher:index:ExoscalePublisher": "ExoscalePublisher",
    "netskope-publisher:index:GcpPublisher": "GcpPublisher",
    "netskope-publisher:index:HcloudPublisher": "HcloudPublisher",
    "netskope-publisher:index:HypervPublisher": "HypervPublisher",
@@ -51,10 +64,17 @@ _utilities.register(
    "netskope-publisher:index:NutanixPublisher": "NutanixPublisher",
    "netskope-publisher:index:OciPublisher": "OciPublisher",
    "netskope-publisher:index:OpenstackPublisher": "OpenstackPublisher",
+   "netskope-publisher:index:OpentelekomcloudPublisher": "OpentelekomcloudPublisher",
+   "netskope-publisher:index:OutscalePublisher": "OutscalePublisher",
    "netskope-publisher:index:OvhPublisher": "OvhPublisher",
    "netskope-publisher:index:ProxmoxvePublisher": "ProxmoxvePublisher",
    "netskope-publisher:index:ScalewayPublisher": "ScalewayPublisher",
-   "netskope-publisher:index:VspherePublisher": "VspherePublisher"
+   "netskope-publisher:index:StackitPublisher": "StackitPublisher",
+   "netskope-publisher:index:TencentcloudPublisher": "TencentcloudPublisher",
+   "netskope-publisher:index:UpcloudPublisher": "UpcloudPublisher",
+   "netskope-publisher:index:VspherePublisher": "VspherePublisher",
+   "netskope-publisher:index:VultrPublisher": "VultrPublisher",
+   "netskope-publisher:index:YandexPublisher": "YandexPublisher"
   }
  }
 ]

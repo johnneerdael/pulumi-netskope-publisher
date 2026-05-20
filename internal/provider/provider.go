@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/blang/semver"
 	p "github.com/pulumi/pulumi-go-provider"
@@ -90,5 +91,44 @@ func Schema(ctx context.Context, version int) (string, error) {
 		return "", err
 	}
 
-	return response.Schema, nil
+	return normalizeSchema(response.Schema)
+}
+
+func normalizeSchema(raw string) (string, error) {
+	var schema map[string]interface{}
+	if err := json.Unmarshal([]byte(raw), &schema); err != nil {
+		return "", err
+	}
+	schema["language"] = map[string]interface{}{
+		"nodejs": map[string]interface{}{
+			"packageName":          "@johninnl/pulumi-netskope-publisher",
+			"respectSchemaVersion": true,
+		},
+		"python": map[string]interface{}{
+			"packageName":          "pulumi_netskope_publisher",
+			"pythonRequires":       ">=3.9",
+			"requires":             map[string]interface{}{"pulumi": ">=3.0.0,<4.0.0"},
+			"respectSchemaVersion": true,
+			"pyproject":            map[string]interface{}{"enabled": true},
+		},
+		"csharp": map[string]interface{}{
+			"packageName":          "JohninNL.Pulumi.NetskopePublisher",
+			"packageReferences":    map[string]interface{}{"Pulumi": "3.*"},
+			"respectSchemaVersion": true,
+		},
+		"go": map[string]interface{}{
+			"importBasePath":       "github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher",
+			"pulumiSDKVersion":     3,
+			"respectSchemaVersion": true,
+		},
+		"java": map[string]interface{}{
+			"basePackage": "com.pulumi",
+			"buildFiles":  "gradle",
+		},
+	}
+	normalized, err := json.Marshal(schema)
+	if err != nil {
+		return "", err
+	}
+	return string(normalized), nil
 }
