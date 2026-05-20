@@ -1,8 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
-import { RawResource } from "./rawResource";
+import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
+import { providerCatalog } from "./providerCatalog";
 import { PublisherOutput, UpcloudPublisherArgs } from "./types";
-import { plainUserData } from "./userDataAdapters";
-import { createVmPublishers } from "./vmPublisherCore";
 
 const ubuntu2204Template = "01000000-0000-4000-8000-000030220200";
 
@@ -13,20 +12,23 @@ export class UpcloudPublisher extends pulumi.ComponentResource {
   constructor(name: string, args: UpcloudPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:UpcloudPublisher", name, {}, opts);
 
-    const outputs = createVmPublishers({ parent: this, componentName: name, args, forceBootstrap: true }, ({ publisherName, userData }) => {
-      const server = new RawResource(`${name}-${publisherName}`, "upcloud:index/server:Server", {
-        hostname: args.hostname ?? publisherName,
-        title: publisherName,
-        zone: args.zone,
-        plan: args.plan ?? "2xCPU-4GB",
-        template: args.template ?? ubuntu2204Template,
-        networkInterfaces: args.networkInterfaces,
+    const provider = providerCatalog.UpcloudPublisher;
+    const outputs = createCatalogRawVmPublishers({
+      parent: this,
+      componentName: name,
+      provider,
+      args,
+      mapInputs: (input, currentArgs) => ({
+        hostname: currentArgs.hostname ?? input.publisherName,
+        title: input.publisherName,
+        zone: currentArgs.zone,
+        plan: currentArgs.plan ?? "2xCPU-4GB",
+        template: currentArgs.template ?? ubuntu2204Template,
+        networkInterfaces: currentArgs.networkInterfaces,
         metadata: true,
-        userData: plainUserData(userData),
-        labels: args.tags,
-      }, { parent: this });
-
-      return { vmId: server.id, privateIp: pulumi.output(""), publicIp: pulumi.output("") };
+        ...userDataProperty(provider, input),
+        labels: currentArgs.tags,
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

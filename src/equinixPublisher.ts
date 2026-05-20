@@ -1,8 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
-import { RawResource } from "./rawResource";
+import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
+import { providerCatalog } from "./providerCatalog";
 import { EquinixPublisherArgs, PublisherOutput } from "./types";
-import { plainUserData } from "./userDataAdapters";
-import { createVmPublishers } from "./vmPublisherCore";
 
 export class EquinixPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -11,21 +10,24 @@ export class EquinixPublisher extends pulumi.ComponentResource {
   constructor(name: string, args: EquinixPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:EquinixPublisher", name, {}, opts);
 
-    const outputs = createVmPublishers({ parent: this, componentName: name, args, forceBootstrap: true }, ({ publisherName, userData }) => {
-      const device = new RawResource(`${name}-${publisherName}`, "equinix:metal/device:Device", {
-        hostname: publisherName,
-        projectId: args.projectId,
-        metro: args.metro,
-        plan: args.plan,
-        operatingSystem: args.operatingSystem ?? "ubuntu_22_04",
-        billingCycle: args.billingCycle ?? "hourly",
-        projectSshKeyIds: args.projectSshKeyIds,
-        userSshKeyIds: args.userSshKeyIds,
-        userData: plainUserData(userData),
-        tags: args.tags === undefined ? undefined : pulumi.output(args.tags).apply((tags) => Object.entries(tags).map(([key, value]) => `${key}:${value}`)),
-      }, { parent: this });
-
-      return { vmId: device.id, privateIp: pulumi.output(""), publicIp: pulumi.output("") };
+    const provider = providerCatalog.EquinixPublisher;
+    const outputs = createCatalogRawVmPublishers({
+      parent: this,
+      componentName: name,
+      provider,
+      args,
+      mapInputs: (input, currentArgs) => ({
+        hostname: input.publisherName,
+        projectId: currentArgs.projectId,
+        metro: currentArgs.metro,
+        plan: currentArgs.plan,
+        operatingSystem: currentArgs.operatingSystem ?? "ubuntu_22_04",
+        billingCycle: currentArgs.billingCycle ?? "hourly",
+        projectSshKeyIds: currentArgs.projectSshKeyIds,
+        userSshKeyIds: currentArgs.userSshKeyIds,
+        ...userDataProperty(provider, input),
+        tags: currentArgs.tags === undefined ? undefined : pulumi.output(currentArgs.tags).apply((tags) => Object.entries(tags).map(([key, value]) => `${key}:${value}`)),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

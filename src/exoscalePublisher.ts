@@ -1,8 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
-import { RawResource } from "./rawResource";
+import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
+import { providerCatalog } from "./providerCatalog";
 import { ExoscalePublisherArgs, PublisherOutput } from "./types";
-import { plainUserData } from "./userDataAdapters";
-import { createVmPublishers } from "./vmPublisherCore";
 
 export class ExoscalePublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -11,21 +10,24 @@ export class ExoscalePublisher extends pulumi.ComponentResource {
   constructor(name: string, args: ExoscalePublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:ExoscalePublisher", name, {}, opts);
 
-    const outputs = createVmPublishers({ parent: this, componentName: name, args, forceBootstrap: true }, ({ publisherName, userData }) => {
-      const instance = new RawResource(`${name}-${publisherName}`, "exoscale:index/computeInstance:ComputeInstance", {
-        name: publisherName,
-        zone: args.zone,
-        type: args.type,
-        templateId: args.templateId,
-        diskSize: args.diskSize,
-        sshKeys: args.sshKeys,
-        securityGroupIds: args.securityGroupIds,
-        networkInterfaces: args.networkInterfaces,
-        userData: plainUserData(userData),
-        labels: args.tags,
-      }, { parent: this });
-
-      return { vmId: instance.id, privateIp: pulumi.output(""), publicIp: pulumi.output("") };
+    const provider = providerCatalog.ExoscalePublisher;
+    const outputs = createCatalogRawVmPublishers({
+      parent: this,
+      componentName: name,
+      provider,
+      args,
+      mapInputs: (input, currentArgs) => ({
+        name: input.publisherName,
+        zone: currentArgs.zone,
+        type: currentArgs.type,
+        templateId: currentArgs.templateId,
+        diskSize: currentArgs.diskSize,
+        sshKeys: currentArgs.sshKeys,
+        securityGroupIds: currentArgs.securityGroupIds,
+        networkInterfaces: currentArgs.networkInterfaces,
+        ...userDataProperty(provider, input),
+        labels: currentArgs.tags,
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

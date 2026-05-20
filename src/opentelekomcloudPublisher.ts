@@ -1,8 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
-import { RawResource } from "./rawResource";
+import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
+import { providerCatalog } from "./providerCatalog";
 import { OpentelekomcloudPublisherArgs, PublisherOutput } from "./types";
-import { plainUserData } from "./userDataAdapters";
-import { createVmPublishers } from "./vmPublisherCore";
 
 export class OpentelekomcloudPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -11,21 +10,24 @@ export class OpentelekomcloudPublisher extends pulumi.ComponentResource {
   constructor(name: string, args: OpentelekomcloudPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:OpentelekomcloudPublisher", name, {}, opts);
 
-    const outputs = createVmPublishers({ parent: this, componentName: name, args, forceBootstrap: true }, ({ publisherName, userData }) => {
-      const instance = new RawResource(`${name}-${publisherName}`, "opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2", {
-        name: publisherName,
-        imageName: args.imageName ?? "Ubuntu 22.04",
-        imageId: args.imageId,
-        flavorName: args.flavorName ?? "s3.medium.2",
-        flavorId: args.flavorId,
-        networks: args.networks,
-        keyPair: args.keyPair,
-        availabilityZone: args.availabilityZone,
-        securityGroups: args.securityGroups,
-        userData: plainUserData(userData),
-      }, { parent: this });
-
-      return { vmId: instance.id, privateIp: pulumi.output(""), publicIp: pulumi.output("") };
+    const provider = providerCatalog.OpentelekomcloudPublisher;
+    const outputs = createCatalogRawVmPublishers({
+      parent: this,
+      componentName: name,
+      provider,
+      args,
+      mapInputs: (input, currentArgs) => ({
+        name: input.publisherName,
+        imageName: currentArgs.imageName ?? "Ubuntu 22.04",
+        imageId: currentArgs.imageId,
+        flavorName: currentArgs.flavorName ?? "s3.medium.2",
+        flavorId: currentArgs.flavorId,
+        networks: currentArgs.networks,
+        keyPair: currentArgs.keyPair,
+        availabilityZone: currentArgs.availabilityZone,
+        securityGroups: currentArgs.securityGroups,
+        ...userDataProperty(provider, input),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

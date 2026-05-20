@@ -34,6 +34,7 @@ test("DigitaloceanPublisher creates Ubuntu droplet with plain userData", async (
   const publishers = await outputValue<Record<string, PublisherOutput>>(component.publishers);
   const droplet = createdResources["digitalocean:index/droplet:Droplet"]["digitalocean-pub-1"];
 
+  assert.equal(droplet.name, "pub-1");
   assert.equal(droplet.image, "ubuntu-22-04-x64");
   assert.equal(droplet.size, "s-2vcpu-4gb");
   assert.match(await inputValue<string>(droplet.userData), /bootstrap\.sh/);

@@ -1,8 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
-import { RawResource } from "./rawResource";
+import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
+import { providerCatalog } from "./providerCatalog";
 import { DigitaloceanPublisherArgs, PublisherOutput } from "./types";
-import { plainUserData } from "./userDataAdapters";
-import { createVmPublishers } from "./vmPublisherCore";
 
 export class DigitaloceanPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -11,26 +10,24 @@ export class DigitaloceanPublisher extends pulumi.ComponentResource {
   constructor(name: string, args: DigitaloceanPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:DigitaloceanPublisher", name, {}, opts);
 
-    const outputs = createVmPublishers({
+    const provider = providerCatalog.DigitaloceanPublisher;
+    const outputs = createCatalogRawVmPublishers({
       parent: this,
       componentName: name,
+      provider,
       args,
-      forceBootstrap: true,
-    }, ({ publisherName, userData }) => {
-      const droplet = new RawResource(`${name}-${publisherName}`, "digitalocean:index/droplet:Droplet", {
-        name: publisherName,
-        region: args.region,
-        size: args.size ?? "s-2vcpu-4gb",
-        image: args.image ?? "ubuntu-22-04-x64",
-        sshKeys: args.sshKeys,
-        vpcUuid: args.vpcUuid,
-        monitoring: args.monitoring,
-        ipv6: args.ipv6,
-        userData: plainUserData(userData),
-        tags: args.tags === undefined ? undefined : pulumi.output(args.tags).apply((tags) => Object.entries(tags).map(([key, value]) => `${key}:${value}`)),
-      }, { parent: this });
-
-      return { vmId: droplet.id, privateIp: pulumi.output(""), publicIp: pulumi.output("") };
+      mapInputs: (input, currentArgs) => ({
+        name: input.publisherName,
+        region: currentArgs.region,
+        size: currentArgs.size ?? "s-2vcpu-4gb",
+        image: currentArgs.image ?? "ubuntu-22-04-x64",
+        sshKeys: currentArgs.sshKeys,
+        vpcUuid: currentArgs.vpcUuid,
+        monitoring: currentArgs.monitoring,
+        ipv6: currentArgs.ipv6,
+        ...userDataProperty(provider, input),
+        tags: currentArgs.tags === undefined ? undefined : pulumi.output(currentArgs.tags).apply((tags) => Object.entries(tags).map(([key, value]) => `${key}:${value}`)),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

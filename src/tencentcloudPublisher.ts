@@ -1,8 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
-import { RawResource } from "./rawResource";
+import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
+import { providerCatalog } from "./providerCatalog";
 import { PublisherOutput, TencentcloudPublisherArgs } from "./types";
-import { plainUserData } from "./userDataAdapters";
-import { createVmPublishers } from "./vmPublisherCore";
 
 export class TencentcloudPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -11,25 +10,28 @@ export class TencentcloudPublisher extends pulumi.ComponentResource {
   constructor(name: string, args: TencentcloudPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:TencentcloudPublisher", name, {}, opts);
 
-    const outputs = createVmPublishers({ parent: this, componentName: name, args, forceBootstrap: true }, ({ publisherName, userData }) => {
-      const instance = new RawResource(`${name}-${publisherName}`, "tencentcloud:index/instance:Instance", {
-        instanceName: publisherName,
-        hostname: publisherName,
-        availabilityZone: args.availabilityZone,
-        imageId: args.imageId,
-        instanceType: args.instanceType ?? "S5.MEDIUM4",
-        subnetId: args.subnetId,
-        vpcId: args.vpcId,
-        keyName: args.keyName,
-        securityGroups: args.securityGroups,
-        systemDiskType: args.systemDiskType,
-        systemDiskSize: args.systemDiskSize,
-        userDataRaw: plainUserData(userData),
+    const provider = providerCatalog.TencentcloudPublisher;
+    const outputs = createCatalogRawVmPublishers({
+      parent: this,
+      componentName: name,
+      provider,
+      args,
+      mapInputs: (input, currentArgs) => ({
+        instanceName: input.publisherName,
+        hostname: input.publisherName,
+        availabilityZone: currentArgs.availabilityZone,
+        imageId: currentArgs.imageId,
+        instanceType: currentArgs.instanceType ?? "S5.MEDIUM4",
+        subnetId: currentArgs.subnetId,
+        vpcId: currentArgs.vpcId,
+        keyName: currentArgs.keyName,
+        securityGroups: currentArgs.securityGroups,
+        systemDiskType: currentArgs.systemDiskType,
+        systemDiskSize: currentArgs.systemDiskSize,
+        ...userDataProperty(provider, input),
         userDataReplaceOnChange: true,
-        tags: args.tags,
-      }, { parent: this });
-
-      return { vmId: instance.id, privateIp: pulumi.output(""), publicIp: pulumi.output("") };
+        tags: currentArgs.tags,
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

@@ -1,8 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
-import { RawResource } from "./rawResource";
+import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
+import { providerCatalog } from "./providerCatalog";
 import { PublisherOutput, VultrPublisherArgs } from "./types";
-import { plainUserData } from "./userDataAdapters";
-import { createVmPublishers } from "./vmPublisherCore";
 
 export class VultrPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -11,23 +10,26 @@ export class VultrPublisher extends pulumi.ComponentResource {
   constructor(name: string, args: VultrPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:VultrPublisher", name, {}, opts);
 
-    const outputs = createVmPublishers({ parent: this, componentName: name, args, forceBootstrap: true }, ({ publisherName, userData }) => {
-      const instance = new RawResource(`${name}-${publisherName}`, "vultr:index/instance:Instance", {
-        label: publisherName,
-        hostname: publisherName,
-        region: args.region,
-        plan: args.plan,
-        osId: args.osId,
-        imageId: args.imageId,
-        sshKeyIds: args.sshKeyIds,
-        vpc2Ids: args.vpc2Ids,
-        enableIpv6: args.enableIpv6,
-        firewallGroupId: args.firewallGroupId,
-        userData: plainUserData(userData),
-        tags: args.tags === undefined ? undefined : pulumi.output(args.tags).apply((tags) => Object.entries(tags).map(([key, value]) => `${key}:${value}`)),
-      }, { parent: this });
-
-      return { vmId: instance.id, privateIp: pulumi.output(""), publicIp: pulumi.output("") };
+    const provider = providerCatalog.VultrPublisher;
+    const outputs = createCatalogRawVmPublishers({
+      parent: this,
+      componentName: name,
+      provider,
+      args,
+      mapInputs: (input, currentArgs) => ({
+        label: input.publisherName,
+        hostname: input.publisherName,
+        region: currentArgs.region,
+        plan: currentArgs.plan,
+        osId: currentArgs.osId,
+        imageId: currentArgs.imageId,
+        sshKeyIds: currentArgs.sshKeyIds,
+        vpc2Ids: currentArgs.vpc2Ids,
+        enableIpv6: currentArgs.enableIpv6,
+        firewallGroupId: currentArgs.firewallGroupId,
+        ...userDataProperty(provider, input),
+        tags: currentArgs.tags === undefined ? undefined : pulumi.output(currentArgs.tags).apply((tags) => Object.entries(tags).map(([key, value]) => `${key}:${value}`)),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

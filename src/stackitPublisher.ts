@@ -1,8 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
-import { RawResource } from "./rawResource";
+import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
+import { providerCatalog } from "./providerCatalog";
 import { PublisherOutput, StackitPublisherArgs } from "./types";
-import { plainUserData } from "./userDataAdapters";
-import { createVmPublishers } from "./vmPublisherCore";
 
 export class StackitPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -11,20 +10,23 @@ export class StackitPublisher extends pulumi.ComponentResource {
   constructor(name: string, args: StackitPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:StackitPublisher", name, {}, opts);
 
-    const outputs = createVmPublishers({ parent: this, componentName: name, args, forceBootstrap: true }, ({ publisherName, userData }) => {
-      const server = new RawResource(`${name}-${publisherName}`, "stackit:index/server:Server", {
-        name: publisherName,
-        projectId: args.projectId,
-        machineType: args.machineType,
-        imageId: args.imageId,
-        availabilityZone: args.availabilityZone,
-        keypairName: args.keypairName,
-        networkInterfaces: args.networkInterfaces,
-        userData: plainUserData(userData),
-        labels: args.tags,
-      }, { parent: this });
-
-      return { vmId: server.id, privateIp: pulumi.output(""), publicIp: pulumi.output("") };
+    const provider = providerCatalog.StackitPublisher;
+    const outputs = createCatalogRawVmPublishers({
+      parent: this,
+      componentName: name,
+      provider,
+      args,
+      mapInputs: (input, currentArgs) => ({
+        name: input.publisherName,
+        projectId: currentArgs.projectId,
+        machineType: currentArgs.machineType,
+        imageId: currentArgs.imageId,
+        availabilityZone: currentArgs.availabilityZone,
+        keypairName: currentArgs.keypairName,
+        networkInterfaces: currentArgs.networkInterfaces,
+        ...userDataProperty(provider, input),
+        labels: currentArgs.tags,
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;
