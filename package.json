@@ -27,6 +27,7 @@
     "go.sum",
     "scripts/build-plugin-archives.mjs",
     "scripts/bump-release-version.mjs",
+    "scripts/check-provider-catalog.mjs",
     "scripts/check-registry-readiness.mjs",
     "scripts/generate-sdks.mjs",
     "scripts/package-sdks.mjs",
@@ -43,9 +44,10 @@
     "plugin:dist": "node scripts/build-plugin-archives.mjs",
     "sdk:gen": "node scripts/generate-sdks.mjs",
     "sdk:pack": "node scripts/package-sdks.mjs",
+    "catalog:check": "node scripts/check-provider-catalog.mjs",
     "registry:check": "node scripts/check-registry-readiness.mjs",
     "release:bump": "node scripts/bump-release-version.mjs",
-    "release:check": "npm ci && npm run typecheck && npm test && npm run go:test && npm run sdk:gen && npm run registry:check && npm run plugin:dist && npm run sdk:pack"
+    "release:check": "npm ci && npm run typecheck && npm test && npm run go:test && npm run sdk:gen && npm run registry:check && npm run catalog:check && npm run plugin:dist && npm run sdk:pack"
   },
   "keywords": [
     "pulumi",

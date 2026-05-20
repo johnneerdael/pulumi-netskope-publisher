@@ -247,6 +247,11 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
+const catalogCheck = spawnSync("node", ["scripts/check-provider-catalog.mjs"], { stdio: "inherit" });
+if (catalogCheck.status !== 0) {
+  process.exit(catalogCheck.status ?? 1);
+}
+
 for (const warning of warnings) {
   console.warn(`Warning: ${warning}`);
 }
