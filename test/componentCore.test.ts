@@ -69,6 +69,7 @@ test("createPublisherOutput preserves provider IDs and token", async () => {
     vmId: "vm-1",
     privateIp: "10.0.0.10",
     publicIp: undefined,
+    placementLabels: [],
   });
 });
 
