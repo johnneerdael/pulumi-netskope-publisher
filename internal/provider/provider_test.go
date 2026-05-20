@@ -294,6 +294,24 @@ func TestAwsConstructCreatesEc2InstanceChild(t *testing.T) {
 	}
 }
 
+func TestAwsConstructIncludesPublisherPlacementLabels(t *testing.T) {
+	response := constructPublisherResource(t, "netskope-publisher:index:AwsPublisher", property.NewMap(map[string]property.Value{
+		"names":            property.New([]property.Value{property.New("pub-1")}),
+		"registrations":    registrationMap("pub-1"),
+		"subnetId":         property.New("subnet-123"),
+		"securityGroupIds": property.New([]property.Value{property.New("sg-123")}),
+		"amiId":            property.New("ami-123"),
+		"placementLabels":  property.New([]property.Value{property.New("vpc-a")}),
+	}))
+
+	publishers := response.State.Get("publishers").AsMap()
+	pub := publishers.Get("pub-1").AsMap()
+	labels := pub.Get("placementLabels").AsArray()
+	if labels.Len() != 1 || labels.Get(0).AsString() != "vpc-a" {
+		t.Fatalf("expected placementLabels [vpc-a], got %#v", labels)
+	}
+}
+
 func TestGcpConstructCreatesComputeInstanceChild(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:GcpPublisher", property.NewMap(map[string]property.Value{
 		"names":         property.New([]property.Value{property.New("pub-1")}),
@@ -962,6 +980,45 @@ func constructAndCollectTypes(t *testing.T, token string, inputs property.Map) [
 		createdTypes = append(createdTypes, resource.Type)
 	}
 	return createdTypes
+}
+
+func constructPublisherResource(t *testing.T, token string, inputs property.Map) p.ConstructResponse {
+	t.Helper()
+
+	provider, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server, err := integration.NewServer(
+		t.Context(),
+		Name,
+		semver.MustParse("0.2.0"),
+		integration.WithProvider(provider),
+		integration.WithMocks(&integration.MockResourceMonitor{
+			NewResourceF: func(args integration.MockResourceArgs) (string, property.Map, error) {
+				if string(args.TypeToken) == "netskope-publisher:index:NetskopeRegistration" {
+					return args.Name + "-id", property.NewMap(map[string]property.Value{
+						"registrations": registrationMap("pub-1"),
+					}), nil
+				}
+				return args.Name + "-id", args.Inputs, nil
+			},
+		}),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response, err := server.Construct(p.ConstructRequest{
+		Urn:    presource.URN("urn:pulumi:stack::project::" + token + "::publisher"),
+		Inputs: inputs,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return response
 }
 
 func constructAndCollectResources(t *testing.T, token string, inputs property.Map) []capturedResource {

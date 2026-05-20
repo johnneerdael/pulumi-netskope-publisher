@@ -3,20 +3,21 @@ package provider
 import "github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 
 type CommonPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
-	Bootstrap     *bool                                 `pulumi:"bootstrap,optional"`
-	BootstrapURL  *string                               `pulumi:"bootstrapUrl,optional"`
-	Nonat         *bool                                 `pulumi:"nonat,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	Bootstrap       *bool                                 `pulumi:"bootstrap,optional"`
+	BootstrapURL    *string                               `pulumi:"bootstrapUrl,optional"`
+	Nonat           *bool                                 `pulumi:"nonat,optional"`
 
 	InstallUser                  *string                `pulumi:"installUser,optional"`
 	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
@@ -40,11 +41,12 @@ type PublisherRegistrationInput struct {
 }
 
 type PublisherOutput struct {
-	PublisherID       pulumi.IntOutput    `pulumi:"publisherId"`
-	RegistrationToken pulumi.StringOutput `pulumi:"registrationToken" provider:"secret"`
-	VMID              pulumi.StringOutput `pulumi:"vmId"`
-	PrivateIP         pulumi.StringOutput `pulumi:"privateIp"`
-	PublicIP          pulumi.StringOutput `pulumi:"publicIp"`
+	PublisherID       pulumi.IntOutput         `pulumi:"publisherId"`
+	RegistrationToken pulumi.StringOutput      `pulumi:"registrationToken" provider:"secret"`
+	VMID              pulumi.StringOutput      `pulumi:"vmId"`
+	PrivateIP         pulumi.StringOutput      `pulumi:"privateIp"`
+	PublicIP          pulumi.StringOutput      `pulumi:"publicIp"`
+	PlacementLabels   pulumi.StringArrayOutput `pulumi:"placementLabels"`
 }
 
 type PublisherComponent struct {

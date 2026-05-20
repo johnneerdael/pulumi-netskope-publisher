@@ -20,17 +20,18 @@ import (
 )
 
 type AwsPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	SubnetID                     string                 `pulumi:"subnetId"`
 	SecurityGroupIDs             []string               `pulumi:"securityGroupIds"`
@@ -130,7 +131,7 @@ func NewAwsPublisher(ctx *pulumi.Context, name string, args AwsPublisherArgs, op
 			return nil, err
 		}
 
-		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), instance.PrivateIp, instance.PublicIp)
+		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), instance.PrivateIp, instance.PublicIp, args.PlacementLabels)
 	}
 
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
@@ -142,17 +143,18 @@ func NewAwsPublisher(ctx *pulumi.Context, name string, args AwsPublisherArgs, op
 }
 
 type AzurePublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	ResourceGroupName            string                 `pulumi:"resourceGroupName"`
 	Location                     string                 `pulumi:"location"`
@@ -297,7 +299,7 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 		if publicIP != nil {
 			publicIPOutput = publicIP.IpAddress.Elem()
 		}
-		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), publicIPOutput)
+		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), publicIPOutput, args.PlacementLabels)
 	}
 
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
@@ -309,17 +311,18 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 }
 
 type GcpPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Project                      string                 `pulumi:"project"`
 	Zone                         string                 `pulumi:"zone"`
@@ -407,7 +410,7 @@ func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, op
 			return nil, err
 		}
 
-		outputs[publisherName] = publisherOutput(registration, instance.InstanceId, pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput())
+		outputs[publisherName] = publisherOutput(registration, instance.InstanceId, pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
 	}
 
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
@@ -419,17 +422,18 @@ func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, op
 }
 
 type KubernetesPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Namespace       *string                `pulumi:"namespace,optional"`
 	EnrollmentMode  *string                `pulumi:"enrollmentMode,optional"`
@@ -636,17 +640,18 @@ func kubernetesAPIAuth(ctx *pulumi.Context, component pulumi.Resource, name stri
 }
 
 type VspherePublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Datacenter   string  `pulumi:"datacenter"`
 	Cluster      *string `pulumi:"cluster,optional"`
@@ -736,7 +741,7 @@ func NewVspherePublisher(ctx *pulumi.Context, name string, args VspherePublisher
 			return nil, err
 		}
 
-		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), vm.DefaultIpAddress, pulumi.String("").ToStringOutput())
+		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), vm.DefaultIpAddress, pulumi.String("").ToStringOutput(), args.PlacementLabels)
 	}
 
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
@@ -748,17 +753,18 @@ func NewVspherePublisher(ctx *pulumi.Context, name string, args VspherePublisher
 }
 
 type HypervPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	SwitchName               string            `pulumi:"switchName"`
 	HardDrives               []HypervHardDrive `pulumi:"hardDrives"`
@@ -793,17 +799,18 @@ func NewHypervPublisher(ctx *pulumi.Context, name string, args HypervPublisherAr
 }
 
 type EsxiPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -832,17 +839,18 @@ type EsxiPublisher struct {
 func (*EsxiPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "EsxiPublisher") }
 
 type HcloudPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -873,17 +881,18 @@ type HcloudPublisher struct {
 func (*HcloudPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "HcloudPublisher") }
 
 type NutanixPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -912,17 +921,18 @@ type NutanixPublisher struct {
 func (*NutanixPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "NutanixPublisher") }
 
 type OpenstackPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -953,17 +963,18 @@ type OpenstackPublisher struct {
 func (*OpenstackPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "OpenstackPublisher") }
 
 type OvhPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -992,17 +1003,18 @@ type OvhPublisher struct {
 func (*OvhPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "OvhPublisher") }
 
 type ScalewayPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1030,17 +1042,18 @@ type ScalewayPublisher struct {
 func (*ScalewayPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "ScalewayPublisher") }
 
 type OciPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1070,17 +1083,18 @@ type OciPublisher struct {
 func (*OciPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "OciPublisher") }
 
 type AlicloudPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1109,17 +1123,18 @@ type AlicloudPublisher struct {
 func (*AlicloudPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "AlicloudPublisher") }
 
 type ProxmoxvePublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1160,17 +1175,18 @@ type ProxmoxvePublisher struct {
 func (*ProxmoxvePublisher) Annotate(a infer.Annotator) { a.SetToken("index", "ProxmoxvePublisher") }
 
 type DigitaloceanPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1202,17 +1218,18 @@ func (*DigitaloceanPublisher) Annotate(a infer.Annotator) {
 }
 
 type VultrPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1243,17 +1260,18 @@ type VultrPublisher struct {
 func (*VultrPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "VultrPublisher") }
 
 type ExoscalePublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                    `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                  `pulumi:"bootstrapUrl,optional"`
@@ -1283,17 +1301,18 @@ type ExoscalePublisher struct {
 func (*ExoscalePublisher) Annotate(a infer.Annotator) { a.SetToken("index", "ExoscalePublisher") }
 
 type UpcloudPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                    `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                  `pulumi:"bootstrapUrl,optional"`
@@ -1321,17 +1340,18 @@ type UpcloudPublisher struct {
 func (*UpcloudPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "UpcloudPublisher") }
 
 type StackitPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                    `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                  `pulumi:"bootstrapUrl,optional"`
@@ -1360,17 +1380,18 @@ type StackitPublisher struct {
 func (*StackitPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "StackitPublisher") }
 
 type EquinixPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1400,17 +1421,18 @@ type EquinixPublisher struct {
 func (*EquinixPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "EquinixPublisher") }
 
 type OutscalePublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1439,17 +1461,18 @@ type OutscalePublisher struct {
 func (*OutscalePublisher) Annotate(a infer.Annotator) { a.SetToken("index", "OutscalePublisher") }
 
 type OpentelekomcloudPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                    `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                  `pulumi:"bootstrapUrl,optional"`
@@ -1482,17 +1505,18 @@ func (*OpentelekomcloudPublisher) Annotate(a infer.Annotator) {
 }
 
 type TencentcloudPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1526,17 +1550,18 @@ func (*TencentcloudPublisher) Annotate(a infer.Annotator) {
 }
 
 type YandexPublisherArgs struct {
-	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
-	Names         []string                              `pulumi:"names,optional"`
-	Replicas      *int                                  `pulumi:"replicas,optional"`
-	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
-	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode      *string                               `pulumi:"authMode,optional"`
-	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
-	WizardPath    *string                               `pulumi:"wizardPath,optional"`
-	Tags          map[string]string                     `pulumi:"tags,optional"`
-	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+	NamePrefix      *string                               `pulumi:"namePrefix,optional"`
+	Names           []string                              `pulumi:"names,optional"`
+	Replicas        *int                                  `pulumi:"replicas,optional"`
+	PlacementLabels []string                              `pulumi:"placementLabels,optional"`
+	TenantURL       *string                               `pulumi:"tenantUrl,optional"`
+	APIToken        *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken     *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode        *string                               `pulumi:"authMode,optional"`
+	OAuth2          *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath      *string                               `pulumi:"wizardPath,optional"`
+	Tags            map[string]string                     `pulumi:"tags,optional"`
+	Registrations   map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
 
 	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
 	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
@@ -1615,7 +1640,7 @@ func NewEsxiPublisher(ctx *pulumi.Context, name string, args EsxiPublisherArgs, 
 		if err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput())
+		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1657,7 +1682,7 @@ func NewHcloudPublisher(ctx *pulumi.Context, name string, args HcloudPublisherAr
 		if err := ctx.RegisterResource("hcloud:index/server:Server", name+"-"+publisherName, inputs, server, pulumi.Parent(component)); err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), server.Ipv4Address)
+		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), server.Ipv4Address, args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1695,7 +1720,7 @@ func NewNutanixPublisher(ctx *pulumi.Context, name string, args NutanixPublisher
 		if err := ctx.RegisterResource("nutanix:index/virtualMachine:VirtualMachine", name+"-"+publisherName, inputs, vm, pulumi.Parent(component)); err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput())
+		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1746,7 +1771,7 @@ func NewOpenstackPublisher(ctx *pulumi.Context, name string, args OpenstackPubli
 			}
 			publicIP = floatingIP.Address
 		}
-		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), publicIP)
+		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), publicIP, args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1804,7 +1829,7 @@ func NewOvhPublisher(ctx *pulumi.Context, name string, args OvhPublisherArgs, op
 		if err := ctx.RegisterResource("ovh:CloudProject/instance:Instance", name+"-"+publisherName, inputs, instance, pulumi.Parent(component)); err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput())
+		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1840,7 +1865,7 @@ func NewScalewayPublisher(ctx *pulumi.Context, name string, args ScalewayPublish
 		if err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput())
+		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1882,7 +1907,7 @@ func NewOciPublisher(ctx *pulumi.Context, name string, args OciPublisherArgs, op
 		if err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), instance.PrivateIP, instance.PublicIP)
+		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), instance.PrivateIP, instance.PublicIP, args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1917,7 +1942,7 @@ func NewAlicloudPublisher(ctx *pulumi.Context, name string, args AlicloudPublish
 		if err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), instance.PrimaryIPAddress, instance.PublicIP)
+		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), instance.PrimaryIPAddress, instance.PublicIP, args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -2008,7 +2033,7 @@ func NewProxmoxvePublisher(ctx *pulumi.Context, name string, args ProxmoxvePubli
 		if err := ctx.RegisterResource("proxmoxve:index/vmLegacy:VmLegacy", name+"-"+publisherName, vmInputs, vm, pulumi.Parent(component)); err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), firstNestedString(vm.Ipv4Addresses), pulumi.String("").ToStringOutput())
+		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), firstNestedString(vm.Ipv4Addresses), pulumi.String("").ToStringOutput(), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -2040,7 +2065,7 @@ func createRawBootstrapPublishers(
 		if err != nil {
 			return pulumi.StringArrayOutput{}, pulumi.MapOutput{}, err
 		}
-		outputs[publisherName] = publisherOutput(registration, result.VMID, result.PrivateIP, result.PublicIP)
+		outputs[publisherName] = publisherOutput(registration, result.VMID, result.PrivateIP, result.PublicIP, args.PlacementLabels)
 	}
 	return toStringArray(publisherNames).ToStringArrayOutput(), pulumi.ToSecret(outputs).(pulumi.MapOutput), nil
 }
@@ -2351,7 +2376,8 @@ func NewYandexPublisher(ctx *pulumi.Context, name string, args YandexPublisherAr
 func (args AwsPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 	}
@@ -2360,7 +2386,8 @@ func (args AwsPublisherArgs) common() CommonPublisherArgs {
 func (args AzurePublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 	}
@@ -2369,7 +2396,8 @@ func (args AzurePublisherArgs) common() CommonPublisherArgs {
 func (args GcpPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 	}
@@ -2378,7 +2406,8 @@ func (args GcpPublisherArgs) common() CommonPublisherArgs {
 func (args KubernetesPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 	}
@@ -2387,7 +2416,8 @@ func (args KubernetesPublisherArgs) common() CommonPublisherArgs {
 func (args VspherePublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 	}
@@ -2396,7 +2426,8 @@ func (args VspherePublisherArgs) common() CommonPublisherArgs {
 func (args EsxiPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2410,7 +2441,8 @@ func (args EsxiPublisherArgs) common() CommonPublisherArgs {
 func (args HcloudPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2424,7 +2456,8 @@ func (args HcloudPublisherArgs) common() CommonPublisherArgs {
 func (args NutanixPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2438,7 +2471,8 @@ func (args NutanixPublisherArgs) common() CommonPublisherArgs {
 func (args OpenstackPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2452,7 +2486,8 @@ func (args OpenstackPublisherArgs) common() CommonPublisherArgs {
 func (args OvhPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2466,7 +2501,8 @@ func (args OvhPublisherArgs) common() CommonPublisherArgs {
 func (args ScalewayPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2480,7 +2516,8 @@ func (args ScalewayPublisherArgs) common() CommonPublisherArgs {
 func (args OciPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2494,7 +2531,8 @@ func (args OciPublisherArgs) common() CommonPublisherArgs {
 func (args AlicloudPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2508,7 +2546,8 @@ func (args AlicloudPublisherArgs) common() CommonPublisherArgs {
 func (args ProxmoxvePublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
-		TenantURL: args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
+		PlacementLabels: args.PlacementLabels,
+		TenantURL:       args.TenantURL, APIToken: args.APIToken, BearerToken: args.BearerToken,
 		AuthMode: args.AuthMode, OAuth2: args.OAuth2, WizardPath: args.WizardPath,
 		Tags: args.Tags, Registrations: args.Registrations,
 		Bootstrap: args.Bootstrap, BootstrapURL: args.BootstrapURL, Nonat: args.Nonat,
@@ -2540,7 +2579,8 @@ func commonFromExpandedArgs(args interface{}) CommonPublisherArgs {
 	value := reflect.ValueOf(args)
 	return CommonPublisherArgs{
 		NamePrefix: fieldValue[*string](value, "NamePrefix"), Names: fieldValue[[]string](value, "Names"), Replicas: fieldValue[*int](value, "Replicas"),
-		TenantURL: fieldValue[*string](value, "TenantURL"), APIToken: fieldValue[*string](value, "APIToken"), BearerToken: fieldValue[*string](value, "BearerToken"),
+		PlacementLabels: fieldValue[[]string](value, "PlacementLabels"),
+		TenantURL:       fieldValue[*string](value, "TenantURL"), APIToken: fieldValue[*string](value, "APIToken"), BearerToken: fieldValue[*string](value, "BearerToken"),
 		AuthMode: fieldValue[*string](value, "AuthMode"), OAuth2: fieldValue[*NetskopeOAuth2Args](value, "OAuth2"), WizardPath: fieldValue[*string](value, "WizardPath"),
 		Tags: fieldValue[map[string]string](value, "Tags"), Registrations: fieldValue[map[string]PublisherRegistrationInput](value, "Registrations"),
 		Bootstrap: fieldValue[*bool](value, "Bootstrap"), BootstrapURL: fieldValue[*string](value, "BootstrapURL"), Nonat: fieldValue[*bool](value, "Nonat"),
@@ -2752,13 +2792,14 @@ func derivePublisherNames(args CommonPublisherArgs) ([]string, error) {
 	return names, nil
 }
 
-func publisherOutput(registration publisherRegistrationOutput, vmID pulumi.StringOutput, privateIP pulumi.StringOutput, publicIP pulumi.StringOutput) pulumi.MapOutput {
+func publisherOutput(registration publisherRegistrationOutput, vmID pulumi.StringOutput, privateIP pulumi.StringOutput, publicIP pulumi.StringOutput, placementLabels []string) pulumi.MapOutput {
 	return pulumi.Map{
 		"publisherId":       registration.PublisherID,
 		"registrationToken": registration.RegistrationToken,
 		"vmId":              vmID,
 		"privateIp":         privateIP,
 		"publicIp":          publicIP,
+		"placementLabels":   toStringArray(placementLabels),
 	}.ToMapOutput()
 }
 
