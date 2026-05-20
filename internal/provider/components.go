@@ -1225,6 +1225,7 @@ func NewHcloudPublisher(ctx *pulumi.Context, name string, args HcloudPublisherAr
 	outputs := pulumi.Map{}
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true))
 		inputs := pulumi.Map{
 			"name":        pulumi.String(publisherName),
 			"serverType":  pulumi.String(defaultString(args.ServerType, "cx22")),
@@ -1237,7 +1238,7 @@ func NewHcloudPublisher(ctx *pulumi.Context, name string, args HcloudPublisherAr
 				"ipv4Enabled": pulumi.Bool(defaultBool(args.AssignPublicIP, true)),
 				"ipv6Enabled": pulumi.Bool(defaultBool(args.AssignPublicIP, true)),
 			}},
-			"userData": renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)).ApplyT(decodeBase64String).(pulumi.StringOutput),
+			"userData": plainUserData(userData),
 			"labels":   toStringMap(args.Tags),
 		}
 		if args.NetworkID != nil {
@@ -1266,13 +1267,14 @@ func NewNutanixPublisher(ctx *pulumi.Context, name string, args NutanixPublisher
 	outputs := pulumi.Map{}
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true))
 		inputs := pulumi.Map{
 			"name":                                pulumi.String(publisherName),
 			"clusterUuid":                         pulumi.String(args.ClusterUUID),
 			"numSockets":                          pulumi.Int(defaultInt(args.NumVCpus, 2)),
 			"numVcpusPerSocket":                   pulumi.Int(defaultInt(args.NumCoresPerVcpu, 1)),
 			"memorySizeMib":                       pulumi.Int(defaultInt(args.MemorySizeMib, 4096)),
-			"guestCustomizationCloudInitUserData": renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)),
+			"guestCustomizationCloudInitUserData": base64UserData(userData),
 		}
 		if args.ImageUUID != nil {
 			inputs["diskLists"] = pulumi.Array{pulumi.Map{"dataSourceReference": pulumi.Map{"kind": pulumi.String("image"), "uuid": pulumi.String(*args.ImageUUID)}}}
@@ -1303,6 +1305,7 @@ func NewOpenstackPublisher(ctx *pulumi.Context, name string, args OpenstackPubli
 	outputs := pulumi.Map{}
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true))
 		instance := &rawVMResource{}
 		err := ctx.RegisterResource("openstack:compute/instance:Instance", name+"-"+publisherName, pulumi.Map{
 			"name":             pulumi.String(publisherName),
@@ -1312,7 +1315,7 @@ func NewOpenstackPublisher(ctx *pulumi.Context, name string, args OpenstackPubli
 			"keyPair":          stringPtrInput(args.KeyPair),
 			"securityGroups":   toStringArray(args.SecurityGroups),
 			"availabilityZone": stringPtrInput(args.AvailabilityZone),
-			"userData":         renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)).ApplyT(decodeBase64String).(pulumi.StringOutput),
+			"userData":         plainUserData(userData),
 		}, instance, pulumi.Parent(component))
 		if err != nil {
 			return nil, err
@@ -1370,6 +1373,7 @@ func NewOvhPublisher(ctx *pulumi.Context, name string, args OvhPublisherArgs, op
 	outputs := pulumi.Map{}
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true))
 		network := pulumi.Map{"public": pulumi.Bool(true)}
 		if args.NetworkID != nil {
 			network["private"] = pulumi.Map{"network": pulumi.Map{"id": pulumi.String(*args.NetworkID)}}
@@ -1382,7 +1386,7 @@ func NewOvhPublisher(ctx *pulumi.Context, name string, args OvhPublisherArgs, op
 			"bootFrom":      pulumi.Map{"imageId": pulumi.String(args.ImageID)},
 			"flavor":        pulumi.Map{"flavorId": pulumi.String(args.FlavorID)},
 			"network":       network,
-			"userData":      renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)).ApplyT(decodeBase64String).(pulumi.StringOutput),
+			"userData":      plainUserData(userData),
 		}
 		if args.SSHKeyName != nil {
 			inputs["sshKey"] = pulumi.Map{"name": pulumi.String(*args.SSHKeyName)}
@@ -1410,7 +1414,8 @@ func NewScalewayPublisher(ctx *pulumi.Context, name string, args ScalewayPublish
 	outputs := pulumi.Map{}
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
-		userData := renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)).ApplyT(decodeBase64String).(pulumi.StringOutput)
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true))
+		userDataPlacement := scalewayUserData(userData)
 		server := &rawVMResource{}
 		err := ctx.RegisterResource("scaleway:instance/server:Server", name+"-"+publisherName, pulumi.Map{
 			"name":            pulumi.String(publisherName),
@@ -1419,8 +1424,8 @@ func NewScalewayPublisher(ctx *pulumi.Context, name string, args ScalewayPublish
 			"zone":            stringPtrInput(args.Zone),
 			"securityGroupId": stringPtrInput(args.SecurityGroupID),
 			"enableDynamicIp": pulumi.Bool(defaultBool(args.EnableDynamicIP, true)),
-			"cloudInit":       userData,
-			"userData":        pulumi.Map{"cloud-init": userData},
+			"cloudInit":       userDataPlacement["cloudInit"],
+			"userData":        userDataPlacement["userData"],
 			"tags":            stringMapToTagArray(args.Tags),
 		}, server, pulumi.Parent(component))
 		if err != nil {
@@ -1445,9 +1450,8 @@ func NewOciPublisher(ctx *pulumi.Context, name string, args OciPublisherArgs, op
 	outputs := pulumi.Map{}
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
-		metadata := pulumi.Map{
-			"userData": renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)),
-		}
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true))
+		metadata := base64MetadataUserData(userData, "userData")
 		if args.SSHPublicKey != nil {
 			metadata["ssh_authorized_keys"] = pulumi.String(*args.SSHPublicKey)
 		}
@@ -1488,6 +1492,7 @@ func NewAlicloudPublisher(ctx *pulumi.Context, name string, args AlicloudPublish
 	outputs := pulumi.Map{}
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true))
 		instance := &rawVMResource{}
 		err := ctx.RegisterResource("alicloud:ecs/instance:Instance", name+"-"+publisherName, pulumi.Map{
 			"instanceName":            pulumi.String(publisherName),
@@ -1497,7 +1502,7 @@ func NewAlicloudPublisher(ctx *pulumi.Context, name string, args AlicloudPublish
 			"securityGroups":          toStringArray(args.SecurityGroupIDs),
 			"keyName":                 stringPtrInput(args.KeyName),
 			"internetMaxBandwidthOut": pulumi.Int(publicBandwidth(args.AllocatePublicIP)),
-			"userData":                renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)),
+			"userData":                base64UserData(userData),
 			"tags":                    toStringMap(args.Tags),
 		}, instance, pulumi.Parent(component))
 		if err != nil {
@@ -1522,13 +1527,14 @@ func NewProxmoxvePublisher(ctx *pulumi.Context, name string, args ProxmoxvePubli
 	outputs := pulumi.Map{}
 	for _, publisherName := range publisherNames {
 		registration := registrations[publisherName]
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true))
 		userDataFile := &rawVMResource{}
 		err := ctx.RegisterResource("proxmoxve:index/fileLegacy:FileLegacy", name+"-"+publisherName+"-user-data", pulumi.Map{
 			"contentType": pulumi.String("snippets"),
 			"datastoreId": pulumi.String(args.DatastoreID),
 			"nodeName":    pulumi.String(args.NodeName),
 			"sourceRaw": pulumi.Map{
-				"data":     renderUserDataBase64OutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args.common(), true)).ApplyT(decodeBase64String).(pulumi.StringOutput),
+				"data":     plainUserData(userData),
 				"fileName": pulumi.String(publisherName + "-user-data.yaml"),
 			},
 		}, userDataFile, pulumi.Parent(component))
