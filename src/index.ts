@@ -21,6 +21,7 @@ export type {
   ProviderYamlExample,
   UserDataMode as ProviderUserDataMode,
 } from "./providerCatalog";
+export * from "./providerValidation";
 export * from "./netskopeClient";
 export * from "./netskopeRegistration";
 export * from "./awsPublisher";
