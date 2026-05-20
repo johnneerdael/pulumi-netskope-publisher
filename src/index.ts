@@ -5,6 +5,22 @@ export * from "./userDataAdapters";
 export * from "./rawResource";
 export * from "./componentCore";
 export * from "./imageSources";
+export {
+  bespokeProviders,
+  catalogDrivenProviders,
+  catalogProviders,
+  providerCatalog,
+} from "./providerCatalog";
+export type {
+  BootstrapModel,
+  ProviderCatalogEntry,
+  ProviderImplementationMode,
+  ProviderInputMetadata,
+  ProviderSupportStatus,
+  ProviderValidationMetadata,
+  ProviderYamlExample,
+  UserDataMode as ProviderUserDataMode,
+} from "./providerCatalog";
 export * from "./netskopeClient";
 export * from "./netskopeRegistration";
 export * from "./awsPublisher";
