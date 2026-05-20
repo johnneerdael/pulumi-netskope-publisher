@@ -1,0 +1,83 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.pulumi",
+    "module": "netskope-publisher",
+    "version": "0.1.12",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.5.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "netskope-publisher-0.1.12.jar",
+          "url": "netskope-publisher-0.1.12.jar",
+          "size": 157967,
+          "sha512": "bc41f97617804e111f84e402fa4d769ebb109b934b0035e7462dc2a431d348459be0f3032be681993dc4ca8901ab16edafcf17d12ebaf4114f337a88eb28dc15",
+          "sha256": "b647414b1ba62f1a469dc9f84eb2be4c93efc3b1a2367d0e255e1d48ff299488",
+          "sha1": "75034a590e086f7f5a186ca2d2236370402370e4",
+          "md5": "4ae66676b76c3e3f80e504b06f3b4418"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.google.code.findbugs",
+          "module": "jsr305",
+          "version": {
+            "requires": "3.0.2"
+          }
+        },
+        {
+          "group": "com.google.code.gson",
+          "module": "gson",
+          "version": {
+            "requires": "2.8.9"
+          }
+        },
+        {
+          "group": "com.pulumi",
+          "module": "pulumi",
+          "version": {
+            "requires": "1.0.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "netskope-publisher-0.1.12.jar",
+          "url": "netskope-publisher-0.1.12.jar",
+          "size": 157967,
+          "sha512": "bc41f97617804e111f84e402fa4d769ebb109b934b0035e7462dc2a431d348459be0f3032be681993dc4ca8901ab16edafcf17d12ebaf4114f337a88eb28dc15",
+          "sha256": "b647414b1ba62f1a469dc9f84eb2be4c93efc3b1a2367d0e255e1d48ff299488",
+          "sha1": "75034a590e086f7f5a186ca2d2236370402370e4",
+          "md5": "4ae66676b76c3e3f80e504b06f3b4418"
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "name": "netskope-publisher",
   "displayName": "Netskope Publisher",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, ESXi, Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, Proxmox VE, and experimental Hyper-V.",
   "keywords": [
     "category/network",

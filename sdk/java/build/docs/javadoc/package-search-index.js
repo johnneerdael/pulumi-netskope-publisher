@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.pulumi.netskopepublisher"},{"l":"com.pulumi.netskopepublisher.provider.inputs"},{"l":"com.pulumi.netskopepublisher.provider.outputs"}]

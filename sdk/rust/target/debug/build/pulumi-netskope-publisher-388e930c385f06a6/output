@@ -1,2 +1,0 @@
-cargo::rerun-if-changed=build.rs
-cargo::rerun-if-changed=/home/runner/work/pulumi-netskope-publisher/pulumi-netskope-publisher/sdk/rust/target/package/pulumi-netskope-publisher-0.1.11/schema.json
