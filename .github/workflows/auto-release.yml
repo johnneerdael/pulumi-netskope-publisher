@@ -102,7 +102,12 @@ jobs:
         run: npm run release:check
 
       - name: Publish npm package
-        run: npm publish --provenance --access public
+        run: |
+          if npm view "${npm_package_name}@${npm_package_version}" version >/dev/null 2>&1; then
+            echo "npm package ${npm_package_name}@${npm_package_version} already exists; skipping."
+            exit 0
+          fi
+          npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -115,7 +120,7 @@ jobs:
       - name: Publish Python SDK
         env:
           PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        run: python3 -m twine upload --non-interactive -u __token__ -p "$PYPI_API_TOKEN" dist/sdks/python/*
+        run: python3 -m twine upload --non-interactive --skip-existing -u __token__ -p "$PYPI_API_TOKEN" dist/sdks/python/*
 
       - name: Publish C# SDK
         env:
@@ -158,7 +163,13 @@ jobs:
       - name: Publish Rust SDK
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish --token "$CARGO_REGISTRY_TOKEN"
+          PACKAGE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if curl --fail --silent --show-error "https://crates.io/api/v1/crates/pulumi-netskope-publisher/${PACKAGE_VERSION}" >/dev/null; then
+            echo "Rust crate pulumi-netskope-publisher ${PACKAGE_VERSION} already exists; skipping."
+            exit 0
+          fi
+          cargo publish --token "$CARGO_REGISTRY_TOKEN"
         working-directory: sdk/rust
 
       - name: Commit release bump and tag
