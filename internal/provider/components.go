@@ -3,6 +3,7 @@ package provider
 import (
 	"encoding/base64"
 	"fmt"
+	"reflect"
 	"strings"
 
 	awsec2 "github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
@@ -1158,6 +1159,414 @@ type ProxmoxvePublisher struct {
 
 func (*ProxmoxvePublisher) Annotate(a infer.Annotator) { a.SetToken("index", "ProxmoxvePublisher") }
 
+type DigitaloceanPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+	Region                       string                 `pulumi:"region"`
+	Size                         *string                `pulumi:"size,optional"`
+	Image                        *string                `pulumi:"image,optional"`
+	SSHKeys                      []string               `pulumi:"sshKeys,optional"`
+	VpcUUID                      *string                `pulumi:"vpcUuid,optional"`
+	Monitoring                   *bool                  `pulumi:"monitoring,optional"`
+	Ipv6                         *bool                  `pulumi:"ipv6,optional"`
+}
+
+type DigitaloceanPublisher struct {
+	pulumi.ResourceState
+	DigitaloceanPublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*DigitaloceanPublisher) Annotate(a infer.Annotator) {
+	a.SetToken("index", "DigitaloceanPublisher")
+}
+
+type VultrPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+	Region                       string                 `pulumi:"region"`
+	Plan                         string                 `pulumi:"plan"`
+	OSID                         *int                   `pulumi:"osId,optional"`
+	ImageID                      *string                `pulumi:"imageId,optional"`
+	SSHKeyIDs                    []string               `pulumi:"sshKeyIds,optional"`
+	Vpc2IDs                      []string               `pulumi:"vpc2Ids,optional"`
+	EnableIpv6                   *bool                  `pulumi:"enableIpv6,optional"`
+	FirewallGroupID              *string                `pulumi:"firewallGroupId,optional"`
+}
+
+type VultrPublisher struct {
+	pulumi.ResourceState
+	VultrPublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*VultrPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "VultrPublisher") }
+
+type ExoscalePublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                    `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                  `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                    `pulumi:"nonat,optional"`
+	InstallUser                  *string                  `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                  `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                    `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string                 `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                    `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface   `pulumi:"guestNetworkInterface,optional"`
+	Zone                         string                   `pulumi:"zone"`
+	Type                         string                   `pulumi:"type"`
+	TemplateID                   string                   `pulumi:"templateId"`
+	DiskSize                     int                      `pulumi:"diskSize"`
+	SSHKeys                      []string                 `pulumi:"sshKeys,optional"`
+	SecurityGroupIDs             []string                 `pulumi:"securityGroupIds,optional"`
+	NetworkInterfaces            []map[string]interface{} `pulumi:"networkInterfaces,optional"`
+}
+
+type ExoscalePublisher struct {
+	pulumi.ResourceState
+	ExoscalePublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*ExoscalePublisher) Annotate(a infer.Annotator) { a.SetToken("index", "ExoscalePublisher") }
+
+type UpcloudPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                    `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                  `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                    `pulumi:"nonat,optional"`
+	InstallUser                  *string                  `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                  `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                    `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string                 `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                    `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface   `pulumi:"guestNetworkInterface,optional"`
+	Zone                         string                   `pulumi:"zone"`
+	Hostname                     *string                  `pulumi:"hostname,optional"`
+	Plan                         *string                  `pulumi:"plan,optional"`
+	Template                     *string                  `pulumi:"template,optional"`
+	NetworkInterfaces            []map[string]interface{} `pulumi:"networkInterfaces,optional"`
+}
+
+type UpcloudPublisher struct {
+	pulumi.ResourceState
+	UpcloudPublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*UpcloudPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "UpcloudPublisher") }
+
+type StackitPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                    `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                  `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                    `pulumi:"nonat,optional"`
+	InstallUser                  *string                  `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                  `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                    `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string                 `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                    `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface   `pulumi:"guestNetworkInterface,optional"`
+	ProjectID                    string                   `pulumi:"projectId"`
+	MachineType                  string                   `pulumi:"machineType"`
+	ImageID                      string                   `pulumi:"imageId"`
+	AvailabilityZone             *string                  `pulumi:"availabilityZone,optional"`
+	KeypairName                  *string                  `pulumi:"keypairName,optional"`
+	NetworkInterfaces            []map[string]interface{} `pulumi:"networkInterfaces,optional"`
+}
+
+type StackitPublisher struct {
+	pulumi.ResourceState
+	StackitPublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*StackitPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "StackitPublisher") }
+
+type EquinixPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+	ProjectID                    string                 `pulumi:"projectId"`
+	Metro                        string                 `pulumi:"metro"`
+	Plan                         string                 `pulumi:"plan"`
+	OperatingSystem              *string                `pulumi:"operatingSystem,optional"`
+	BillingCycle                 *string                `pulumi:"billingCycle,optional"`
+	ProjectSSHKeyIDs             []string               `pulumi:"projectSshKeyIds,optional"`
+	UserSSHKeyIDs                []string               `pulumi:"userSshKeyIds,optional"`
+}
+
+type EquinixPublisher struct {
+	pulumi.ResourceState
+	EquinixPublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*EquinixPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "EquinixPublisher") }
+
+type OutscalePublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+	ImageID                      string                 `pulumi:"imageId"`
+	VMType                       *string                `pulumi:"vmType,optional"`
+	SubnetID                     *string                `pulumi:"subnetId,optional"`
+	KeypairName                  *string                `pulumi:"keypairName,optional"`
+	SecurityGroupIDs             []string               `pulumi:"securityGroupIds,optional"`
+	PlacementSubregionName       *string                `pulumi:"placementSubregionName,optional"`
+}
+
+type OutscalePublisher struct {
+	pulumi.ResourceState
+	OutscalePublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*OutscalePublisher) Annotate(a infer.Annotator) { a.SetToken("index", "OutscalePublisher") }
+
+type OpentelekomcloudPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                    `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                  `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                    `pulumi:"nonat,optional"`
+	InstallUser                  *string                  `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                  `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                    `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string                 `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                    `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface   `pulumi:"guestNetworkInterface,optional"`
+	ImageName                    *string                  `pulumi:"imageName,optional"`
+	ImageID                      *string                  `pulumi:"imageId,optional"`
+	FlavorName                   *string                  `pulumi:"flavorName,optional"`
+	FlavorID                     *string                  `pulumi:"flavorId,optional"`
+	Networks                     []map[string]interface{} `pulumi:"networks"`
+	KeyPair                      *string                  `pulumi:"keyPair,optional"`
+	AvailabilityZone             *string                  `pulumi:"availabilityZone,optional"`
+	SecurityGroups               []string                 `pulumi:"securityGroups,optional"`
+}
+
+type OpentelekomcloudPublisher struct {
+	pulumi.ResourceState
+	OpentelekomcloudPublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*OpentelekomcloudPublisher) Annotate(a infer.Annotator) {
+	a.SetToken("index", "OpentelekomcloudPublisher")
+}
+
+type TencentcloudPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+	AvailabilityZone             string                 `pulumi:"availabilityZone"`
+	ImageID                      string                 `pulumi:"imageId"`
+	InstanceType                 *string                `pulumi:"instanceType,optional"`
+	SubnetID                     *string                `pulumi:"subnetId,optional"`
+	VpcID                        *string                `pulumi:"vpcId,optional"`
+	KeyName                      *string                `pulumi:"keyName,optional"`
+	SecurityGroups               []string               `pulumi:"securityGroups,optional"`
+	SystemDiskType               *string                `pulumi:"systemDiskType,optional"`
+	SystemDiskSize               *int                   `pulumi:"systemDiskSize,optional"`
+}
+
+type TencentcloudPublisher struct {
+	pulumi.ResourceState
+	TencentcloudPublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*TencentcloudPublisher) Annotate(a infer.Annotator) {
+	a.SetToken("index", "TencentcloudPublisher")
+}
+
+type YandexPublisherArgs struct {
+	NamePrefix    *string                               `pulumi:"namePrefix,optional"`
+	Names         []string                              `pulumi:"names,optional"`
+	Replicas      *int                                  `pulumi:"replicas,optional"`
+	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
+	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
+	WizardPath    *string                               `pulumi:"wizardPath,optional"`
+	Tags          map[string]string                     `pulumi:"tags,optional"`
+	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
+
+	Bootstrap                    *bool                  `pulumi:"bootstrap,optional"`
+	BootstrapURL                 *string                `pulumi:"bootstrapUrl,optional"`
+	Nonat                        *bool                  `pulumi:"nonat,optional"`
+	InstallUser                  *string                `pulumi:"installUser,optional"`
+	InstallUserPassword          *string                `pulumi:"installUserPassword,optional" provider:"secret"`
+	InstallUserPasswordIsHash    *bool                  `pulumi:"installUserPasswordIsHash,optional"`
+	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
+	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
+	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+	Zone                         *string                `pulumi:"zone,optional"`
+	PlatformID                   *string                `pulumi:"platformId,optional"`
+	ImageID                      string                 `pulumi:"imageId"`
+	SubnetID                     string                 `pulumi:"subnetId"`
+	Cores                        *int                   `pulumi:"cores,optional"`
+	Memory                       *int                   `pulumi:"memory,optional"`
+	CoreFraction                 *int                   `pulumi:"coreFraction,optional"`
+	Nat                          *bool                  `pulumi:"nat,optional"`
+	SSHKeys                      []string               `pulumi:"sshKeys,optional"`
+}
+
+type YandexPublisher struct {
+	pulumi.ResourceState
+	YandexPublisherArgs
+	PublisherNames pulumi.StringArrayOutput `pulumi:"publisherNames"`
+	Publishers     pulumi.MapOutput         `pulumi:"publishers" provider:"secret"`
+}
+
+func (*YandexPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "YandexPublisher") }
+
 type rawVMResource struct {
 	pulumi.CustomResourceState
 
@@ -1606,6 +2015,339 @@ func NewProxmoxvePublisher(ctx *pulumi.Context, name string, args ProxmoxvePubli
 	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
 }
 
+type rawBootstrapBuildResult struct {
+	VMID      pulumi.StringOutput
+	PrivateIP pulumi.StringOutput
+	PublicIP  pulumi.StringOutput
+}
+
+func createRawBootstrapPublishers(
+	ctx *pulumi.Context,
+	component pulumi.Resource,
+	componentName string,
+	args CommonPublisherArgs,
+	build func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error),
+) (pulumi.StringArrayOutput, pulumi.MapOutput, error) {
+	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, componentName, args)
+	if err != nil {
+		return pulumi.StringArrayOutput{}, pulumi.MapOutput{}, err
+	}
+	outputs := pulumi.Map{}
+	for _, publisherName := range publisherNames {
+		registration := registrations[publisherName]
+		userData := renderUserDataOutputWithOptions(publisherName, registration.RegistrationToken, args.WizardPath, cloudInitOptionsFromCommon(args, true))
+		result, err := build(publisherName, userData)
+		if err != nil {
+			return pulumi.StringArrayOutput{}, pulumi.MapOutput{}, err
+		}
+		outputs[publisherName] = publisherOutput(registration, result.VMID, result.PrivateIP, result.PublicIP)
+	}
+	return toStringArray(publisherNames).ToStringArrayOutput(), pulumi.ToSecret(outputs).(pulumi.MapOutput), nil
+}
+
+func NewDigitaloceanPublisher(ctx *pulumi.Context, name string, args DigitaloceanPublisherArgs, opts ...pulumi.ResourceOption) (*DigitaloceanPublisher, error) {
+	component := &DigitaloceanPublisher{DigitaloceanPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		droplet := &rawVMResource{}
+		err := ctx.RegisterResource("digitalocean:index/droplet:Droplet", name+"-"+publisherName, pulumi.Map{
+			"name":       pulumi.String(publisherName),
+			"region":     pulumi.String(args.Region),
+			"size":       pulumi.String(defaultString(args.Size, "s-2vcpu-4gb")),
+			"image":      pulumi.String(defaultString(args.Image, "ubuntu-22-04-x64")),
+			"sshKeys":    toStringArray(args.SSHKeys),
+			"vpcUuid":    stringPtrInput(args.VpcUUID),
+			"monitoring": boolPtrInput(args.Monitoring),
+			"ipv6":       boolPtrInput(args.Ipv6),
+			"userData":   plainUserData(userData),
+			"tags":       stringMapToColonTagArray(args.Tags),
+		}, droplet, pulumi.Parent(component))
+		return rawBootstrapBuildResult{droplet.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewVultrPublisher(ctx *pulumi.Context, name string, args VultrPublisherArgs, opts ...pulumi.ResourceOption) (*VultrPublisher, error) {
+	component := &VultrPublisher{VultrPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		instance := &rawVMResource{}
+		err := ctx.RegisterResource("vultr:index/instance:Instance", name+"-"+publisherName, pulumi.Map{
+			"label":           pulumi.String(publisherName),
+			"hostname":        pulumi.String(publisherName),
+			"region":          pulumi.String(args.Region),
+			"plan":            pulumi.String(args.Plan),
+			"osId":            intPtrInput(args.OSID),
+			"imageId":         stringPtrInput(args.ImageID),
+			"sshKeyIds":       toStringArray(args.SSHKeyIDs),
+			"vpc2Ids":         toStringArray(args.Vpc2IDs),
+			"enableIpv6":      boolPtrInput(args.EnableIpv6),
+			"firewallGroupId": stringPtrInput(args.FirewallGroupID),
+			"userData":        plainUserData(userData),
+			"tags":            stringMapToColonTagArray(args.Tags),
+		}, instance, pulumi.Parent(component))
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewExoscalePublisher(ctx *pulumi.Context, name string, args ExoscalePublisherArgs, opts ...pulumi.ResourceOption) (*ExoscalePublisher, error) {
+	component := &ExoscalePublisher{ExoscalePublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		instance := &rawVMResource{}
+		err := ctx.RegisterResource("exoscale:index/computeInstance:ComputeInstance", name+"-"+publisherName, pulumi.Map{
+			"name":              pulumi.String(publisherName),
+			"zone":              pulumi.String(args.Zone),
+			"type":              pulumi.String(args.Type),
+			"templateId":        pulumi.String(args.TemplateID),
+			"diskSize":          pulumi.Int(args.DiskSize),
+			"sshKeys":           toStringArray(args.SSHKeys),
+			"securityGroupIds":  toStringArray(args.SecurityGroupIDs),
+			"networkInterfaces": toMapArray(args.NetworkInterfaces),
+			"userData":          plainUserData(userData),
+			"labels":            toStringMap(args.Tags),
+		}, instance, pulumi.Parent(component))
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewUpcloudPublisher(ctx *pulumi.Context, name string, args UpcloudPublisherArgs, opts ...pulumi.ResourceOption) (*UpcloudPublisher, error) {
+	component := &UpcloudPublisher{UpcloudPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		server := &rawVMResource{}
+		err := ctx.RegisterResource("upcloud:index/server:Server", name+"-"+publisherName, pulumi.Map{
+			"hostname":          pulumi.String(defaultString(args.Hostname, publisherName)),
+			"title":             pulumi.String(publisherName),
+			"zone":              pulumi.String(args.Zone),
+			"plan":              pulumi.String(defaultString(args.Plan, "2xCPU-4GB")),
+			"template":          pulumi.String(defaultString(args.Template, "01000000-0000-4000-8000-000030220200")),
+			"networkInterfaces": toMapArray(args.NetworkInterfaces),
+			"metadata":          pulumi.Bool(true),
+			"userData":          plainUserData(userData),
+			"labels":            toStringMap(args.Tags),
+		}, server, pulumi.Parent(component))
+		return rawBootstrapBuildResult{server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewStackitPublisher(ctx *pulumi.Context, name string, args StackitPublisherArgs, opts ...pulumi.ResourceOption) (*StackitPublisher, error) {
+	component := &StackitPublisher{StackitPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		server := &rawVMResource{}
+		err := ctx.RegisterResource("stackit:index/server:Server", name+"-"+publisherName, pulumi.Map{
+			"name":              pulumi.String(publisherName),
+			"projectId":         pulumi.String(args.ProjectID),
+			"machineType":       pulumi.String(args.MachineType),
+			"imageId":           pulumi.String(args.ImageID),
+			"availabilityZone":  stringPtrInput(args.AvailabilityZone),
+			"keypairName":       stringPtrInput(args.KeypairName),
+			"networkInterfaces": toMapArray(args.NetworkInterfaces),
+			"userData":          plainUserData(userData),
+			"labels":            toStringMap(args.Tags),
+		}, server, pulumi.Parent(component))
+		return rawBootstrapBuildResult{server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewEquinixPublisher(ctx *pulumi.Context, name string, args EquinixPublisherArgs, opts ...pulumi.ResourceOption) (*EquinixPublisher, error) {
+	component := &EquinixPublisher{EquinixPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		device := &rawVMResource{}
+		err := ctx.RegisterResource("equinix:metal/device:Device", name+"-"+publisherName, pulumi.Map{
+			"hostname":         pulumi.String(publisherName),
+			"projectId":        pulumi.String(args.ProjectID),
+			"metro":            pulumi.String(args.Metro),
+			"plan":             pulumi.String(args.Plan),
+			"operatingSystem":  pulumi.String(defaultString(args.OperatingSystem, "ubuntu_22_04")),
+			"billingCycle":     pulumi.String(defaultString(args.BillingCycle, "hourly")),
+			"projectSshKeyIds": toStringArray(args.ProjectSSHKeyIDs),
+			"userSshKeyIds":    toStringArray(args.UserSSHKeyIDs),
+			"userData":         plainUserData(userData),
+			"tags":             stringMapToColonTagArray(args.Tags),
+		}, device, pulumi.Parent(component))
+		return rawBootstrapBuildResult{device.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewOutscalePublisher(ctx *pulumi.Context, name string, args OutscalePublisherArgs, opts ...pulumi.ResourceOption) (*OutscalePublisher, error) {
+	component := &OutscalePublisher{OutscalePublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		vm := &rawVMResource{}
+		err := ctx.RegisterResource("outscale:index/vm:Vm", name+"-"+publisherName, pulumi.Map{
+			"imageId":                pulumi.String(args.ImageID),
+			"vmType":                 pulumi.String(defaultString(args.VMType, "tinav5.c2r4p1")),
+			"subnetId":               stringPtrInput(args.SubnetID),
+			"keypairName":            stringPtrInput(args.KeypairName),
+			"securityGroupIds":       toStringArray(args.SecurityGroupIDs),
+			"placementSubregionName": stringPtrInput(args.PlacementSubregionName),
+			"userData":               plainUserData(userData),
+		}, vm, pulumi.Parent(component))
+		return rawBootstrapBuildResult{vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewOpentelekomcloudPublisher(ctx *pulumi.Context, name string, args OpentelekomcloudPublisherArgs, opts ...pulumi.ResourceOption) (*OpentelekomcloudPublisher, error) {
+	component := &OpentelekomcloudPublisher{OpentelekomcloudPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		instance := &rawVMResource{}
+		err := ctx.RegisterResource("opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2", name+"-"+publisherName, pulumi.Map{
+			"name":             pulumi.String(publisherName),
+			"imageName":        pulumi.String(defaultString(args.ImageName, "Ubuntu 22.04")),
+			"imageId":          stringPtrInput(args.ImageID),
+			"flavorName":       pulumi.String(defaultString(args.FlavorName, "s3.medium.2")),
+			"flavorId":         stringPtrInput(args.FlavorID),
+			"networks":         toMapArray(args.Networks),
+			"keyPair":          stringPtrInput(args.KeyPair),
+			"availabilityZone": stringPtrInput(args.AvailabilityZone),
+			"securityGroups":   toStringArray(args.SecurityGroups),
+			"userData":         plainUserData(userData),
+		}, instance, pulumi.Parent(component))
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewTencentcloudPublisher(ctx *pulumi.Context, name string, args TencentcloudPublisherArgs, opts ...pulumi.ResourceOption) (*TencentcloudPublisher, error) {
+	component := &TencentcloudPublisher{TencentcloudPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		instance := &rawVMResource{}
+		err := ctx.RegisterResource("tencentcloud:index/instance:Instance", name+"-"+publisherName, pulumi.Map{
+			"instanceName":            pulumi.String(publisherName),
+			"hostname":                pulumi.String(publisherName),
+			"availabilityZone":        pulumi.String(args.AvailabilityZone),
+			"imageId":                 pulumi.String(args.ImageID),
+			"instanceType":            pulumi.String(defaultString(args.InstanceType, "S5.MEDIUM4")),
+			"subnetId":                stringPtrInput(args.SubnetID),
+			"vpcId":                   stringPtrInput(args.VpcID),
+			"keyName":                 stringPtrInput(args.KeyName),
+			"securityGroups":          toStringArray(args.SecurityGroups),
+			"systemDiskType":          stringPtrInput(args.SystemDiskType),
+			"systemDiskSize":          intPtrInput(args.SystemDiskSize),
+			"userDataRaw":             plainUserData(userData),
+			"userDataReplaceOnChange": pulumi.Bool(true),
+			"tags":                    toStringMap(args.Tags),
+		}, instance, pulumi.Parent(component))
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func NewYandexPublisher(ctx *pulumi.Context, name string, args YandexPublisherArgs, opts ...pulumi.ResourceOption) (*YandexPublisher, error) {
+	component := &YandexPublisher{YandexPublisherArgs: args}
+	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		metadata := metadataUserData(userData, "user-data")
+		if len(args.SSHKeys) > 0 {
+			metadata["ssh-keys"] = pulumi.String(strings.Join(args.SSHKeys, "\n"))
+		}
+		instance := &rawVMResource{}
+		err := ctx.RegisterResource("yandex:index/computeInstance:ComputeInstance", name+"-"+publisherName, pulumi.Map{
+			"name":       pulumi.String(publisherName),
+			"hostname":   pulumi.String(publisherName),
+			"zone":       stringPtrInput(args.Zone),
+			"platformId": pulumi.String(defaultString(args.PlatformID, "standard-v3")),
+			"bootDisk": pulumi.Map{"initializeParams": pulumi.Map{
+				"imageId": pulumi.String(args.ImageID),
+			}},
+			"resources": pulumi.Map{
+				"cores":        pulumi.Int(defaultInt(args.Cores, 2)),
+				"memory":       pulumi.Int(defaultInt(args.Memory, 4)),
+				"coreFraction": intPtrInput(args.CoreFraction),
+			},
+			"networkInterfaces": pulumi.Array{pulumi.Map{
+				"subnetId": pulumi.String(args.SubnetID),
+				"nat":      pulumi.Bool(defaultBool(args.Nat, false)),
+			}},
+			"metadata": metadata,
+			"labels":   toStringMap(args.Tags),
+		}, instance, pulumi.Parent(component))
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	component.PublisherNames = publisherNames
+	component.Publishers = publishers
+	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
 func (args AwsPublisherArgs) common() CommonPublisherArgs {
 	return CommonPublisherArgs{
 		NamePrefix: args.NamePrefix, Names: args.Names, Replicas: args.Replicas,
@@ -1775,6 +2517,48 @@ func (args ProxmoxvePublisherArgs) common() CommonPublisherArgs {
 		InstallUserSSHAuthorizedKeys: args.InstallUserSSHAuthorizedKeys,
 		DeleteDefaultUser:            args.DeleteDefaultUser, GuestNetworkInterface: args.GuestNetworkInterface,
 	}
+}
+
+func (args DigitaloceanPublisherArgs) common() CommonPublisherArgs {
+	return commonFromExpandedArgs(args)
+}
+func (args VultrPublisherArgs) common() CommonPublisherArgs    { return commonFromExpandedArgs(args) }
+func (args ExoscalePublisherArgs) common() CommonPublisherArgs { return commonFromExpandedArgs(args) }
+func (args UpcloudPublisherArgs) common() CommonPublisherArgs  { return commonFromExpandedArgs(args) }
+func (args StackitPublisherArgs) common() CommonPublisherArgs  { return commonFromExpandedArgs(args) }
+func (args EquinixPublisherArgs) common() CommonPublisherArgs  { return commonFromExpandedArgs(args) }
+func (args OutscalePublisherArgs) common() CommonPublisherArgs { return commonFromExpandedArgs(args) }
+func (args OpentelekomcloudPublisherArgs) common() CommonPublisherArgs {
+	return commonFromExpandedArgs(args)
+}
+func (args TencentcloudPublisherArgs) common() CommonPublisherArgs {
+	return commonFromExpandedArgs(args)
+}
+func (args YandexPublisherArgs) common() CommonPublisherArgs { return commonFromExpandedArgs(args) }
+
+func commonFromExpandedArgs(args interface{}) CommonPublisherArgs {
+	value := reflect.ValueOf(args)
+	return CommonPublisherArgs{
+		NamePrefix: fieldValue[*string](value, "NamePrefix"), Names: fieldValue[[]string](value, "Names"), Replicas: fieldValue[*int](value, "Replicas"),
+		TenantURL: fieldValue[*string](value, "TenantURL"), APIToken: fieldValue[*string](value, "APIToken"), BearerToken: fieldValue[*string](value, "BearerToken"),
+		AuthMode: fieldValue[*string](value, "AuthMode"), OAuth2: fieldValue[*NetskopeOAuth2Args](value, "OAuth2"), WizardPath: fieldValue[*string](value, "WizardPath"),
+		Tags: fieldValue[map[string]string](value, "Tags"), Registrations: fieldValue[map[string]PublisherRegistrationInput](value, "Registrations"),
+		Bootstrap: fieldValue[*bool](value, "Bootstrap"), BootstrapURL: fieldValue[*string](value, "BootstrapURL"), Nonat: fieldValue[*bool](value, "Nonat"),
+		InstallUser: fieldValue[*string](value, "InstallUser"), InstallUserPassword: fieldValue[*string](value, "InstallUserPassword"),
+		InstallUserPasswordIsHash:    fieldValue[*bool](value, "InstallUserPasswordIsHash"),
+		InstallUserSSHAuthorizedKeys: fieldValue[[]string](value, "InstallUserSSHAuthorizedKeys"),
+		DeleteDefaultUser:            fieldValue[*bool](value, "DeleteDefaultUser"),
+		GuestNetworkInterface:        fieldValue[*GuestNetworkInterface](value, "GuestNetworkInterface"),
+	}
+}
+
+func fieldValue[T any](value reflect.Value, name string) T {
+	field := value.FieldByName(name)
+	if !field.IsValid() || field.IsZero() {
+		var zero T
+		return zero
+	}
+	return field.Interface().(T)
 }
 
 type publisherRegistrationOutput struct {
@@ -2341,6 +3125,13 @@ func intPtrInput(value *int) pulumi.IntPtrInput {
 	return pulumi.IntPtr(*value)
 }
 
+func boolPtrInput(value *bool) pulumi.BoolPtrInput {
+	if value == nil {
+		return nil
+	}
+	return pulumi.BoolPtr(*value)
+}
+
 func decodeBase64String(value string) string {
 	decoded, err := base64.StdEncoding.DecodeString(value)
 	if err != nil {
@@ -2384,6 +3175,45 @@ func stringMapToTagArray(values map[string]string) pulumi.StringArray {
 	result := pulumi.StringArray{}
 	for key, value := range values {
 		result = append(result, pulumi.String(key+"="+value))
+	}
+	return result
+}
+
+func stringMapToColonTagArray(values map[string]string) pulumi.StringArray {
+	result := pulumi.StringArray{}
+	for key, value := range values {
+		result = append(result, pulumi.String(key+":"+value))
+	}
+	return result
+}
+
+func toMapArray(values []map[string]interface{}) pulumi.Array {
+	result := pulumi.Array{}
+	for _, value := range values {
+		result = append(result, toPulumiMap(value))
+	}
+	return result
+}
+
+func toPulumiMap(values map[string]interface{}) pulumi.Map {
+	result := pulumi.Map{}
+	for key, value := range values {
+		switch typed := value.(type) {
+		case string:
+			result[key] = pulumi.String(typed)
+		case int:
+			result[key] = pulumi.Int(typed)
+		case float64:
+			result[key] = pulumi.Float64(typed)
+		case bool:
+			result[key] = pulumi.Bool(typed)
+		case map[string]interface{}:
+			result[key] = toPulumiMap(typed)
+		default:
+			if value != nil {
+				result[key] = pulumi.Any(value)
+			}
+		}
 	}
 	return result
 }

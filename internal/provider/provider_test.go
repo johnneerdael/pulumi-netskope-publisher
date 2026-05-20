@@ -599,6 +599,185 @@ func TestAdditionalProviderConstructsBootstrapWithRegistryFields(t *testing.T) {
 	}
 }
 
+func TestExpandedProviderConstructsCreateProviderChildren(t *testing.T) {
+	cases := expandedProviderCases()
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			createdTypes := constructAndCollectTypes(t, tc.token, tc.inputs)
+			if !contains(createdTypes, tc.expected) {
+				t.Fatalf("expected %s construct to create %s child, got %v", tc.name, tc.expected, createdTypes)
+			}
+		})
+	}
+}
+
+func TestExpandedProviderConstructsBootstrapWithRegistryFields(t *testing.T) {
+	cases := expandedProviderCases()
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			resources := constructAndCollectResources(t, tc.token, tc.inputs)
+			child := findResourceByType(t, resources, tc.expected)
+			tc.validate(t, child.Inputs)
+		})
+	}
+}
+
+type expandedProviderCase struct {
+	name     string
+	token    string
+	inputs   property.Map
+	expected string
+	validate func(*testing.T, property.Map)
+}
+
+func expandedProviderCases() []expandedProviderCase {
+	return []expandedProviderCase{
+		{
+			name:  "DigitalOcean",
+			token: "netskope-publisher:index:DigitaloceanPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"region":        property.New("ams3"),
+			}),
+			expected: "digitalocean:index/droplet:Droplet",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "Vultr",
+			token: "netskope-publisher:index:VultrPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"region":        property.New("ams"),
+				"plan":          property.New("vc2-2c-4gb"),
+				"osId":          property.New(1743.0),
+			}),
+			expected: "vultr:index/instance:Instance",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "Exoscale",
+			token: "netskope-publisher:index:ExoscalePublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"zone":          property.New("ch-gva-2"),
+				"type":          property.New("standard.medium"),
+				"templateId":    property.New("template-id"),
+				"diskSize":      property.New(50.0),
+			}),
+			expected: "exoscale:index/computeInstance:ComputeInstance",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "UpCloud",
+			token: "netskope-publisher:index:UpcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"zone":          property.New("nl-ams1"),
+			}),
+			expected: "upcloud:index/server:Server",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "Stackit",
+			token: "netskope-publisher:index:StackitPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"projectId":     property.New("project-id"),
+				"machineType":   property.New("g1.2"),
+				"imageId":       property.New("image-id"),
+			}),
+			expected: "stackit:index/server:Server",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "Equinix",
+			token: "netskope-publisher:index:EquinixPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"projectId":     property.New("project-id"),
+				"metro":         property.New("AM"),
+				"plan":          property.New("c3.small.x86"),
+			}),
+			expected: "equinix:metal/device:Device",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "Outscale",
+			token: "netskope-publisher:index:OutscalePublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"imageId":       property.New("ami-123"),
+			}),
+			expected: "outscale:index/vm:Vm",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "OpenTelekomCloud",
+			token: "netskope-publisher:index:OpentelekomcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"networks": property.New([]property.Value{property.New(map[string]property.Value{
+					"name": property.New("private"),
+				})}),
+			}),
+			expected: "opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "TencentCloud",
+			token: "netskope-publisher:index:TencentcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":            property.New([]property.Value{property.New("pub-1")}),
+				"registrations":    registrationMap("pub-1"),
+				"availabilityZone": property.New("ap-guangzhou-6"),
+				"imageId":          property.New("img-123"),
+			}),
+			expected: "tencentcloud:index/instance:Instance",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userDataRaw").AsString())
+			},
+		},
+		{
+			name:  "Yandex",
+			token: "netskope-publisher:index:YandexPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"imageId":       property.New("image-id"),
+				"subnetId":      property.New("subnet-id"),
+			}),
+			expected: "yandex:index/computeInstance:ComputeInstance",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("metadata").AsMap().Get("user-data").AsString())
+			},
+		},
+	}
+}
+
 func TestProxmoxveConstructCreatesSnippetBackedVmClone(t *testing.T) {
 	resources := constructAndCollectResources(t, "netskope-publisher:index:ProxmoxvePublisher", property.NewMap(map[string]property.Value{
 		"names":         property.New([]property.Value{property.New("pub-1")}),
