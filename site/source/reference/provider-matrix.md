@@ -20,14 +20,24 @@ title: Provider Matrix
 | OCI | `OciPublisher` | Supported bootstrap mode |
 | Alicloud | `AlicloudPublisher` | Supported bootstrap mode |
 | Proxmox VE | `ProxmoxvePublisher` | Supported bootstrap mode from template clone |
+| DigitalOcean | `DigitaloceanPublisher` | Supported bootstrap mode |
+| Vultr | `VultrPublisher` | Supported bootstrap mode |
+| Exoscale | `ExoscalePublisher` | Supported bootstrap mode |
+| UpCloud | `UpcloudPublisher` | Supported bootstrap mode |
+| Stackit | `StackitPublisher` | Supported bootstrap mode |
+| Equinix Metal | `EquinixPublisher` | Supported bootstrap mode |
+| Outscale | `OutscalePublisher` | Supported bootstrap mode |
+| OpenTelekomCloud | `OpentelekomcloudPublisher` | Supported bootstrap mode |
+| TencentCloud | `TencentcloudPublisher` | Supported bootstrap mode |
+| Yandex Cloud | `YandexPublisher` | Supported bootstrap mode |
 | Hyper-V | `HypervPublisher` | Experimental gate |
 
 All supported providers share name derivation, Netskope registration,
 cloud-init generation, and secret output conventions.
 
 ESXi Native is direct-host ESXi support and does not replace the vSphere
-component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, and
-Proxmox VE use bootstrap mode on Ubuntu 22.04 images or templates.
+component. Bootstrap-mode providers use Ubuntu 22.04 images or templates
+and provider-specific user-data placement.
 
 Official Netskope image sources:
 

@@ -61,6 +61,11 @@ Install the cloud provider packages used by the component you deploy:
 npm install @pulumi/aws @pulumi/azure-native @pulumi/gcp @pulumi/kubernetes @pulumi/vsphere @pulumiverse/esxi-native @pulumi/hcloud @pierskarsenbarg/nutanix @pulumi/openstack @ovhcloud/pulumi-ovh @pulumiverse/scaleway @pulumi/oci @pulumi/alicloud @muhlba91/pulumi-proxmoxve
 ```
 
+The expanded bootstrap components for DigitalOcean, Vultr, Exoscale,
+UpCloud, Stackit, Equinix Metal, Outscale, OpenTelekomCloud,
+TencentCloud, and Yandex are implemented through the provider schema and
+do not require TypeScript programs to install additional npm SDKs.
+
 ## Netskope configuration
 
 For automatic publisher registration, configure the Netskope tenant URL
@@ -83,7 +88,9 @@ Each entry is keyed by the publisher name and must include
 Configure the cloud provider used by the selected component with the
 standard Pulumi provider configuration for AWS, Azure Native, Google
 Cloud, Kubernetes, vSphere, ESXi Native, Hcloud, Nutanix, OpenStack,
-OVH, Scaleway, OCI, Alicloud, or Proxmox VE.
+OVH, Scaleway, OCI, Alicloud, Proxmox VE, DigitalOcean, Vultr,
+Exoscale, UpCloud, Stackit, Equinix Metal, Outscale,
+OpenTelekomCloud, TencentCloud, or Yandex.
 
 Each component also requires provider-specific network and image inputs.
 See the component API docs and the examples directory for complete

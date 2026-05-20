@@ -30,6 +30,16 @@ for package manager setup.
 - [OCI](/pulumi-netskope-publisher/admin/component/oci/)
 - [Alicloud](/pulumi-netskope-publisher/admin/component/alicloud/)
 - [Proxmox VE](/pulumi-netskope-publisher/admin/component/proxmoxve/)
+- [DigitalOcean](/pulumi-netskope-publisher/admin/component/digitalocean/)
+- [Vultr](/pulumi-netskope-publisher/admin/component/vultr/)
+- [Exoscale](/pulumi-netskope-publisher/admin/component/exoscale/)
+- [UpCloud](/pulumi-netskope-publisher/admin/component/upcloud/)
+- [Stackit](/pulumi-netskope-publisher/admin/component/stackit/)
+- [Equinix Metal](/pulumi-netskope-publisher/admin/component/equinix/)
+- [Outscale](/pulumi-netskope-publisher/admin/component/outscale/)
+- [OpenTelekomCloud](/pulumi-netskope-publisher/admin/component/opentelekomcloud/)
+- [TencentCloud](/pulumi-netskope-publisher/admin/component/tencentcloud/)
+- [Yandex Cloud](/pulumi-netskope-publisher/admin/component/yandex/)
 - [Hyper-V (experimental)](/pulumi-netskope-publisher/admin/component/hyperv/)
 - [Netskope Registration](/pulumi-netskope-publisher/admin/component/registration/)
 
@@ -51,8 +61,8 @@ deployments additionally support chart API enrollment.
 | `wizardPath` | Absolute path to `npa_publisher_wizard`. |
 
 ESXi Native is direct-host ESXi support and does not replace the vSphere
-component. Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, and
-Proxmox VE use bootstrap mode on Ubuntu 22.04 images or templates.
+component. Bootstrap-mode providers use Ubuntu 22.04 images or templates
+and provider-specific user-data placement.
 
 VM-backed cloud providers accept bootstrap and install-user controls:
 `bootstrap`, `bootstrapUrl`, `nonat`, `installUser`,
