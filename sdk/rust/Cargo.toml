@@ -1,6 +1,6 @@
 [package]
 name = "pulumi-netskope-publisher"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 description = "Pulumi Gestalt Rust SDK for Netskope Private Access Publishers."
 license = "Apache-2.0"
