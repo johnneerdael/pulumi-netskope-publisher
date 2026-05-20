@@ -5,6 +5,12 @@ toc: true
 
 # vSphere Component
 
+Java examples use the published
+[`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+SDK. Rust examples use the published
+[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+crate plus Pulumi Gestalt.
+
 `VspherePublisher` clones one VM per publisher name from an existing
 template and passes registration data through guestinfo cloud-init.
 

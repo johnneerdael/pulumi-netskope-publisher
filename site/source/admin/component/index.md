@@ -8,6 +8,14 @@ The package exposes provider-specific publisher components. Each page
 lists required inputs, common optional inputs, outputs, and examples for
 the Pulumi CLI, TypeScript, Python, C#, Go, Java, and Rust.
 
+The Java examples use the published
+[`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+SDK. The Rust examples use the published
+[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+crate plus Pulumi Gestalt. See
+[SDK installation](/pulumi-netskope-publisher/reference/sdk-installation/)
+for package manager setup.
+
 - [AWS](/pulumi-netskope-publisher/admin/component/aws/)
 - [Azure](/pulumi-netskope-publisher/admin/component/azure/)
 - [GCP](/pulumi-netskope-publisher/admin/component/gcp/)

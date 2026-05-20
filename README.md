@@ -4,6 +4,8 @@
 [![PyPI](https://img.shields.io/pypi/v/pulumi-netskope-publisher?logo=pypi)](https://pypi.org/project/pulumi-netskope-publisher/)
 [![NuGet](https://img.shields.io/nuget/v/JohninNL.Pulumi.NetskopePublisher?logo=nuget)](https://www.nuget.org/packages/JohninNL.Pulumi.NetskopePublisher)
 [![Go Reference](https://pkg.go.dev/badge/github.com/johnneerdael/pulumi-netskope-publisher.svg)](https://pkg.go.dev/github.com/johnneerdael/pulumi-netskope-publisher)
+[![Java SDK](https://img.shields.io/badge/Java-GitHub%20Packages-blue?logo=apachemaven)](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+[![Crates.io](https://img.shields.io/crates/v/pulumi-netskope-publisher?logo=rust)](https://crates.io/crates/pulumi-netskope-publisher)
 
 Pulumi components for provisioning Netskope Private Access Publishers
 with TypeScript, Python, C#, Go, Java, and Rust SDKs.
@@ -112,9 +114,10 @@ The release also publishes the TypeScript SDK to npm, the Python SDK to
 PyPI, the C# SDK to NuGet, and the Go SDK through the tagged GitHub
 module path
 `github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher`.
-The Java SDK is published to a Maven-compatible repository, defaulting
-to GitHub Packages for this repository, and the Rust SDK is published to
-crates.io.
+The Java SDK is published as `com.pulumi:netskope-publisher` to GitHub
+Packages for this repository by default, and the Rust SDK is published
+as [`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+on crates.io.
 
 The Go provider constructs cloud, virtualization, Kubernetes, and
 registration child resources and includes a stateful

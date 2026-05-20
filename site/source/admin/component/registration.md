@@ -5,6 +5,12 @@ toc: true
 
 # NetskopeRegistration
 
+Java examples use the published
+[`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+SDK. Rust examples use the published
+[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+crate plus Pulumi Gestalt.
+
 `NetskopeRegistration` is the stateful provider resource that registers
 or reuses Netskope publisher records and generates registration tokens.
 

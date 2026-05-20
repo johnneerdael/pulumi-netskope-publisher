@@ -31,9 +31,13 @@ Each component accepts either Netskope tenant credentials for automatic
 publisher registration or pre-created registration tokens keyed by
 publisher name.
 
-Java and Rust SDKs are also generated. Java uses Pulumi's standard
-package SDK generator. Rust uses Pulumi Gestalt and requires the Gestalt
-Rust language plugin in Rust Pulumi programs.
+Java and Rust SDKs are also published. Java is available as
+`com.pulumi:netskope-publisher` from the configured Maven-compatible
+repository, defaulting to GitHub Packages for this repository. Rust is
+available as
+[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+on crates.io and requires the Gestalt Rust language plugin in Rust
+Pulumi programs.
 
 ## TypeScript example
 

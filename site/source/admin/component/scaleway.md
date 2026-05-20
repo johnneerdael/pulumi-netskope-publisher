@@ -5,6 +5,12 @@ toc: true
 
 # Scaleway Component
 
+Java examples use the published
+[`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+SDK. Rust examples use the published
+[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+crate plus Pulumi Gestalt.
+
 `ScalewayPublisher` creates one Scaleway Instance per publisher name.
 
 ## Inputs

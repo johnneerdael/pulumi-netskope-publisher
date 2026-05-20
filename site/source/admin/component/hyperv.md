@@ -5,6 +5,12 @@ toc: true
 
 # Hyper-V Component
 
+Java examples use the published
+[`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+SDK. Rust examples use the published
+[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+crate plus Pulumi Gestalt.
+
 `HypervPublisher` is experimental. The upstream Pulumi Hyper-V provider
 exists in `pulumi/pulumi-hyperv`, but `@pulumi/hyperv` is not published
 to npm, so this component currently acts as an explicit gate.

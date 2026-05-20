@@ -5,6 +5,12 @@ toc: true
 
 # AWS Component
 
+Java examples use the published
+[`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+SDK. Rust examples use the published
+[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+crate plus Pulumi Gestalt.
+
 `AwsPublisher` creates one EC2 instance per publisher name and registers
 each instance with Netskope.
 

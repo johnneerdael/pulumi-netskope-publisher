@@ -5,6 +5,12 @@ toc: true
 
 # Alicloud Component
 
+Java examples use the published
+[`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+SDK. Rust examples use the published
+[`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
+crate plus Pulumi Gestalt.
+
 `AlicloudPublisher` creates one Alibaba Cloud ECS instance per publisher
 name.
 

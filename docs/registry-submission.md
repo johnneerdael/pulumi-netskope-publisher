@@ -33,8 +33,10 @@ graphs for AWS, Azure, GCP, Kubernetes, and vSphere.
 
 Before opening the public Registry PR:
 
-1. Publish the npm package, Python SDK, Go SDK, C# SDK, Java SDK, and
-   Rust SDK.
+1. Publish the npm package, Python SDK, Go SDK, C# SDK, Java SDK
+   ([`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)),
+   and Rust SDK
+   ([`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)).
 2. Confirm the tag release attached plugin archives for supported
    platforms.
 3. Run `npm run sdk:gen`.

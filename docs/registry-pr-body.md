@@ -16,7 +16,8 @@ community package list with schema path `schema.json`.
 - [x] Published C# SDK:
   [`JohninNL.Pulumi.NetskopePublisher`](https://www.nuget.org/packages/JohninNL.Pulumi.NetskopePublisher)
 - [x] Published Java SDK:
-  `com.pulumi:netskope-publisher` in the configured Maven-compatible package repository
+  [`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)
+  in the configured Maven-compatible package repository
 - [x] Published Rust SDK:
   [`pulumi-netskope-publisher`](https://crates.io/crates/pulumi-netskope-publisher)
 - [x] Checked in `schema.json` at the same path used by the Registry package entry
