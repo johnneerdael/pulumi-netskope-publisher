@@ -1,5 +1,6 @@
 import * as hcloud from "@pulumi/hcloud";
 import * as pulumi from "@pulumi/pulumi";
+import { plainUserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { HcloudPublisherArgs, PublisherOutput } from "./types";
 
@@ -31,7 +32,7 @@ export class HcloudPublisher extends pulumi.ComponentResource {
         networks: args.networkId === undefined ? undefined : [{
           networkId: args.networkId,
         }],
-        userData,
+        userData: plainUserData(userData),
         labels: args.tags,
       }, { parent: this });
 

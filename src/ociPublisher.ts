@@ -1,5 +1,6 @@
 import * as oci from "@pulumi/oci";
 import * as pulumi from "@pulumi/pulumi";
+import { base64UserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { OciPublisherArgs, PublisherOutput } from "./types";
 
@@ -15,7 +16,7 @@ export class OciPublisher extends pulumi.ComponentResource {
       componentName: name,
       args,
       forceBootstrap: true,
-    }, ({ publisherName, userDataBase64 }) => {
+    }, ({ publisherName, userData }) => {
       const instance = new oci.core.Instance(`${name}-${publisherName}`, {
         displayName: publisherName,
         compartmentId: args.compartmentId,
@@ -30,8 +31,8 @@ export class OciPublisher extends pulumi.ComponentResource {
           sourceType: "image",
           sourceId: args.imageId,
         },
-        metadata: pulumi.all([userDataBase64, args.sshPublicKey]).apply(([userData, sshPublicKey]) => ({
-          userData,
+        metadata: pulumi.all([base64UserData(userData), args.sshPublicKey]).apply(([encodedUserData, sshPublicKey]) => ({
+          userData: encodedUserData,
           ...(sshPublicKey === undefined ? {} : { ssh_authorized_keys: sshPublicKey }),
         })),
         freeformTags: args.tags,

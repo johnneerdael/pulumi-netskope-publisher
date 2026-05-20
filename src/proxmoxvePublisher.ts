@@ -1,5 +1,6 @@
 import * as proxmoxve from "@muhlba91/pulumi-proxmoxve";
 import * as pulumi from "@pulumi/pulumi";
+import { plainUserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { ProxmoxvePublisherArgs, PublisherOutput } from "./types";
 
@@ -21,7 +22,7 @@ export class ProxmoxvePublisher extends pulumi.ComponentResource {
         datastoreId: args.datastoreId,
         nodeName: args.nodeName,
         sourceRaw: {
-          data: userData,
+          data: plainUserData(userData),
           fileName: `${publisherName}-user-data.yaml`,
         },
       }, { parent: this });

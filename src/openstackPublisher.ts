@@ -1,5 +1,6 @@
 import * as openstack from "@pulumi/openstack";
 import * as pulumi from "@pulumi/pulumi";
+import { plainUserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { OpenstackPublisherArgs, PublisherOutput } from "./types";
 
@@ -24,7 +25,7 @@ export class OpenstackPublisher extends pulumi.ComponentResource {
         keyPair: args.keyPair,
         securityGroups: args.securityGroups,
         availabilityZone: args.availabilityZone,
-        userData,
+        userData: plainUserData(userData),
       }, { parent: this });
 
       const floatingIp = args.assignFloatingIp === true

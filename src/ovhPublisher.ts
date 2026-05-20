@@ -1,5 +1,6 @@
 import * as ovh from "@ovhcloud/pulumi-ovh";
 import * as pulumi from "@pulumi/pulumi";
+import { plainUserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { OvhPublisherArgs, PublisherOutput } from "./types";
 
@@ -40,7 +41,7 @@ export class OvhPublisher extends pulumi.ComponentResource {
         sshKey: args.sshKeyName === undefined ? undefined : {
           name: args.sshKeyName,
         },
-        userData,
+        userData: plainUserData(userData),
       }, { parent: this });
 
       return {

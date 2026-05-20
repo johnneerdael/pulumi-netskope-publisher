@@ -1,5 +1,6 @@
 import * as nutanix from "@pierskarsenbarg/nutanix";
 import * as pulumi from "@pulumi/pulumi";
+import { base64UserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { NutanixPublisherArgs, PublisherOutput } from "./types";
 
@@ -15,7 +16,7 @@ export class NutanixPublisher extends pulumi.ComponentResource {
       componentName: name,
       args,
       forceBootstrap: true,
-    }, ({ publisherName, userDataBase64 }) => {
+    }, ({ publisherName, userData }) => {
       const vm = new nutanix.VirtualMachine(`${name}-${publisherName}`, {
         name: publisherName,
         clusterUuid: args.clusterUuid,
@@ -33,7 +34,7 @@ export class NutanixPublisher extends pulumi.ComponentResource {
           nicType: "NORMAL_NIC",
           model: "VIRTIO",
         }],
-        guestCustomizationCloudInitUserData: userDataBase64,
+        guestCustomizationCloudInitUserData: base64UserData(userData),
       }, { parent: this });
 
       return {

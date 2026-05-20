@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as scaleway from "@pulumiverse/scaleway";
 import { createVmPublishers } from "./vmPublisherCore";
 import { PublisherOutput, ScalewayPublisherArgs } from "./types";
+import { scalewayUserData } from "./userDataAdapters";
 
 export class ScalewayPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -16,6 +17,7 @@ export class ScalewayPublisher extends pulumi.ComponentResource {
       args,
       forceBootstrap: true,
     }, ({ publisherName, userData }) => {
+      const userDataPlacement = scalewayUserData(userData);
       const server = new scaleway.instance.Server(`${name}-${publisherName}`, {
         name: publisherName,
         type: args.type ?? "DEV1-M",
@@ -23,10 +25,8 @@ export class ScalewayPublisher extends pulumi.ComponentResource {
         zone: args.zone,
         securityGroupId: args.securityGroupId,
         enableDynamicIp: args.enableDynamicIp ?? true,
-        cloudInit: userData,
-        userData: {
-          "cloud-init": userData,
-        },
+        cloudInit: userDataPlacement.cloudInit as pulumi.Input<string>,
+        userData: userDataPlacement.userData as pulumi.Input<Record<string, pulumi.Input<string>>>,
         tags: pulumi.output(args.tags ?? {}).apply((tags) =>
           Object.entries(tags).map(([key, value]) => `${key}=${value}`),
         ),

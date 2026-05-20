@@ -1,6 +1,7 @@
 import * as alicloud from "@pulumi/alicloud";
 import * as pulumi from "@pulumi/pulumi";
 import { AlicloudPublisherArgs, PublisherOutput } from "./types";
+import { base64UserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 
 export class AlicloudPublisher extends pulumi.ComponentResource {
@@ -15,7 +16,7 @@ export class AlicloudPublisher extends pulumi.ComponentResource {
       componentName: name,
       args,
       forceBootstrap: true,
-    }, ({ publisherName, userDataBase64 }) => {
+    }, ({ publisherName, userData }) => {
       const instance = new alicloud.ecs.Instance(`${name}-${publisherName}`, {
         instanceName: publisherName,
         instanceType: args.instanceType ?? "ecs.t6-c1m2.large",
@@ -24,7 +25,7 @@ export class AlicloudPublisher extends pulumi.ComponentResource {
         securityGroups: args.securityGroupIds,
         keyName: args.keyName,
         internetMaxBandwidthOut: args.allocatePublicIp === true ? 10 : 0,
-        userData: userDataBase64,
+        userData: base64UserData(userData),
         tags: args.tags,
       }, { parent: this });
 
