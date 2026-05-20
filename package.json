@@ -44,6 +44,7 @@
     "plugin:dist": "node scripts/build-plugin-archives.mjs",
     "sdk:gen": "node scripts/generate-sdks.mjs",
     "sdk:pack": "node scripts/package-sdks.mjs",
+    "docs:gen": "node scripts/generate-provider-docs.mjs",
     "catalog:check": "node scripts/check-provider-catalog.mjs",
     "registry:check": "node scripts/check-registry-readiness.mjs",
     "release:bump": "node scripts/bump-release-version.mjs",
