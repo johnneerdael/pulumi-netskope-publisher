@@ -34,8 +34,10 @@ AWS and Azure support both paths. GCP uses bootstrap mode by default
 because there is no public Netskope Publisher image. vSphere clones an
 existing template, Hyper-V is currently an experimental gate, and
 Kubernetes installs the publisher Helm chart instead of booting a VM.
-Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, and Proxmox
-VE use bootstrap mode.
+Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, Proxmox VE,
+DigitalOcean, Vultr, Exoscale, UpCloud, Stackit, Equinix Metal,
+Outscale, OpenTelekomCloud, TencentCloud, and Yandex Cloud use
+bootstrap mode.
 
 ## What each component owns
 
@@ -55,6 +57,16 @@ VE use bootstrap mode.
 | `OciPublisher` | OCI instances and metadata user data | `@pulumi/oci` |
 | `AlicloudPublisher` | Alibaba Cloud ECS instances and user data | `@pulumi/alicloud` |
 | `ProxmoxvePublisher` | Proxmox VE cloud-init snippets and VM template clones | `@muhlba91/pulumi-proxmoxve` |
+| `DigitaloceanPublisher` | DigitalOcean Droplets and user data | `@pulumi/digitalocean` |
+| `VultrPublisher` | Vultr instances and user data | `@ediri/vultr` |
+| `ExoscalePublisher` | Exoscale compute instances and user data | `@pulumiverse/exoscale` |
+| `UpcloudPublisher` | UpCloud servers and user data | `@pulumiverse/upcloud` |
+| `StackitPublisher` | STACKIT servers and user data | `@stackitcloud/stackit` |
+| `EquinixPublisher` | Equinix Metal devices and user data | `@equinix-labs/equinix` |
+| `OutscalePublisher` | OUTSCALE VMs and user data | `@pulumiverse/outscale` |
+| `OpentelekomcloudPublisher` | Open Telekom Cloud compute instances and user data | `@pulumiverse/opentelekomcloud` |
+| `TencentcloudPublisher` | TencentCloud CVM instances and raw user data | `@pulumi/tencentcloud` |
+| `YandexPublisher` | Yandex Cloud compute instances and metadata user-data | `@pulumi/yandex` |
 | `KubernetesPublisher` | Helm chart releases and token/API Secrets | `@pulumi/kubernetes` |
 | `HypervPublisher` | Experimental placeholder until `@pulumi/hyperv` is published | none |
 
@@ -64,4 +76,6 @@ Use the component that matches the provider already configured in the
 stack. A stack that only creates `AwsPublisher` resources does not need
 Azure, GCP, vSphere, or Kubernetes provider credentials.
 
-See also: [Registration flow](/pulumi-netskope-publisher/admin/concepts/registration-flow/).
+See also:
+[Shared cloud-init and user-data adapters](/pulumi-netskope-publisher/admin/concepts/shared-cloud-init/)
+and [Registration flow](/pulumi-netskope-publisher/admin/concepts/registration-flow/).

@@ -8,6 +8,7 @@ Reference, how-tos, and operational guidance for operators running
 ## Concepts
 
 - [Architecture overview](/pulumi-netskope-publisher/admin/concepts/architecture-overview/)
+- [Shared cloud-init and user-data adapters](/pulumi-netskope-publisher/admin/concepts/shared-cloud-init/)
 - [Registration flow](/pulumi-netskope-publisher/admin/concepts/registration-flow/)
 - [Naming, replicas, and component instances](/pulumi-netskope-publisher/admin/concepts/naming-replicas-components/)
 - [Connectivity requirements](/pulumi-netskope-publisher/admin/concepts/connectivity/)
@@ -29,6 +30,16 @@ Reference, how-tos, and operational guidance for operators running
 - [OCI](/pulumi-netskope-publisher/admin/component/oci/)
 - [Alicloud](/pulumi-netskope-publisher/admin/component/alicloud/)
 - [Proxmox VE](/pulumi-netskope-publisher/admin/component/proxmoxve/)
+- [DigitalOcean](/pulumi-netskope-publisher/admin/component/digitalocean/)
+- [Vultr](/pulumi-netskope-publisher/admin/component/vultr/)
+- [Exoscale](/pulumi-netskope-publisher/admin/component/exoscale/)
+- [UpCloud](/pulumi-netskope-publisher/admin/component/upcloud/)
+- [Stackit](/pulumi-netskope-publisher/admin/component/stackit/)
+- [Equinix Metal](/pulumi-netskope-publisher/admin/component/equinix/)
+- [Outscale](/pulumi-netskope-publisher/admin/component/outscale/)
+- [OpenTelekomCloud](/pulumi-netskope-publisher/admin/component/opentelekomcloud/)
+- [TencentCloud](/pulumi-netskope-publisher/admin/component/tencentcloud/)
+- [Yandex Cloud](/pulumi-netskope-publisher/admin/component/yandex/)
 - [Hyper-V (experimental)](/pulumi-netskope-publisher/admin/component/hyperv/)
 - [Netskope Registration](/pulumi-netskope-publisher/admin/component/registration/)
 
