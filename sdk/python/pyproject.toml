@@ -5,7 +5,7 @@
   keywords = ["category/network", "kind/component", "pulumi", "netskope", "npa", "publisher", "aws", "azure", "gcp", "kubernetes", "vsphere", "esxi", "hcloud", "nutanix", "openstack", "ovh", "scaleway", "oci", "alicloud", "proxmoxve", "proxmox", "digitalocean", "vultr", "exoscale", "upcloud", "stackit", "equinix", "outscale", "opentelekomcloud", "tencentcloud", "yandex"]
   readme = "README.md"
   requires-python = ">=3.9"
-  version = "0.2.0"
+  version = "0.2.1"
   license = "Apache-2.0"
   [project.urls]
     Homepage = "https://johnneerdael.github.io/pulumi-netskope-publisher/"
