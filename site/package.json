@@ -5,6 +5,7 @@
     "version": "7.3.0"
   },
   "scripts": {
+    "prebuild": "cd .. && npm run docs:gen",
     "build": "hexo generate",
     "serve": "hexo server",
     "clean": "hexo clean"

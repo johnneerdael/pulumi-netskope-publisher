@@ -33,6 +33,7 @@ jobs:
         working-directory: sdk/rust
       - run: npm run registry:check
       - run: npm run plugin:dist
+      - run: npm run docs:gen
       - uses: actions/setup-node@v4
         with:
           node-version: 20

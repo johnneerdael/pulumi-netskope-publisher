@@ -29,6 +29,7 @@
     "scripts/bump-release-version.mjs",
     "scripts/check-provider-catalog.mjs",
     "scripts/check-registry-readiness.mjs",
+    "scripts/generate-provider-docs.mjs",
     "scripts/generate-sdks.mjs",
     "scripts/package-sdks.mjs",
     "scripts/run-node-tests.mjs",

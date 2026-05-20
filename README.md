@@ -76,6 +76,14 @@ npm run registry:check
 npm run plugin:dist
 ```
 
+### Provider catalog maintenance
+
+Provider capability metadata lives in `src/providerCatalog.ts`. Run
+`npm run docs:gen` after changing provider metadata and run
+`npm run catalog:check` before opening a release PR. The generated docs
+snippets under `site/source/_generated/` are committed so GitHub Pages
+builds are reproducible.
+
 ## Quick start
 
 ```ts
