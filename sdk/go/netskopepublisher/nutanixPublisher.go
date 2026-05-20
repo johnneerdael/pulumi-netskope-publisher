@@ -53,15 +53,6 @@ func NewNutanixPublisher(ctx *pulumi.Context,
 		return nil, errors.New("missing one or more required arguments")
 	}
 
-	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
-	}
-	if args.BearerToken != nil {
-		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
-	}
-	if args.InstallUserPassword != nil {
-		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
-	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
 		"bearerToken",

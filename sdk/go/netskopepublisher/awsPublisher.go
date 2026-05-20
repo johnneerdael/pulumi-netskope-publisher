@@ -60,15 +60,6 @@ func NewAwsPublisher(ctx *pulumi.Context,
 	if args.SecurityGroupIds == nil {
 		return nil, errors.New("invalid value for required argument 'SecurityGroupIds'")
 	}
-	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
-	}
-	if args.BearerToken != nil {
-		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
-	}
-	if args.InstallUserPassword != nil {
-		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
-	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
 		"bearerToken",

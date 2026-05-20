@@ -68,6 +68,10 @@ for (const language of selectedLanguages) {
     writeFileSync(project, contents);
   }
 
+  if (language === "go") {
+    removeGoPointerSecretAssertions();
+  }
+
   if (language === "java") {
     removeJavaComponentSecretOutputOptions();
 
@@ -237,6 +241,19 @@ function removeDotnetComponentSecretOutputOptions() {
       continue;
     }
     const updated = contents.replace(/\n\s*AdditionalSecretOutputs =\n\s*\{[\s\S]*?\n\s*\},/g, "");
+    if (updated !== contents) {
+      writeFileSync(file, updated);
+    }
+  }
+}
+
+function removeGoPointerSecretAssertions() {
+  for (const file of listFiles("sdk/go/netskopepublisher", ".go")) {
+    const contents = readFileSync(file, "utf8");
+    const updated = contents.replace(
+      /\n\tif args\.(ApiToken|BearerToken|InstallUserPassword) != nil \{\n\t\targs\.\1 = pulumi\.ToSecret\(args\.\1\)\.\(\*string\)\n\t\}/g,
+      ""
+    );
     if (updated !== contents) {
       writeFileSync(file, updated);
     }

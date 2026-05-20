@@ -52,12 +52,6 @@ func NewHypervPublisher(ctx *pulumi.Context,
 	if args.HardDrives == nil {
 		return nil, errors.New("invalid value for required argument 'HardDrives'")
 	}
-	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
-	}
-	if args.BearerToken != nil {
-		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
-	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
 		"bearerToken",
