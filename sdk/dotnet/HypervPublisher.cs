@@ -37,7 +37,7 @@ namespace Pulumi.NetskopePublisher
         public Output<int?> Generation { get; private set; } = null!;
 
         [Output("hardDrives")]
-        public Output<ImmutableArray<Pulumi.NetskopePublisher.Provider.Outputs.HypervHardDrive>> HardDrives { get; private set; } = null!;
+        public Output<ImmutableArray<Pulumi.NetskopePublisher.Types.Outputs.HypervHardDrive>> HardDrives { get; private set; } = null!;
 
         [Output("maximumMemory")]
         public Output<int?> MaximumMemory { get; private set; } = null!;
@@ -55,7 +55,7 @@ namespace Pulumi.NetskopePublisher
         public Output<ImmutableArray<string>> Names { get; private set; } = null!;
 
         [Output("oauth2")]
-        public Output<Pulumi.NetskopePublisher.Provider.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
+        public Output<Pulumi.NetskopePublisher.Types.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
 
         [Output("processorCount")]
         public Output<int?> ProcessorCount { get; private set; } = null!;
@@ -67,7 +67,7 @@ namespace Pulumi.NetskopePublisher
         public Output<ImmutableDictionary<string, object>> Publishers { get; private set; } = null!;
 
         [Output("registrations")]
-        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Types.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
 
         [Output("replicas")]
         public Output<int?> Replicas { get; private set; } = null!;
@@ -154,10 +154,10 @@ namespace Pulumi.NetskopePublisher
         public int? Generation { get; set; }
 
         [Input("hardDrives", required: true)]
-        private InputList<Pulumi.NetskopePublisher.Provider.Inputs.HypervHardDriveArgs>? _hardDrives;
-        public InputList<Pulumi.NetskopePublisher.Provider.Inputs.HypervHardDriveArgs> HardDrives
+        private InputList<Pulumi.NetskopePublisher.Types.Inputs.HypervHardDriveArgs>? _hardDrives;
+        public InputList<Pulumi.NetskopePublisher.Types.Inputs.HypervHardDriveArgs> HardDrives
         {
-            get => _hardDrives ?? (_hardDrives = new InputList<Pulumi.NetskopePublisher.Provider.Inputs.HypervHardDriveArgs>());
+            get => _hardDrives ?? (_hardDrives = new InputList<Pulumi.NetskopePublisher.Types.Inputs.HypervHardDriveArgs>());
             set => _hardDrives = value;
         }
 
@@ -182,16 +182,16 @@ namespace Pulumi.NetskopePublisher
         }
 
         [Input("oauth2")]
-        public Input<Pulumi.NetskopePublisher.Provider.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
+        public Input<Pulumi.NetskopePublisher.Types.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
 
         [Input("processorCount")]
         public int? ProcessorCount { get; set; }
 
         [Input("registrations")]
-        private InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>? _registrations;
-        public InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs> Registrations
+        private InputMap<Pulumi.NetskopePublisher.Types.Inputs.PublisherRegistrationInputArgs>? _registrations;
+        public InputMap<Pulumi.NetskopePublisher.Types.Inputs.PublisherRegistrationInputArgs> Registrations
         {
-            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>());
+            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Types.Inputs.PublisherRegistrationInputArgs>());
             set => _registrations = value;
         }
 

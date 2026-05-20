@@ -253,12 +253,6 @@ public class AwsPublisher extends com.pulumi.resources.ComponentResource {
         var defaultOptions = com.pulumi.resources.ComponentResourceOptions.builder()
             .version(Utilities.getVersion())
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
-            .additionalSecretOutputs(List.of(
-                "apiToken",
-                "bearerToken",
-                "installUserPassword",
-                "publishers"
-            ))
             .build();
         return com.pulumi.resources.ComponentResourceOptions.merge(defaultOptions, options, id);
     }

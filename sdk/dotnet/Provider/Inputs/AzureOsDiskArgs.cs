@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Pulumi.Serialization;
 
-namespace Pulumi.NetskopePublisher.Provider.Inputs
+namespace Pulumi.NetskopePublisher.Types.Inputs
 {
 
     public sealed class AzureOsDiskArgs : global::Pulumi.ResourceArgs

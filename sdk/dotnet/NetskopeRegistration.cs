@@ -22,13 +22,13 @@ namespace Pulumi.NetskopePublisher
         public Output<string?> BearerToken { get; private set; } = null!;
 
         [Output("oauth2")]
-        public Output<Pulumi.NetskopePublisher.Provider.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
+        public Output<Pulumi.NetskopePublisher.Types.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
 
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
 
         [Output("registrations")]
-        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.RegistrationRecord>> Registrations { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Types.Outputs.RegistrationRecord>> Registrations { get; private set; } = null!;
 
         [Output("tenantUrl")]
         public Output<string> TenantUrl { get; private set; } = null!;
@@ -112,7 +112,7 @@ namespace Pulumi.NetskopePublisher
         }
 
         [Input("oauth2")]
-        public Input<Pulumi.NetskopePublisher.Provider.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
+        public Input<Pulumi.NetskopePublisher.Types.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
 
         [Input("publisherNames", required: true)]
         private InputList<string>? _publisherNames;

@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const languages = process.argv.slice(2);
@@ -42,6 +42,7 @@ for (const language of selectedLanguages) {
 
   if (language === "dotnet") {
     normalizeDotnetProviderCase();
+    normalizeDotnetProviderNamespaces();
 
     const project = "sdk/dotnet/Pulumi.NetskopePublisher.csproj";
     let contents = readFileSync(project, "utf8");
@@ -67,6 +68,8 @@ for (const language of selectedLanguages) {
   }
 
   if (language === "java") {
+    removeJavaComponentSecretOutputOptions();
+
     const build = "sdk/java/build.gradle";
     let contents = readFileSync(build, "utf8");
     contents = contents
@@ -195,4 +198,46 @@ function normalizeDotnetProviderCase() {
   renameSync(lowerProvider, temporaryProvider);
   rmSync(canonicalProvider, { force: true });
   renameSync(temporaryProvider, canonicalProvider);
+}
+
+function normalizeDotnetProviderNamespaces() {
+  for (const file of listFiles("sdk/dotnet", ".cs")) {
+    const contents = readFileSync(file, "utf8");
+    const updated = contents.replaceAll(
+      "Pulumi.NetskopePublisher.Provider.",
+      "Pulumi.NetskopePublisher.Types."
+    ).replaceAll(
+      "namespace Pulumi.NetskopePublisher.Provider.",
+      "namespace Pulumi.NetskopePublisher.Types."
+    );
+    if (updated !== contents) {
+      writeFileSync(file, updated);
+    }
+  }
+}
+
+function removeJavaComponentSecretOutputOptions() {
+  for (const file of listFiles("sdk/java/src/main/java/com/pulumi/netskopepublisher", ".java")) {
+    const contents = readFileSync(file, "utf8");
+    if (!contents.includes("extends com.pulumi.resources.ComponentResource")) {
+      continue;
+    }
+    const updated = contents.replace(/\n\s*\.additionalSecretOutputs\(List\.of\([\s\S]*?\n\s*\)\)/g, "");
+    if (updated !== contents) {
+      writeFileSync(file, updated);
+    }
+  }
+}
+
+function listFiles(dir, extension) {
+  const files = [];
+  for (const entry of readdirSync(dir)) {
+    const path = `${dir}/${entry}`;
+    if (statSync(path).isDirectory()) {
+      files.push(...listFiles(path, extension));
+    } else if (path.endsWith(extension)) {
+      files.push(path);
+    }
+  }
+  return files;
 }

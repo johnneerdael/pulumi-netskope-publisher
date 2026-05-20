@@ -34,7 +34,7 @@ namespace Pulumi.NetskopePublisher
         public Output<bool?> DeleteDefaultUser { get; private set; } = null!;
 
         [Output("guestNetworkInterface")]
-        public Output<Pulumi.NetskopePublisher.Provider.Outputs.GuestNetworkInterface?> GuestNetworkInterface { get; private set; } = null!;
+        public Output<Pulumi.NetskopePublisher.Types.Outputs.GuestNetworkInterface?> GuestNetworkInterface { get; private set; } = null!;
 
         [Output("imageUuid")]
         public Output<string?> ImageUuid { get; private set; } = null!;
@@ -70,7 +70,7 @@ namespace Pulumi.NetskopePublisher
         public Output<int?> NumVCpus { get; private set; } = null!;
 
         [Output("oauth2")]
-        public Output<Pulumi.NetskopePublisher.Provider.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
+        public Output<Pulumi.NetskopePublisher.Types.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
 
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
@@ -79,7 +79,7 @@ namespace Pulumi.NetskopePublisher
         public Output<ImmutableDictionary<string, object>> Publishers { get; private set; } = null!;
 
         [Output("registrations")]
-        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Provider.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
+        public Output<ImmutableDictionary<string, Pulumi.NetskopePublisher.Types.Outputs.PublisherRegistrationInput>?> Registrations { get; private set; } = null!;
 
         [Output("replicas")]
         public Output<int?> Replicas { get; private set; } = null!;
@@ -164,7 +164,7 @@ namespace Pulumi.NetskopePublisher
         public bool? DeleteDefaultUser { get; set; }
 
         [Input("guestNetworkInterface")]
-        public Input<Pulumi.NetskopePublisher.Provider.Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
+        public Input<Pulumi.NetskopePublisher.Types.Inputs.GuestNetworkInterfaceArgs>? GuestNetworkInterface { get; set; }
 
         [Input("imageUuid")]
         public string? ImageUuid { get; set; }
@@ -215,13 +215,13 @@ namespace Pulumi.NetskopePublisher
         public int? NumVCpus { get; set; }
 
         [Input("oauth2")]
-        public Input<Pulumi.NetskopePublisher.Provider.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
+        public Input<Pulumi.NetskopePublisher.Types.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
 
         [Input("registrations")]
-        private InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>? _registrations;
-        public InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs> Registrations
+        private InputMap<Pulumi.NetskopePublisher.Types.Inputs.PublisherRegistrationInputArgs>? _registrations;
+        public InputMap<Pulumi.NetskopePublisher.Types.Inputs.PublisherRegistrationInputArgs> Registrations
         {
-            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>());
+            get => _registrations ?? (_registrations = new InputMap<Pulumi.NetskopePublisher.Types.Inputs.PublisherRegistrationInputArgs>());
             set => _registrations = value;
         }
 
