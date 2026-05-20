@@ -13,6 +13,7 @@ import (
 	"github.com/pulumi/pulumi-go-provider/integration"
 	presource "github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/property"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
 func TestNetskopeRegistrationCreatesMissingPublishersAndTokens(t *testing.T) {
@@ -268,6 +269,25 @@ func TestRenderUserDataSupportsInstallUserOptions(t *testing.T) {
 		if !strings.Contains(userData, expected) {
 			t.Fatalf("expected user data to contain %q, got:\n%s", expected, userData)
 		}
+	}
+}
+
+func TestUserDataAdaptersRenderPlacement(t *testing.T) {
+	payload := pulumi.String("#cloud-config").ToStringOutput()
+
+	_ = plainUserData(payload)
+	_ = base64UserData(payload)
+	if got := metadataUserData(payload, "user-data"); got["user-data"] == nil {
+		t.Fatalf("expected metadata user-data key")
+	}
+	if got := base64MetadataUserData(payload, "userData"); got["userData"] == nil {
+		t.Fatalf("expected base64 metadata userData key")
+	}
+	if got := guestInfoUserData(payload); got["guestinfo.userdata.encoding"] == nil || got["guestinfo.userdata"] == nil {
+		t.Fatalf("expected guestinfo userdata and encoding keys")
+	}
+	if got := scalewayUserData(payload); got["cloudInit"] == nil || got["userData"] == nil {
+		t.Fatalf("expected Scaleway cloudInit and userData keys")
 	}
 }
 
