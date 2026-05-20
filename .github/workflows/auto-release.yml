@@ -142,9 +142,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           repo_url="${JAVA_MAVEN_REPOSITORY_URL:-https://maven.pkg.github.com/${GITHUB_REPOSITORY}}"
+          java_maven_group_id="${JAVA_MAVEN_GROUP_ID:-com.pulumi}"
+          artifact_path="$(printf '%s' "$java_maven_group_id" | tr '.' '/')/netskope-publisher/${PACKAGE_VERSION}/netskope-publisher-${PACKAGE_VERSION}.pom"
           if [ -n "$JAVA_MAVEN_AUTH_BASE64" ]; then
+            artifact_status="$(curl --silent --output /dev/null --write-out '%{http_code}' --head \
+              -H "Authorization: Bearer ${JAVA_MAVEN_AUTH_BASE64}" \
+              "${repo_url%/}/${artifact_path}")"
+            if [ "$artifact_status" = "200" ]; then
+              echo "Java SDK ${java_maven_group_id}:netskope-publisher:${PACKAGE_VERSION} already exists; skipping."
+              exit 0
+            fi
             PUBLISH_REPO_URL="$repo_url" \
-              JAVA_MAVEN_GROUP_ID="$JAVA_MAVEN_GROUP_ID" \
+              JAVA_MAVEN_GROUP_ID="$java_maven_group_id" \
               PUBLISH_REPO_BEARER_TOKEN="$JAVA_MAVEN_AUTH_BASE64" \
               SIGNING_KEY="$JAVA_SIGNING_KEY" \
               SIGNING_PASSWORD="$JAVA_SIGNING_PASSWORD" \
@@ -152,8 +161,15 @@ jobs:
           else
             repo_username="${JAVA_MAVEN_USERNAME:-${GITHUB_ACTOR}}"
             repo_password="${JAVA_MAVEN_PASSWORD:-${GITHUB_TOKEN}}"
+            artifact_status="$(curl --silent --output /dev/null --write-out '%{http_code}' --head \
+              -u "${repo_username}:${repo_password}" \
+              "${repo_url%/}/${artifact_path}")"
+            if [ "$artifact_status" = "200" ]; then
+              echo "Java SDK ${java_maven_group_id}:netskope-publisher:${PACKAGE_VERSION} already exists; skipping."
+              exit 0
+            fi
             PUBLISH_REPO_URL="$repo_url" \
-              JAVA_MAVEN_GROUP_ID="$JAVA_MAVEN_GROUP_ID" \
+              JAVA_MAVEN_GROUP_ID="$java_maven_group_id" \
               PUBLISH_REPO_USERNAME="$repo_username" \
               PUBLISH_REPO_PASSWORD="$repo_password" \
               SIGNING_KEY="$JAVA_SIGNING_KEY" \
@@ -167,11 +183,18 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
           PACKAGE_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          if curl --fail --silent --show-error "https://crates.io/api/v1/crates/pulumi-netskope-publisher/${PACKAGE_VERSION}" >/dev/null; then
+          crate_status="$(curl --silent --output /dev/null --write-out '%{http_code}' \
+            -H "User-Agent: pulumi-netskope-publisher-release-check (https://github.com/johnneerdael/pulumi-netskope-publisher)" \
+            "https://crates.io/api/v1/crates/pulumi-netskope-publisher/${PACKAGE_VERSION}")"
+          if [ "$crate_status" = "200" ]; then
             echo "Rust crate pulumi-netskope-publisher ${PACKAGE_VERSION} already exists; skipping."
             exit 0
           fi
-          cargo publish --token "$CARGO_REGISTRY_TOKEN"
+          if [ "$crate_status" != "404" ]; then
+            echo "::error::Unable to check crates.io for pulumi-netskope-publisher ${PACKAGE_VERSION}; HTTP ${crate_status}."
+            exit 1
+          fi
+          cargo publish --allow-dirty
         working-directory: sdk/rust
 
       - name: Commit release bump and tag
