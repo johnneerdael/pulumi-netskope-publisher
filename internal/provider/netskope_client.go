@@ -157,6 +157,98 @@ func (client *netskopeClient) generateRegistrationToken(ctx context.Context, pub
 	return response.Data.Token, nil
 }
 
+type privateAppProtocol struct {
+	Type  string `json:"type"`
+	Ports string `json:"ports,omitempty"`
+	Port  string `json:"port,omitempty"`
+}
+
+type privateAppTag struct {
+	TagID   int    `json:"tag_id,omitempty"`
+	TagName string `json:"tag_name"`
+}
+
+type privateAppPayload struct {
+	AppName              string               `json:"app_name"`
+	AppType              string               `json:"app_type,omitempty"`
+	Host                 any                  `json:"host"`
+	ClientlessAccess     bool                 `json:"clientless_access"`
+	IsUserPortalApp      bool                 `json:"is_user_portal_app"`
+	Protocols            []privateAppProtocol `json:"protocols"`
+	TrustSelfSignedCerts bool                 `json:"trust_self_signed_certs"`
+	UsePublisherDNS      bool                 `json:"use_publisher_dns"`
+	PrivateAppTags       []privateAppTag      `json:"private_app_tags,omitempty"`
+	Tags                 []privateAppTag      `json:"tags,omitempty"`
+}
+
+type privateAppRecord struct {
+	AppID   int             `json:"app_id"`
+	ID      int             `json:"id"`
+	AppName string          `json:"app_name"`
+	Name    string          `json:"name"`
+	Host    any             `json:"host"`
+	Tags    []privateAppTag `json:"tags"`
+}
+
+func (app privateAppRecord) resourceID() int {
+	if app.AppID != 0 {
+		return app.AppID
+	}
+	return app.ID
+}
+
+func (client *netskopeClient) listPrivateApps(ctx context.Context) ([]privateAppRecord, error) {
+	var response struct {
+		Status string             `json:"status"`
+		Data   []privateAppRecord `json:"data"`
+	}
+	if err := client.request(ctx, "List private apps", http.MethodGet, "/api/v2/steering/apps/private", nil, &response); err != nil {
+		return nil, err
+	}
+	return response.Data, nil
+}
+
+func (client *netskopeClient) findPrivateAppByName(ctx context.Context, name string) (*privateAppRecord, error) {
+	apps, err := client.listPrivateApps(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, app := range apps {
+		if app.AppName == name || app.Name == name {
+			return &app, nil
+		}
+	}
+	return nil, nil
+}
+
+func (client *netskopeClient) createPrivateApp(ctx context.Context, payload privateAppPayload) (privateAppRecord, error) {
+	var response struct {
+		Status string           `json:"status"`
+		Data   privateAppRecord `json:"data"`
+	}
+	if err := client.request(ctx, "Create private app "+payload.AppName, http.MethodPost, "/api/v2/steering/apps/private", payload, &response); err != nil {
+		return privateAppRecord{}, err
+	}
+	return response.Data, nil
+}
+
+func (client *netskopeClient) updatePrivateApp(ctx context.Context, id int, payload privateAppPayload) (privateAppRecord, error) {
+	var response struct {
+		Status string           `json:"status"`
+		Data   privateAppRecord `json:"data"`
+	}
+	path := fmt.Sprintf("/api/v2/steering/apps/private/%d", id)
+	if err := client.request(ctx, "Update private app "+payload.AppName, http.MethodPatch, path, payload, &response); err != nil {
+		return privateAppRecord{}, err
+	}
+	return response.Data, nil
+}
+
+func (client *netskopeClient) deletePrivateApp(ctx context.Context, id int) error {
+	path := fmt.Sprintf("/api/v2/steering/apps/private/%d", id)
+	return client.request(ctx, fmt.Sprintf("Delete private app %d", id), http.MethodDelete, path, nil, nil)
+}
+
 func (client *netskopeClient) resolveAccessToken(ctx context.Context) (string, error) {
 	switch client.authMode {
 	case "", "token":

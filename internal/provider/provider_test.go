@@ -176,6 +176,92 @@ func TestNetskopeClientReportsHTTPStatusAndBody(t *testing.T) {
 	}
 }
 
+func TestPrivateAppCreateFailsWhenExistingWithoutAdopt(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private" {
+			writeJSON(t, w, map[string]any{
+				"status": "success",
+				"data": []map[string]any{{
+					"app_id":   44,
+					"app_name": "orders",
+					"name":     "orders",
+					"tags":     []map[string]any{},
+				}},
+			})
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	_, err := createPrivateAppResource(t, property.NewMap(map[string]property.Value{
+		"tenantUrl":            property.New(server.URL),
+		"bearerToken":          property.New("api-token"),
+		"appName":              property.New("orders"),
+		"appType":              property.New("client"),
+		"host":                 property.New("orders.internal"),
+		"protocols":            property.New([]property.Value{property.New(map[string]property.Value{"type": property.New("tcp"), "ports": property.New("443")})}),
+		"clientlessAccess":     property.New(false),
+		"isUserPortalApp":      property.New(false),
+		"usePublisherDns":      property.New(false),
+		"trustSelfSignedCerts": property.New(false),
+	}))
+	if err == nil {
+		t.Fatalf("expected existing app error")
+	}
+	if !strings.Contains(err.Error(), "already exists") || !strings.Contains(err.Error(), "adoptExisting") {
+		t.Fatalf("expected adopt hint, got %v", err)
+	}
+}
+
+func TestPrivateAppAdoptsExistingByName(t *testing.T) {
+	var patched bool
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private":
+			writeJSON(t, w, map[string]any{
+				"status": "success",
+				"data": []map[string]any{{
+					"app_id":   44,
+					"app_name": "orders",
+					"name":     "orders",
+					"tags":     []map[string]any{{"tag_id": 7, "tag_name": "vpc-a"}},
+				}},
+			})
+		case r.Method == http.MethodPatch && r.URL.Path == "/api/v2/steering/apps/private/44":
+			patched = true
+			writeJSON(t, w, map[string]any{"status": "success", "data": map[string]any{"app_id": 44, "app_name": "orders", "name": "orders"}})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	response, err := createPrivateAppResource(t, property.NewMap(map[string]property.Value{
+		"tenantUrl":            property.New(server.URL),
+		"bearerToken":          property.New("api-token"),
+		"appName":              property.New("orders"),
+		"appType":              property.New("client"),
+		"host":                 property.New("orders.internal"),
+		"protocols":            property.New([]property.Value{property.New(map[string]property.Value{"type": property.New("tcp"), "ports": property.New("443")})}),
+		"clientlessAccess":     property.New(false),
+		"isUserPortalApp":      property.New(false),
+		"usePublisherDns":      property.New(false),
+		"trustSelfSignedCerts": property.New(false),
+		"tags":                 property.New([]property.Value{property.New("vpc-a")}),
+		"adoptExisting":        property.New(true),
+	}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.ID != "44" {
+		t.Fatalf("expected adopted ID 44, got %q", response.ID)
+	}
+	if !patched {
+		t.Fatalf("expected adopted app to be reconciled with PATCH")
+	}
+}
+
 func TestAwsConstructCreatesRegistrationChildWhenRegistrationsOmitted(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:AwsPublisher", property.NewMap(map[string]property.Value{
 		"names":            property.New([]property.Value{property.New("pub-1")}),
@@ -963,6 +1049,30 @@ func createRegistrationResource(t *testing.T, inputs property.Map) p.CreateRespo
 	}
 
 	return response
+}
+
+func createPrivateAppResource(t *testing.T, inputs property.Map) (p.CreateResponse, error) {
+	t.Helper()
+
+	provider, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server, err := integration.NewServer(
+		t.Context(),
+		Name,
+		semver.MustParse("0.2.0"),
+		integration.WithProvider(provider),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return server.Create(p.CreateRequest{
+		Urn:        presource.URN("urn:pulumi:stack::project::netskope-publisher:index:PrivateApp::app"),
+		Properties: inputs,
+	})
 }
 
 func registrationMap(name string) property.Value {

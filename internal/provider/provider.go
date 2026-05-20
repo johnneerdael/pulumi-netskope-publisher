@@ -36,6 +36,7 @@ func New() (p.Provider, error) {
 		WithKeywords("category/network", "kind/component", "pulumi", "netskope", "npa", "publisher", "aws", "azure", "gcp", "kubernetes", "vsphere", "esxi", "hcloud", "nutanix", "openstack", "ovh", "scaleway", "oci", "alicloud", "proxmoxve", "proxmox", "digitalocean", "vultr", "exoscale", "upcloud", "stackit", "equinix", "outscale", "opentelekomcloud", "tencentcloud", "yandex").
 		WithResources(
 			infer.Resource(&NetskopeRegistration{}),
+			infer.Resource(&PrivateApp{}),
 		).
 		WithComponents(
 			infer.ComponentF(NewAwsPublisher),
