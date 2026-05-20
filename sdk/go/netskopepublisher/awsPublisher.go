@@ -19,6 +19,8 @@ type AwsPublisher struct {
 	AmiId                        pulumi.StringPtrOutput                       `pulumi:"amiId"`
 	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
 	AssociatePublicIpAddress     pulumi.BoolPtrOutput                         `pulumi:"associatePublicIpAddress"`
+	AuthMode                     pulumi.StringPtrOutput                       `pulumi:"authMode"`
+	BearerToken                  pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
 	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            pulumi.BoolPtrOutput                         `pulumi:"deleteDefaultUser"`
@@ -36,6 +38,7 @@ type AwsPublisher struct {
 	NamePrefix                   pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
 	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -60,11 +63,15 @@ func NewAwsPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	if args.InstallUserPassword != nil {
 		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"installUserPassword",
 		"publishers",
 	})
@@ -82,6 +89,8 @@ type awsPublisherArgs struct {
 	AmiId                        *string                                        `pulumi:"amiId"`
 	ApiToken                     *string                                        `pulumi:"apiToken"`
 	AssociatePublicIpAddress     *bool                                          `pulumi:"associatePublicIpAddress"`
+	AuthMode                     *string                                        `pulumi:"authMode"`
+	BearerToken                  *string                                        `pulumi:"bearerToken"`
 	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
 	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            *bool                                          `pulumi:"deleteDefaultUser"`
@@ -99,6 +108,7 @@ type awsPublisherArgs struct {
 	NamePrefix                   *string                                        `pulumi:"namePrefix"`
 	Names                        []string                                       `pulumi:"names"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
+	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	SecurityGroupIds             []string                                       `pulumi:"securityGroupIds"`
@@ -113,6 +123,8 @@ type AwsPublisherArgs struct {
 	AmiId                        *string
 	ApiToken                     *string
 	AssociatePublicIpAddress     *bool
+	AuthMode                     *string
+	BearerToken                  *string
 	Bootstrap                    *bool
 	BootstrapUrl                 *string
 	DeleteDefaultUser            *bool
@@ -130,6 +142,7 @@ type AwsPublisherArgs struct {
 	NamePrefix                   *string
 	Names                        pulumi.StringArrayInput
 	Nonat                        *bool
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	SecurityGroupIds             pulumi.StringArrayInput
@@ -186,6 +199,14 @@ func (o AwsPublisherOutput) ApiToken() pulumi.StringPtrOutput {
 
 func (o AwsPublisherOutput) AssociatePublicIpAddress() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.AssociatePublicIpAddress }).(pulumi.BoolPtrOutput)
+}
+
+func (o AwsPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
+func (o AwsPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o AwsPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
@@ -254,6 +275,10 @@ func (o AwsPublisherOutput) Names() pulumi.StringArrayOutput {
 
 func (o AwsPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *AwsPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o AwsPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *AwsPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o AwsPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

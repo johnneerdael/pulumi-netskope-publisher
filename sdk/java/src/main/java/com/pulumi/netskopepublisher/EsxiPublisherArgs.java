@@ -7,6 +7,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import com.pulumi.netskopepublisher.provider.inputs.GuestNetworkInterfaceArgs;
+import com.pulumi.netskopepublisher.provider.inputs.NetskopeOAuth2ArgsArgs;
 import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -27,6 +28,20 @@ public final class EsxiPublisherArgs extends com.pulumi.resources.ResourceArgs {
 
     public Optional<String> apiToken() {
         return Optional.ofNullable(this.apiToken);
+    }
+
+    @Import(name="authMode")
+    private @Nullable String authMode;
+
+    public Optional<String> authMode() {
+        return Optional.ofNullable(this.authMode);
+    }
+
+    @Import(name="bearerToken")
+    private @Nullable String bearerToken;
+
+    public Optional<String> bearerToken() {
+        return Optional.ofNullable(this.bearerToken);
     }
 
     @Import(name="bootstrap")
@@ -134,6 +149,13 @@ public final class EsxiPublisherArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.numVCpus);
     }
 
+    @Import(name="oauth2")
+    private @Nullable Output<NetskopeOAuth2ArgsArgs> oauth2;
+
+    public Optional<Output<NetskopeOAuth2ArgsArgs>> oauth2() {
+        return Optional.ofNullable(this.oauth2);
+    }
+
     @Import(name="os")
     private @Nullable String os;
 
@@ -187,6 +209,8 @@ public final class EsxiPublisherArgs extends com.pulumi.resources.ResourceArgs {
 
     private EsxiPublisherArgs(EsxiPublisherArgs $) {
         this.apiToken = $.apiToken;
+        this.authMode = $.authMode;
+        this.bearerToken = $.bearerToken;
         this.bootstrap = $.bootstrap;
         this.bootstrapUrl = $.bootstrapUrl;
         this.deleteDefaultUser = $.deleteDefaultUser;
@@ -202,6 +226,7 @@ public final class EsxiPublisherArgs extends com.pulumi.resources.ResourceArgs {
         this.names = $.names;
         this.nonat = $.nonat;
         this.numVCpus = $.numVCpus;
+        this.oauth2 = $.oauth2;
         this.os = $.os;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
@@ -231,6 +256,16 @@ public final class EsxiPublisherArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder apiToken(@Nullable String apiToken) {
             $.apiToken = apiToken;
+            return this;
+        }
+
+        public Builder authMode(@Nullable String authMode) {
+            $.authMode = authMode;
+            return this;
+        }
+
+        public Builder bearerToken(@Nullable String bearerToken) {
+            $.bearerToken = bearerToken;
             return this;
         }
 
@@ -327,6 +362,15 @@ public final class EsxiPublisherArgs extends com.pulumi.resources.ResourceArgs {
         public Builder numVCpus(@Nullable Integer numVCpus) {
             $.numVCpus = numVCpus;
             return this;
+        }
+
+        public Builder oauth2(@Nullable Output<NetskopeOAuth2ArgsArgs> oauth2) {
+            $.oauth2 = oauth2;
+            return this;
+        }
+
+        public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
+            return oauth2(Output.of(oauth2));
         }
 
         public Builder os(@Nullable String os) {

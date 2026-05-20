@@ -1,5 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
-import { NetskopeClient } from "./netskopeClient";
+import { NetskopeClient, NetskopeOAuth2ClientArgs } from "./netskopeClient";
+import { NetskopeAuthMode, NetskopeOAuth2Args } from "./types";
 
 export interface RegistrationRecord {
   publisherId: number;
@@ -41,13 +42,20 @@ export async function resolveRegistrations(args: ResolveRegistrationsArgs): Prom
 export interface NetskopeRegistrationArgs {
   publisherNames: pulumi.Input<string[]>;
   tenantUrl: pulumi.Input<string>;
-  apiToken: pulumi.Input<string>;
+  bearerToken?: pulumi.Input<string>;
+  authMode?: pulumi.Input<NetskopeAuthMode>;
+  oauth2?: pulumi.Input<NetskopeOAuth2Args>;
+  /** @deprecated Use bearerToken instead. */
+  apiToken?: pulumi.Input<string>;
 }
 
 interface NetskopeRegistrationProviderInputs {
   publisherNames: string[];
   tenantUrl: string;
-  apiToken: string;
+  bearerToken?: string;
+  authMode?: NetskopeAuthMode;
+  oauth2?: NetskopeOAuth2ClientArgs;
+  apiToken?: string;
 }
 
 interface NetskopeRegistrationProviderOutputs extends NetskopeRegistrationProviderInputs {
@@ -60,6 +68,9 @@ class NetskopeRegistrationProvider implements pulumi.dynamic.ResourceProvider {
       publisherNames: inputs.publisherNames,
       client: new NetskopeClient({
         tenantUrl: inputs.tenantUrl,
+        bearerToken: inputs.bearerToken,
+        authMode: inputs.authMode,
+        oauth2: inputs.oauth2,
         apiToken: inputs.apiToken,
       }),
     });

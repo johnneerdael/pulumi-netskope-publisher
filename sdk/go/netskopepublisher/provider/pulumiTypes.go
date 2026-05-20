@@ -955,6 +955,184 @@ func (o MetadataOptionsPtrOutput) HttpTokens() pulumi.StringPtrOutput {
 	}).(pulumi.StringPtrOutput)
 }
 
+type NetskopeOAuth2Args struct {
+	ClientId     string  `pulumi:"clientId"`
+	ClientSecret string  `pulumi:"clientSecret"`
+	Scope        *string `pulumi:"scope"`
+	TokenUrl     string  `pulumi:"tokenUrl"`
+}
+
+// NetskopeOAuth2ArgsInput is an input type that accepts NetskopeOAuth2ArgsArgs and NetskopeOAuth2ArgsOutput values.
+// You can construct a concrete instance of `NetskopeOAuth2ArgsInput` via:
+//
+//	NetskopeOAuth2ArgsArgs{...}
+type NetskopeOAuth2ArgsInput interface {
+	pulumi.Input
+
+	ToNetskopeOAuth2ArgsOutput() NetskopeOAuth2ArgsOutput
+	ToNetskopeOAuth2ArgsOutputWithContext(context.Context) NetskopeOAuth2ArgsOutput
+}
+
+type NetskopeOAuth2ArgsArgs struct {
+	ClientId     pulumi.StringInput    `pulumi:"clientId"`
+	ClientSecret pulumi.StringInput    `pulumi:"clientSecret"`
+	Scope        pulumi.StringPtrInput `pulumi:"scope"`
+	TokenUrl     pulumi.StringInput    `pulumi:"tokenUrl"`
+}
+
+func (NetskopeOAuth2ArgsArgs) ElementType() reflect.Type {
+	return reflect.TypeOf((*NetskopeOAuth2Args)(nil)).Elem()
+}
+
+func (i NetskopeOAuth2ArgsArgs) ToNetskopeOAuth2ArgsOutput() NetskopeOAuth2ArgsOutput {
+	return i.ToNetskopeOAuth2ArgsOutputWithContext(context.Background())
+}
+
+func (i NetskopeOAuth2ArgsArgs) ToNetskopeOAuth2ArgsOutputWithContext(ctx context.Context) NetskopeOAuth2ArgsOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NetskopeOAuth2ArgsOutput)
+}
+
+func (i NetskopeOAuth2ArgsArgs) ToNetskopeOAuth2ArgsPtrOutput() NetskopeOAuth2ArgsPtrOutput {
+	return i.ToNetskopeOAuth2ArgsPtrOutputWithContext(context.Background())
+}
+
+func (i NetskopeOAuth2ArgsArgs) ToNetskopeOAuth2ArgsPtrOutputWithContext(ctx context.Context) NetskopeOAuth2ArgsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NetskopeOAuth2ArgsOutput).ToNetskopeOAuth2ArgsPtrOutputWithContext(ctx)
+}
+
+// NetskopeOAuth2ArgsPtrInput is an input type that accepts NetskopeOAuth2ArgsArgs, NetskopeOAuth2ArgsPtr and NetskopeOAuth2ArgsPtrOutput values.
+// You can construct a concrete instance of `NetskopeOAuth2ArgsPtrInput` via:
+//
+//	        NetskopeOAuth2ArgsArgs{...}
+//
+//	or:
+//
+//	        nil
+type NetskopeOAuth2ArgsPtrInput interface {
+	pulumi.Input
+
+	ToNetskopeOAuth2ArgsPtrOutput() NetskopeOAuth2ArgsPtrOutput
+	ToNetskopeOAuth2ArgsPtrOutputWithContext(context.Context) NetskopeOAuth2ArgsPtrOutput
+}
+
+type netskopeOAuth2ArgsPtrType NetskopeOAuth2ArgsArgs
+
+func NetskopeOAuth2ArgsPtr(v *NetskopeOAuth2ArgsArgs) NetskopeOAuth2ArgsPtrInput {
+	return (*netskopeOAuth2ArgsPtrType)(v)
+}
+
+func (*netskopeOAuth2ArgsPtrType) ElementType() reflect.Type {
+	return reflect.TypeOf((**NetskopeOAuth2Args)(nil)).Elem()
+}
+
+func (i *netskopeOAuth2ArgsPtrType) ToNetskopeOAuth2ArgsPtrOutput() NetskopeOAuth2ArgsPtrOutput {
+	return i.ToNetskopeOAuth2ArgsPtrOutputWithContext(context.Background())
+}
+
+func (i *netskopeOAuth2ArgsPtrType) ToNetskopeOAuth2ArgsPtrOutputWithContext(ctx context.Context) NetskopeOAuth2ArgsPtrOutput {
+	return pulumi.ToOutputWithContext(ctx, i).(NetskopeOAuth2ArgsPtrOutput)
+}
+
+type NetskopeOAuth2ArgsOutput struct{ *pulumi.OutputState }
+
+func (NetskopeOAuth2ArgsOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((*NetskopeOAuth2Args)(nil)).Elem()
+}
+
+func (o NetskopeOAuth2ArgsOutput) ToNetskopeOAuth2ArgsOutput() NetskopeOAuth2ArgsOutput {
+	return o
+}
+
+func (o NetskopeOAuth2ArgsOutput) ToNetskopeOAuth2ArgsOutputWithContext(ctx context.Context) NetskopeOAuth2ArgsOutput {
+	return o
+}
+
+func (o NetskopeOAuth2ArgsOutput) ToNetskopeOAuth2ArgsPtrOutput() NetskopeOAuth2ArgsPtrOutput {
+	return o.ToNetskopeOAuth2ArgsPtrOutputWithContext(context.Background())
+}
+
+func (o NetskopeOAuth2ArgsOutput) ToNetskopeOAuth2ArgsPtrOutputWithContext(ctx context.Context) NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyTWithContext(ctx, func(_ context.Context, v NetskopeOAuth2Args) *NetskopeOAuth2Args {
+		return &v
+	}).(NetskopeOAuth2ArgsPtrOutput)
+}
+
+func (o NetskopeOAuth2ArgsOutput) ClientId() pulumi.StringOutput {
+	return o.ApplyT(func(v NetskopeOAuth2Args) string { return v.ClientId }).(pulumi.StringOutput)
+}
+
+func (o NetskopeOAuth2ArgsOutput) ClientSecret() pulumi.StringOutput {
+	return o.ApplyT(func(v NetskopeOAuth2Args) string { return v.ClientSecret }).(pulumi.StringOutput)
+}
+
+func (o NetskopeOAuth2ArgsOutput) Scope() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v NetskopeOAuth2Args) *string { return v.Scope }).(pulumi.StringPtrOutput)
+}
+
+func (o NetskopeOAuth2ArgsOutput) TokenUrl() pulumi.StringOutput {
+	return o.ApplyT(func(v NetskopeOAuth2Args) string { return v.TokenUrl }).(pulumi.StringOutput)
+}
+
+type NetskopeOAuth2ArgsPtrOutput struct{ *pulumi.OutputState }
+
+func (NetskopeOAuth2ArgsPtrOutput) ElementType() reflect.Type {
+	return reflect.TypeOf((**NetskopeOAuth2Args)(nil)).Elem()
+}
+
+func (o NetskopeOAuth2ArgsPtrOutput) ToNetskopeOAuth2ArgsPtrOutput() NetskopeOAuth2ArgsPtrOutput {
+	return o
+}
+
+func (o NetskopeOAuth2ArgsPtrOutput) ToNetskopeOAuth2ArgsPtrOutputWithContext(ctx context.Context) NetskopeOAuth2ArgsPtrOutput {
+	return o
+}
+
+func (o NetskopeOAuth2ArgsPtrOutput) Elem() NetskopeOAuth2ArgsOutput {
+	return o.ApplyT(func(v *NetskopeOAuth2Args) NetskopeOAuth2Args {
+		if v != nil {
+			return *v
+		}
+		var ret NetskopeOAuth2Args
+		return ret
+	}).(NetskopeOAuth2ArgsOutput)
+}
+
+func (o NetskopeOAuth2ArgsPtrOutput) ClientId() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NetskopeOAuth2Args) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.ClientId
+	}).(pulumi.StringPtrOutput)
+}
+
+func (o NetskopeOAuth2ArgsPtrOutput) ClientSecret() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NetskopeOAuth2Args) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.ClientSecret
+	}).(pulumi.StringPtrOutput)
+}
+
+func (o NetskopeOAuth2ArgsPtrOutput) Scope() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NetskopeOAuth2Args) *string {
+		if v == nil {
+			return nil
+		}
+		return v.Scope
+	}).(pulumi.StringPtrOutput)
+}
+
+func (o NetskopeOAuth2ArgsPtrOutput) TokenUrl() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NetskopeOAuth2Args) *string {
+		if v == nil {
+			return nil
+		}
+		return &v.TokenUrl
+	}).(pulumi.StringPtrOutput)
+}
+
 type PublisherRegistrationInput struct {
 	ExistedBefore     *bool  `pulumi:"existedBefore"`
 	PublisherId       int    `pulumi:"publisherId"`
@@ -1126,6 +1304,8 @@ func init() {
 	pulumi.RegisterInputType(reflect.TypeOf((*HypervHardDriveArrayInput)(nil)).Elem(), HypervHardDriveArray{})
 	pulumi.RegisterInputType(reflect.TypeOf((*MetadataOptionsInput)(nil)).Elem(), MetadataOptionsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*MetadataOptionsPtrInput)(nil)).Elem(), MetadataOptionsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NetskopeOAuth2ArgsInput)(nil)).Elem(), NetskopeOAuth2ArgsArgs{})
+	pulumi.RegisterInputType(reflect.TypeOf((*NetskopeOAuth2ArgsPtrInput)(nil)).Elem(), NetskopeOAuth2ArgsArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*PublisherRegistrationInputInput)(nil)).Elem(), PublisherRegistrationInputArgs{})
 	pulumi.RegisterInputType(reflect.TypeOf((*PublisherRegistrationInputMapInput)(nil)).Elem(), PublisherRegistrationInputMap{})
 	pulumi.RegisterOutputType(AzureMarketplaceImageOutput{})
@@ -1140,6 +1320,8 @@ func init() {
 	pulumi.RegisterOutputType(HypervHardDriveArrayOutput{})
 	pulumi.RegisterOutputType(MetadataOptionsOutput{})
 	pulumi.RegisterOutputType(MetadataOptionsPtrOutput{})
+	pulumi.RegisterOutputType(NetskopeOAuth2ArgsOutput{})
+	pulumi.RegisterOutputType(NetskopeOAuth2ArgsPtrOutput{})
 	pulumi.RegisterOutputType(PublisherRegistrationInputOutput{})
 	pulumi.RegisterOutputType(PublisherRegistrationInputMapOutput{})
 	pulumi.RegisterOutputType(RegistrationRecordOutput{})

@@ -18,6 +18,8 @@ type AlicloudPublisher struct {
 
 	AllocatePublicIp             pulumi.BoolPtrOutput                         `pulumi:"allocatePublicIp"`
 	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AuthMode                     pulumi.StringPtrOutput                       `pulumi:"authMode"`
+	BearerToken                  pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
 	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            pulumi.BoolPtrOutput                         `pulumi:"deleteDefaultUser"`
@@ -32,6 +34,7 @@ type AlicloudPublisher struct {
 	NamePrefix                   pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
 	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -56,11 +59,15 @@ func NewAlicloudPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	if args.InstallUserPassword != nil {
 		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"installUserPassword",
 		"publishers",
 	})
@@ -77,6 +84,8 @@ func NewAlicloudPublisher(ctx *pulumi.Context,
 type alicloudPublisherArgs struct {
 	AllocatePublicIp             *bool                                          `pulumi:"allocatePublicIp"`
 	ApiToken                     *string                                        `pulumi:"apiToken"`
+	AuthMode                     *string                                        `pulumi:"authMode"`
+	BearerToken                  *string                                        `pulumi:"bearerToken"`
 	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
 	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            *bool                                          `pulumi:"deleteDefaultUser"`
@@ -91,6 +100,7 @@ type alicloudPublisherArgs struct {
 	NamePrefix                   *string                                        `pulumi:"namePrefix"`
 	Names                        []string                                       `pulumi:"names"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
+	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	SecurityGroupIds             []string                                       `pulumi:"securityGroupIds"`
@@ -104,6 +114,8 @@ type alicloudPublisherArgs struct {
 type AlicloudPublisherArgs struct {
 	AllocatePublicIp             *bool
 	ApiToken                     *string
+	AuthMode                     *string
+	BearerToken                  *string
 	Bootstrap                    *bool
 	BootstrapUrl                 *string
 	DeleteDefaultUser            *bool
@@ -118,6 +130,7 @@ type AlicloudPublisherArgs struct {
 	NamePrefix                   *string
 	Names                        pulumi.StringArrayInput
 	Nonat                        *bool
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	SecurityGroupIds             pulumi.StringArrayInput
@@ -170,6 +183,14 @@ func (o AlicloudPublisherOutput) AllocatePublicIp() pulumi.BoolPtrOutput {
 
 func (o AlicloudPublisherOutput) ApiToken() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *AlicloudPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o AlicloudPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AlicloudPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
+func (o AlicloudPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *AlicloudPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o AlicloudPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
@@ -226,6 +247,10 @@ func (o AlicloudPublisherOutput) Names() pulumi.StringArrayOutput {
 
 func (o AlicloudPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *AlicloudPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o AlicloudPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *AlicloudPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o AlicloudPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

@@ -18,6 +18,12 @@ namespace Pulumi.NetskopePublisher
         [Output("assignPublicIp")]
         public Output<bool?> AssignPublicIp { get; private set; } = null!;
 
+        [Output("authMode")]
+        public Output<string?> AuthMode { get; private set; } = null!;
+
+        [Output("bearerToken")]
+        public Output<string?> BearerToken { get; private set; } = null!;
+
         [Output("bootstrap")]
         public Output<bool?> Bootstrap { get; private set; } = null!;
 
@@ -62,6 +68,9 @@ namespace Pulumi.NetskopePublisher
 
         [Output("nonat")]
         public Output<bool?> Nonat { get; private set; } = null!;
+
+        [Output("oauth2")]
+        public Output<Pulumi.NetskopePublisher.Provider.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
 
         [Output("project")]
         public Output<string> Project { get; private set; } = null!;
@@ -118,6 +127,7 @@ namespace Pulumi.NetskopePublisher
                 AdditionalSecretOutputs =
                 {
                     "apiToken",
+                    "bearerToken",
                     "installUserPassword",
                     "publishers",
                 },
@@ -141,6 +151,17 @@ namespace Pulumi.NetskopePublisher
 
         [Input("assignPublicIp")]
         public bool? AssignPublicIp { get; set; }
+
+        [Input("authMode")]
+        public string? AuthMode { get; set; }
+
+        [Input("bearerToken")]
+        private string? _bearerToken;
+        public string? BearerToken
+        {
+            get => _bearerToken;
+            set => _bearerToken = value;
+        }
 
         [Input("bootstrap")]
         public bool? Bootstrap { get; set; }
@@ -206,6 +227,9 @@ namespace Pulumi.NetskopePublisher
 
         [Input("nonat")]
         public bool? Nonat { get; set; }
+
+        [Input("oauth2")]
+        public Input<Pulumi.NetskopePublisher.Provider.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
 
         [Input("project", required: true)]
         public string Project { get; set; } = null!;

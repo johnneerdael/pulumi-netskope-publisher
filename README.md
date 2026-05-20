@@ -73,7 +73,7 @@ const publisher = new AwsPublisher("publisher", {
   namePrefix: "pub-eu",
   replicas: 2,
   tenantUrl: config.require("tenantUrl"),
-  apiToken: config.requireSecret("apiToken"),
+  bearerToken: config.requireSecret("bearerToken"),
   subnetId: config.require("subnetId"),
   securityGroupIds: config.requireObject<string[]>("securityGroupIds"),
 });
@@ -112,8 +112,9 @@ The release also publishes the TypeScript SDK to npm, the Python SDK to
 PyPI, the C# SDK to NuGet, and the Go SDK through the tagged GitHub
 module path
 `github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher`.
-Java is generated under `sdk/java`; Rust is generated with Pulumi
-Gestalt under `sdk/rust`.
+The Java SDK is published to a Maven-compatible repository, defaulting
+to GitHub Packages for this repository, and the Rust SDK is published to
+crates.io.
 
 The Go provider constructs cloud, virtualization, Kubernetes, and
 registration child resources and includes a stateful
@@ -135,9 +136,24 @@ Required repository secret:
 - `NPM_TOKEN`: npm automation token for publishing
 - `PYPI_API_TOKEN`: PyPI token for publishing the Python SDK
 - `NUGET_API_KEY`: NuGet API key for publishing the C# SDK
+- `CARGO_REGISTRY_TOKEN`: crates.io token for publishing the Rust SDK
+
+Java SDK publishing defaults to GitHub Packages with the workflow
+`GITHUB_TOKEN`. To publish to another Maven-compatible repository, set
+the `JAVA_MAVEN_REPOSITORY_URL` repository variable. Set
+`JAVA_MAVEN_GROUP_ID` when publishing to a registry that requires a
+verified namespace, such as Maven Central. Configure
+`JAVA_MAVEN_AUTH_BASE64` as a base64-encoded `username:password` secret
+for bearer-token publishing endpoints such as Maven Central's OSSRH
+staging API, or configure `JAVA_MAVEN_USERNAME` and
+`JAVA_MAVEN_PASSWORD` repository secrets for Basic-auth Maven
+repositories. Maven Central publishing also requires signed artifacts;
+configure `JAVA_SIGNING_KEY` and `JAVA_SIGNING_PASSWORD` with an
+ASCII-armored PGP private key and its password before publishing there.
 
 Repository Actions settings must allow workflows to write repository
-contents so the release workflow can push the version commit and tag.
+contents and packages so the release workflow can push the version
+commit and tag and publish the Java package.
 
 Optional Pulumi Registry PR automation:
 

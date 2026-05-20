@@ -10,6 +10,7 @@ import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.HypervPublisherArgs;
 import com.pulumi.netskopepublisher.Utilities;
 import com.pulumi.netskopepublisher.provider.outputs.HypervHardDrive;
+import com.pulumi.netskopepublisher.provider.outputs.NetskopeOAuth2Args;
 import com.pulumi.netskopepublisher.provider.outputs.PublisherRegistrationInput;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -28,6 +29,12 @@ public class HypervPublisher extends com.pulumi.resources.ComponentResource {
     public Output<Optional<String>> apiToken() {
         return Codegen.optional(this.apiToken);
     }
+    @Export(name="authMode", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> authMode;
+
+    public Output<Optional<String>> authMode() {
+        return Codegen.optional(this.authMode);
+    }
     @Export(name="autoStartAction", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> autoStartAction;
 
@@ -39,6 +46,12 @@ public class HypervPublisher extends com.pulumi.resources.ComponentResource {
 
     public Output<Optional<String>> autoStopAction() {
         return Codegen.optional(this.autoStopAction);
+    }
+    @Export(name="bearerToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> bearerToken;
+
+    public Output<Optional<String>> bearerToken() {
+        return Codegen.optional(this.bearerToken);
     }
     @Export(name="dynamicMemory", refs={Boolean.class}, tree="[0]")
     private Output</* @Nullable */ Boolean> dynamicMemory;
@@ -93,6 +106,12 @@ public class HypervPublisher extends com.pulumi.resources.ComponentResource {
 
     public Output<Optional<List<String>>> names() {
         return Codegen.optional(this.names);
+    }
+    @Export(name="oauth2", refs={NetskopeOAuth2Args.class}, tree="[0]")
+    private Output</* @Nullable */ NetskopeOAuth2Args> oauth2;
+
+    public Output<Optional<NetskopeOAuth2Args>> oauth2() {
+        return Codegen.optional(this.oauth2);
     }
     @Export(name="processorCount", refs={Integer.class}, tree="[0]")
     private Output</* @Nullable */ Integer> processorCount;
@@ -187,6 +206,7 @@ public class HypervPublisher extends com.pulumi.resources.ComponentResource {
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
             .additionalSecretOutputs(List.of(
                 "apiToken",
+                "bearerToken",
                 "publishers"
             ))
             .build();

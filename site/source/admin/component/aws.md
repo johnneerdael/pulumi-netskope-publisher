@@ -14,7 +14,7 @@ Required:
 
 - `subnetId`
 - `securityGroupIds`
-- `tenantUrl` and `apiToken`, unless `registrations` is provided
+- `tenantUrl` and `bearerToken`, unless `registrations` is provided
 
 Common optional inputs:
 
@@ -47,7 +47,7 @@ instance ID, private IP, and public IP when assigned.
 pulumi new typescript
 pulumi config set aws:region eu-west-1
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi config set subnetId subnet-0123456789abcdef0
 pulumi config set securityGroupId sg-0123456789abcdef0
 pulumi config set keyName npa-admin
@@ -67,7 +67,7 @@ const publisher = new AwsPublisher("publisher", {
   namePrefix: "pub-eu",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   subnetId: config.require("subnetId"),
   securityGroupIds: [config.require("securityGroupId")],
   keyName: config.get("keyName"),
@@ -98,7 +98,7 @@ publisher = AwsPublisher(
     name_prefix="pub-eu",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     subnet_id=config.require("subnetId"),
     security_group_ids=[config.require("securityGroupId")],
     key_name=config.get("keyName"),
@@ -132,7 +132,7 @@ return await Deployment.RunAsync(() =>
         NamePrefix = "pub-eu",
         Replicas = 2,
         TenantUrl = netskope.Require("tenantUrl"),
-        ApiToken = netskope.RequireSecret("apiToken"),
+        BearerToken = netskope.RequireSecret("bearerToken"),
         SubnetId = config.Require("subnetId"),
         SecurityGroupIds = { config.Require("securityGroupId") },
         KeyName = config.Get("keyName"),
@@ -174,7 +174,7 @@ func main() {
 			NamePrefix:               pulumi.String("pub-eu"),
 			Replicas:                 pulumi.Int(2),
 			TenantUrl:                pulumi.String(netskope.Require("tenantUrl")),
-			ApiToken:                 netskope.RequireSecret("apiToken"),
+			BearerToken:                 netskope.RequireSecret("bearerToken"),
 			SubnetId:                 pulumi.String(cfg.Require("subnetId")),
 			SecurityGroupIds:         pulumi.StringArray{pulumi.String(cfg.Require("securityGroupId"))},
 			KeyName:                  pulumi.StringPtr(cfg.Get("keyName")),
@@ -218,7 +218,7 @@ public class App {
                 .namePrefix("pub-eu")
                 .replicas(2)
                 .tenantUrl(netskope.require("tenantUrl"))
-                .apiToken(netskope.requireSecret("apiToken"))
+                .bearerToken(netskope.requireSecret("bearerToken"))
                 .subnetId(config.require("subnetId"))
                 .securityGroupIds(config.require("securityGroupId"))
                 .keyName(config.get("keyName").orElse(null))
@@ -256,7 +256,7 @@ fn pulumi_main(ctx: &Context) -> Result<()> {
             .name_prefix("pub-eu")
             .replicas(2)
             .tenant_url("https://tenant.goskope.com")
-            .api_token("secret-token")
+            .bearer_token("secret-token")
             .subnet_id("subnet-0123456789abcdef0")
             .security_group_ids(vec!["sg-0123456789abcdef0".to_string()])
             .instance_type("t3.medium")

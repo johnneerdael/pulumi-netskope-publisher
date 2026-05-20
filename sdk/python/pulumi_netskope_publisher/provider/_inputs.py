@@ -27,6 +27,8 @@ __all__ = [
     'HypervHardDriveArgsDict',
     'MetadataOptionsArgs',
     'MetadataOptionsArgsDict',
+    'NetskopeOAuth2ArgsArgs',
+    'NetskopeOAuth2ArgsArgsDict',
     'PublisherRegistrationInputArgs',
     'PublisherRegistrationInputArgsDict',
 ]
@@ -325,6 +327,62 @@ class MetadataOptionsArgs:
     @http_tokens.setter
     def http_tokens(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "http_tokens", value)
+
+
+class NetskopeOAuth2ArgsArgsDict(TypedDict):
+    client_id: pulumi.Input[_builtins.str]
+    client_secret: pulumi.Input[_builtins.str]
+    token_url: pulumi.Input[_builtins.str]
+    scope: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+
+@pulumi.input_type
+class NetskopeOAuth2ArgsArgs:
+    def __init__(__self__, *,
+                 client_id: pulumi.Input[_builtins.str],
+                 client_secret: pulumi.Input[_builtins.str],
+                 token_url: pulumi.Input[_builtins.str],
+                 scope: pulumi.Input[Optional[_builtins.str]] = None):
+        pulumi.set(__self__, "client_id", client_id)
+        pulumi.set(__self__, "client_secret", client_secret)
+        pulumi.set(__self__, "token_url", token_url)
+        if scope is not None:
+            pulumi.set(__self__, "scope", scope)
+
+    @_builtins.property
+    @pulumi.getter(name="clientId")
+    def client_id(self) -> pulumi.Input[_builtins.str]:
+        return pulumi.get(self, "client_id")
+
+    @client_id.setter
+    def client_id(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "client_id", value)
+
+    @_builtins.property
+    @pulumi.getter(name="clientSecret")
+    def client_secret(self) -> pulumi.Input[_builtins.str]:
+        return pulumi.get(self, "client_secret")
+
+    @client_secret.setter
+    def client_secret(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "client_secret", value)
+
+    @_builtins.property
+    @pulumi.getter(name="tokenUrl")
+    def token_url(self) -> pulumi.Input[_builtins.str]:
+        return pulumi.get(self, "token_url")
+
+    @token_url.setter
+    def token_url(self, value: pulumi.Input[_builtins.str]):
+        pulumi.set(self, "token_url", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def scope(self) -> pulumi.Input[Optional[_builtins.str]]:
+        return pulumi.get(self, "scope")
+
+    @scope.setter
+    def scope(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "scope", value)
 
 
 class PublisherRegistrationInputArgsDict(TypedDict):

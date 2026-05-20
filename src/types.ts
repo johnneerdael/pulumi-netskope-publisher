@@ -25,11 +25,24 @@ export interface PublisherRegistrationInput {
   registrationToken: pulumi.Input<string>;
 }
 
+export type NetskopeAuthMode = "token" | "oauth2";
+
+export interface NetskopeOAuth2Args {
+  tokenUrl: pulumi.Input<string>;
+  clientId: pulumi.Input<string>;
+  clientSecret: pulumi.Input<string>;
+  scope?: pulumi.Input<string>;
+}
+
 export interface CommonPublisherArgs extends NameArgs {
   namePrefix?: string;
   names?: string[];
   replicas?: number;
   tenantUrl?: pulumi.Input<string>;
+  bearerToken?: pulumi.Input<string>;
+  authMode?: pulumi.Input<NetskopeAuthMode>;
+  oauth2?: pulumi.Input<NetskopeOAuth2Args>;
+  /** @deprecated Use bearerToken instead. */
   apiToken?: pulumi.Input<string>;
   wizardPath?: pulumi.Input<string>;
   tags?: pulumi.Input<Record<string, pulumi.Input<string>>>;

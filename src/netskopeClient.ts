@@ -1,19 +1,36 @@
+import type { NetskopeAuthMode } from "./types";
+
 export type FetchLike = typeof fetch;
+
+export interface NetskopeOAuth2ClientArgs {
+  tokenUrl: string;
+  clientId: string;
+  clientSecret: string;
+  scope?: string;
+}
 
 export interface NetskopeClientArgs {
   tenantUrl: string;
-  apiToken: string;
+  bearerToken?: string;
+  authMode?: NetskopeAuthMode;
+  oauth2?: NetskopeOAuth2ClientArgs;
+  apiToken?: string;
   fetchImpl?: FetchLike;
 }
 
 export class NetskopeClient {
   private readonly apiBase: string;
-  private readonly apiToken: string;
+  private readonly bearerToken?: string;
+  private readonly authMode: NetskopeAuthMode;
+  private readonly oauth2?: NetskopeOAuth2ClientArgs;
   private readonly fetchImpl: FetchLike;
+  private accessToken?: Promise<string>;
 
   constructor(args: NetskopeClientArgs) {
     this.apiBase = `${args.tenantUrl.replace(/\/+$/, "")}/api/v2/infrastructure/publishers`;
-    this.apiToken = args.apiToken;
+    this.bearerToken = args.bearerToken ?? args.apiToken;
+    this.authMode = args.authMode ?? "token";
+    this.oauth2 = args.oauth2;
     this.fetchImpl = args.fetchImpl ?? fetch;
   }
 
@@ -49,10 +66,11 @@ export class NetskopeClient {
   }
 
   private async request(operation: string, url: string, init: RequestInit): Promise<any> {
+    const token = await this.resolveAccessToken();
     const response = await this.fetchImpl(url, {
       ...init,
       headers: {
-        "Netskope-Api-Token": this.apiToken,
+        "Authorization": `Bearer ${token}`,
         "Accept": "application/json",
         "Content-Type": "application/json",
         ...(init.headers ?? {}),
@@ -67,5 +85,56 @@ export class NetskopeClient {
     }
 
     return body;
+  }
+
+  private async resolveAccessToken(): Promise<string> {
+    if (this.authMode === "token") {
+      if (!this.bearerToken) {
+        throw new Error("Netskope bearerToken or apiToken is required for token authentication");
+      }
+      return this.bearerToken;
+    }
+
+    if (this.authMode !== "oauth2") {
+      throw new Error(`Unsupported Netskope authMode ${this.authMode}`);
+    }
+
+    this.accessToken ??= this.fetchOAuth2AccessToken();
+    return this.accessToken;
+  }
+
+  private async fetchOAuth2AccessToken(): Promise<string> {
+    if (!this.oauth2?.tokenUrl || !this.oauth2.clientId || !this.oauth2.clientSecret) {
+      throw new Error("Netskope oauth2.tokenUrl, clientId, and clientSecret are required for OAuth2 authentication");
+    }
+
+    const body = new URLSearchParams();
+    body.set("grant_type", "client_credentials");
+    body.set("client_id", this.oauth2.clientId);
+    body.set("client_secret", this.oauth2.clientSecret);
+    if (this.oauth2.scope) {
+      body.set("scope", this.oauth2.scope);
+    }
+
+    const response = await this.fetchImpl(this.oauth2.tokenUrl, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body,
+    });
+    const text = await response.text();
+    const responseBody = text.length > 0 ? JSON.parse(text) : undefined;
+
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(`Fetch OAuth2 access token failed (status=${response.status})`);
+    }
+
+    const token = responseBody?.access_token;
+    if (typeof token !== "string" || token.length === 0) {
+      throw new Error("Fetch OAuth2 access token returned no access_token");
+    }
+    return token;
   }
 }

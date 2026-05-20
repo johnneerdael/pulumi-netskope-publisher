@@ -25,6 +25,8 @@ class AwsPublisherArgs:
                  ami_id: Optional[_builtins.str] = None,
                  api_token: Optional[_builtins.str] = None,
                  associate_public_ip_address: Optional[_builtins.bool] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  bootstrap: Optional[_builtins.bool] = None,
                  bootstrap_url: Optional[_builtins.str] = None,
                  delete_default_user: Optional[_builtins.bool] = None,
@@ -42,6 +44,7 @@ class AwsPublisherArgs:
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  nonat: Optional[_builtins.bool] = None,
+                 oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -58,6 +61,10 @@ class AwsPublisherArgs:
             pulumi.set(__self__, "api_token", api_token)
         if associate_public_ip_address is not None:
             pulumi.set(__self__, "associate_public_ip_address", associate_public_ip_address)
+        if auth_mode is not None:
+            pulumi.set(__self__, "auth_mode", auth_mode)
+        if bearer_token is not None:
+            pulumi.set(__self__, "bearer_token", bearer_token)
         if bootstrap is not None:
             pulumi.set(__self__, "bootstrap", bootstrap)
         if bootstrap_url is not None:
@@ -92,6 +99,8 @@ class AwsPublisherArgs:
             pulumi.set(__self__, "names", names)
         if nonat is not None:
             pulumi.set(__self__, "nonat", nonat)
+        if oauth2 is not None:
+            pulumi.set(__self__, "oauth2", oauth2)
         if registrations is not None:
             pulumi.set(__self__, "registrations", registrations)
         if replicas is not None:
@@ -147,6 +156,24 @@ class AwsPublisherArgs:
     @associate_public_ip_address.setter
     def associate_public_ip_address(self, value: Optional[_builtins.bool]):
         pulumi.set(self, "associate_public_ip_address", value)
+
+    @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "auth_mode")
+
+    @auth_mode.setter
+    def auth_mode(self, value: Optional[_builtins.str]):
+        pulumi.set(self, "auth_mode", value)
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "bearer_token")
+
+    @bearer_token.setter
+    def bearer_token(self, value: Optional[_builtins.str]):
+        pulumi.set(self, "bearer_token", value)
 
     @_builtins.property
     @pulumi.getter
@@ -303,6 +330,15 @@ class AwsPublisherArgs:
 
     @_builtins.property
     @pulumi.getter
+    def oauth2(self) -> pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]:
+        return pulumi.get(self, "oauth2")
+
+    @oauth2.setter
+    def oauth2(self, value: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]):
+        pulumi.set(self, "oauth2", value)
+
+    @_builtins.property
+    @pulumi.getter
     def registrations(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]:
         return pulumi.get(self, "registrations")
 
@@ -356,6 +392,8 @@ class AwsPublisher(pulumi.ComponentResource):
                  ami_id: Optional[_builtins.str] = None,
                  api_token: Optional[_builtins.str] = None,
                  associate_public_ip_address: Optional[_builtins.bool] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  bootstrap: Optional[_builtins.bool] = None,
                  bootstrap_url: Optional[_builtins.str] = None,
                  delete_default_user: Optional[_builtins.bool] = None,
@@ -373,6 +411,7 @@ class AwsPublisher(pulumi.ComponentResource):
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  nonat: Optional[_builtins.bool] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  security_group_ids: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
@@ -414,6 +453,8 @@ class AwsPublisher(pulumi.ComponentResource):
                  ami_id: Optional[_builtins.str] = None,
                  api_token: Optional[_builtins.str] = None,
                  associate_public_ip_address: Optional[_builtins.bool] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  bootstrap: Optional[_builtins.bool] = None,
                  bootstrap_url: Optional[_builtins.str] = None,
                  delete_default_user: Optional[_builtins.bool] = None,
@@ -431,6 +472,7 @@ class AwsPublisher(pulumi.ComponentResource):
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  nonat: Optional[_builtins.bool] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  security_group_ids: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
@@ -452,6 +494,8 @@ class AwsPublisher(pulumi.ComponentResource):
             __props__.__dict__["ami_id"] = ami_id
             __props__.__dict__["api_token"] = None if api_token is None else pulumi.Output.secret(api_token)
             __props__.__dict__["associate_public_ip_address"] = associate_public_ip_address
+            __props__.__dict__["auth_mode"] = auth_mode
+            __props__.__dict__["bearer_token"] = None if bearer_token is None else pulumi.Output.secret(bearer_token)
             __props__.__dict__["bootstrap"] = bootstrap
             __props__.__dict__["bootstrap_url"] = bootstrap_url
             __props__.__dict__["delete_default_user"] = delete_default_user
@@ -469,6 +513,7 @@ class AwsPublisher(pulumi.ComponentResource):
             __props__.__dict__["name_prefix"] = name_prefix
             __props__.__dict__["names"] = names
             __props__.__dict__["nonat"] = nonat
+            __props__.__dict__["oauth2"] = oauth2
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas
             if security_group_ids is None and not opts.urn:
@@ -482,7 +527,7 @@ class AwsPublisher(pulumi.ComponentResource):
             __props__.__dict__["wizard_path"] = wizard_path
             __props__.__dict__["publisher_names"] = None
             __props__.__dict__["publishers"] = None
-        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "installUserPassword", "publishers"])
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "bearerToken", "installUserPassword", "publishers"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         super(AwsPublisher, __self__).__init__(
             'netskope-publisher:index:AwsPublisher',
@@ -505,6 +550,16 @@ class AwsPublisher(pulumi.ComponentResource):
     @pulumi.getter(name="associatePublicIpAddress")
     def associate_public_ip_address(self) -> pulumi.Output[Optional[_builtins.bool]]:
         return pulumi.get(self, "associate_public_ip_address")
+
+    @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "auth_mode")
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "bearer_token")
 
     @_builtins.property
     @pulumi.getter
@@ -590,6 +645,11 @@ class AwsPublisher(pulumi.ComponentResource):
     @pulumi.getter
     def nonat(self) -> pulumi.Output[Optional[_builtins.bool]]:
         return pulumi.get(self, "nonat")
+
+    @_builtins.property
+    @pulumi.getter
+    def oauth2(self) -> pulumi.Output[Optional['_provider.outputs.NetskopeOAuth2Args']]:
+        return pulumi.get(self, "oauth2")
 
     @_builtins.property
     @pulumi.getter(name="publisherNames")

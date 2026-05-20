@@ -25,6 +25,8 @@ class VspherePublisherArgs:
                  network_name: _builtins.str,
                  template_name: _builtins.str,
                  api_token: Optional[_builtins.str] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  cluster: Optional[_builtins.str] = None,
                  folder: Optional[_builtins.str] = None,
                  host: Optional[_builtins.str] = None,
@@ -32,6 +34,7 @@ class VspherePublisherArgs:
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  num_cpus: Optional[_builtins.int] = None,
+                 oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -46,6 +49,10 @@ class VspherePublisherArgs:
         pulumi.set(__self__, "template_name", template_name)
         if api_token is not None:
             pulumi.set(__self__, "api_token", api_token)
+        if auth_mode is not None:
+            pulumi.set(__self__, "auth_mode", auth_mode)
+        if bearer_token is not None:
+            pulumi.set(__self__, "bearer_token", bearer_token)
         if cluster is not None:
             pulumi.set(__self__, "cluster", cluster)
         if folder is not None:
@@ -60,6 +67,8 @@ class VspherePublisherArgs:
             pulumi.set(__self__, "names", names)
         if num_cpus is not None:
             pulumi.set(__self__, "num_cpus", num_cpus)
+        if oauth2 is not None:
+            pulumi.set(__self__, "oauth2", oauth2)
         if registrations is not None:
             pulumi.set(__self__, "registrations", registrations)
         if replicas is not None:
@@ -115,6 +124,24 @@ class VspherePublisherArgs:
     @api_token.setter
     def api_token(self, value: Optional[_builtins.str]):
         pulumi.set(self, "api_token", value)
+
+    @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "auth_mode")
+
+    @auth_mode.setter
+    def auth_mode(self, value: Optional[_builtins.str]):
+        pulumi.set(self, "auth_mode", value)
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "bearer_token")
+
+    @bearer_token.setter
+    def bearer_token(self, value: Optional[_builtins.str]):
+        pulumi.set(self, "bearer_token", value)
 
     @_builtins.property
     @pulumi.getter
@@ -181,6 +208,15 @@ class VspherePublisherArgs:
 
     @_builtins.property
     @pulumi.getter
+    def oauth2(self) -> pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]:
+        return pulumi.get(self, "oauth2")
+
+    @oauth2.setter
+    def oauth2(self, value: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]):
+        pulumi.set(self, "oauth2", value)
+
+    @_builtins.property
+    @pulumi.getter
     def registrations(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]:
         return pulumi.get(self, "registrations")
 
@@ -232,6 +268,8 @@ class VspherePublisher(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: Optional[_builtins.str] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  cluster: Optional[_builtins.str] = None,
                  datacenter: Optional[_builtins.str] = None,
                  datastore: Optional[_builtins.str] = None,
@@ -242,6 +280,7 @@ class VspherePublisher(pulumi.ComponentResource):
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  network_name: Optional[_builtins.str] = None,
                  num_cpus: Optional[_builtins.int] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -280,6 +319,8 @@ class VspherePublisher(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: Optional[_builtins.str] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  cluster: Optional[_builtins.str] = None,
                  datacenter: Optional[_builtins.str] = None,
                  datastore: Optional[_builtins.str] = None,
@@ -290,6 +331,7 @@ class VspherePublisher(pulumi.ComponentResource):
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  network_name: Optional[_builtins.str] = None,
                  num_cpus: Optional[_builtins.int] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  tags: pulumi.Input[Optional[Mapping[str, _builtins.str]]] = None,
@@ -308,6 +350,8 @@ class VspherePublisher(pulumi.ComponentResource):
             __props__ = VspherePublisherArgs.__new__(VspherePublisherArgs)
 
             __props__.__dict__["api_token"] = None if api_token is None else pulumi.Output.secret(api_token)
+            __props__.__dict__["auth_mode"] = auth_mode
+            __props__.__dict__["bearer_token"] = None if bearer_token is None else pulumi.Output.secret(bearer_token)
             __props__.__dict__["cluster"] = cluster
             if datacenter is None and not opts.urn:
                 raise TypeError("Missing required property 'datacenter'")
@@ -324,6 +368,7 @@ class VspherePublisher(pulumi.ComponentResource):
                 raise TypeError("Missing required property 'network_name'")
             __props__.__dict__["network_name"] = network_name
             __props__.__dict__["num_cpus"] = num_cpus
+            __props__.__dict__["oauth2"] = oauth2
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas
             __props__.__dict__["tags"] = tags
@@ -334,7 +379,7 @@ class VspherePublisher(pulumi.ComponentResource):
             __props__.__dict__["wizard_path"] = wizard_path
             __props__.__dict__["publisher_names"] = None
             __props__.__dict__["publishers"] = None
-        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "publishers"])
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "bearerToken", "publishers"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         super(VspherePublisher, __self__).__init__(
             'netskope-publisher:index:VspherePublisher',
@@ -347,6 +392,16 @@ class VspherePublisher(pulumi.ComponentResource):
     @pulumi.getter(name="apiToken")
     def api_token(self) -> pulumi.Output[Optional[_builtins.str]]:
         return pulumi.get(self, "api_token")
+
+    @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "auth_mode")
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "bearer_token")
 
     @_builtins.property
     @pulumi.getter
@@ -397,6 +452,11 @@ class VspherePublisher(pulumi.ComponentResource):
     @pulumi.getter(name="numCpus")
     def num_cpus(self) -> pulumi.Output[Optional[_builtins.int]]:
         return pulumi.get(self, "num_cpus")
+
+    @_builtins.property
+    @pulumi.getter
+    def oauth2(self) -> pulumi.Output[Optional['_provider.outputs.NetskopeOAuth2Args']]:
+        return pulumi.get(self, "oauth2")
 
     @_builtins.property
     @pulumi.getter(name="publisherNames")

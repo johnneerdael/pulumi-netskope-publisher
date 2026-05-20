@@ -15,6 +15,12 @@ namespace Pulumi.NetskopePublisher
         [Output("apiToken")]
         public Output<string?> ApiToken { get; private set; } = null!;
 
+        [Output("authMode")]
+        public Output<string?> AuthMode { get; private set; } = null!;
+
+        [Output("bearerToken")]
+        public Output<string?> BearerToken { get; private set; } = null!;
+
         [Output("chartRepository")]
         public Output<string?> ChartRepository { get; private set; } = null!;
 
@@ -53,6 +59,9 @@ namespace Pulumi.NetskopePublisher
 
         [Output("namespace")]
         public Output<string?> Namespace { get; private set; } = null!;
+
+        [Output("oauth2")]
+        public Output<Pulumi.NetskopePublisher.Provider.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
 
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
@@ -100,6 +109,7 @@ namespace Pulumi.NetskopePublisher
                 AdditionalSecretOutputs =
                 {
                     "apiToken",
+                    "bearerToken",
                     "publishers",
                 },
             };
@@ -118,6 +128,17 @@ namespace Pulumi.NetskopePublisher
         {
             get => _apiToken;
             set => _apiToken = value;
+        }
+
+        [Input("authMode")]
+        public string? AuthMode { get; set; }
+
+        [Input("bearerToken")]
+        private string? _bearerToken;
+        public string? BearerToken
+        {
+            get => _bearerToken;
+            set => _bearerToken = value;
         }
 
         [Input("chartRepository")]
@@ -165,6 +186,9 @@ namespace Pulumi.NetskopePublisher
 
         [Input("namespace")]
         public string? Namespace { get; set; }
+
+        [Input("oauth2")]
+        public Input<Pulumi.NetskopePublisher.Provider.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
 
         [Input("registrations")]
         private InputMap<Pulumi.NetskopePublisher.Provider.Inputs.PublisherRegistrationInputArgs>? _registrations;

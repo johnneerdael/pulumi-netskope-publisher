@@ -18,7 +18,9 @@ type OciPublisher struct {
 
 	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
 	AssignPublicIp               pulumi.BoolPtrOutput                         `pulumi:"assignPublicIp"`
+	AuthMode                     pulumi.StringPtrOutput                       `pulumi:"authMode"`
 	AvailabilityDomain           pulumi.StringOutput                          `pulumi:"availabilityDomain"`
+	BearerToken                  pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
 	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
 	CompartmentId                pulumi.StringOutput                          `pulumi:"compartmentId"`
@@ -32,6 +34,7 @@ type OciPublisher struct {
 	NamePrefix                   pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
 	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -54,11 +57,15 @@ func NewOciPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	if args.InstallUserPassword != nil {
 		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"installUserPassword",
 		"publishers",
 	})
@@ -75,7 +82,9 @@ func NewOciPublisher(ctx *pulumi.Context,
 type ociPublisherArgs struct {
 	ApiToken                     *string                                        `pulumi:"apiToken"`
 	AssignPublicIp               *bool                                          `pulumi:"assignPublicIp"`
+	AuthMode                     *string                                        `pulumi:"authMode"`
 	AvailabilityDomain           string                                         `pulumi:"availabilityDomain"`
+	BearerToken                  *string                                        `pulumi:"bearerToken"`
 	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
 	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
 	CompartmentId                string                                         `pulumi:"compartmentId"`
@@ -89,6 +98,7 @@ type ociPublisherArgs struct {
 	NamePrefix                   *string                                        `pulumi:"namePrefix"`
 	Names                        []string                                       `pulumi:"names"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
+	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	Shape                        *string                                        `pulumi:"shape"`
@@ -103,7 +113,9 @@ type ociPublisherArgs struct {
 type OciPublisherArgs struct {
 	ApiToken                     *string
 	AssignPublicIp               *bool
+	AuthMode                     *string
 	AvailabilityDomain           string
+	BearerToken                  *string
 	Bootstrap                    *bool
 	BootstrapUrl                 *string
 	CompartmentId                string
@@ -117,6 +129,7 @@ type OciPublisherArgs struct {
 	NamePrefix                   *string
 	Names                        pulumi.StringArrayInput
 	Nonat                        *bool
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	Shape                        *string
@@ -172,8 +185,16 @@ func (o OciPublisherOutput) AssignPublicIp() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *OciPublisher) pulumi.BoolPtrOutput { return v.AssignPublicIp }).(pulumi.BoolPtrOutput)
 }
 
+func (o OciPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *OciPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
 func (o OciPublisherOutput) AvailabilityDomain() pulumi.StringOutput {
 	return o.ApplyT(func(v *OciPublisher) pulumi.StringOutput { return v.AvailabilityDomain }).(pulumi.StringOutput)
+}
+
+func (o OciPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *OciPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o OciPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
@@ -226,6 +247,10 @@ func (o OciPublisherOutput) Names() pulumi.StringArrayOutput {
 
 func (o OciPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *OciPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o OciPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *OciPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o OciPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

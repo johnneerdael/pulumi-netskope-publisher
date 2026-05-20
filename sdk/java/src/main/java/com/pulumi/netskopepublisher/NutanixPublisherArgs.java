@@ -7,6 +7,7 @@ import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import com.pulumi.netskopepublisher.provider.inputs.GuestNetworkInterfaceArgs;
+import com.pulumi.netskopepublisher.provider.inputs.NetskopeOAuth2ArgsArgs;
 import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -27,6 +28,20 @@ public final class NutanixPublisherArgs extends com.pulumi.resources.ResourceArg
 
     public Optional<String> apiToken() {
         return Optional.ofNullable(this.apiToken);
+    }
+
+    @Import(name="authMode")
+    private @Nullable String authMode;
+
+    public Optional<String> authMode() {
+        return Optional.ofNullable(this.authMode);
+    }
+
+    @Import(name="bearerToken")
+    private @Nullable String bearerToken;
+
+    public Optional<String> bearerToken() {
+        return Optional.ofNullable(this.bearerToken);
     }
 
     @Import(name="bootstrap")
@@ -141,6 +156,13 @@ public final class NutanixPublisherArgs extends com.pulumi.resources.ResourceArg
         return Optional.ofNullable(this.numVCpus);
     }
 
+    @Import(name="oauth2")
+    private @Nullable Output<NetskopeOAuth2ArgsArgs> oauth2;
+
+    public Optional<Output<NetskopeOAuth2ArgsArgs>> oauth2() {
+        return Optional.ofNullable(this.oauth2);
+    }
+
     @Import(name="registrations")
     private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
@@ -187,6 +209,8 @@ public final class NutanixPublisherArgs extends com.pulumi.resources.ResourceArg
 
     private NutanixPublisherArgs(NutanixPublisherArgs $) {
         this.apiToken = $.apiToken;
+        this.authMode = $.authMode;
+        this.bearerToken = $.bearerToken;
         this.bootstrap = $.bootstrap;
         this.bootstrapUrl = $.bootstrapUrl;
         this.clusterUuid = $.clusterUuid;
@@ -203,6 +227,7 @@ public final class NutanixPublisherArgs extends com.pulumi.resources.ResourceArg
         this.nonat = $.nonat;
         this.numCoresPerVcpu = $.numCoresPerVcpu;
         this.numVCpus = $.numVCpus;
+        this.oauth2 = $.oauth2;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
         this.subnetUuid = $.subnetUuid;
@@ -231,6 +256,16 @@ public final class NutanixPublisherArgs extends com.pulumi.resources.ResourceArg
 
         public Builder apiToken(@Nullable String apiToken) {
             $.apiToken = apiToken;
+            return this;
+        }
+
+        public Builder authMode(@Nullable String authMode) {
+            $.authMode = authMode;
+            return this;
+        }
+
+        public Builder bearerToken(@Nullable String bearerToken) {
+            $.bearerToken = bearerToken;
             return this;
         }
 
@@ -332,6 +367,15 @@ public final class NutanixPublisherArgs extends com.pulumi.resources.ResourceArg
         public Builder numVCpus(@Nullable Integer numVCpus) {
             $.numVCpus = numVCpus;
             return this;
+        }
+
+        public Builder oauth2(@Nullable Output<NetskopeOAuth2ArgsArgs> oauth2) {
+            $.oauth2 = oauth2;
+            return this;
+        }
+
+        public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
+            return oauth2(Output.of(oauth2));
         }
 
         public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {

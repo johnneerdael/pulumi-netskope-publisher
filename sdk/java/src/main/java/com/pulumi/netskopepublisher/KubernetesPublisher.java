@@ -9,6 +9,7 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.KubernetesPublisherArgs;
 import com.pulumi.netskopepublisher.Utilities;
+import com.pulumi.netskopepublisher.provider.outputs.NetskopeOAuth2Args;
 import com.pulumi.netskopepublisher.provider.outputs.PublisherRegistrationInput;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -26,6 +27,18 @@ public class KubernetesPublisher extends com.pulumi.resources.ComponentResource 
 
     public Output<Optional<String>> apiToken() {
         return Codegen.optional(this.apiToken);
+    }
+    @Export(name="authMode", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> authMode;
+
+    public Output<Optional<String>> authMode() {
+        return Codegen.optional(this.authMode);
+    }
+    @Export(name="bearerToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> bearerToken;
+
+    public Output<Optional<String>> bearerToken() {
+        return Codegen.optional(this.bearerToken);
     }
     @Export(name="chartRepository", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> chartRepository;
@@ -104,6 +117,12 @@ public class KubernetesPublisher extends com.pulumi.resources.ComponentResource 
 
     public Output<Optional<String>> namespace() {
         return Codegen.optional(this.namespace);
+    }
+    @Export(name="oauth2", refs={NetskopeOAuth2Args.class}, tree="[0]")
+    private Output</* @Nullable */ NetskopeOAuth2Args> oauth2;
+
+    public Output<Optional<NetskopeOAuth2Args>> oauth2() {
+        return Codegen.optional(this.oauth2);
     }
     @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
     private Output<List<String>> publisherNames;
@@ -192,6 +211,7 @@ public class KubernetesPublisher extends com.pulumi.resources.ComponentResource 
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
             .additionalSecretOutputs(List.of(
                 "apiToken",
+                "bearerToken",
                 "publishers"
             ))
             .build();

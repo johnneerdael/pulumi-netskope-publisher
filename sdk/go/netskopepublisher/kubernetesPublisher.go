@@ -16,6 +16,8 @@ type KubernetesPublisher struct {
 	pulumi.ResourceState
 
 	ApiToken         pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AuthMode         pulumi.StringPtrOutput                       `pulumi:"authMode"`
+	BearerToken      pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	ChartRepository  pulumi.StringPtrOutput                       `pulumi:"chartRepository"`
 	ChartValues      pulumi.MapOutput                             `pulumi:"chartValues"`
 	ChartVersion     pulumi.StringPtrOutput                       `pulumi:"chartVersion"`
@@ -29,6 +31,7 @@ type KubernetesPublisher struct {
 	NamePrefix       pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
 	Names            pulumi.StringArrayOutput                     `pulumi:"names"`
 	Namespace        pulumi.StringPtrOutput                       `pulumi:"namespace"`
+	Oauth2           provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	PublisherNames   pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers       pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations    provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -49,8 +52,12 @@ func NewKubernetesPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"publishers",
 	})
 	opts = append(opts, secrets)
@@ -65,6 +72,8 @@ func NewKubernetesPublisher(ctx *pulumi.Context,
 
 type kubernetesPublisherArgs struct {
 	ApiToken        *string                                        `pulumi:"apiToken"`
+	AuthMode        *string                                        `pulumi:"authMode"`
+	BearerToken     *string                                        `pulumi:"bearerToken"`
 	ChartRepository *string                                        `pulumi:"chartRepository"`
 	ChartValues     map[string]interface{}                         `pulumi:"chartValues"`
 	ChartVersion    *string                                        `pulumi:"chartVersion"`
@@ -77,6 +86,7 @@ type kubernetesPublisherArgs struct {
 	NamePrefix      *string                                        `pulumi:"namePrefix"`
 	Names           []string                                       `pulumi:"names"`
 	Namespace       *string                                        `pulumi:"namespace"`
+	Oauth2          *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Registrations   map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas        *int                                           `pulumi:"replicas"`
 	Tags            map[string]string                              `pulumi:"tags"`
@@ -88,6 +98,8 @@ type kubernetesPublisherArgs struct {
 // The set of arguments for constructing a KubernetesPublisher resource.
 type KubernetesPublisherArgs struct {
 	ApiToken        *string
+	AuthMode        *string
+	BearerToken     *string
 	ChartRepository *string
 	ChartValues     pulumi.MapInput
 	ChartVersion    *string
@@ -100,6 +112,7 @@ type KubernetesPublisherArgs struct {
 	NamePrefix      *string
 	Names           pulumi.StringArrayInput
 	Namespace       *string
+	Oauth2          provider.NetskopeOAuth2ArgsPtrInput
 	Registrations   provider.PublisherRegistrationInputMapInput
 	Replicas        *int
 	Tags            pulumi.StringMapInput
@@ -147,6 +160,14 @@ func (o KubernetesPublisherOutput) ToKubernetesPublisherOutputWithContext(ctx co
 
 func (o KubernetesPublisherOutput) ApiToken() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o KubernetesPublisherOutput) ChartRepository() pulumi.StringPtrOutput {
@@ -199,6 +220,10 @@ func (o KubernetesPublisherOutput) Names() pulumi.StringArrayOutput {
 
 func (o KubernetesPublisherOutput) Namespace() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *KubernetesPublisher) pulumi.StringPtrOutput { return v.Namespace }).(pulumi.StringPtrOutput)
+}
+
+func (o KubernetesPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *KubernetesPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o KubernetesPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

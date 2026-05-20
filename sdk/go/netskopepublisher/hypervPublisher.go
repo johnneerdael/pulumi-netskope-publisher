@@ -17,8 +17,10 @@ type HypervPublisher struct {
 	pulumi.ResourceState
 
 	ApiToken                 pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AuthMode                 pulumi.StringPtrOutput                       `pulumi:"authMode"`
 	AutoStartAction          pulumi.StringPtrOutput                       `pulumi:"autoStartAction"`
 	AutoStopAction           pulumi.StringPtrOutput                       `pulumi:"autoStopAction"`
+	BearerToken              pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	DynamicMemory            pulumi.BoolPtrOutput                         `pulumi:"dynamicMemory"`
 	EnableExperimentalHyperv pulumi.BoolPtrOutput                         `pulumi:"enableExperimentalHyperv"`
 	Generation               pulumi.IntPtrOutput                          `pulumi:"generation"`
@@ -28,6 +30,7 @@ type HypervPublisher struct {
 	MinimumMemory            pulumi.IntPtrOutput                          `pulumi:"minimumMemory"`
 	NamePrefix               pulumi.StringPtrOutput                       `pulumi:"namePrefix"`
 	Names                    pulumi.StringArrayOutput                     `pulumi:"names"`
+	Oauth2                   provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	ProcessorCount           pulumi.IntPtrOutput                          `pulumi:"processorCount"`
 	PublisherNames           pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers               pulumi.MapOutput                             `pulumi:"publishers"`
@@ -52,8 +55,12 @@ func NewHypervPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"publishers",
 	})
 	opts = append(opts, secrets)
@@ -68,8 +75,10 @@ func NewHypervPublisher(ctx *pulumi.Context,
 
 type hypervPublisherArgs struct {
 	ApiToken                 *string                                        `pulumi:"apiToken"`
+	AuthMode                 *string                                        `pulumi:"authMode"`
 	AutoStartAction          *string                                        `pulumi:"autoStartAction"`
 	AutoStopAction           *string                                        `pulumi:"autoStopAction"`
+	BearerToken              *string                                        `pulumi:"bearerToken"`
 	DynamicMemory            *bool                                          `pulumi:"dynamicMemory"`
 	EnableExperimentalHyperv *bool                                          `pulumi:"enableExperimentalHyperv"`
 	Generation               *int                                           `pulumi:"generation"`
@@ -79,6 +88,7 @@ type hypervPublisherArgs struct {
 	MinimumMemory            *int                                           `pulumi:"minimumMemory"`
 	NamePrefix               *string                                        `pulumi:"namePrefix"`
 	Names                    []string                                       `pulumi:"names"`
+	Oauth2                   *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	ProcessorCount           *int                                           `pulumi:"processorCount"`
 	Registrations            map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                 *int                                           `pulumi:"replicas"`
@@ -91,8 +101,10 @@ type hypervPublisherArgs struct {
 // The set of arguments for constructing a HypervPublisher resource.
 type HypervPublisherArgs struct {
 	ApiToken                 *string
+	AuthMode                 *string
 	AutoStartAction          *string
 	AutoStopAction           *string
+	BearerToken              *string
 	DynamicMemory            *bool
 	EnableExperimentalHyperv *bool
 	Generation               *int
@@ -102,6 +114,7 @@ type HypervPublisherArgs struct {
 	MinimumMemory            *int
 	NamePrefix               *string
 	Names                    pulumi.StringArrayInput
+	Oauth2                   provider.NetskopeOAuth2ArgsPtrInput
 	ProcessorCount           *int
 	Registrations            provider.PublisherRegistrationInputMapInput
 	Replicas                 *int
@@ -152,12 +165,20 @@ func (o HypervPublisherOutput) ApiToken() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
 }
 
+func (o HypervPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
 func (o HypervPublisherOutput) AutoStartAction() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.AutoStartAction }).(pulumi.StringPtrOutput)
 }
 
 func (o HypervPublisherOutput) AutoStopAction() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.AutoStopAction }).(pulumi.StringPtrOutput)
+}
+
+func (o HypervPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o HypervPublisherOutput) DynamicMemory() pulumi.BoolPtrOutput {
@@ -194,6 +215,10 @@ func (o HypervPublisherOutput) NamePrefix() pulumi.StringPtrOutput {
 
 func (o HypervPublisherOutput) Names() pulumi.StringArrayOutput {
 	return o.ApplyT(func(v *HypervPublisher) pulumi.StringArrayOutput { return v.Names }).(pulumi.StringArrayOutput)
+}
+
+func (o HypervPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *HypervPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o HypervPublisherOutput) ProcessorCount() pulumi.IntPtrOutput {

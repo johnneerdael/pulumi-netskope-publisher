@@ -18,6 +18,8 @@ type GcpPublisher struct {
 
 	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
 	AssignPublicIp               pulumi.BoolPtrOutput                         `pulumi:"assignPublicIp"`
+	AuthMode                     pulumi.StringPtrOutput                       `pulumi:"authMode"`
+	BearerToken                  pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
 	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            pulumi.BoolPtrOutput                         `pulumi:"deleteDefaultUser"`
@@ -33,6 +35,7 @@ type GcpPublisher struct {
 	Network                      pulumi.StringOutput                          `pulumi:"network"`
 	NetworkTags                  pulumi.StringArrayOutput                     `pulumi:"networkTags"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	Project                      pulumi.StringOutput                          `pulumi:"project"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
@@ -56,11 +59,15 @@ func NewGcpPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	if args.InstallUserPassword != nil {
 		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"installUserPassword",
 		"publishers",
 	})
@@ -77,6 +84,8 @@ func NewGcpPublisher(ctx *pulumi.Context,
 type gcpPublisherArgs struct {
 	ApiToken                     *string                                        `pulumi:"apiToken"`
 	AssignPublicIp               *bool                                          `pulumi:"assignPublicIp"`
+	AuthMode                     *string                                        `pulumi:"authMode"`
+	BearerToken                  *string                                        `pulumi:"bearerToken"`
 	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
 	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            *bool                                          `pulumi:"deleteDefaultUser"`
@@ -92,6 +101,7 @@ type gcpPublisherArgs struct {
 	Network                      string                                         `pulumi:"network"`
 	NetworkTags                  []string                                       `pulumi:"networkTags"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
+	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Project                      string                                         `pulumi:"project"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -107,6 +117,8 @@ type gcpPublisherArgs struct {
 type GcpPublisherArgs struct {
 	ApiToken                     *string
 	AssignPublicIp               *bool
+	AuthMode                     *string
+	BearerToken                  *string
 	Bootstrap                    *bool
 	BootstrapUrl                 *string
 	DeleteDefaultUser            *bool
@@ -122,6 +134,7 @@ type GcpPublisherArgs struct {
 	Network                      string
 	NetworkTags                  pulumi.StringArrayInput
 	Nonat                        *bool
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Project                      string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -176,6 +189,14 @@ func (o GcpPublisherOutput) ApiToken() pulumi.StringPtrOutput {
 
 func (o GcpPublisherOutput) AssignPublicIp() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *GcpPublisher) pulumi.BoolPtrOutput { return v.AssignPublicIp }).(pulumi.BoolPtrOutput)
+}
+
+func (o GcpPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
+func (o GcpPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o GcpPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
@@ -236,6 +257,10 @@ func (o GcpPublisherOutput) NetworkTags() pulumi.StringArrayOutput {
 
 func (o GcpPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *GcpPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o GcpPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *GcpPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o GcpPublisherOutput) Project() pulumi.StringOutput {

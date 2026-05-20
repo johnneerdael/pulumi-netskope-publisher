@@ -23,8 +23,32 @@ test("normalizeByoRegistrations requires every publisher name", () => {
 test("requireManagedRegistrationInputs rejects missing tenantUrl", () => {
   assert.throws(
     () => requireManagedRegistrationInputs({ apiToken: "token" }),
-    /tenantUrl and apiToken are required when registrations are not provided/,
+    /tenantUrl and a bearer token or oauth2 credentials are required when registrations are not provided/,
   );
+});
+
+test("requireManagedRegistrationInputs accepts bearerToken without legacy apiToken", () => {
+  const result = requireManagedRegistrationInputs({
+    tenantUrl: "https://tenant.goskope.com",
+    bearerToken: "bearer-token",
+  });
+
+  assert.equal(result.bearerToken, "bearer-token");
+});
+
+test("requireManagedRegistrationInputs accepts oauth2 credentials", () => {
+  const result = requireManagedRegistrationInputs({
+    tenantUrl: "https://tenant.goskope.com",
+    authMode: "oauth2",
+    oauth2: {
+      tokenUrl: "https://tenant.goskope.com/oauth2/token",
+      clientId: "client-id",
+      clientSecret: "client-secret",
+    },
+  });
+
+  assert.equal(result.authMode, "oauth2");
+  assert.equal((result.oauth2 as { tokenUrl: string }).tokenUrl, "https://tenant.goskope.com/oauth2/token");
 });
 
 test("createPublisherOutput preserves provider IDs and token", async () => {

@@ -15,11 +15,17 @@ namespace Pulumi.NetskopePublisher
         [Output("apiToken")]
         public Output<string?> ApiToken { get; private set; } = null!;
 
+        [Output("authMode")]
+        public Output<string?> AuthMode { get; private set; } = null!;
+
         [Output("autoStartAction")]
         public Output<string?> AutoStartAction { get; private set; } = null!;
 
         [Output("autoStopAction")]
         public Output<string?> AutoStopAction { get; private set; } = null!;
+
+        [Output("bearerToken")]
+        public Output<string?> BearerToken { get; private set; } = null!;
 
         [Output("dynamicMemory")]
         public Output<bool?> DynamicMemory { get; private set; } = null!;
@@ -47,6 +53,9 @@ namespace Pulumi.NetskopePublisher
 
         [Output("names")]
         public Output<ImmutableArray<string>> Names { get; private set; } = null!;
+
+        [Output("oauth2")]
+        public Output<Pulumi.NetskopePublisher.Provider.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
 
         [Output("processorCount")]
         public Output<int?> ProcessorCount { get; private set; } = null!;
@@ -97,6 +106,7 @@ namespace Pulumi.NetskopePublisher
                 AdditionalSecretOutputs =
                 {
                     "apiToken",
+                    "bearerToken",
                     "publishers",
                 },
             };
@@ -117,11 +127,22 @@ namespace Pulumi.NetskopePublisher
             set => _apiToken = value;
         }
 
+        [Input("authMode")]
+        public string? AuthMode { get; set; }
+
         [Input("autoStartAction")]
         public string? AutoStartAction { get; set; }
 
         [Input("autoStopAction")]
         public string? AutoStopAction { get; set; }
+
+        [Input("bearerToken")]
+        private string? _bearerToken;
+        public string? BearerToken
+        {
+            get => _bearerToken;
+            set => _bearerToken = value;
+        }
 
         [Input("dynamicMemory")]
         public bool? DynamicMemory { get; set; }
@@ -159,6 +180,9 @@ namespace Pulumi.NetskopePublisher
             get => _names ?? (_names = new InputList<string>());
             set => _names = value;
         }
+
+        [Input("oauth2")]
+        public Input<Pulumi.NetskopePublisher.Provider.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
 
         [Input("processorCount")]
         public int? ProcessorCount { get; set; }

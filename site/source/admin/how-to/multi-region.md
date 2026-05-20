@@ -15,7 +15,7 @@ new AwsPublisher("publisher-eu", {
   namePrefix: "pub-eu",
   replicas: 2,
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId: euSubnetId,
   securityGroupIds: [euSecurityGroupId],
 }, { provider: eu });
@@ -24,7 +24,7 @@ new AwsPublisher("publisher-us", {
   namePrefix: "pub-us",
   replicas: 2,
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId: usSubnetId,
   securityGroupIds: [usSecurityGroupId],
 }, { provider: us });

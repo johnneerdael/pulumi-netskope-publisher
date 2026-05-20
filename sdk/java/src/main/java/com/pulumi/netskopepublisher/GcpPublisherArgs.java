@@ -8,6 +8,7 @@ import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import com.pulumi.netskopepublisher.provider.inputs.GcpServiceAccountArgs;
 import com.pulumi.netskopepublisher.provider.inputs.GuestNetworkInterfaceArgs;
+import com.pulumi.netskopepublisher.provider.inputs.NetskopeOAuth2ArgsArgs;
 import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -35,6 +36,20 @@ public final class GcpPublisherArgs extends com.pulumi.resources.ResourceArgs {
 
     public Optional<Boolean> assignPublicIp() {
         return Optional.ofNullable(this.assignPublicIp);
+    }
+
+    @Import(name="authMode")
+    private @Nullable String authMode;
+
+    public Optional<String> authMode() {
+        return Optional.ofNullable(this.authMode);
+    }
+
+    @Import(name="bearerToken")
+    private @Nullable String bearerToken;
+
+    public Optional<String> bearerToken() {
+        return Optional.ofNullable(this.bearerToken);
     }
 
     @Import(name="bootstrap")
@@ -142,6 +157,13 @@ public final class GcpPublisherArgs extends com.pulumi.resources.ResourceArgs {
         return Optional.ofNullable(this.nonat);
     }
 
+    @Import(name="oauth2")
+    private @Nullable Output<NetskopeOAuth2ArgsArgs> oauth2;
+
+    public Optional<Output<NetskopeOAuth2ArgsArgs>> oauth2() {
+        return Optional.ofNullable(this.oauth2);
+    }
+
     @Import(name="project", required=true)
     private String project;
 
@@ -210,6 +232,8 @@ public final class GcpPublisherArgs extends com.pulumi.resources.ResourceArgs {
     private GcpPublisherArgs(GcpPublisherArgs $) {
         this.apiToken = $.apiToken;
         this.assignPublicIp = $.assignPublicIp;
+        this.authMode = $.authMode;
+        this.bearerToken = $.bearerToken;
         this.bootstrap = $.bootstrap;
         this.bootstrapUrl = $.bootstrapUrl;
         this.deleteDefaultUser = $.deleteDefaultUser;
@@ -225,6 +249,7 @@ public final class GcpPublisherArgs extends com.pulumi.resources.ResourceArgs {
         this.network = $.network;
         this.networkTags = $.networkTags;
         this.nonat = $.nonat;
+        this.oauth2 = $.oauth2;
         this.project = $.project;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
@@ -261,6 +286,16 @@ public final class GcpPublisherArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder assignPublicIp(@Nullable Boolean assignPublicIp) {
             $.assignPublicIp = assignPublicIp;
+            return this;
+        }
+
+        public Builder authMode(@Nullable String authMode) {
+            $.authMode = authMode;
+            return this;
+        }
+
+        public Builder bearerToken(@Nullable String bearerToken) {
+            $.bearerToken = bearerToken;
             return this;
         }
 
@@ -365,6 +400,15 @@ public final class GcpPublisherArgs extends com.pulumi.resources.ResourceArgs {
         public Builder nonat(@Nullable Boolean nonat) {
             $.nonat = nonat;
             return this;
+        }
+
+        public Builder oauth2(@Nullable Output<NetskopeOAuth2ArgsArgs> oauth2) {
+            $.oauth2 = oauth2;
+            return this;
+        }
+
+        public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
+            return oauth2(Output.of(oauth2));
         }
 
         public Builder project(String project) {

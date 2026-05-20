@@ -27,6 +27,6 @@ Before opening the public Registry PR:
 
 The Go provider constructs AWS, Azure, GCP, Kubernetes, and vSphere child
 resources and includes the stateful `NetskopeRegistration` resource used
-by those components when `tenantUrl` and `apiToken` are provided.
+by those components when `tenantUrl` and `bearerToken` are provided.
 Pre-created `registrations` remain available for BYO registration
 workflows.

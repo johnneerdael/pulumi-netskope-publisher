@@ -10,7 +10,7 @@ toc: true
 ## Inputs
 
 Required: `serviceName`, `region`, `imageId`, `flavorId`, and
-`tenantUrl` plus `apiToken` unless `registrations` is provided.
+`tenantUrl` plus `bearerToken` unless `registrations` is provided.
 
 Optional platform inputs: `sshKeyName` and `networkId`.
 
@@ -32,7 +32,7 @@ pulumi config set ovh:applicationKey --secret
 pulumi config set ovh:applicationSecret --secret
 pulumi config set ovh:consumerKey --secret
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi up
 ```
 
@@ -43,7 +43,7 @@ const publisher = new OvhPublisher("publisher", {
   namePrefix: "pub-ovh",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   serviceName: config.require("serviceName"),
   region: "GRA11",
   imageId: config.require("imageId"),
@@ -60,7 +60,7 @@ publisher = OvhPublisher(
     name_prefix="pub-ovh",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     service_name=config.require("serviceName"),
     region="GRA11",
     image_id=config.require("imageId"),
@@ -77,7 +77,7 @@ var publisher = new OvhPublisher("publisher", new OvhPublisherArgs
     NamePrefix = "pub-ovh",
     Replicas = 2,
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     ServiceName = config.Require("serviceName"),
     Region = "GRA11",
     ImageId = config.Require("imageId"),
@@ -93,7 +93,7 @@ publisher, err := netskopepublisher.NewOvhPublisher(ctx, "publisher", &netskopep
 	NamePrefix: pulumi.String("pub-ovh"),
 	Replicas:   pulumi.Int(2),
 	TenantUrl:  pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:   netskope.RequireSecret("apiToken"),
+	BearerToken:   netskope.RequireSecret("bearerToken"),
 	ServiceName: pulumi.String(cfg.Require("serviceName")),
 	Region:     pulumi.String("GRA11"),
 	ImageId:    pulumi.String(cfg.Require("imageId")),
@@ -108,7 +108,7 @@ var publisher = new OvhPublisher("publisher", OvhPublisherArgs.builder()
     .namePrefix("pub-ovh")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .serviceName(config.require("serviceName"))
     .region("GRA11")
     .imageId(config.require("imageId"))
@@ -126,7 +126,7 @@ let publisher = netskope::ovh_publisher::create(
         .name_prefix("pub-ovh")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .service_name("project-id")
         .region("GRA11")
         .image_id("ubuntu-image-id")

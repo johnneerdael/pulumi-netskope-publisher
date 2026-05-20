@@ -12,7 +12,7 @@ const publisher = new AwsPublisher("publisher", {
   namePrefix: "pub-eu",
   replicas: 2,
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId,
   securityGroupIds: [securityGroupId],
   keyName,
@@ -27,7 +27,7 @@ For multi-AZ HA, create one component per subnet:
 new AwsPublisher("publisher-a", {
   names: ["pub-eu-a"],
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId: subnetA,
   securityGroupIds: [securityGroupId],
 });
@@ -35,7 +35,7 @@ new AwsPublisher("publisher-a", {
 new AwsPublisher("publisher-b", {
   names: ["pub-eu-b"],
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId: subnetB,
   securityGroupIds: [securityGroupId],
 });

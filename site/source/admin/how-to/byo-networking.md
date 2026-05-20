@@ -27,7 +27,7 @@ override before the publisher install runs.
 ```ts
 new AwsPublisher("publisher", {
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId,
   securityGroupIds: [securityGroupId],
   bootstrap: true,

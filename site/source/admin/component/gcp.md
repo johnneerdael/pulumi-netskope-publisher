@@ -16,7 +16,7 @@ Required:
 - `network`
 - `subnetwork`
 - `image`
-- `tenantUrl` and `apiToken`, unless `registrations` is provided
+- `tenantUrl` and `bearerToken`, unless `registrations` is provided
 
 Use a stock Ubuntu image for bootstrap mode:
 
@@ -45,7 +45,7 @@ when using a custom image that already has `npa_publisher_wizard`.
 pulumi new typescript
 pulumi config set gcp:project my-gcp-project
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi config set project my-gcp-project
 pulumi config set zone europe-west4-a
 pulumi config set network default
@@ -67,7 +67,7 @@ const publisher = new GcpPublisher("publisher", {
   namePrefix: "pub-gcp",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   project: config.require("project"),
   zone: config.require("zone"),
   network: config.require("network"),
@@ -97,7 +97,7 @@ publisher = GcpPublisher(
     name_prefix="pub-gcp",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     project=config.require("project"),
     zone=config.require("zone"),
     network=config.require("network"),
@@ -130,7 +130,7 @@ return await Deployment.RunAsync(() =>
         NamePrefix = "pub-gcp",
         Replicas = 2,
         TenantUrl = netskope.Require("tenantUrl"),
-        ApiToken = netskope.RequireSecret("apiToken"),
+        BearerToken = netskope.RequireSecret("bearerToken"),
         Project = config.Require("project"),
         Zone = config.Require("zone"),
         Network = config.Require("network"),
@@ -157,7 +157,7 @@ publisher, err := netskopepublisher.NewGcpPublisher(ctx, "publisher", &netskopep
 	NamePrefix:    pulumi.String("pub-gcp"),
 	Replicas:      pulumi.Int(2),
 	TenantUrl:     pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:      netskope.RequireSecret("apiToken"),
+	BearerToken:      netskope.RequireSecret("bearerToken"),
 	Project:       pulumi.String(cfg.Require("project")),
 	Zone:          pulumi.String(cfg.Require("zone")),
 	Network:       pulumi.String(cfg.Require("network")),
@@ -184,7 +184,7 @@ var publisher = new GcpPublisher("publisher", GcpPublisherArgs.builder()
     .namePrefix("pub-gcp")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .project(config.require("project"))
     .zone(config.require("zone"))
     .network(config.require("network"))
@@ -209,7 +209,7 @@ let publisher = netskope::gcp_publisher::create(
         .name_prefix("pub-gcp")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .project("my-gcp-project")
         .zone("europe-west4-a")
         .network("default")

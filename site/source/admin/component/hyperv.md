@@ -28,7 +28,7 @@ publisher naming, tenant registration, and NoCloud seed data.
 
 ```bash
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi config set enableExperimentalHyperv true
 ```
 

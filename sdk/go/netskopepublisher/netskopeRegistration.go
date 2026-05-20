@@ -16,7 +16,10 @@ import (
 type NetskopeRegistration struct {
 	pulumi.CustomResourceState
 
-	ApiToken       pulumi.StringOutput                  `pulumi:"apiToken"`
+	ApiToken       pulumi.StringPtrOutput               `pulumi:"apiToken"`
+	AuthMode       pulumi.StringPtrOutput               `pulumi:"authMode"`
+	BearerToken    pulumi.StringPtrOutput               `pulumi:"bearerToken"`
+	Oauth2         provider.NetskopeOAuth2ArgsPtrOutput `pulumi:"oauth2"`
 	PublisherNames pulumi.StringArrayOutput             `pulumi:"publisherNames"`
 	Registrations  provider.RegistrationRecordMapOutput `pulumi:"registrations"`
 	TenantUrl      pulumi.StringOutput                  `pulumi:"tenantUrl"`
@@ -29,9 +32,6 @@ func NewNetskopeRegistration(ctx *pulumi.Context,
 		return nil, errors.New("missing one or more required arguments")
 	}
 
-	if args.ApiToken == nil {
-		return nil, errors.New("invalid value for required argument 'ApiToken'")
-	}
 	if args.PublisherNames == nil {
 		return nil, errors.New("invalid value for required argument 'PublisherNames'")
 	}
@@ -39,10 +39,14 @@ func NewNetskopeRegistration(ctx *pulumi.Context,
 		return nil, errors.New("invalid value for required argument 'TenantUrl'")
 	}
 	if args.ApiToken != nil {
-		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringInput)
+		args.ApiToken = pulumi.ToSecret(args.ApiToken).(pulumi.StringPtrInput)
+	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(pulumi.StringPtrInput)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 	})
 	opts = append(opts, secrets)
 	opts = internal.PkgResourceDefaultOpts(opts)
@@ -78,14 +82,20 @@ func (NetskopeRegistrationState) ElementType() reflect.Type {
 }
 
 type netskopeRegistrationArgs struct {
-	ApiToken       string   `pulumi:"apiToken"`
-	PublisherNames []string `pulumi:"publisherNames"`
-	TenantUrl      string   `pulumi:"tenantUrl"`
+	ApiToken       *string                      `pulumi:"apiToken"`
+	AuthMode       *string                      `pulumi:"authMode"`
+	BearerToken    *string                      `pulumi:"bearerToken"`
+	Oauth2         *provider.NetskopeOAuth2Args `pulumi:"oauth2"`
+	PublisherNames []string                     `pulumi:"publisherNames"`
+	TenantUrl      string                       `pulumi:"tenantUrl"`
 }
 
 // The set of arguments for constructing a NetskopeRegistration resource.
 type NetskopeRegistrationArgs struct {
-	ApiToken       pulumi.StringInput
+	ApiToken       pulumi.StringPtrInput
+	AuthMode       pulumi.StringPtrInput
+	BearerToken    pulumi.StringPtrInput
+	Oauth2         provider.NetskopeOAuth2ArgsPtrInput
 	PublisherNames pulumi.StringArrayInput
 	TenantUrl      pulumi.StringInput
 }
@@ -127,8 +137,20 @@ func (o NetskopeRegistrationOutput) ToNetskopeRegistrationOutputWithContext(ctx 
 	return o
 }
 
-func (o NetskopeRegistrationOutput) ApiToken() pulumi.StringOutput {
-	return o.ApplyT(func(v *NetskopeRegistration) pulumi.StringOutput { return v.ApiToken }).(pulumi.StringOutput)
+func (o NetskopeRegistrationOutput) ApiToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NetskopeRegistration) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o NetskopeRegistrationOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NetskopeRegistration) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
+func (o NetskopeRegistrationOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NetskopeRegistration) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
+}
+
+func (o NetskopeRegistrationOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *NetskopeRegistration) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o NetskopeRegistrationOutput) PublisherNames() pulumi.StringArrayOutput {

@@ -63,6 +63,51 @@ for (const language of selectedLanguages) {
     }
     writeFileSync(project, contents);
   }
+
+  if (language === "java") {
+    const build = "sdk/java/build.gradle";
+    let contents = readFileSync(build, "utf8");
+    contents = contents
+      .replace(
+        "plugins {\n",
+        "import org.gradle.api.credentials.HttpHeaderCredentials\nimport org.gradle.authentication.http.HttpHeaderAuthentication\n\nplugins {\n"
+      )
+      .replace(
+        'group = "com.pulumi"',
+        'def javaMavenGroupId = System.getenv("JAVA_MAVEN_GROUP_ID") ?: "com.pulumi"\n\ngroup = javaMavenGroupId'
+      )
+      .replace(
+        'def publishRepoPassword = System.getenv("PUBLISH_REPO_PASSWORD")',
+        'def publishRepoPassword = System.getenv("PUBLISH_REPO_PASSWORD")\ndef publishRepoBearerToken = System.getenv("PUBLISH_REPO_BEARER_TOKEN")'
+      )
+      .replace('                inceptionYear = ""', '                inceptionYear = "2026"')
+      .replace('                name = ""', '                name = "Netskope Publisher Pulumi Java SDK"')
+      .replace('                        id = ""', '                        id = "johnneerdael"')
+      .replace('                        name = ""', '                        name = "John Neerdael"')
+      .replace('                        email = ""', '                        email = "johnneerdael@users.noreply.github.com"')
+      .replace('            groupId = "com.pulumi"', '            groupId = javaMavenGroupId')
+      .replace(
+        `                credentials {
+                    username = publishRepoUsername
+                    password = publishRepoPassword
+                }`,
+        `                if (publishRepoBearerToken) {
+                    credentials(HttpHeaderCredentials) {
+                        name = "Authorization"
+                        value = "Bearer \${publishRepoBearerToken}"
+                    }
+                    authentication {
+                        header(HttpHeaderAuthentication)
+                    }
+                } else {
+                    credentials {
+                        username = publishRepoUsername
+                        password = publishRepoPassword
+                    }
+                }`
+      );
+    writeFileSync(build, contents);
+  }
 }
 
 function generateRustSdk() {

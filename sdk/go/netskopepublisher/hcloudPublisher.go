@@ -17,6 +17,8 @@ type HcloudPublisher struct {
 
 	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
 	AssignPublicIp               pulumi.BoolPtrOutput                         `pulumi:"assignPublicIp"`
+	AuthMode                     pulumi.StringPtrOutput                       `pulumi:"authMode"`
+	BearerToken                  pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
 	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
 	Datacenter                   pulumi.StringPtrOutput                       `pulumi:"datacenter"`
@@ -33,6 +35,7 @@ type HcloudPublisher struct {
 	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
 	NetworkId                    pulumi.IntPtrOutput                          `pulumi:"networkId"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -54,11 +57,15 @@ func NewHcloudPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	if args.InstallUserPassword != nil {
 		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"installUserPassword",
 		"publishers",
 	})
@@ -75,6 +82,8 @@ func NewHcloudPublisher(ctx *pulumi.Context,
 type hcloudPublisherArgs struct {
 	ApiToken                     *string                                        `pulumi:"apiToken"`
 	AssignPublicIp               *bool                                          `pulumi:"assignPublicIp"`
+	AuthMode                     *string                                        `pulumi:"authMode"`
+	BearerToken                  *string                                        `pulumi:"bearerToken"`
 	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
 	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
 	Datacenter                   *string                                        `pulumi:"datacenter"`
@@ -91,6 +100,7 @@ type hcloudPublisherArgs struct {
 	Names                        []string                                       `pulumi:"names"`
 	NetworkId                    *int                                           `pulumi:"networkId"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
+	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	ServerType                   *string                                        `pulumi:"serverType"`
@@ -104,6 +114,8 @@ type hcloudPublisherArgs struct {
 type HcloudPublisherArgs struct {
 	ApiToken                     *string
 	AssignPublicIp               *bool
+	AuthMode                     *string
+	BearerToken                  *string
 	Bootstrap                    *bool
 	BootstrapUrl                 *string
 	Datacenter                   *string
@@ -120,6 +132,7 @@ type HcloudPublisherArgs struct {
 	Names                        pulumi.StringArrayInput
 	NetworkId                    *int
 	Nonat                        *bool
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	ServerType                   *string
@@ -172,6 +185,14 @@ func (o HcloudPublisherOutput) ApiToken() pulumi.StringPtrOutput {
 
 func (o HcloudPublisherOutput) AssignPublicIp() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *HcloudPublisher) pulumi.BoolPtrOutput { return v.AssignPublicIp }).(pulumi.BoolPtrOutput)
+}
+
+func (o HcloudPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HcloudPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
+func (o HcloudPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *HcloudPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o HcloudPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
@@ -236,6 +257,10 @@ func (o HcloudPublisherOutput) NetworkId() pulumi.IntPtrOutput {
 
 func (o HcloudPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *HcloudPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o HcloudPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *HcloudPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o HcloudPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

@@ -27,6 +27,13 @@ Before requesting public Registry listing:
 - Publish the Python SDK to PyPI.
 - Publish the Go SDK through the tagged GitHub module.
 - Publish the C# SDK to NuGet.
+- Publish the Java SDK to the configured Maven-compatible repository.
+  For Maven Central, confirm `JAVA_MAVEN_AUTH_BASE64`,
+  `JAVA_MAVEN_GROUP_ID`, `JAVA_SIGNING_KEY`, and
+  `JAVA_SIGNING_PASSWORD` are configured and the Maven namespace is
+  verified. `JAVA_MAVEN_AUTH_BASE64` is sent as a bearer token for Maven
+  Central's OSSRH staging API.
+- Publish the Rust SDK to crates.io.
 - Confirm the tag release uploaded the plugin archives to GitHub
   Releases, matching `pluginDownloadURL` in `schema.json`.
 - Confirm the Go provider schema includes `NetskopeRegistration` plus

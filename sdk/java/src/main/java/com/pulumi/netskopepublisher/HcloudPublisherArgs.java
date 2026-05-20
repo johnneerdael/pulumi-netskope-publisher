@@ -6,6 +6,7 @@ package com.pulumi.netskopepublisher;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.netskopepublisher.provider.inputs.GuestNetworkInterfaceArgs;
+import com.pulumi.netskopepublisher.provider.inputs.NetskopeOAuth2ArgsArgs;
 import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -33,6 +34,20 @@ public final class HcloudPublisherArgs extends com.pulumi.resources.ResourceArgs
 
     public Optional<Boolean> assignPublicIp() {
         return Optional.ofNullable(this.assignPublicIp);
+    }
+
+    @Import(name="authMode")
+    private @Nullable String authMode;
+
+    public Optional<String> authMode() {
+        return Optional.ofNullable(this.authMode);
+    }
+
+    @Import(name="bearerToken")
+    private @Nullable String bearerToken;
+
+    public Optional<String> bearerToken() {
+        return Optional.ofNullable(this.bearerToken);
     }
 
     @Import(name="bootstrap")
@@ -147,6 +162,13 @@ public final class HcloudPublisherArgs extends com.pulumi.resources.ResourceArgs
         return Optional.ofNullable(this.nonat);
     }
 
+    @Import(name="oauth2")
+    private @Nullable Output<NetskopeOAuth2ArgsArgs> oauth2;
+
+    public Optional<Output<NetskopeOAuth2ArgsArgs>> oauth2() {
+        return Optional.ofNullable(this.oauth2);
+    }
+
     @Import(name="registrations")
     private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
@@ -201,6 +223,8 @@ public final class HcloudPublisherArgs extends com.pulumi.resources.ResourceArgs
     private HcloudPublisherArgs(HcloudPublisherArgs $) {
         this.apiToken = $.apiToken;
         this.assignPublicIp = $.assignPublicIp;
+        this.authMode = $.authMode;
+        this.bearerToken = $.bearerToken;
         this.bootstrap = $.bootstrap;
         this.bootstrapUrl = $.bootstrapUrl;
         this.datacenter = $.datacenter;
@@ -217,6 +241,7 @@ public final class HcloudPublisherArgs extends com.pulumi.resources.ResourceArgs
         this.names = $.names;
         this.networkId = $.networkId;
         this.nonat = $.nonat;
+        this.oauth2 = $.oauth2;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
         this.serverType = $.serverType;
@@ -251,6 +276,16 @@ public final class HcloudPublisherArgs extends com.pulumi.resources.ResourceArgs
 
         public Builder assignPublicIp(@Nullable Boolean assignPublicIp) {
             $.assignPublicIp = assignPublicIp;
+            return this;
+        }
+
+        public Builder authMode(@Nullable String authMode) {
+            $.authMode = authMode;
+            return this;
+        }
+
+        public Builder bearerToken(@Nullable String bearerToken) {
+            $.bearerToken = bearerToken;
             return this;
         }
 
@@ -360,6 +395,15 @@ public final class HcloudPublisherArgs extends com.pulumi.resources.ResourceArgs
         public Builder nonat(@Nullable Boolean nonat) {
             $.nonat = nonat;
             return this;
+        }
+
+        public Builder oauth2(@Nullable Output<NetskopeOAuth2ArgsArgs> oauth2) {
+            $.oauth2 = oauth2;
+            return this;
+        }
+
+        public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
+            return oauth2(Output.of(oauth2));
         }
 
         public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {

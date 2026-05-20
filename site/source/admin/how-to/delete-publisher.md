@@ -18,7 +18,7 @@ Or use the API:
 
 ```bash
 curl -X DELETE \
-  -H "Netskope-Api-Token: $NETSKOPE_API_TOKEN" \
+  -H "Authorization: Bearer $NETSKOPE_BEARER_TOKEN" \
   "$NETSKOPE_TENANT_URL/api/v2/infrastructure/publishers/<publisher_id>"
 ```
 

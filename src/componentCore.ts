@@ -1,7 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
 import { derivePublisherNames } from "./names";
 import { NetskopeRegistration, RegistrationRecord } from "./netskopeRegistration";
-import { CommonPublisherArgs, PublisherOutput, PublisherRegistrationInput } from "./types";
+import { CommonPublisherArgs, NetskopeAuthMode, NetskopeOAuth2Args, PublisherOutput, PublisherRegistrationInput } from "./types";
 
 export function resolvePublisherNames(args: CommonPublisherArgs): string[] {
   return derivePublisherNames({
@@ -27,20 +27,33 @@ export function createRegistrations(
   return new NetskopeRegistration(`${componentName}-registration`, {
     publisherNames,
     tenantUrl: required.tenantUrl,
+    bearerToken: required.bearerToken,
+    authMode: required.authMode,
+    oauth2: required.oauth2,
     apiToken: required.apiToken,
   }, opts).registrations;
 }
 
 export function requireManagedRegistrationInputs(args: CommonPublisherArgs): {
   tenantUrl: pulumi.Input<string>;
-  apiToken: pulumi.Input<string>;
+  bearerToken?: pulumi.Input<string>;
+  authMode?: pulumi.Input<NetskopeAuthMode>;
+  oauth2?: pulumi.Input<NetskopeOAuth2Args>;
+  apiToken?: pulumi.Input<string>;
 } {
-  if (args.tenantUrl === undefined || args.apiToken === undefined) {
-    throw new Error("tenantUrl and apiToken are required when registrations are not provided");
+  const authMode = args.authMode ?? "token";
+  const hasToken = args.bearerToken !== undefined || args.apiToken !== undefined;
+  const hasOAuth2 = args.oauth2 !== undefined;
+
+  if (args.tenantUrl === undefined || (authMode === "oauth2" ? !hasOAuth2 : !hasToken)) {
+    throw new Error("tenantUrl and a bearer token or oauth2 credentials are required when registrations are not provided");
   }
 
   return {
     tenantUrl: args.tenantUrl,
+    bearerToken: args.bearerToken,
+    authMode: args.authMode,
+    oauth2: args.oauth2,
     apiToken: args.apiToken,
   };
 }

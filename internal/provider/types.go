@@ -8,6 +8,9 @@ type CommonPublisherArgs struct {
 	Replicas      *int                                  `pulumi:"replicas,optional"`
 	TenantURL     *string                               `pulumi:"tenantUrl,optional"`
 	APIToken      *string                               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken   *string                               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode      *string                               `pulumi:"authMode,optional"`
+	OAuth2        *NetskopeOAuth2Args                   `pulumi:"oauth2,optional"`
 	WizardPath    *string                               `pulumi:"wizardPath,optional"`
 	Tags          map[string]string                     `pulumi:"tags,optional"`
 	Registrations map[string]PublisherRegistrationInput `pulumi:"registrations,optional"`
@@ -21,6 +24,13 @@ type CommonPublisherArgs struct {
 	InstallUserSSHAuthorizedKeys []string               `pulumi:"installUserSshAuthorizedKeys,optional"`
 	DeleteDefaultUser            *bool                  `pulumi:"deleteDefaultUser,optional"`
 	GuestNetworkInterface        *GuestNetworkInterface `pulumi:"guestNetworkInterface,optional"`
+}
+
+type NetskopeOAuth2Args struct {
+	TokenURL     string  `pulumi:"tokenUrl"`
+	ClientID     string  `pulumi:"clientId"`
+	ClientSecret string  `pulumi:"clientSecret" provider:"secret"`
+	Scope        *string `pulumi:"scope,optional"`
 }
 
 type PublisherRegistrationInput struct {

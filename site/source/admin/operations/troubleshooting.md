@@ -9,9 +9,10 @@ toc: true
 
 ### `List publishers failed (status=401)`
 
-The API token is missing, expired, or lacks publisher read/write scope.
-Create a new Netskope REST API v2 token with access to
-`/infrastructure/publishers`, then update the Pulumi stack secret.
+The bearer token or OAuth2 client credentials are missing, expired, or
+lack publisher read/write scope. Create a new Netskope REST API v2
+credential with access to `/infrastructure/publishers`, then update the
+Pulumi stack secret.
 
 ### `List publishers failed (status=404)`
 
@@ -21,7 +22,7 @@ is the tenant admin console URL, then rerun `pulumi preview`.
 ### `Create publisher ... failed (status=409)`
 
 A publisher with that name already exists but the list endpoint did not
-return it. Use a token with tenant-wide visibility, or pass
+return it. Use credentials with tenant-wide visibility, or pass
 `registrations` for pre-created publishers.
 
 ## VM provisioning failures

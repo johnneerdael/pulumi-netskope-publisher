@@ -73,16 +73,30 @@ export class KubernetesPublisher extends pulumi.ComponentResource {
 
     if (enrollmentMode === "api") {
       const required = requireManagedRegistrationInputs(args);
-      const apiSecret = new k8s.core.v1.Secret(`${name}-api-token`, {
-        metadata: {
-          name: "npa-api-token",
-          namespace: namespaceOutput,
-        },
-        stringData: {
-          "api-token": required.apiToken,
-        },
-        type: "Opaque",
-      }, { ...parentOpts, dependsOn: [namespace] });
+      const apiAuthMode = required.authMode ?? "token";
+      const oauth2 = pulumi.output(required.oauth2!);
+      const apiSecret = apiAuthMode === "oauth2"
+        ? new k8s.core.v1.Secret(`${name}-api-oauth`, {
+          metadata: {
+            name: "npa-api-oauth",
+            namespace: namespaceOutput,
+          },
+          stringData: {
+            "client-id": oauth2.apply((values) => values.clientId),
+            "client-secret": oauth2.apply((values) => values.clientSecret),
+          },
+          type: "Opaque",
+        }, { ...parentOpts, dependsOn: [namespace] })
+        : new k8s.core.v1.Secret(`${name}-api-token`, {
+          metadata: {
+            name: "npa-api-token",
+            namespace: namespaceOutput,
+          },
+          stringData: {
+            "api-token": required.bearerToken ?? required.apiToken!,
+          },
+          type: "Opaque",
+        }, { ...parentOpts, dependsOn: [namespace] });
 
       const release = createHelmRelease(name, "npa-publisher", namespaceOutput, args, pulumi.all([commonValues, args.chartValues ?? {}]).apply(([values, chartValues]) => ({
         ...values,
@@ -90,8 +104,19 @@ export class KubernetesPublisher extends pulumi.ComponentResource {
           mode: "api",
           api: {
             baseUrl: required.tenantUrl,
-            existingSecret: "npa-api-token",
-            tokenKey: "api-token",
+            authMode: apiAuthMode,
+            ...(apiAuthMode === "oauth2" ? {
+              oauth2: {
+                tokenUrl: oauth2.apply((values) => values.tokenUrl),
+                existingSecret: "npa-api-oauth",
+                clientIdKey: "client-id",
+                clientSecretKey: "client-secret",
+                scope: oauth2.apply((values) => values.scope ?? ""),
+              },
+            } : {
+              existingSecret: "npa-api-token",
+              tokenKey: "api-token",
+            }),
             cleanupOnDelete: false,
           },
         },

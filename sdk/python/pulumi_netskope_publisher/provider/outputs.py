@@ -21,6 +21,7 @@ __all__ = [
     'GuestNetworkInterface',
     'HypervHardDrive',
     'MetadataOptions',
+    'NetskopeOAuth2Args',
     'PublisherRegistrationInput',
     'RegistrationRecord',
 ]
@@ -264,6 +265,61 @@ class MetadataOptions(dict):
     @pulumi.getter(name="httpTokens")
     def http_tokens(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "http_tokens")
+
+
+@pulumi.output_type
+class NetskopeOAuth2Args(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "clientId":
+            suggest = "client_id"
+        elif key == "clientSecret":
+            suggest = "client_secret"
+        elif key == "tokenUrl":
+            suggest = "token_url"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in NetskopeOAuth2Args. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        NetskopeOAuth2Args.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        NetskopeOAuth2Args.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 client_id: _builtins.str,
+                 client_secret: _builtins.str,
+                 token_url: _builtins.str,
+                 scope: Optional[_builtins.str] = None):
+        pulumi.set(__self__, "client_id", client_id)
+        pulumi.set(__self__, "client_secret", client_secret)
+        pulumi.set(__self__, "token_url", token_url)
+        if scope is not None:
+            pulumi.set(__self__, "scope", scope)
+
+    @_builtins.property
+    @pulumi.getter(name="clientId")
+    def client_id(self) -> _builtins.str:
+        return pulumi.get(self, "client_id")
+
+    @_builtins.property
+    @pulumi.getter(name="clientSecret")
+    def client_secret(self) -> _builtins.str:
+        return pulumi.get(self, "client_secret")
+
+    @_builtins.property
+    @pulumi.getter(name="tokenUrl")
+    def token_url(self) -> _builtins.str:
+        return pulumi.get(self, "token_url")
+
+    @_builtins.property
+    @pulumi.getter
+    def scope(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "scope")
 
 
 @pulumi.output_type

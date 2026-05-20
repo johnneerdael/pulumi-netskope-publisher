@@ -9,7 +9,7 @@ toc: true
 
 ## Inputs
 
-Required: `clusterUuid` and `tenantUrl` plus `apiToken` unless
+Required: `clusterUuid` and `tenantUrl` plus `bearerToken` unless
 `registrations` is provided.
 
 Optional platform inputs: `imageUuid`, `subnetUuid`, `numVCpus`,
@@ -32,7 +32,7 @@ pulumi config set nutanix:endpoint prism.example.com
 pulumi config set nutanix:username admin
 pulumi config set nutanix:password --secret
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi up
 ```
 
@@ -43,7 +43,7 @@ const publisher = new NutanixPublisher("publisher", {
   namePrefix: "pub-ntnx",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   clusterUuid: config.require("clusterUuid"),
   imageUuid: config.require("imageUuid"),
   subnetUuid: config.require("subnetUuid"),
@@ -58,7 +58,7 @@ publisher = NutanixPublisher(
     name_prefix="pub-ntnx",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     cluster_uuid=config.require("clusterUuid"),
     image_uuid=config.require("imageUuid"),
     subnet_uuid=config.require("subnetUuid"),
@@ -73,7 +73,7 @@ var publisher = new NutanixPublisher("publisher", new NutanixPublisherArgs
     NamePrefix = "pub-ntnx",
     Replicas = 2,
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     ClusterUuid = config.Require("clusterUuid"),
     ImageUuid = config.Require("imageUuid"),
     SubnetUuid = config.Require("subnetUuid"),
@@ -87,7 +87,7 @@ publisher, err := netskopepublisher.NewNutanixPublisher(ctx, "publisher", &netsk
 	NamePrefix:  pulumi.String("pub-ntnx"),
 	Replicas:    pulumi.Int(2),
 	TenantUrl:   pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:    netskope.RequireSecret("apiToken"),
+	BearerToken:    netskope.RequireSecret("bearerToken"),
 	ClusterUuid: pulumi.String(cfg.Require("clusterUuid")),
 	ImageUuid:   pulumi.String(cfg.Require("imageUuid")),
 	SubnetUuid:  pulumi.String(cfg.Require("subnetUuid")),
@@ -101,7 +101,7 @@ var publisher = new NutanixPublisher("publisher", NutanixPublisherArgs.builder()
     .namePrefix("pub-ntnx")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .clusterUuid(config.require("clusterUuid"))
     .imageUuid(config.require("imageUuid"))
     .subnetUuid(config.require("subnetUuid"))
@@ -118,7 +118,7 @@ let publisher = netskope::nutanix_publisher::create(
         .name_prefix("pub-ntnx")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .cluster_uuid("cluster-uuid")
         .image_uuid("image-uuid")
         .subnet_uuid("subnet-uuid")

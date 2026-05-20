@@ -11,7 +11,7 @@ name. It is direct-host ESXi support and does not replace
 
 ## Inputs
 
-Required: `diskStore`, `virtualNetwork`, and `tenantUrl` plus `apiToken`
+Required: `diskStore`, `virtualNetwork`, and `tenantUrl` plus `bearerToken`
 unless `registrations` is provided.
 
 Optional platform inputs: `os`, `memory`, `numVCpus`, and `diskSize`.
@@ -33,7 +33,7 @@ pulumi config set esxi-native:host https://esxi.example.com/sdk
 pulumi config set esxi-native:user root
 pulumi config set esxi-native:password --secret
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi up
 ```
 
@@ -43,7 +43,7 @@ pulumi up
 const publisher = new EsxiPublisher("publisher", {
   names: ["pub-esxi-1", "pub-esxi-2"],
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   diskStore: "datastore1",
   virtualNetwork: "VM Network",
   memory: 4096,
@@ -58,7 +58,7 @@ publisher = EsxiPublisher(
     "publisher",
     names=["pub-esxi-1", "pub-esxi-2"],
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     disk_store="datastore1",
     virtual_network="VM Network",
     memory=4096,
@@ -73,7 +73,7 @@ var publisher = new EsxiPublisher("publisher", new EsxiPublisherArgs
 {
     Names = { "pub-esxi-1", "pub-esxi-2" },
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     DiskStore = "datastore1",
     VirtualNetwork = "VM Network",
     Memory = 4096,
@@ -87,7 +87,7 @@ var publisher = new EsxiPublisher("publisher", new EsxiPublisherArgs
 publisher, err := netskopepublisher.NewEsxiPublisher(ctx, "publisher", &netskopepublisher.EsxiPublisherArgs{
 	Names:          pulumi.StringArray{pulumi.String("pub-esxi-1"), pulumi.String("pub-esxi-2")},
 	TenantUrl:      pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:       netskope.RequireSecret("apiToken"),
+	BearerToken:       netskope.RequireSecret("bearerToken"),
 	DiskStore:      pulumi.String("datastore1"),
 	VirtualNetwork: pulumi.String("VM Network"),
 	Memory:         pulumi.Int(4096),
@@ -101,7 +101,7 @@ publisher, err := netskopepublisher.NewEsxiPublisher(ctx, "publisher", &netskope
 var publisher = new EsxiPublisher("publisher", EsxiPublisherArgs.builder()
     .names("pub-esxi-1", "pub-esxi-2")
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .diskStore("datastore1")
     .virtualNetwork("VM Network")
     .memory(4096)
@@ -118,7 +118,7 @@ let publisher = netskope::esxi_publisher::create(
     netskope::esxi_publisher::EsxiPublisherArgs::builder()
         .names(vec!["pub-esxi-1".to_string(), "pub-esxi-2".to_string()])
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .disk_store("datastore1")
         .virtual_network("VM Network")
         .memory(4096)

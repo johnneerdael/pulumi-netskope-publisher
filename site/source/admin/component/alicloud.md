@@ -11,7 +11,7 @@ name.
 ## Inputs
 
 Required: `imageId`, `vswitchId`, `securityGroupIds`, and `tenantUrl`
-plus `apiToken` unless `registrations` is provided.
+plus `bearerToken` unless `registrations` is provided.
 
 Optional platform inputs: `instanceType`, `keyName`, and
 `allocatePublicIp`.
@@ -30,7 +30,7 @@ bootstrap mode and passes base64 cloud-init through `userData`.
 ```bash
 pulumi config set alicloud:region eu-central-1
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi up
 ```
 
@@ -41,7 +41,7 @@ const publisher = new AlicloudPublisher("publisher", {
   namePrefix: "pub-ali",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   imageId: config.require("imageId"),
   vswitchId: config.require("vswitchId"),
   securityGroupIds: [config.require("securityGroupId")],
@@ -57,7 +57,7 @@ publisher = AlicloudPublisher(
     name_prefix="pub-ali",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     image_id=config.require("imageId"),
     vswitch_id=config.require("vswitchId"),
     security_group_ids=[config.require("securityGroupId")],
@@ -73,7 +73,7 @@ var publisher = new AlicloudPublisher("publisher", new AlicloudPublisherArgs
     NamePrefix = "pub-ali",
     Replicas = 2,
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     ImageId = config.Require("imageId"),
     VswitchId = config.Require("vswitchId"),
     SecurityGroupIds = { config.Require("securityGroupId") },
@@ -88,7 +88,7 @@ publisher, err := netskopepublisher.NewAlicloudPublisher(ctx, "publisher", &nets
 	NamePrefix:       pulumi.String("pub-ali"),
 	Replicas:         pulumi.Int(2),
 	TenantUrl:        pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:         netskope.RequireSecret("apiToken"),
+	BearerToken:         netskope.RequireSecret("bearerToken"),
 	ImageId:          pulumi.String(cfg.Require("imageId")),
 	VswitchId:        pulumi.String(cfg.Require("vswitchId")),
 	SecurityGroupIds: pulumi.StringArray{pulumi.String(cfg.Require("securityGroupId"))},
@@ -103,7 +103,7 @@ var publisher = new AlicloudPublisher("publisher", AlicloudPublisherArgs.builder
     .namePrefix("pub-ali")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .imageId(config.require("imageId"))
     .vswitchId(config.require("vswitchId"))
     .securityGroupIds(config.require("securityGroupId"))
@@ -121,7 +121,7 @@ let publisher = netskope::alicloud_publisher::create(
         .name_prefix("pub-ali")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .image_id("ubuntu_22_04_x64_20G_alibase.vhd")
         .vswitch_id("vsw-123")
         .security_group_ids(vec!["sg-123".to_string()])

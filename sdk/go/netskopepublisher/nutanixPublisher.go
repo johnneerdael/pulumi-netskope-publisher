@@ -17,6 +17,8 @@ type NutanixPublisher struct {
 	pulumi.ResourceState
 
 	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AuthMode                     pulumi.StringPtrOutput                       `pulumi:"authMode"`
+	BearerToken                  pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
 	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
 	ClusterUuid                  pulumi.StringOutput                          `pulumi:"clusterUuid"`
@@ -33,6 +35,7 @@ type NutanixPublisher struct {
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
 	NumCoresPerVcpu              pulumi.IntPtrOutput                          `pulumi:"numCoresPerVcpu"`
 	NumVCpus                     pulumi.IntPtrOutput                          `pulumi:"numVCpus"`
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -53,11 +56,15 @@ func NewNutanixPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	if args.InstallUserPassword != nil {
 		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"installUserPassword",
 		"publishers",
 	})
@@ -73,6 +80,8 @@ func NewNutanixPublisher(ctx *pulumi.Context,
 
 type nutanixPublisherArgs struct {
 	ApiToken                     *string                                        `pulumi:"apiToken"`
+	AuthMode                     *string                                        `pulumi:"authMode"`
+	BearerToken                  *string                                        `pulumi:"bearerToken"`
 	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
 	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
 	ClusterUuid                  string                                         `pulumi:"clusterUuid"`
@@ -89,6 +98,7 @@ type nutanixPublisherArgs struct {
 	Nonat                        *bool                                          `pulumi:"nonat"`
 	NumCoresPerVcpu              *int                                           `pulumi:"numCoresPerVcpu"`
 	NumVCpus                     *int                                           `pulumi:"numVCpus"`
+	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	SubnetUuid                   *string                                        `pulumi:"subnetUuid"`
@@ -100,6 +110,8 @@ type nutanixPublisherArgs struct {
 // The set of arguments for constructing a NutanixPublisher resource.
 type NutanixPublisherArgs struct {
 	ApiToken                     *string
+	AuthMode                     *string
+	BearerToken                  *string
 	Bootstrap                    *bool
 	BootstrapUrl                 *string
 	ClusterUuid                  string
@@ -116,6 +128,7 @@ type NutanixPublisherArgs struct {
 	Nonat                        *bool
 	NumCoresPerVcpu              *int
 	NumVCpus                     *int
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	SubnetUuid                   *string
@@ -163,6 +176,14 @@ func (o NutanixPublisherOutput) ToNutanixPublisherOutputWithContext(ctx context.
 
 func (o NutanixPublisherOutput) ApiToken() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *NutanixPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o NutanixPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NutanixPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
+func (o NutanixPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *NutanixPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o NutanixPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
@@ -227,6 +248,10 @@ func (o NutanixPublisherOutput) NumCoresPerVcpu() pulumi.IntPtrOutput {
 
 func (o NutanixPublisherOutput) NumVCpus() pulumi.IntPtrOutput {
 	return o.ApplyT(func(v *NutanixPublisher) pulumi.IntPtrOutput { return v.NumVCpus }).(pulumi.IntPtrOutput)
+}
+
+func (o NutanixPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *NutanixPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o NutanixPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

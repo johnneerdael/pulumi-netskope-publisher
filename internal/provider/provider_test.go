@@ -19,8 +19,8 @@ func TestNetskopeRegistrationCreatesMissingPublishersAndTokens(t *testing.T) {
 	var requests []string
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requests = append(requests, r.Method+" "+r.URL.Path)
-		if got := r.Header.Get("Netskope-Api-Token"); got != "api-token" {
-			t.Fatalf("expected Netskope API token header, got %q", got)
+		if got := r.Header.Get("Authorization"); got != "Bearer api-token" {
+			t.Fatalf("expected bearer authorization header, got %q", got)
 		}
 
 		switch {
@@ -82,6 +82,70 @@ func TestNetskopeRegistrationCreatesMissingPublishersAndTokens(t *testing.T) {
 	}
 	if !equalStrings(requests, expectedRequests) {
 		t.Fatalf("expected requests %v, got %v", expectedRequests, requests)
+	}
+}
+
+func TestNetskopeRegistrationSupportsOAuth2ClientCredentials(t *testing.T) {
+	var tokenRequests int
+	var authorizationHeaders []string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodPost && r.URL.Path == "/oauth2/token":
+			tokenRequests++
+			if err := r.ParseForm(); err != nil {
+				t.Fatal(err)
+			}
+			if got := r.Form.Get("grant_type"); got != "client_credentials" {
+				t.Fatalf("expected grant_type client_credentials, got %q", got)
+			}
+			if got := r.Form.Get("client_id"); got != "client-id" {
+				t.Fatalf("expected client_id, got %q", got)
+			}
+			if got := r.Form.Get("client_secret"); got != "client-secret" {
+				t.Fatalf("expected client_secret, got %q", got)
+			}
+			if got := r.Form.Get("scope"); got != "npa.publisher" {
+				t.Fatalf("expected scope, got %q", got)
+			}
+			writeJSON(t, w, map[string]any{"access_token": "oauth-access-token"})
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/infrastructure/publishers":
+			authorizationHeaders = append(authorizationHeaders, r.Header.Get("Authorization"))
+			writeJSON(t, w, map[string]any{"data": map[string]any{"publishers": []map[string]any{}}})
+		case r.Method == http.MethodPost && r.URL.Path == "/api/v2/infrastructure/publishers":
+			authorizationHeaders = append(authorizationHeaders, r.Header.Get("Authorization"))
+			writeJSON(t, w, map[string]any{"data": map[string]any{"id": 202}})
+		case r.Method == http.MethodPost && r.URL.Path == "/api/v2/infrastructure/publishers/202/registration_token":
+			authorizationHeaders = append(authorizationHeaders, r.Header.Get("Authorization"))
+			writeJSON(t, w, map[string]any{"data": map[string]any{"token": "token-202"}})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	response := createRegistrationResource(t, property.NewMap(map[string]property.Value{
+		"publisherNames": property.New([]property.Value{property.New("pub-a")}),
+		"tenantUrl":      property.New(server.URL + "/"),
+		"authMode":       property.New("oauth2"),
+		"oauth2": property.New(map[string]property.Value{
+			"tokenUrl":     property.New(server.URL + "/oauth2/token"),
+			"clientId":     property.New("client-id"),
+			"clientSecret": property.New("client-secret"),
+			"scope":        property.New("npa.publisher"),
+		}),
+	}))
+
+	pubA := response.Properties.Get("registrations").AsMap().Get("pub-a").AsMap()
+	if got := pubA.Get("registrationToken").AsString(); got != "token-202" {
+		t.Fatalf("expected registration token, got %q", got)
+	}
+	if tokenRequests != 1 {
+		t.Fatalf("expected exactly one OAuth2 token request, got %d", tokenRequests)
+	}
+	for _, header := range authorizationHeaders {
+		if header != "Bearer oauth-access-token" {
+			t.Fatalf("expected OAuth2 bearer header, got %q", header)
+		}
 	}
 }
 

@@ -40,7 +40,28 @@ go get github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublishe
 Published Go SDK:
 [`github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher`](https://pkg.go.dev/github.com/johnneerdael/pulumi-netskope-publisher/sdk/go/netskopepublisher).
 
-The Java SDK is optional and not currently published.
+Install the Java SDK from the configured Maven-compatible repository:
+
+```kotlin
+implementation("com.pulumi:netskope-publisher:<version>")
+```
+
+The release workflow publishes Java packages to GitHub Packages by
+default, or to the Maven-compatible repository configured through
+`JAVA_MAVEN_REPOSITORY_URL`. Configure the matching Maven repository in
+Gradle or Maven before resolving this dependency.
+
+Install the Rust SDK from crates.io:
+
+```toml
+pulumi-netskope-publisher = "<version>"
+```
+
+Rust programs also require the Pulumi Gestalt Rust language plugin:
+
+```bash
+pulumi plugin install language rust "0.0.10" --server github://api.github.com/andrzejressel/pulumi-gestalt
+```
 
 Install the cloud provider packages used by the component you deploy:
 

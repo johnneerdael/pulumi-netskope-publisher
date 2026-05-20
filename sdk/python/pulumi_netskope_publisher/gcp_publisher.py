@@ -27,6 +27,8 @@ class GcpPublisherArgs:
                  zone: _builtins.str,
                  api_token: Optional[_builtins.str] = None,
                  assign_public_ip: Optional[_builtins.bool] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  bootstrap: Optional[_builtins.bool] = None,
                  bootstrap_url: Optional[_builtins.str] = None,
                  delete_default_user: Optional[_builtins.bool] = None,
@@ -40,6 +42,7 @@ class GcpPublisherArgs:
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  network_tags: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  nonat: Optional[_builtins.bool] = None,
+                 oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
                  service_account: pulumi.Input[Optional['_provider.GcpServiceAccountArgs']] = None,
@@ -58,6 +61,10 @@ class GcpPublisherArgs:
             pulumi.set(__self__, "api_token", api_token)
         if assign_public_ip is not None:
             pulumi.set(__self__, "assign_public_ip", assign_public_ip)
+        if auth_mode is not None:
+            pulumi.set(__self__, "auth_mode", auth_mode)
+        if bearer_token is not None:
+            pulumi.set(__self__, "bearer_token", bearer_token)
         if bootstrap is not None:
             pulumi.set(__self__, "bootstrap", bootstrap)
         if bootstrap_url is not None:
@@ -84,6 +91,8 @@ class GcpPublisherArgs:
             pulumi.set(__self__, "network_tags", network_tags)
         if nonat is not None:
             pulumi.set(__self__, "nonat", nonat)
+        if oauth2 is not None:
+            pulumi.set(__self__, "oauth2", oauth2)
         if registrations is not None:
             pulumi.set(__self__, "registrations", registrations)
         if replicas is not None:
@@ -159,6 +168,24 @@ class GcpPublisherArgs:
     @assign_public_ip.setter
     def assign_public_ip(self, value: Optional[_builtins.bool]):
         pulumi.set(self, "assign_public_ip", value)
+
+    @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "auth_mode")
+
+    @auth_mode.setter
+    def auth_mode(self, value: Optional[_builtins.str]):
+        pulumi.set(self, "auth_mode", value)
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "bearer_token")
+
+    @bearer_token.setter
+    def bearer_token(self, value: Optional[_builtins.str]):
+        pulumi.set(self, "bearer_token", value)
 
     @_builtins.property
     @pulumi.getter
@@ -279,6 +306,15 @@ class GcpPublisherArgs:
 
     @_builtins.property
     @pulumi.getter
+    def oauth2(self) -> pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]:
+        return pulumi.get(self, "oauth2")
+
+    @oauth2.setter
+    def oauth2(self, value: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]):
+        pulumi.set(self, "oauth2", value)
+
+    @_builtins.property
+    @pulumi.getter
     def registrations(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]]:
         return pulumi.get(self, "registrations")
 
@@ -340,6 +376,8 @@ class GcpPublisher(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: Optional[_builtins.str] = None,
                  assign_public_ip: Optional[_builtins.bool] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  bootstrap: Optional[_builtins.bool] = None,
                  bootstrap_url: Optional[_builtins.str] = None,
                  delete_default_user: Optional[_builtins.bool] = None,
@@ -355,6 +393,7 @@ class GcpPublisher(pulumi.ComponentResource):
                  network: Optional[_builtins.str] = None,
                  network_tags: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  nonat: Optional[_builtins.bool] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  project: Optional[_builtins.str] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -397,6 +436,8 @@ class GcpPublisher(pulumi.ComponentResource):
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: Optional[_builtins.str] = None,
                  assign_public_ip: Optional[_builtins.bool] = None,
+                 auth_mode: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  bootstrap: Optional[_builtins.bool] = None,
                  bootstrap_url: Optional[_builtins.str] = None,
                  delete_default_user: Optional[_builtins.bool] = None,
@@ -412,6 +453,7 @@ class GcpPublisher(pulumi.ComponentResource):
                  network: Optional[_builtins.str] = None,
                  network_tags: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
                  nonat: Optional[_builtins.bool] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  project: Optional[_builtins.str] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -434,6 +476,8 @@ class GcpPublisher(pulumi.ComponentResource):
 
             __props__.__dict__["api_token"] = None if api_token is None else pulumi.Output.secret(api_token)
             __props__.__dict__["assign_public_ip"] = assign_public_ip
+            __props__.__dict__["auth_mode"] = auth_mode
+            __props__.__dict__["bearer_token"] = None if bearer_token is None else pulumi.Output.secret(bearer_token)
             __props__.__dict__["bootstrap"] = bootstrap
             __props__.__dict__["bootstrap_url"] = bootstrap_url
             __props__.__dict__["delete_default_user"] = delete_default_user
@@ -453,6 +497,7 @@ class GcpPublisher(pulumi.ComponentResource):
             __props__.__dict__["network"] = network
             __props__.__dict__["network_tags"] = network_tags
             __props__.__dict__["nonat"] = nonat
+            __props__.__dict__["oauth2"] = oauth2
             if project is None and not opts.urn:
                 raise TypeError("Missing required property 'project'")
             __props__.__dict__["project"] = project
@@ -470,7 +515,7 @@ class GcpPublisher(pulumi.ComponentResource):
             __props__.__dict__["zone"] = zone
             __props__.__dict__["publisher_names"] = None
             __props__.__dict__["publishers"] = None
-        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "installUserPassword", "publishers"])
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "bearerToken", "installUserPassword", "publishers"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         super(GcpPublisher, __self__).__init__(
             'netskope-publisher:index:GcpPublisher',
@@ -488,6 +533,16 @@ class GcpPublisher(pulumi.ComponentResource):
     @pulumi.getter(name="assignPublicIp")
     def assign_public_ip(self) -> pulumi.Output[Optional[_builtins.bool]]:
         return pulumi.get(self, "assign_public_ip")
+
+    @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "auth_mode")
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "bearer_token")
 
     @_builtins.property
     @pulumi.getter
@@ -563,6 +618,11 @@ class GcpPublisher(pulumi.ComponentResource):
     @pulumi.getter
     def nonat(self) -> pulumi.Output[Optional[_builtins.bool]]:
         return pulumi.get(self, "nonat")
+
+    @_builtins.property
+    @pulumi.getter
+    def oauth2(self) -> pulumi.Output[Optional['_provider.outputs.NetskopeOAuth2Args']]:
+        return pulumi.get(self, "oauth2")
 
     @_builtins.property
     @pulumi.getter

@@ -9,7 +9,7 @@ toc: true
 
 ## Inputs
 
-Required: `tenantUrl` and `apiToken`, unless `registrations` is provided.
+Required: `tenantUrl` and `bearerToken`, unless `registrations` is provided.
 
 Optional platform inputs: `type`, `image`, `zone`, `securityGroupId`, and
 `enableDynamicIp`.
@@ -30,7 +30,7 @@ pulumi config set scaleway:access_key --secret
 pulumi config set scaleway:secret_key --secret
 pulumi config set scaleway:project_id <project-id>
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi up
 ```
 
@@ -41,7 +41,7 @@ const publisher = new ScalewayPublisher("publisher", {
   namePrefix: "pub-fr",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   zone: "fr-par-1",
   type: "DEV1-M",
 });
@@ -55,7 +55,7 @@ publisher = ScalewayPublisher(
     name_prefix="pub-fr",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     zone="fr-par-1",
     type="DEV1-M",
 )
@@ -69,7 +69,7 @@ var publisher = new ScalewayPublisher("publisher", new ScalewayPublisherArgs
     NamePrefix = "pub-fr",
     Replicas = 2,
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     Zone = "fr-par-1",
     Type = "DEV1-M",
 });
@@ -82,7 +82,7 @@ publisher, err := netskopepublisher.NewScalewayPublisher(ctx, "publisher", &nets
 	NamePrefix: pulumi.String("pub-fr"),
 	Replicas:   pulumi.Int(2),
 	TenantUrl:  pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:   netskope.RequireSecret("apiToken"),
+	BearerToken:   netskope.RequireSecret("bearerToken"),
 	Zone:       pulumi.String("fr-par-1"),
 	Type:       pulumi.String("DEV1-M"),
 })
@@ -95,7 +95,7 @@ var publisher = new ScalewayPublisher("publisher", ScalewayPublisherArgs.builder
     .namePrefix("pub-fr")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .zone("fr-par-1")
     .type("DEV1-M")
     .build());
@@ -111,7 +111,7 @@ let publisher = netskope::scaleway_publisher::create(
         .name_prefix("pub-fr")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .zone("fr-par-1")
         .type_("DEV1-M")
         .build_struct(),

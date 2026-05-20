@@ -6,6 +6,7 @@ package com.pulumi.netskopepublisher;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
+import com.pulumi.netskopepublisher.provider.inputs.NetskopeOAuth2ArgsArgs;
 import com.pulumi.netskopepublisher.provider.inputs.PublisherRegistrationInputArgs;
 import java.lang.Integer;
 import java.lang.String;
@@ -25,6 +26,20 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
 
     public Optional<String> apiToken() {
         return Optional.ofNullable(this.apiToken);
+    }
+
+    @Import(name="authMode")
+    private @Nullable String authMode;
+
+    public Optional<String> authMode() {
+        return Optional.ofNullable(this.authMode);
+    }
+
+    @Import(name="bearerToken")
+    private @Nullable String bearerToken;
+
+    public Optional<String> bearerToken() {
+        return Optional.ofNullable(this.bearerToken);
     }
 
     @Import(name="cluster")
@@ -97,6 +112,13 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
         return Optional.ofNullable(this.numCpus);
     }
 
+    @Import(name="oauth2")
+    private @Nullable Output<NetskopeOAuth2ArgsArgs> oauth2;
+
+    public Optional<Output<NetskopeOAuth2ArgsArgs>> oauth2() {
+        return Optional.ofNullable(this.oauth2);
+    }
+
     @Import(name="registrations")
     private @Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations;
 
@@ -143,6 +165,8 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
 
     private VspherePublisherArgs(VspherePublisherArgs $) {
         this.apiToken = $.apiToken;
+        this.authMode = $.authMode;
+        this.bearerToken = $.bearerToken;
         this.cluster = $.cluster;
         this.datacenter = $.datacenter;
         this.datastore = $.datastore;
@@ -153,6 +177,7 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
         this.names = $.names;
         this.networkName = $.networkName;
         this.numCpus = $.numCpus;
+        this.oauth2 = $.oauth2;
         this.registrations = $.registrations;
         this.replicas = $.replicas;
         this.tags = $.tags;
@@ -181,6 +206,16 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
 
         public Builder apiToken(@Nullable String apiToken) {
             $.apiToken = apiToken;
+            return this;
+        }
+
+        public Builder authMode(@Nullable String authMode) {
+            $.authMode = authMode;
+            return this;
+        }
+
+        public Builder bearerToken(@Nullable String bearerToken) {
+            $.bearerToken = bearerToken;
             return this;
         }
 
@@ -240,6 +275,15 @@ public final class VspherePublisherArgs extends com.pulumi.resources.ResourceArg
         public Builder numCpus(@Nullable Integer numCpus) {
             $.numCpus = numCpus;
             return this;
+        }
+
+        public Builder oauth2(@Nullable Output<NetskopeOAuth2ArgsArgs> oauth2) {
+            $.oauth2 = oauth2;
+            return this;
+        }
+
+        public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
+            return oauth2(Output.of(oauth2));
         }
 
         public Builder registrations(@Nullable Output<Map<String,PublisherRegistrationInputArgs>> registrations) {

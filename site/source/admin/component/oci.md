@@ -11,7 +11,7 @@ per publisher name.
 ## Inputs
 
 Required: `compartmentId`, `availabilityDomain`, `subnetId`, `imageId`,
-and `tenantUrl` plus `apiToken` unless `registrations` is provided.
+and `tenantUrl` plus `bearerToken` unless `registrations` is provided.
 
 Optional platform inputs: `shape`, `sshPublicKey`, and `assignPublicIp`.
 
@@ -30,7 +30,7 @@ metadata.
 ```bash
 pulumi config set oci:region eu-frankfurt-1
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi up
 ```
 
@@ -40,7 +40,7 @@ pulumi up
 const publisher = new OciPublisher("publisher", {
   names: ["pub-fra-1", "pub-fra-2"],
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   compartmentId: config.require("compartmentId"),
   availabilityDomain: config.require("availabilityDomain"),
   subnetId: config.require("subnetId"),
@@ -56,7 +56,7 @@ publisher = OciPublisher(
     "publisher",
     names=["pub-fra-1", "pub-fra-2"],
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     compartment_id=config.require("compartmentId"),
     availability_domain=config.require("availabilityDomain"),
     subnet_id=config.require("subnetId"),
@@ -72,7 +72,7 @@ var publisher = new OciPublisher("publisher", new OciPublisherArgs
 {
     Names = { "pub-fra-1", "pub-fra-2" },
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     CompartmentId = config.Require("compartmentId"),
     AvailabilityDomain = config.Require("availabilityDomain"),
     SubnetId = config.Require("subnetId"),
@@ -87,7 +87,7 @@ var publisher = new OciPublisher("publisher", new OciPublisherArgs
 publisher, err := netskopepublisher.NewOciPublisher(ctx, "publisher", &netskopepublisher.OciPublisherArgs{
 	Names:              pulumi.StringArray{pulumi.String("pub-fra-1"), pulumi.String("pub-fra-2")},
 	TenantUrl:          pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:           netskope.RequireSecret("apiToken"),
+	BearerToken:           netskope.RequireSecret("bearerToken"),
 	CompartmentId:      pulumi.String(cfg.Require("compartmentId")),
 	AvailabilityDomain: pulumi.String(cfg.Require("availabilityDomain")),
 	SubnetId:           pulumi.String(cfg.Require("subnetId")),
@@ -102,7 +102,7 @@ publisher, err := netskopepublisher.NewOciPublisher(ctx, "publisher", &netskopep
 var publisher = new OciPublisher("publisher", OciPublisherArgs.builder()
     .names("pub-fra-1", "pub-fra-2")
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .compartmentId(config.require("compartmentId"))
     .availabilityDomain(config.require("availabilityDomain"))
     .subnetId(config.require("subnetId"))
@@ -120,7 +120,7 @@ let publisher = netskope::oci_publisher::create(
     netskope::oci_publisher::OciPublisherArgs::builder()
         .names(vec!["pub-fra-1".to_string(), "pub-fra-2".to_string()])
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .compartment_id("ocid1.compartment.oc1..example")
         .availability_domain("AD-1")
         .subnet_id("ocid1.subnet.oc1..example")

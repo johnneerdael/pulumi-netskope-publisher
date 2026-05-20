@@ -9,15 +9,18 @@ toc: true
 or reuses Netskope publisher records and generates registration tokens.
 
 Provider-specific publisher components create this resource
-automatically when `tenantUrl` and `apiToken` are supplied. Use it
-directly when you want to separate tenant registration from platform
-infrastructure.
+automatically when `tenantUrl` and either `bearerToken` or OAuth2
+client credentials are supplied. Use it directly when you want to
+separate tenant registration from platform infrastructure.
 
 ## Inputs
 
 - `publisherNames`
 - `tenantUrl`
-- `apiToken`
+- `bearerToken`, or `authMode: "oauth2"` plus `oauth2`
+
+`apiToken` remains accepted as a backwards-compatible alias for
+`bearerToken`.
 
 ## Outputs
 
@@ -30,7 +33,17 @@ infrastructure.
 
 ```bash
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
+pulumi up
+```
+
+For OAuth2 client credentials:
+
+```bash
+pulumi config set netskope:tenantUrl https://tenant.goskope.com
+pulumi config set netskope:oauthTokenUrl https://tenant.goskope.com/oauth2/token
+pulumi config set netskope:oauthClientId <client-id>
+pulumi config set netskope:oauthClientSecret --secret
 pulumi up
 ```
 
@@ -45,7 +58,7 @@ const netskope = new pulumi.Config("netskope");
 const registration = new NetskopeRegistration("registration", {
   publisherNames: ["pub-eu-1", "pub-eu-2"],
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
 });
 
 const publisher = new AwsPublisher("publisher", {
@@ -57,6 +70,21 @@ const publisher = new AwsPublisher("publisher", {
 
 export const registrations = pulumi.secret(registration.registrations);
 export const publisherNames = publisher.publisherNames;
+```
+
+OAuth2:
+
+```ts
+const registration = new NetskopeRegistration("registration", {
+  publisherNames: ["pub-eu-1", "pub-eu-2"],
+  tenantUrl: netskope.require("tenantUrl"),
+  authMode: "oauth2",
+  oauth2: {
+    tokenUrl: netskope.require("oauthTokenUrl"),
+    clientId: netskope.require("oauthClientId"),
+    clientSecret: netskope.requireSecret("oauthClientSecret"),
+  },
+});
 ```
 
 ## Python
@@ -71,10 +99,26 @@ registration = NetskopeRegistration(
     "registration",
     publisher_names=["pub-eu-1", "pub-eu-2"],
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
 )
 
 pulumi.export("registrations", pulumi.Output.secret(registration.registrations))
+```
+
+OAuth2:
+
+```python
+registration = NetskopeRegistration(
+    "registration",
+    publisher_names=["pub-eu-1", "pub-eu-2"],
+    tenant_url=netskope.require("tenantUrl"),
+    auth_mode="oauth2",
+    oauth2={
+        "token_url": netskope.require("oauthTokenUrl"),
+        "client_id": netskope.require("oauthClientId"),
+        "client_secret": netskope.require_secret("oauthClientSecret"),
+    },
+)
 ```
 
 ## C#
@@ -84,7 +128,24 @@ var registration = new NetskopeRegistration("registration", new NetskopeRegistra
 {
     PublisherNames = { "pub-eu-1", "pub-eu-2" },
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
+});
+```
+
+OAuth2:
+
+```csharp
+var registration = new NetskopeRegistration("registration", new NetskopeRegistrationArgs
+{
+    PublisherNames = { "pub-eu-1", "pub-eu-2" },
+    TenantUrl = netskope.Require("tenantUrl"),
+    AuthMode = "oauth2",
+    Oauth2 = new Pulumi.NetskopePublisher.Provider.Inputs.NetskopeOAuth2ArgsArgs
+    {
+        TokenUrl = netskope.Require("oauthTokenUrl"),
+        ClientId = netskope.Require("oauthClientId"),
+        ClientSecret = netskope.RequireSecret("oauthClientSecret"),
+    },
 });
 ```
 
@@ -97,12 +158,30 @@ registration, err := netskopepublisher.NewNetskopeRegistration(ctx, "registratio
 		pulumi.String("pub-eu-2"),
 	},
 	TenantUrl: pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:  netskope.RequireSecret("apiToken"),
+	BearerToken: netskope.RequireSecret("bearerToken"),
 })
 if err != nil {
 	return err
 }
 ctx.Export("registrations", pulumi.ToSecret(registration.Registrations))
+```
+
+OAuth2:
+
+```go
+registration, err := netskopepublisher.NewNetskopeRegistration(ctx, "registration", &netskopepublisher.NetskopeRegistrationArgs{
+	PublisherNames: pulumi.StringArray{
+		pulumi.String("pub-eu-1"),
+		pulumi.String("pub-eu-2"),
+	},
+	TenantUrl: pulumi.String(netskope.Require("tenantUrl")),
+	AuthMode:  pulumi.StringPtr("oauth2"),
+	Oauth2: &provider.NetskopeOAuth2ArgsArgs{
+		TokenUrl:     pulumi.String(netskope.Require("oauthTokenUrl")),
+		ClientId:     pulumi.String(netskope.Require("oauthClientId")),
+		ClientSecret: netskope.RequireSecret("oauthClientSecret"),
+	},
+})
 ```
 
 ## Java
@@ -111,10 +190,25 @@ ctx.Export("registrations", pulumi.ToSecret(registration.Registrations))
 var registration = new NetskopeRegistration("registration", NetskopeRegistrationArgs.builder()
     .publisherNames("pub-eu-1", "pub-eu-2")
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .build());
 
 ctx.export("registrations", Output.secret(registration.registrations()));
+```
+
+OAuth2:
+
+```java
+var registration = new NetskopeRegistration("registration", NetskopeRegistrationArgs.builder()
+    .publisherNames("pub-eu-1", "pub-eu-2")
+    .tenantUrl(netskope.require("tenantUrl"))
+    .authMode("oauth2")
+    .oauth2(NetskopeOAuth2ArgsArgs.builder()
+        .tokenUrl(netskope.require("oauthTokenUrl"))
+        .clientId(netskope.require("oauthClientId"))
+        .clientSecret(netskope.requireSecret("oauthClientSecret"))
+        .build())
+    .build());
 ```
 
 ## Rust
@@ -126,9 +220,28 @@ let registration = netskope::netskope_registration::create(
     netskope::netskope_registration::NetskopeRegistrationArgs::builder()
         .publisher_names(vec!["pub-eu-1".to_string(), "pub-eu-2".to_string()])
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .build_struct(),
 );
 
 add_export("registrations", &registration.registrations);
+```
+
+OAuth2:
+
+```rust
+let registration = netskope::netskope_registration::create(
+    ctx,
+    "registration",
+    netskope::netskope_registration::NetskopeRegistrationArgs::builder()
+        .publisher_names(vec!["pub-eu-1".to_string(), "pub-eu-2".to_string()])
+        .tenant_url("https://tenant.goskope.com")
+        .auth_mode("oauth2")
+        .oauth2(netskope::types::NetskopeOAuth2Args::builder()
+            .token_url("https://tenant.goskope.com/oauth2/token")
+            .client_id("client-id")
+            .client_secret("client-secret")
+            .build_struct())
+        .build_struct(),
+);
 ```

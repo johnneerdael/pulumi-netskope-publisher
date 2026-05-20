@@ -12,7 +12,7 @@ chart into an existing Kubernetes cluster.
 
 Required:
 
-- `tenantUrl` and `apiToken`, unless token-mode `registrations` are provided
+- `tenantUrl` and `bearerToken`, unless token-mode `registrations` are provided
 
 Common optional inputs include `namespace`, `enrollmentMode`,
 `chartRepository`, `chartVersion`, `chartValues`, `workloadType`,
@@ -41,7 +41,7 @@ during startup.
 pulumi new typescript
 pulumi config set kubernetes:context kind-npa
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi config set namespace npa
 pulumi up
 ```
@@ -59,7 +59,7 @@ const publisher = new KubernetesPublisher("publisher", {
   namePrefix: "pub-k8s",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   namespace: config.get("namespace") ?? "npa",
   enrollmentMode: "token",
   workloadType: "deployment",
@@ -90,7 +90,7 @@ publisher = KubernetesPublisher(
     name_prefix="pub-k8s",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     namespace=config.get("namespace") or "npa",
     enrollment_mode="token",
     workload_type="deployment",
@@ -115,7 +115,7 @@ var publisher = new KubernetesPublisher("publisher", new KubernetesPublisherArgs
     NamePrefix = "pub-k8s",
     Replicas = 2,
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     Namespace = config.Get("namespace") ?? "npa",
     EnrollmentMode = "token",
     WorkloadType = "deployment",
@@ -132,7 +132,7 @@ publisher, err := netskopepublisher.NewKubernetesPublisher(ctx, "publisher", &ne
 	NamePrefix:      pulumi.String("pub-k8s"),
 	Replicas:        pulumi.Int(2),
 	TenantUrl:       pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:        netskope.RequireSecret("apiToken"),
+	BearerToken:        netskope.RequireSecret("bearerToken"),
 	Namespace:       pulumi.String("npa"),
 	EnrollmentMode:  pulumi.String("token"),
 	WorkloadType:    pulumi.String("deployment"),
@@ -155,7 +155,7 @@ var publisher = new KubernetesPublisher("publisher", KubernetesPublisherArgs.bui
     .namePrefix("pub-k8s")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .namespace("npa")
     .enrollmentMode("token")
     .workloadType("deployment")
@@ -179,7 +179,7 @@ let publisher = netskope::kubernetes_publisher::create(
         .name_prefix("pub-k8s")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .namespace("npa")
         .enrollment_mode("token")
         .workload_type("deployment")

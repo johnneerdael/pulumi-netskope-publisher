@@ -9,19 +9,39 @@ import com.pulumi.core.annotations.ResourceType;
 import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.NetskopeRegistrationArgs;
 import com.pulumi.netskopepublisher.Utilities;
+import com.pulumi.netskopepublisher.provider.outputs.NetskopeOAuth2Args;
 import com.pulumi.netskopepublisher.provider.outputs.RegistrationRecord;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 @ResourceType(type="netskope-publisher:index:NetskopeRegistration")
 public class NetskopeRegistration extends com.pulumi.resources.CustomResource {
     @Export(name="apiToken", refs={String.class}, tree="[0]")
-    private Output<String> apiToken;
+    private Output</* @Nullable */ String> apiToken;
 
-    public Output<String> apiToken() {
-        return this.apiToken;
+    public Output<Optional<String>> apiToken() {
+        return Codegen.optional(this.apiToken);
+    }
+    @Export(name="authMode", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> authMode;
+
+    public Output<Optional<String>> authMode() {
+        return Codegen.optional(this.authMode);
+    }
+    @Export(name="bearerToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> bearerToken;
+
+    public Output<Optional<String>> bearerToken() {
+        return Codegen.optional(this.bearerToken);
+    }
+    @Export(name="oauth2", refs={NetskopeOAuth2Args.class}, tree="[0]")
+    private Output</* @Nullable */ NetskopeOAuth2Args> oauth2;
+
+    public Output<Optional<NetskopeOAuth2Args>> oauth2() {
+        return Codegen.optional(this.oauth2);
     }
     @Export(name="publisherNames", refs={List.class,String.class}, tree="[0,1]")
     private Output<List<String>> publisherNames;
@@ -83,7 +103,8 @@ public class NetskopeRegistration extends com.pulumi.resources.CustomResource {
             .version(Utilities.getVersion())
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
             .additionalSecretOutputs(List.of(
-                "apiToken"
+                "apiToken",
+                "bearerToken"
             ))
             .build();
         return com.pulumi.resources.CustomResourceOptions.merge(defaultOptions, options, id);

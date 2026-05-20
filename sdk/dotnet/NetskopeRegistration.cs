@@ -13,7 +13,16 @@ namespace Pulumi.NetskopePublisher
     public partial class NetskopeRegistration : global::Pulumi.CustomResource
     {
         [Output("apiToken")]
-        public Output<string> ApiToken { get; private set; } = null!;
+        public Output<string?> ApiToken { get; private set; } = null!;
+
+        [Output("authMode")]
+        public Output<string?> AuthMode { get; private set; } = null!;
+
+        [Output("bearerToken")]
+        public Output<string?> BearerToken { get; private set; } = null!;
+
+        [Output("oauth2")]
+        public Output<Pulumi.NetskopePublisher.Provider.Outputs.NetskopeOAuth2Args?> Oauth2 { get; private set; } = null!;
 
         [Output("publisherNames")]
         public Output<ImmutableArray<string>> PublisherNames { get; private set; } = null!;
@@ -51,6 +60,7 @@ namespace Pulumi.NetskopePublisher
                 AdditionalSecretOutputs =
                 {
                     "apiToken",
+                    "bearerToken",
                 },
             };
             var merged = CustomResourceOptions.Merge(defaultOptions, options);
@@ -74,7 +84,7 @@ namespace Pulumi.NetskopePublisher
 
     public sealed class NetskopeRegistrationArgs : global::Pulumi.ResourceArgs
     {
-        [Input("apiToken", required: true)]
+        [Input("apiToken")]
         private Input<string>? _apiToken;
         public Input<string>? ApiToken
         {
@@ -85,6 +95,24 @@ namespace Pulumi.NetskopePublisher
                 _apiToken = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
             }
         }
+
+        [Input("authMode")]
+        public Input<string>? AuthMode { get; set; }
+
+        [Input("bearerToken")]
+        private Input<string>? _bearerToken;
+        public Input<string>? BearerToken
+        {
+            get => _bearerToken;
+            set
+            {
+                var emptySecret = Output.CreateSecret(0);
+                _bearerToken = Output.Tuple<Input<string>?, int>(value, emptySecret).Apply(t => t.Item1);
+            }
+        }
+
+        [Input("oauth2")]
+        public Input<Pulumi.NetskopePublisher.Provider.Inputs.NetskopeOAuth2ArgsArgs>? Oauth2 { get; set; }
 
         [Input("publisherNames", required: true)]
         private InputList<string>? _publisherNames;

@@ -33,7 +33,7 @@ deployments additionally support chart API enrollment.
 | Input | Description |
 |---|---|
 | `tenantUrl` | Netskope tenant URL. Required unless `registrations` is supplied. |
-| `apiToken` | Secret Netskope API token. Required unless `registrations` is supplied. |
+| `bearerToken` | Secret Netskope API token. Required unless `registrations` is supplied. |
 | `registrations` | Pre-created publisher IDs and registration tokens keyed by publisher name. |
 | `namePrefix` | Prefix used when deriving names. Defaults to `npa-publisher`. |
 | `names` | Explicit publisher names. Overrides `namePrefix` and `replicas`. |

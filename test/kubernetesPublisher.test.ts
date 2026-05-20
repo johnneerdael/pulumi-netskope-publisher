@@ -89,6 +89,42 @@ test("KubernetesPublisher api mode creates shared api token secret and release",
   assert.equal(publishers["npa-publisher"].publisherId, undefined);
 });
 
+test("KubernetesPublisher api mode supports OAuth2 auth", async () => {
+  const component = new KubernetesPublisher("publisher-api-oauth", {
+    enrollmentMode: "api",
+    namePrefix: "api-pub",
+    tenantUrl: "https://tenant.goskope.com",
+    authMode: "oauth2",
+    oauth2: {
+      tokenUrl: "https://tenant.goskope.com/oauth2/token",
+      clientId: "client-id",
+      clientSecret: pulumi.secret("client-secret"),
+      scope: "npa.publisher",
+    },
+    namespace: "netskope",
+  });
+
+  await outputValue(component.publisherNames);
+  await outputValue(component.helmReleaseNames);
+  await outputValue(component.publishers);
+
+  const oauthSecret = Object.values(createdResources["kubernetes:core/v1:Secret"])
+    .find((resource) => resource.metadata?.name === "npa-api-oauth");
+  assert.ok(oauthSecret, `created secrets: ${Object.keys(createdResources["kubernetes:core/v1:Secret"]).join(", ")}`);
+  const secretDataOutput = await outputValue(pulumi.output(oauthSecret.stringData));
+  const apiSecretData = secretDataOutput.value ?? secretDataOutput;
+  assert.equal(apiSecretData["client-id"] ?? apiSecretData.clientId, "client-id", `secret keys: ${Object.keys(apiSecretData).join(", ")}`);
+  const clientSecret = apiSecretData["client-secret"] ?? apiSecretData.clientSecret;
+  assert.equal((clientSecret.value ?? clientSecret), "client-secret");
+
+  const releaseValuesOutput = await outputValue(pulumi.output(createdResources["kubernetes:helm.sh/v3:Release"]["publisher-api-oauth-npa-publisher"].values));
+  const releaseValues = releaseValuesOutput.value ?? releaseValuesOutput;
+  assert.equal(releaseValues.enrollment.api.authMode, "oauth2");
+  assert.equal(releaseValues.enrollment.api.oauth2.tokenUrl, "https://tenant.goskope.com/oauth2/token");
+  assert.equal(releaseValues.enrollment.api.oauth2.existingSecret, "npa-api-oauth");
+  assert.equal(releaseValues.enrollment.api.oauth2.scope, "npa.publisher");
+});
+
 async function outputValue<T>(output: pulumi.Output<T>): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     output.apply((value) => {

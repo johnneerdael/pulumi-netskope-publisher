@@ -11,6 +11,7 @@ import com.pulumi.netskopepublisher.GcpPublisherArgs;
 import com.pulumi.netskopepublisher.Utilities;
 import com.pulumi.netskopepublisher.provider.outputs.GcpServiceAccount;
 import com.pulumi.netskopepublisher.provider.outputs.GuestNetworkInterface;
+import com.pulumi.netskopepublisher.provider.outputs.NetskopeOAuth2Args;
 import com.pulumi.netskopepublisher.provider.outputs.PublisherRegistrationInput;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -34,6 +35,18 @@ public class GcpPublisher extends com.pulumi.resources.ComponentResource {
 
     public Output<Optional<Boolean>> assignPublicIp() {
         return Codegen.optional(this.assignPublicIp);
+    }
+    @Export(name="authMode", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> authMode;
+
+    public Output<Optional<String>> authMode() {
+        return Codegen.optional(this.authMode);
+    }
+    @Export(name="bearerToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> bearerToken;
+
+    public Output<Optional<String>> bearerToken() {
+        return Codegen.optional(this.bearerToken);
     }
     @Export(name="bootstrap", refs={Boolean.class}, tree="[0]")
     private Output</* @Nullable */ Boolean> bootstrap;
@@ -124,6 +137,12 @@ public class GcpPublisher extends com.pulumi.resources.ComponentResource {
 
     public Output<Optional<Boolean>> nonat() {
         return Codegen.optional(this.nonat);
+    }
+    @Export(name="oauth2", refs={NetskopeOAuth2Args.class}, tree="[0]")
+    private Output</* @Nullable */ NetskopeOAuth2Args> oauth2;
+
+    public Output<Optional<NetskopeOAuth2Args>> oauth2() {
+        return Codegen.optional(this.oauth2);
     }
     @Export(name="project", refs={String.class}, tree="[0]")
     private Output<String> project;
@@ -230,6 +249,7 @@ public class GcpPublisher extends com.pulumi.resources.ComponentResource {
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
             .additionalSecretOutputs(List.of(
                 "apiToken",
+                "bearerToken",
                 "installUserPassword",
                 "publishers"
             ))

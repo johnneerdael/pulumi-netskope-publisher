@@ -23,8 +23,10 @@ class HypervPublisherArgs:
                  hard_drives: pulumi.Input[Sequence[pulumi.Input['_provider.HypervHardDriveArgs']]],
                  switch_name: _builtins.str,
                  api_token: Optional[_builtins.str] = None,
+                 auth_mode: Optional[_builtins.str] = None,
                  auto_start_action: Optional[_builtins.str] = None,
                  auto_stop_action: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  dynamic_memory: Optional[_builtins.bool] = None,
                  enable_experimental_hyperv: Optional[_builtins.bool] = None,
                  generation: Optional[_builtins.int] = None,
@@ -33,6 +35,7 @@ class HypervPublisherArgs:
                  minimum_memory: Optional[_builtins.int] = None,
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  processor_count: Optional[_builtins.int] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input['_provider.PublisherRegistrationInputArgs']]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -46,10 +49,14 @@ class HypervPublisherArgs:
         pulumi.set(__self__, "switch_name", switch_name)
         if api_token is not None:
             pulumi.set(__self__, "api_token", api_token)
+        if auth_mode is not None:
+            pulumi.set(__self__, "auth_mode", auth_mode)
         if auto_start_action is not None:
             pulumi.set(__self__, "auto_start_action", auto_start_action)
         if auto_stop_action is not None:
             pulumi.set(__self__, "auto_stop_action", auto_stop_action)
+        if bearer_token is not None:
+            pulumi.set(__self__, "bearer_token", bearer_token)
         if dynamic_memory is not None:
             pulumi.set(__self__, "dynamic_memory", dynamic_memory)
         if enable_experimental_hyperv is not None:
@@ -66,6 +73,8 @@ class HypervPublisherArgs:
             pulumi.set(__self__, "name_prefix", name_prefix)
         if names is not None:
             pulumi.set(__self__, "names", names)
+        if oauth2 is not None:
+            pulumi.set(__self__, "oauth2", oauth2)
         if processor_count is not None:
             pulumi.set(__self__, "processor_count", processor_count)
         if registrations is not None:
@@ -107,6 +116,15 @@ class HypervPublisherArgs:
         pulumi.set(self, "api_token", value)
 
     @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "auth_mode")
+
+    @auth_mode.setter
+    def auth_mode(self, value: Optional[_builtins.str]):
+        pulumi.set(self, "auth_mode", value)
+
+    @_builtins.property
     @pulumi.getter(name="autoStartAction")
     def auto_start_action(self) -> Optional[_builtins.str]:
         return pulumi.get(self, "auto_start_action")
@@ -123,6 +141,15 @@ class HypervPublisherArgs:
     @auto_stop_action.setter
     def auto_stop_action(self, value: Optional[_builtins.str]):
         pulumi.set(self, "auto_stop_action", value)
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "bearer_token")
+
+    @bearer_token.setter
+    def bearer_token(self, value: Optional[_builtins.str]):
+        pulumi.set(self, "bearer_token", value)
 
     @_builtins.property
     @pulumi.getter(name="dynamicMemory")
@@ -197,6 +224,15 @@ class HypervPublisherArgs:
         pulumi.set(self, "names", value)
 
     @_builtins.property
+    @pulumi.getter
+    def oauth2(self) -> pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]:
+        return pulumi.get(self, "oauth2")
+
+    @oauth2.setter
+    def oauth2(self, value: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]):
+        pulumi.set(self, "oauth2", value)
+
+    @_builtins.property
     @pulumi.getter(name="processorCount")
     def processor_count(self) -> Optional[_builtins.int]:
         return pulumi.get(self, "processor_count")
@@ -258,8 +294,10 @@ class HypervPublisher(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: Optional[_builtins.str] = None,
+                 auth_mode: Optional[_builtins.str] = None,
                  auto_start_action: Optional[_builtins.str] = None,
                  auto_stop_action: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  dynamic_memory: Optional[_builtins.bool] = None,
                  enable_experimental_hyperv: Optional[_builtins.bool] = None,
                  generation: Optional[_builtins.int] = None,
@@ -269,6 +307,7 @@ class HypervPublisher(pulumi.ComponentResource):
                  minimum_memory: Optional[_builtins.int] = None,
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  processor_count: Optional[_builtins.int] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -308,8 +347,10 @@ class HypervPublisher(pulumi.ComponentResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: Optional[_builtins.str] = None,
+                 auth_mode: Optional[_builtins.str] = None,
                  auto_start_action: Optional[_builtins.str] = None,
                  auto_stop_action: Optional[_builtins.str] = None,
+                 bearer_token: Optional[_builtins.str] = None,
                  dynamic_memory: Optional[_builtins.bool] = None,
                  enable_experimental_hyperv: Optional[_builtins.bool] = None,
                  generation: Optional[_builtins.int] = None,
@@ -319,6 +360,7 @@ class HypervPublisher(pulumi.ComponentResource):
                  minimum_memory: Optional[_builtins.int] = None,
                  name_prefix: Optional[_builtins.str] = None,
                  names: pulumi.Input[Optional[Sequence[_builtins.str]]] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  processor_count: Optional[_builtins.int] = None,
                  registrations: pulumi.Input[Optional[Mapping[str, pulumi.Input[Union['_provider.PublisherRegistrationInputArgs', '_provider.PublisherRegistrationInputArgsDict']]]]] = None,
                  replicas: Optional[_builtins.int] = None,
@@ -338,8 +380,10 @@ class HypervPublisher(pulumi.ComponentResource):
             __props__ = HypervPublisherArgs.__new__(HypervPublisherArgs)
 
             __props__.__dict__["api_token"] = None if api_token is None else pulumi.Output.secret(api_token)
+            __props__.__dict__["auth_mode"] = auth_mode
             __props__.__dict__["auto_start_action"] = auto_start_action
             __props__.__dict__["auto_stop_action"] = auto_stop_action
+            __props__.__dict__["bearer_token"] = None if bearer_token is None else pulumi.Output.secret(bearer_token)
             __props__.__dict__["dynamic_memory"] = dynamic_memory
             __props__.__dict__["enable_experimental_hyperv"] = enable_experimental_hyperv
             __props__.__dict__["generation"] = generation
@@ -351,6 +395,7 @@ class HypervPublisher(pulumi.ComponentResource):
             __props__.__dict__["minimum_memory"] = minimum_memory
             __props__.__dict__["name_prefix"] = name_prefix
             __props__.__dict__["names"] = names
+            __props__.__dict__["oauth2"] = oauth2
             __props__.__dict__["processor_count"] = processor_count
             __props__.__dict__["registrations"] = registrations
             __props__.__dict__["replicas"] = replicas
@@ -362,7 +407,7 @@ class HypervPublisher(pulumi.ComponentResource):
             __props__.__dict__["wizard_path"] = wizard_path
             __props__.__dict__["publisher_names"] = None
             __props__.__dict__["publishers"] = None
-        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "publishers"])
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "bearerToken", "publishers"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         super(HypervPublisher, __self__).__init__(
             'netskope-publisher:index:HypervPublisher',
@@ -377,6 +422,11 @@ class HypervPublisher(pulumi.ComponentResource):
         return pulumi.get(self, "api_token")
 
     @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "auth_mode")
+
+    @_builtins.property
     @pulumi.getter(name="autoStartAction")
     def auto_start_action(self) -> pulumi.Output[Optional[_builtins.str]]:
         return pulumi.get(self, "auto_start_action")
@@ -385,6 +435,11 @@ class HypervPublisher(pulumi.ComponentResource):
     @pulumi.getter(name="autoStopAction")
     def auto_stop_action(self) -> pulumi.Output[Optional[_builtins.str]]:
         return pulumi.get(self, "auto_stop_action")
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "bearer_token")
 
     @_builtins.property
     @pulumi.getter(name="dynamicMemory")
@@ -430,6 +485,11 @@ class HypervPublisher(pulumi.ComponentResource):
     @pulumi.getter
     def names(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
         return pulumi.get(self, "names")
+
+    @_builtins.property
+    @pulumi.getter
+    def oauth2(self) -> pulumi.Output[Optional['_provider.outputs.NetskopeOAuth2Args']]:
+        return pulumi.get(self, "oauth2")
 
     @_builtins.property
     @pulumi.getter(name="processorCount")

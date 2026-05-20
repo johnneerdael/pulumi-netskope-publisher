@@ -10,6 +10,7 @@ import com.pulumi.core.internal.Codegen;
 import com.pulumi.netskopepublisher.EsxiPublisherArgs;
 import com.pulumi.netskopepublisher.Utilities;
 import com.pulumi.netskopepublisher.provider.outputs.GuestNetworkInterface;
+import com.pulumi.netskopepublisher.provider.outputs.NetskopeOAuth2Args;
 import com.pulumi.netskopepublisher.provider.outputs.PublisherRegistrationInput;
 import java.lang.Boolean;
 import java.lang.Integer;
@@ -27,6 +28,18 @@ public class EsxiPublisher extends com.pulumi.resources.ComponentResource {
 
     public Output<Optional<String>> apiToken() {
         return Codegen.optional(this.apiToken);
+    }
+    @Export(name="authMode", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> authMode;
+
+    public Output<Optional<String>> authMode() {
+        return Codegen.optional(this.authMode);
+    }
+    @Export(name="bearerToken", refs={String.class}, tree="[0]")
+    private Output</* @Nullable */ String> bearerToken;
+
+    public Output<Optional<String>> bearerToken() {
+        return Codegen.optional(this.bearerToken);
     }
     @Export(name="bootstrap", refs={Boolean.class}, tree="[0]")
     private Output</* @Nullable */ Boolean> bootstrap;
@@ -117,6 +130,12 @@ public class EsxiPublisher extends com.pulumi.resources.ComponentResource {
 
     public Output<Optional<Integer>> numVCpus() {
         return Codegen.optional(this.numVCpus);
+    }
+    @Export(name="oauth2", refs={NetskopeOAuth2Args.class}, tree="[0]")
+    private Output</* @Nullable */ NetskopeOAuth2Args> oauth2;
+
+    public Output<Optional<NetskopeOAuth2Args>> oauth2() {
+        return Codegen.optional(this.oauth2);
     }
     @Export(name="os", refs={String.class}, tree="[0]")
     private Output</* @Nullable */ String> os;
@@ -211,6 +230,7 @@ public class EsxiPublisher extends com.pulumi.resources.ComponentResource {
             .pluginDownloadURL("github://api.github.com/johnneerdael/pulumi-netskope-publisher")
             .additionalSecretOutputs(List.of(
                 "apiToken",
+                "bearerToken",
                 "installUserPassword",
                 "publishers"
             ))

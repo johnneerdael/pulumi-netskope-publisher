@@ -38,7 +38,7 @@ with `namePrefix` or explicit `names`.
 ```bash
 pulumi stack init prod
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 ```
 
 ## Moving state

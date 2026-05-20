@@ -18,7 +18,9 @@ type OpenstackPublisher struct {
 
 	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
 	AssignFloatingIp             pulumi.BoolPtrOutput                         `pulumi:"assignFloatingIp"`
+	AuthMode                     pulumi.StringPtrOutput                       `pulumi:"authMode"`
 	AvailabilityZone             pulumi.StringPtrOutput                       `pulumi:"availabilityZone"`
+	BearerToken                  pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
 	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            pulumi.BoolPtrOutput                         `pulumi:"deleteDefaultUser"`
@@ -35,6 +37,7 @@ type OpenstackPublisher struct {
 	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
 	NetworkName                  pulumi.StringOutput                          `pulumi:"networkName"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Registrations                provider.PublisherRegistrationInputMapOutput `pulumi:"registrations"`
@@ -55,11 +58,15 @@ func NewOpenstackPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	if args.InstallUserPassword != nil {
 		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"installUserPassword",
 		"publishers",
 	})
@@ -76,7 +83,9 @@ func NewOpenstackPublisher(ctx *pulumi.Context,
 type openstackPublisherArgs struct {
 	ApiToken                     *string                                        `pulumi:"apiToken"`
 	AssignFloatingIp             *bool                                          `pulumi:"assignFloatingIp"`
+	AuthMode                     *string                                        `pulumi:"authMode"`
 	AvailabilityZone             *string                                        `pulumi:"availabilityZone"`
+	BearerToken                  *string                                        `pulumi:"bearerToken"`
 	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
 	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            *bool                                          `pulumi:"deleteDefaultUser"`
@@ -93,6 +102,7 @@ type openstackPublisherArgs struct {
 	Names                        []string                                       `pulumi:"names"`
 	NetworkName                  string                                         `pulumi:"networkName"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
+	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
 	SecurityGroups               []string                                       `pulumi:"securityGroups"`
@@ -105,7 +115,9 @@ type openstackPublisherArgs struct {
 type OpenstackPublisherArgs struct {
 	ApiToken                     *string
 	AssignFloatingIp             *bool
+	AuthMode                     *string
 	AvailabilityZone             *string
+	BearerToken                  *string
 	Bootstrap                    *bool
 	BootstrapUrl                 *string
 	DeleteDefaultUser            *bool
@@ -122,6 +134,7 @@ type OpenstackPublisherArgs struct {
 	Names                        pulumi.StringArrayInput
 	NetworkName                  string
 	Nonat                        *bool
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
 	SecurityGroups               pulumi.StringArrayInput
@@ -175,8 +188,16 @@ func (o OpenstackPublisherOutput) AssignFloatingIp() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *OpenstackPublisher) pulumi.BoolPtrOutput { return v.AssignFloatingIp }).(pulumi.BoolPtrOutput)
 }
 
+func (o OpenstackPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *OpenstackPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
 func (o OpenstackPublisherOutput) AvailabilityZone() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *OpenstackPublisher) pulumi.StringPtrOutput { return v.AvailabilityZone }).(pulumi.StringPtrOutput)
+}
+
+func (o OpenstackPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *OpenstackPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o OpenstackPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
@@ -241,6 +262,10 @@ func (o OpenstackPublisherOutput) NetworkName() pulumi.StringOutput {
 
 func (o OpenstackPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *OpenstackPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o OpenstackPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *OpenstackPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o OpenstackPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

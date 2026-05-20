@@ -23,7 +23,7 @@ The resolved list is exposed as the `publisherNames` output.
 new AwsPublisher("publisher", {
   names: ["pub-eu-1", "pub-eu-2"],
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId,
   securityGroupIds: [securityGroupId],
 });
@@ -39,7 +39,7 @@ new AwsPublisher("publisher", {
   namePrefix: "pub-eu",
   replicas: 2,
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId,
   securityGroupIds: [securityGroupId],
 });
@@ -57,7 +57,7 @@ new AwsPublisher("publisher-eu-a", {
   namePrefix: "pub-eu-a",
   replicas: 1,
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId: euSubnetA,
   securityGroupIds: [euSecurityGroup],
 });
@@ -66,7 +66,7 @@ new AwsPublisher("publisher-eu-b", {
   namePrefix: "pub-eu-b",
   replicas: 1,
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId: euSubnetB,
   securityGroupIds: [euSecurityGroup],
 });

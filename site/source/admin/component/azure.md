@@ -16,7 +16,7 @@ Required:
 - `subnetId`
 - `adminSshPublicKey`
 - one of `imageId`, `marketplace`, or `bootstrap: true`
-- `tenantUrl` and `apiToken`, unless `registrations` is provided
+- `tenantUrl` and `bearerToken`, unless `registrations` is provided
 
 Common optional inputs:
 
@@ -44,7 +44,7 @@ cloud-init ownership aligned.
 pulumi new typescript
 pulumi config set azure-native:location westeurope
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi config set resourceGroupName rg-npa
 pulumi config set location westeurope
 pulumi config set subnetId /subscriptions/.../subnets/npa
@@ -65,7 +65,7 @@ const publisher = new AzurePublisher("publisher", {
   namePrefix: "pub-az",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   resourceGroupName: config.require("resourceGroupName"),
   location: config.require("location"),
   subnetId: config.require("subnetId"),
@@ -94,7 +94,7 @@ publisher = AzurePublisher(
     name_prefix="pub-az",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     resource_group_name=config.require("resourceGroupName"),
     location=config.require("location"),
     subnet_id=config.require("subnetId"),
@@ -126,7 +126,7 @@ return await Deployment.RunAsync(() =>
         NamePrefix = "pub-az",
         Replicas = 2,
         TenantUrl = netskope.Require("tenantUrl"),
-        ApiToken = netskope.RequireSecret("apiToken"),
+        BearerToken = netskope.RequireSecret("bearerToken"),
         ResourceGroupName = config.Require("resourceGroupName"),
         Location = config.Require("location"),
         SubnetId = config.Require("subnetId"),
@@ -165,7 +165,7 @@ func main() {
 			NamePrefix:        pulumi.String("pub-az"),
 			Replicas:          pulumi.Int(2),
 			TenantUrl:         pulumi.String(netskope.Require("tenantUrl")),
-			ApiToken:          netskope.RequireSecret("apiToken"),
+			BearerToken:          netskope.RequireSecret("bearerToken"),
 			ResourceGroupName: pulumi.String(cfg.Require("resourceGroupName")),
 			Location:          pulumi.String(cfg.Require("location")),
 			SubnetId:          pulumi.String(cfg.Require("subnetId")),
@@ -195,7 +195,7 @@ var publisher = new AzurePublisher("publisher", AzurePublisherArgs.builder()
     .namePrefix("pub-az")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .resourceGroupName(config.require("resourceGroupName"))
     .location(config.require("location"))
     .subnetId(config.require("subnetId"))
@@ -219,7 +219,7 @@ let publisher = netskope::azure_publisher::create(
         .name_prefix("pub-az")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .resource_group_name("rg-npa")
         .location("westeurope")
         .subnet_id("/subscriptions/.../subnets/npa")

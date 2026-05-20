@@ -17,7 +17,7 @@ Required:
 - `networkName`
 - `templateName`
 - either `cluster` or `host`
-- `tenantUrl` and `apiToken`, unless `registrations` is provided
+- `tenantUrl` and `bearerToken`, unless `registrations` is provided
 
 Optional inputs include `folder`, `numCpus`, `memory`, `tags`,
 `namePrefix`, `names`, `replicas`, and `wizardPath`.
@@ -43,7 +43,7 @@ pulumi config set vsphere:user administrator@vsphere.local
 pulumi config set vsphere:password --secret
 pulumi config set vsphere:vsphereServer vcsa.lab.local
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi config set datacenter Lab
 pulumi config set datastore datastore1
 pulumi config set networkName VM Network
@@ -65,7 +65,7 @@ const publisher = new VspherePublisher("publisher", {
   namePrefix: "pub-vsphere",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   datacenter: config.require("datacenter"),
   datastore: config.require("datastore"),
   networkName: config.require("networkName"),
@@ -94,7 +94,7 @@ publisher = VspherePublisher(
     name_prefix="pub-vsphere",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     datacenter=config.require("datacenter"),
     datastore=config.require("datastore"),
     network_name=config.require("networkName"),
@@ -117,7 +117,7 @@ var publisher = new VspherePublisher("publisher", new VspherePublisherArgs
     NamePrefix = "pub-vsphere",
     Replicas = 2,
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     Datacenter = config.Require("datacenter"),
     Datastore = config.Require("datastore"),
     NetworkName = config.Require("networkName"),
@@ -136,7 +136,7 @@ publisher, err := netskopepublisher.NewVspherePublisher(ctx, "publisher", &netsk
 	NamePrefix:   pulumi.String("pub-vsphere"),
 	Replicas:     pulumi.Int(2),
 	TenantUrl:    pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:     netskope.RequireSecret("apiToken"),
+	BearerToken:     netskope.RequireSecret("bearerToken"),
 	Datacenter:   pulumi.String(cfg.Require("datacenter")),
 	Datastore:    pulumi.String(cfg.Require("datastore")),
 	NetworkName:  pulumi.String(cfg.Require("networkName")),
@@ -160,7 +160,7 @@ var publisher = new VspherePublisher("publisher", VspherePublisherArgs.builder()
     .namePrefix("pub-vsphere")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .datacenter(config.require("datacenter"))
     .datastore(config.require("datastore"))
     .networkName(config.require("networkName"))
@@ -185,7 +185,7 @@ let publisher = netskope::vsphere_publisher::create(
         .name_prefix("pub-vsphere")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .datacenter("Lab")
         .datastore("datastore1")
         .network_name("VM Network")

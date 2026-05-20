@@ -17,6 +17,8 @@ type OvhPublisher struct {
 	pulumi.ResourceState
 
 	ApiToken                     pulumi.StringPtrOutput                       `pulumi:"apiToken"`
+	AuthMode                     pulumi.StringPtrOutput                       `pulumi:"authMode"`
+	BearerToken                  pulumi.StringPtrOutput                       `pulumi:"bearerToken"`
 	Bootstrap                    pulumi.BoolPtrOutput                         `pulumi:"bootstrap"`
 	BootstrapUrl                 pulumi.StringPtrOutput                       `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            pulumi.BoolPtrOutput                         `pulumi:"deleteDefaultUser"`
@@ -31,6 +33,7 @@ type OvhPublisher struct {
 	Names                        pulumi.StringArrayOutput                     `pulumi:"names"`
 	NetworkId                    pulumi.StringPtrOutput                       `pulumi:"networkId"`
 	Nonat                        pulumi.BoolPtrOutput                         `pulumi:"nonat"`
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrOutput         `pulumi:"oauth2"`
 	PublisherNames               pulumi.StringArrayOutput                     `pulumi:"publisherNames"`
 	Publishers                   pulumi.MapOutput                             `pulumi:"publishers"`
 	Region                       pulumi.StringOutput                          `pulumi:"region"`
@@ -53,11 +56,15 @@ func NewOvhPublisher(ctx *pulumi.Context,
 	if args.ApiToken != nil {
 		args.ApiToken = pulumi.ToSecret(args.ApiToken).(*string)
 	}
+	if args.BearerToken != nil {
+		args.BearerToken = pulumi.ToSecret(args.BearerToken).(*string)
+	}
 	if args.InstallUserPassword != nil {
 		args.InstallUserPassword = pulumi.ToSecret(args.InstallUserPassword).(*string)
 	}
 	secrets := pulumi.AdditionalSecretOutputs([]string{
 		"apiToken",
+		"bearerToken",
 		"installUserPassword",
 		"publishers",
 	})
@@ -73,6 +80,8 @@ func NewOvhPublisher(ctx *pulumi.Context,
 
 type ovhPublisherArgs struct {
 	ApiToken                     *string                                        `pulumi:"apiToken"`
+	AuthMode                     *string                                        `pulumi:"authMode"`
+	BearerToken                  *string                                        `pulumi:"bearerToken"`
 	Bootstrap                    *bool                                          `pulumi:"bootstrap"`
 	BootstrapUrl                 *string                                        `pulumi:"bootstrapUrl"`
 	DeleteDefaultUser            *bool                                          `pulumi:"deleteDefaultUser"`
@@ -87,6 +96,7 @@ type ovhPublisherArgs struct {
 	Names                        []string                                       `pulumi:"names"`
 	NetworkId                    *string                                        `pulumi:"networkId"`
 	Nonat                        *bool                                          `pulumi:"nonat"`
+	Oauth2                       *provider.NetskopeOAuth2Args                   `pulumi:"oauth2"`
 	Region                       string                                         `pulumi:"region"`
 	Registrations                map[string]provider.PublisherRegistrationInput `pulumi:"registrations"`
 	Replicas                     *int                                           `pulumi:"replicas"`
@@ -100,6 +110,8 @@ type ovhPublisherArgs struct {
 // The set of arguments for constructing a OvhPublisher resource.
 type OvhPublisherArgs struct {
 	ApiToken                     *string
+	AuthMode                     *string
+	BearerToken                  *string
 	Bootstrap                    *bool
 	BootstrapUrl                 *string
 	DeleteDefaultUser            *bool
@@ -114,6 +126,7 @@ type OvhPublisherArgs struct {
 	Names                        pulumi.StringArrayInput
 	NetworkId                    *string
 	Nonat                        *bool
+	Oauth2                       provider.NetskopeOAuth2ArgsPtrInput
 	Region                       string
 	Registrations                provider.PublisherRegistrationInputMapInput
 	Replicas                     *int
@@ -163,6 +176,14 @@ func (o OvhPublisherOutput) ToOvhPublisherOutputWithContext(ctx context.Context)
 
 func (o OvhPublisherOutput) ApiToken() pulumi.StringPtrOutput {
 	return o.ApplyT(func(v *OvhPublisher) pulumi.StringPtrOutput { return v.ApiToken }).(pulumi.StringPtrOutput)
+}
+
+func (o OvhPublisherOutput) AuthMode() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *OvhPublisher) pulumi.StringPtrOutput { return v.AuthMode }).(pulumi.StringPtrOutput)
+}
+
+func (o OvhPublisherOutput) BearerToken() pulumi.StringPtrOutput {
+	return o.ApplyT(func(v *OvhPublisher) pulumi.StringPtrOutput { return v.BearerToken }).(pulumi.StringPtrOutput)
 }
 
 func (o OvhPublisherOutput) Bootstrap() pulumi.BoolPtrOutput {
@@ -219,6 +240,10 @@ func (o OvhPublisherOutput) NetworkId() pulumi.StringPtrOutput {
 
 func (o OvhPublisherOutput) Nonat() pulumi.BoolPtrOutput {
 	return o.ApplyT(func(v *OvhPublisher) pulumi.BoolPtrOutput { return v.Nonat }).(pulumi.BoolPtrOutput)
+}
+
+func (o OvhPublisherOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
+	return o.ApplyT(func(v *OvhPublisher) provider.NetskopeOAuth2ArgsPtrOutput { return v.Oauth2 }).(provider.NetskopeOAuth2ArgsPtrOutput)
 }
 
 func (o OvhPublisherOutput) PublisherNames() pulumi.StringArrayOutput {

@@ -9,7 +9,7 @@ toc: true
 
 ## Inputs
 
-Required: `tenantUrl` and `apiToken`, unless `registrations` is provided.
+Required: `tenantUrl` and `bearerToken`, unless `registrations` is provided.
 
 Optional platform inputs: `serverType`, `image`, `location`, `datacenter`,
 `sshKeys`, `firewallIds`, `networkId`, and `assignPublicIp`.
@@ -28,7 +28,7 @@ Netskope's generic installer through cloud-init.
 ```bash
 pulumi config set hcloud:token --secret
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi up
 ```
 
@@ -43,7 +43,7 @@ const publisher = new HcloudPublisher("publisher", {
   namePrefix: "pub-fsn",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   location: "fsn1",
   serverType: "cx22",
 });
@@ -62,7 +62,7 @@ publisher = HcloudPublisher(
     name_prefix="pub-fsn",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     location="fsn1",
     server_type="cx22",
 )
@@ -83,7 +83,7 @@ return await Deployment.RunAsync(() =>
         NamePrefix = "pub-fsn",
         Replicas = 2,
         TenantUrl = netskope.Require("tenantUrl"),
-        ApiToken = netskope.RequireSecret("apiToken"),
+        BearerToken = netskope.RequireSecret("bearerToken"),
         Location = "fsn1",
         ServerType = "cx22",
     });
@@ -97,7 +97,7 @@ publisher, err := netskopepublisher.NewHcloudPublisher(ctx, "publisher", &netsko
 	NamePrefix: pulumi.String("pub-fsn"),
 	Replicas:   pulumi.Int(2),
 	TenantUrl:  pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:   netskope.RequireSecret("apiToken"),
+	BearerToken:   netskope.RequireSecret("bearerToken"),
 	Location:   pulumi.String("fsn1"),
 	ServerType: pulumi.String("cx22"),
 })
@@ -110,7 +110,7 @@ var publisher = new HcloudPublisher("publisher", HcloudPublisherArgs.builder()
     .namePrefix("pub-fsn")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .location("fsn1")
     .serverType("cx22")
     .build());
@@ -126,7 +126,7 @@ let publisher = netskope::hcloud_publisher::create(
         .name_prefix("pub-fsn")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .location("fsn1")
         .server_type("cx22")
         .build_struct(),

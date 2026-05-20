@@ -6,20 +6,44 @@ package com.pulumi.netskopepublisher;
 import com.pulumi.core.Output;
 import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
+import com.pulumi.netskopepublisher.provider.inputs.NetskopeOAuth2ArgsArgs;
 import java.lang.String;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import javax.annotation.Nullable;
 
 
 public final class NetskopeRegistrationArgs extends com.pulumi.resources.ResourceArgs {
 
     public static final NetskopeRegistrationArgs Empty = new NetskopeRegistrationArgs();
 
-    @Import(name="apiToken", required=true)
-    private Output<String> apiToken;
+    @Import(name="apiToken")
+    private @Nullable Output<String> apiToken;
 
-    public Output<String> apiToken() {
-        return this.apiToken;
+    public Optional<Output<String>> apiToken() {
+        return Optional.ofNullable(this.apiToken);
+    }
+
+    @Import(name="authMode")
+    private @Nullable Output<String> authMode;
+
+    public Optional<Output<String>> authMode() {
+        return Optional.ofNullable(this.authMode);
+    }
+
+    @Import(name="bearerToken")
+    private @Nullable Output<String> bearerToken;
+
+    public Optional<Output<String>> bearerToken() {
+        return Optional.ofNullable(this.bearerToken);
+    }
+
+    @Import(name="oauth2")
+    private @Nullable Output<NetskopeOAuth2ArgsArgs> oauth2;
+
+    public Optional<Output<NetskopeOAuth2ArgsArgs>> oauth2() {
+        return Optional.ofNullable(this.oauth2);
     }
 
     @Import(name="publisherNames", required=true)
@@ -40,6 +64,9 @@ public final class NetskopeRegistrationArgs extends com.pulumi.resources.Resourc
 
     private NetskopeRegistrationArgs(NetskopeRegistrationArgs $) {
         this.apiToken = $.apiToken;
+        this.authMode = $.authMode;
+        this.bearerToken = $.bearerToken;
+        this.oauth2 = $.oauth2;
         this.publisherNames = $.publisherNames;
         this.tenantUrl = $.tenantUrl;
     }
@@ -62,13 +89,40 @@ public final class NetskopeRegistrationArgs extends com.pulumi.resources.Resourc
             $ = new NetskopeRegistrationArgs(Objects.requireNonNull(defaults));
         }
 
-        public Builder apiToken(Output<String> apiToken) {
+        public Builder apiToken(@Nullable Output<String> apiToken) {
             $.apiToken = apiToken;
             return this;
         }
 
         public Builder apiToken(String apiToken) {
             return apiToken(Output.of(apiToken));
+        }
+
+        public Builder authMode(@Nullable Output<String> authMode) {
+            $.authMode = authMode;
+            return this;
+        }
+
+        public Builder authMode(String authMode) {
+            return authMode(Output.of(authMode));
+        }
+
+        public Builder bearerToken(@Nullable Output<String> bearerToken) {
+            $.bearerToken = bearerToken;
+            return this;
+        }
+
+        public Builder bearerToken(String bearerToken) {
+            return bearerToken(Output.of(bearerToken));
+        }
+
+        public Builder oauth2(@Nullable Output<NetskopeOAuth2ArgsArgs> oauth2) {
+            $.oauth2 = oauth2;
+            return this;
+        }
+
+        public Builder oauth2(NetskopeOAuth2ArgsArgs oauth2) {
+            return oauth2(Output.of(oauth2));
         }
 
         public Builder publisherNames(Output<List<String>> publisherNames) {
@@ -94,9 +148,6 @@ public final class NetskopeRegistrationArgs extends com.pulumi.resources.Resourc
         }
 
         public NetskopeRegistrationArgs build() {
-            if ($.apiToken == null) {
-                throw new MissingRequiredPropertyException("NetskopeRegistrationArgs", "apiToken");
-            }
             if ($.publisherNames == null) {
                 throw new MissingRequiredPropertyException("NetskopeRegistrationArgs", "publisherNames");
             }

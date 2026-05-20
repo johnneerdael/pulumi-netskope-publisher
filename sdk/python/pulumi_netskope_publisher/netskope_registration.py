@@ -20,24 +20,25 @@ __all__ = ['NetskopeRegistrationArgs', 'NetskopeRegistration']
 @pulumi.input_type
 class NetskopeRegistrationArgs:
     def __init__(__self__, *,
-                 api_token: pulumi.Input[_builtins.str],
                  publisher_names: pulumi.Input[Sequence[pulumi.Input[_builtins.str]]],
-                 tenant_url: pulumi.Input[_builtins.str]):
+                 tenant_url: pulumi.Input[_builtins.str],
+                 api_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 auth_mode: pulumi.Input[Optional[_builtins.str]] = None,
+                 bearer_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None):
         """
         The set of arguments for constructing a NetskopeRegistration resource.
         """
-        pulumi.set(__self__, "api_token", api_token)
         pulumi.set(__self__, "publisher_names", publisher_names)
         pulumi.set(__self__, "tenant_url", tenant_url)
-
-    @_builtins.property
-    @pulumi.getter(name="apiToken")
-    def api_token(self) -> pulumi.Input[_builtins.str]:
-        return pulumi.get(self, "api_token")
-
-    @api_token.setter
-    def api_token(self, value: pulumi.Input[_builtins.str]):
-        pulumi.set(self, "api_token", value)
+        if api_token is not None:
+            pulumi.set(__self__, "api_token", api_token)
+        if auth_mode is not None:
+            pulumi.set(__self__, "auth_mode", auth_mode)
+        if bearer_token is not None:
+            pulumi.set(__self__, "bearer_token", bearer_token)
+        if oauth2 is not None:
+            pulumi.set(__self__, "oauth2", oauth2)
 
     @_builtins.property
     @pulumi.getter(name="publisherNames")
@@ -57,6 +58,42 @@ class NetskopeRegistrationArgs:
     def tenant_url(self, value: pulumi.Input[_builtins.str]):
         pulumi.set(self, "tenant_url", value)
 
+    @_builtins.property
+    @pulumi.getter(name="apiToken")
+    def api_token(self) -> pulumi.Input[Optional[_builtins.str]]:
+        return pulumi.get(self, "api_token")
+
+    @api_token.setter
+    def api_token(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "api_token", value)
+
+    @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> pulumi.Input[Optional[_builtins.str]]:
+        return pulumi.get(self, "auth_mode")
+
+    @auth_mode.setter
+    def auth_mode(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "auth_mode", value)
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> pulumi.Input[Optional[_builtins.str]]:
+        return pulumi.get(self, "bearer_token")
+
+    @bearer_token.setter
+    def bearer_token(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "bearer_token", value)
+
+    @_builtins.property
+    @pulumi.getter
+    def oauth2(self) -> pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]:
+        return pulumi.get(self, "oauth2")
+
+    @oauth2.setter
+    def oauth2(self, value: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]):
+        pulumi.set(self, "oauth2", value)
+
 
 @pulumi.type_token("netskope-publisher:index:NetskopeRegistration")
 class NetskopeRegistration(pulumi.CustomResource):
@@ -65,6 +102,9 @@ class NetskopeRegistration(pulumi.CustomResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 auth_mode: pulumi.Input[Optional[_builtins.str]] = None,
+                 bearer_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  publisher_names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
@@ -99,6 +139,9 @@ class NetskopeRegistration(pulumi.CustomResource):
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
                  api_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 auth_mode: pulumi.Input[Optional[_builtins.str]] = None,
+                 bearer_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  publisher_names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
@@ -110,9 +153,10 @@ class NetskopeRegistration(pulumi.CustomResource):
                 raise TypeError('__props__ is only valid when passed in combination with a valid opts.id to get an existing resource')
             __props__ = NetskopeRegistrationArgs.__new__(NetskopeRegistrationArgs)
 
-            if api_token is None and not opts.urn:
-                raise TypeError("Missing required property 'api_token'")
             __props__.__dict__["api_token"] = None if api_token is None else pulumi.Output.secret(api_token)
+            __props__.__dict__["auth_mode"] = auth_mode
+            __props__.__dict__["bearer_token"] = None if bearer_token is None else pulumi.Output.secret(bearer_token)
+            __props__.__dict__["oauth2"] = oauth2
             if publisher_names is None and not opts.urn:
                 raise TypeError("Missing required property 'publisher_names'")
             __props__.__dict__["publisher_names"] = publisher_names
@@ -120,7 +164,7 @@ class NetskopeRegistration(pulumi.CustomResource):
                 raise TypeError("Missing required property 'tenant_url'")
             __props__.__dict__["tenant_url"] = tenant_url
             __props__.__dict__["registrations"] = None
-        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken"])
+        secret_opts = pulumi.ResourceOptions(additional_secret_outputs=["apiToken", "bearerToken"])
         opts = pulumi.ResourceOptions.merge(opts, secret_opts)
         super(NetskopeRegistration, __self__).__init__(
             'netskope-publisher:index:NetskopeRegistration',
@@ -145,6 +189,9 @@ class NetskopeRegistration(pulumi.CustomResource):
         __props__ = NetskopeRegistrationArgs.__new__(NetskopeRegistrationArgs)
 
         __props__.__dict__["api_token"] = None
+        __props__.__dict__["auth_mode"] = None
+        __props__.__dict__["bearer_token"] = None
+        __props__.__dict__["oauth2"] = None
         __props__.__dict__["publisher_names"] = None
         __props__.__dict__["registrations"] = None
         __props__.__dict__["tenant_url"] = None
@@ -152,8 +199,23 @@ class NetskopeRegistration(pulumi.CustomResource):
 
     @_builtins.property
     @pulumi.getter(name="apiToken")
-    def api_token(self) -> pulumi.Output[_builtins.str]:
+    def api_token(self) -> pulumi.Output[Optional[_builtins.str]]:
         return pulumi.get(self, "api_token")
+
+    @_builtins.property
+    @pulumi.getter(name="authMode")
+    def auth_mode(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "auth_mode")
+
+    @_builtins.property
+    @pulumi.getter(name="bearerToken")
+    def bearer_token(self) -> pulumi.Output[Optional[_builtins.str]]:
+        return pulumi.get(self, "bearer_token")
+
+    @_builtins.property
+    @pulumi.getter
+    def oauth2(self) -> pulumi.Output[Optional['_provider.outputs.NetskopeOAuth2Args']]:
+        return pulumi.get(self, "oauth2")
 
     @_builtins.property
     @pulumi.getter(name="publisherNames")

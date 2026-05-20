@@ -18,6 +18,7 @@ on:
 permissions:
   contents: write
   id-token: write
+  packages: write
 
 concurrency:
   group: auto-release-main
@@ -71,6 +72,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
             echo "::error::Configure the NPM_TOKEN repository secret before automatic releases can publish."
@@ -82,6 +84,10 @@ jobs:
           fi
           if [ -z "$NUGET_API_KEY" ]; then
             echo "::error::Configure the NUGET_API_KEY repository secret before automatic releases can publish the C# SDK."
+            exit 1
+          fi
+          if [ -z "$CARGO_REGISTRY_TOKEN" ]; then
+            echo "::error::Configure the CARGO_REGISTRY_TOKEN repository secret before automatic releases can publish the Rust SDK."
             exit 1
           fi
 
@@ -115,6 +121,45 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: dotnet nuget push dist/sdks/dotnet/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Publish Java SDK
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.version }}
+          JAVA_MAVEN_REPOSITORY_URL: ${{ vars.JAVA_MAVEN_REPOSITORY_URL }}
+          JAVA_MAVEN_GROUP_ID: ${{ vars.JAVA_MAVEN_GROUP_ID }}
+          JAVA_MAVEN_AUTH_BASE64: ${{ secrets.JAVA_MAVEN_AUTH_BASE64 }}
+          JAVA_MAVEN_USERNAME: ${{ secrets.JAVA_MAVEN_USERNAME }}
+          JAVA_MAVEN_PASSWORD: ${{ secrets.JAVA_MAVEN_PASSWORD }}
+          JAVA_SIGNING_KEY: ${{ secrets.JAVA_SIGNING_KEY }}
+          JAVA_SIGNING_PASSWORD: ${{ secrets.JAVA_SIGNING_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          repo_url="${JAVA_MAVEN_REPOSITORY_URL:-https://maven.pkg.github.com/${GITHUB_REPOSITORY}}"
+          if [ -n "$JAVA_MAVEN_AUTH_BASE64" ]; then
+            PUBLISH_REPO_URL="$repo_url" \
+              JAVA_MAVEN_GROUP_ID="$JAVA_MAVEN_GROUP_ID" \
+              PUBLISH_REPO_BEARER_TOKEN="$JAVA_MAVEN_AUTH_BASE64" \
+              SIGNING_KEY="$JAVA_SIGNING_KEY" \
+              SIGNING_PASSWORD="$JAVA_SIGNING_PASSWORD" \
+              gradle publish
+          else
+            repo_username="${JAVA_MAVEN_USERNAME:-${GITHUB_ACTOR}}"
+            repo_password="${JAVA_MAVEN_PASSWORD:-${GITHUB_TOKEN}}"
+            PUBLISH_REPO_URL="$repo_url" \
+              JAVA_MAVEN_GROUP_ID="$JAVA_MAVEN_GROUP_ID" \
+              PUBLISH_REPO_USERNAME="$repo_username" \
+              PUBLISH_REPO_PASSWORD="$repo_password" \
+              SIGNING_KEY="$JAVA_SIGNING_KEY" \
+              SIGNING_PASSWORD="$JAVA_SIGNING_PASSWORD" \
+              gradle publish
+          fi
+        working-directory: sdk/java
+
+      - name: Publish Rust SDK
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish --token "$CARGO_REGISTRY_TOKEN"
+        working-directory: sdk/rust
 
       - name: Commit release bump and tag
         run: |

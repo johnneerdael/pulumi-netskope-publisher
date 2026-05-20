@@ -11,7 +11,7 @@ publisher name.
 ## Inputs
 
 Required: `imageName`, `flavorName`, `networkName`, and `tenantUrl` plus
-`apiToken` unless `registrations` is provided.
+`bearerToken` unless `registrations` is provided.
 
 Optional platform inputs: `keyPair`, `securityGroups`,
 `availabilityZone`, `assignFloatingIp`, and `floatingIpPool`.
@@ -32,7 +32,7 @@ pulumi config set openstack:authUrl https://openstack.example.com:5000/v3
 pulumi config set openstack:userName admin
 pulumi config set openstack:password --secret
 pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:apiToken --secret
+pulumi config set netskope:bearerToken --secret
 pulumi up
 ```
 
@@ -43,7 +43,7 @@ const publisher = new OpenstackPublisher("publisher", {
   namePrefix: "pub-os",
   replicas: 2,
   tenantUrl: netskope.require("tenantUrl"),
-  apiToken: netskope.requireSecret("apiToken"),
+  bearerToken: netskope.requireSecret("bearerToken"),
   imageName: "Ubuntu 22.04",
   flavorName: "m1.medium",
   networkName: "private",
@@ -59,7 +59,7 @@ publisher = OpenstackPublisher(
     name_prefix="pub-os",
     replicas=2,
     tenant_url=netskope.require("tenantUrl"),
-    api_token=netskope.require_secret("apiToken"),
+    bearer_token=netskope.require_secret("bearerToken"),
     image_name="Ubuntu 22.04",
     flavor_name="m1.medium",
     network_name="private",
@@ -75,7 +75,7 @@ var publisher = new OpenstackPublisher("publisher", new OpenstackPublisherArgs
     NamePrefix = "pub-os",
     Replicas = 2,
     TenantUrl = netskope.Require("tenantUrl"),
-    ApiToken = netskope.RequireSecret("apiToken"),
+    BearerToken = netskope.RequireSecret("bearerToken"),
     ImageName = "Ubuntu 22.04",
     FlavorName = "m1.medium",
     NetworkName = "private",
@@ -90,7 +90,7 @@ publisher, err := netskopepublisher.NewOpenstackPublisher(ctx, "publisher", &net
 	NamePrefix:     pulumi.String("pub-os"),
 	Replicas:       pulumi.Int(2),
 	TenantUrl:      pulumi.String(netskope.Require("tenantUrl")),
-	ApiToken:       netskope.RequireSecret("apiToken"),
+	BearerToken:       netskope.RequireSecret("bearerToken"),
 	ImageName:      pulumi.String("Ubuntu 22.04"),
 	FlavorName:     pulumi.String("m1.medium"),
 	NetworkName:    pulumi.String("private"),
@@ -105,7 +105,7 @@ var publisher = new OpenstackPublisher("publisher", OpenstackPublisherArgs.build
     .namePrefix("pub-os")
     .replicas(2)
     .tenantUrl(netskope.require("tenantUrl"))
-    .apiToken(netskope.requireSecret("apiToken"))
+    .bearerToken(netskope.requireSecret("bearerToken"))
     .imageName("Ubuntu 22.04")
     .flavorName("m1.medium")
     .networkName("private")
@@ -123,7 +123,7 @@ let publisher = netskope::openstack_publisher::create(
         .name_prefix("pub-os")
         .replicas(2)
         .tenant_url("https://tenant.goskope.com")
-        .api_token("secret-token")
+        .bearer_token("secret-token")
         .image_name("Ubuntu 22.04")
         .flavor_name("m1.medium")
         .network_name("private")

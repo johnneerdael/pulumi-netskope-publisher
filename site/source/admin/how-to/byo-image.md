@@ -13,7 +13,7 @@ publisher during cloud-init.
 ```ts
 new AwsPublisher("publisher", {
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId,
   securityGroupIds: [securityGroupId],
   bootstrap: true,
@@ -42,7 +42,7 @@ Use pre-baked mode when the image already includes
 ```ts
 new AwsPublisher("publisher", {
   tenantUrl,
-  apiToken,
+  bearerToken,
   subnetId,
   securityGroupIds: [securityGroupId],
   bootstrap: false,
