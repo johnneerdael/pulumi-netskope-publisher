@@ -1,0 +1,13 @@
+/home/runner/work/pulumi-netskope-publisher/pulumi-netskope-publisher/sdk/rust/target/debug/deps/log-c259725d4b6530e1.d: /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/lib.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/macros.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/serde.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/mod.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/error.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/key.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/source.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/value.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/__private_api.rs
+
+/home/runner/work/pulumi-netskope-publisher/pulumi-netskope-publisher/sdk/rust/target/debug/deps/liblog-c259725d4b6530e1.rmeta: /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/lib.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/macros.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/serde.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/mod.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/error.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/key.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/source.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/value.rs /home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/__private_api.rs
+
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/lib.rs:
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/macros.rs:
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/serde.rs:
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/mod.rs:
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/error.rs:
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/key.rs:
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/source.rs:
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/kv/value.rs:
+/home/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/log-0.4.29/src/__private_api.rs:

@@ -1,0 +1,6 @@
+{
+    "resource": true,
+    "name": "netskope-publisher",
+    "server": "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
+    "version": "0.1.11"
+}

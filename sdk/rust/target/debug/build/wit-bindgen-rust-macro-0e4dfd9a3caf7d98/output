@@ -1,0 +1,2 @@
+cargo:rerun-if-changed=build.rs
+cargo:rustc-env=DEBUG_OUTPUT_DIR=/home/runner/work/pulumi-netskope-publisher/pulumi-netskope-publisher/sdk/rust/target/debug/build/wit-bindgen-rust-macro-0e4dfd9a3caf7d98/out
