@@ -200,124 +200,90 @@ function token(componentName: string): string {
   return `netskope-publisher:index:${componentName}`;
 }
 
-const entries = [
-  {
-    displayName: "AWS",
-    componentName: "AwsPublisher",
-    token: token("AwsPublisher"),
-    support: "supported",
-    providerPackage: "@pulumi/aws",
-    implementation: "bespoke",
-    bootstrapModel: "prebakedSupported",
-    userData: { mode: "base64", property: "userDataBase64" },
+function provider(
+  displayName: string,
+  componentName: string,
+  implementation: ProviderImplementationMode,
+  bootstrapModel: BootstrapModel,
+  userDataMode: UserDataMode,
+  slug: string,
+  required: string[],
+  resourceToken?: string,
+  validation: Omit<ProviderValidationMetadata, "required"> = {},
+): ProviderCatalogEntry {
+  return {
+    displayName,
+    componentName,
+    token: token(componentName),
+    support: componentName === "HypervPublisher" ? "experimental" : "supported",
+    resourceToken,
+    implementation,
+    bootstrapModel,
+    userData: {
+      mode: userDataMode,
+      property: userDataProperty(userDataMode),
+      metadataKey: userDataMode === "metadata" ? "user-data" : undefined,
+    },
     inputs: {
-      required: [
-        { name: "subnetId", required: true, summary: "EC2 subnet ID.", example: "subnet-0123456789abcdef0" },
-        { name: "securityGroupIds", required: true, summary: "EC2 security group IDs.", example: ["sg-0123456789abcdef0"] },
-      ],
-      optional: [
-        { name: "amiId", summary: "Publisher or Ubuntu 22.04 AMI ID." },
-        { name: "instanceType", summary: "EC2 instance type.", example: "t3.medium" },
-      ],
+      required: required.map((name) => ({ name, required: true, summary: `${displayName} ${name} input.` })),
+      optional: [],
     },
-    validation: { required: ["subnetId", "securityGroupIds"] },
-    docs: { slug: "aws", summary: "EC2 instances with optional AMI lookup." },
+    validation: { required, ...validation },
+    docs: { slug, summary: `${displayName} publisher component.` },
     yamlExample: {
-      name: "netskope-publisher-aws",
-      properties: [
-        ["namePrefix", "pub-eu"],
-        ["replicas", 2],
-        ["subnetId", "subnet-0123456789abcdef0"],
-        ["securityGroupIds", ["sg-0123456789abcdef0"]],
-        ["instanceType", "t3.medium"],
-        ["bootstrap", true],
-      ],
+      name: `netskope-publisher-${slug}`,
+      properties: [["namePrefix", "pub"], ["replicas", 2], ...required.map((name) => [name, exampleValue(name)] as [string, unknown])],
     },
-  },
-  {
-    displayName: "DigitalOcean",
-    componentName: "DigitaloceanPublisher",
-    token: token("DigitaloceanPublisher"),
-    support: "supported",
-    providerPackage: "@pulumi/digitalocean",
-    resourceToken: "digitalocean:index/droplet:Droplet",
-    implementation: "catalogRawVm",
-    bootstrapModel: "bootstrapOnly",
-    userData: { mode: "plain", property: "userData" },
-    inputs: {
-      required: [{ name: "region", required: true, summary: "DigitalOcean region slug.", example: "ams3" }],
-      optional: [
-        { name: "size", summary: "Droplet size slug.", example: "s-2vcpu-4gb" },
-        { name: "image", summary: "Ubuntu 22.04 image slug.", example: "ubuntu-22-04-x64" },
-      ],
-    },
-    validation: { required: ["region"] },
-    docs: { slug: "digitalocean", summary: "DigitalOcean Droplets with plain user data." },
-    yamlExample: {
-      name: "netskope-publisher-digitalocean",
-      properties: [
-        ["namePrefix", "pub"],
-        ["replicas", 2],
-        ["region", "ams3"],
-        ["size", "s-2vcpu-4gb"],
-        ["image", "ubuntu-22-04-x64"],
-        ["bootstrap", true],
-      ],
-    },
-  },
+  };
+}
+
+function userDataProperty(mode: UserDataMode): string | undefined {
+  if (mode === "plain") return "userData";
+  if (mode === "base64") return "userData";
+  if (mode === "raw") return "userDataRaw";
+  if (mode === "metadata") return "metadata";
+  if (mode === "customData") return "customData";
+  return undefined;
+}
+
+function exampleValue(name: string): unknown {
+  if (name.endsWith("Ids")) return [`${name}-example`];
+  if (name === "replicas" || name === "diskSize" || name === "templateVmId") return 2;
+  if (name === "hardDrives") return [{ path: "/var/lib/hyperv/npa.vhdx" }];
+  if (name === "networks") return [{ name: "private" }];
+  return `${name}-example`;
+}
+
+const providerDefinitions = [
+  provider("AWS", "AwsPublisher", "bespoke", "prebakedSupported", "base64", "aws", ["subnetId", "securityGroupIds"]),
+  provider("Azure", "AzurePublisher", "bespoke", "marketplaceSupported", "customData", "azure", ["resourceGroupName", "location", "subnetId", "adminSshPublicKey"]),
+  provider("GCP", "GcpPublisher", "bespoke", "bootstrapOnly", "metadata", "gcp", ["project", "zone", "network", "subnetwork", "image"]),
+  provider("Kubernetes", "KubernetesPublisher", "bespoke", "helm", "none", "kubernetes", []),
+  provider("vSphere", "VspherePublisher", "bespoke", "prebakedSupported", "guestInfo", "vsphere", ["datacenter", "datastore", "networkName", "templateName"]),
+  provider("ESXi Native", "EsxiPublisher", "bespoke", "prebakedSupported", "guestInfo", "esxi", ["diskStore", "virtualNetwork"]),
+  provider("Hcloud", "HcloudPublisher", "catalogRawVm", "bootstrapOnly", "plain", "hcloud", [], "hcloud:index/server:Server"),
+  provider("Nutanix", "NutanixPublisher", "catalogRawVm", "bootstrapOnly", "base64", "nutanix", ["clusterUuid"], "nutanix:index/virtualMachine:VirtualMachine"),
+  provider("OpenStack", "OpenstackPublisher", "catalogRawVm", "bootstrapOnly", "plain", "openstack", ["imageName", "flavorName", "networkName"], "openstack:compute/instance:Instance"),
+  provider("OVH", "OvhPublisher", "catalogRawVm", "bootstrapOnly", "plain", "ovh", ["serviceName", "region", "imageId", "flavorId"], "ovh:cloudproject/instance:Instance"),
+  provider("Scaleway", "ScalewayPublisher", "catalogRawVm", "bootstrapOnly", "scalewayDual", "scaleway", [], "scaleway:index/instanceServer:InstanceServer"),
+  provider("OCI", "OciPublisher", "catalogRawVm", "bootstrapOnly", "ociMetadata", "oci", ["compartmentId", "availabilityDomain", "subnetId", "imageId"], "oci:core/instance:Instance"),
+  provider("Alicloud", "AlicloudPublisher", "catalogRawVm", "bootstrapOnly", "base64", "alicloud", ["imageId", "vswitchId", "securityGroupIds"], "alicloud:ecs/instance:Instance"),
+  provider("Proxmox VE", "ProxmoxvePublisher", "catalogSpecializedVm", "bootstrapOnly", "proxmoxSnippet", "proxmoxve", ["nodeName", "datastoreId", "templateVmId"], "proxmoxve:vm/virtualMachine:VirtualMachine"),
+  provider("DigitalOcean", "DigitaloceanPublisher", "catalogRawVm", "bootstrapOnly", "plain", "digitalocean", ["region"], "digitalocean:index/droplet:Droplet"),
+  provider("Vultr", "VultrPublisher", "catalogRawVm", "bootstrapOnly", "plain", "vultr", ["region", "plan"], "vultr:index/instance:Instance", { requiredOneOf: [["osId", "imageId"]], mutuallyExclusive: [["osId", "imageId"]] }),
+  provider("Exoscale", "ExoscalePublisher", "catalogRawVm", "bootstrapOnly", "plain", "exoscale", ["zone", "type", "templateId", "diskSize"], "exoscale:index/computeInstance:ComputeInstance"),
+  provider("UpCloud", "UpcloudPublisher", "catalogRawVm", "bootstrapOnly", "plain", "upcloud", ["zone"], "upcloud:index/server:Server"),
+  provider("Stackit", "StackitPublisher", "catalogRawVm", "bootstrapOnly", "plain", "stackit", ["projectId", "machineType", "imageId"], "stackit:index/server:Server"),
+  provider("Equinix Metal", "EquinixPublisher", "catalogRawVm", "bootstrapOnly", "plain", "equinix", ["projectId", "metro", "plan"], "equinix:metal/device:Device"),
+  provider("Outscale", "OutscalePublisher", "catalogRawVm", "bootstrapOnly", "plain", "outscale", ["imageId"], "outscale:index/vm:Vm"),
+  provider("OpenTelekomCloud", "OpentelekomcloudPublisher", "catalogRawVm", "bootstrapOnly", "plain", "opentelekomcloud", ["networks"], "opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2"),
+  provider("TencentCloud", "TencentcloudPublisher", "catalogRawVm", "bootstrapOnly", "raw", "tencentcloud", ["availabilityZone", "imageId"], "tencentcloud:index/instance:Instance"),
+  provider("Yandex Cloud", "YandexPublisher", "catalogRawVm", "bootstrapOnly", "metadata", "yandex", ["imageId", "subnetId"], "yandex:index/computeInstance:ComputeInstance"),
+  provider("Hyper-V", "HypervPublisher", "bespoke", "experimental", "none", "hyperv", ["switchName", "hardDrives"], undefined, { experimentalOptInField: "enableExperimentalHyperv" }),
+  provider("Netskope Registration", "NetskopeRegistration", "bespoke", "registrationOnly", "none", "registration", ["publisherNames"]),
 ] satisfies ProviderCatalogEntry[];
 
-const remainingComponentNames = [
-  "AzurePublisher",
-  "GcpPublisher",
-  "KubernetesPublisher",
-  "VspherePublisher",
-  "EsxiPublisher",
-  "HcloudPublisher",
-  "NutanixPublisher",
-  "OpenstackPublisher",
-  "OvhPublisher",
-  "ScalewayPublisher",
-  "OciPublisher",
-  "AlicloudPublisher",
-  "ProxmoxvePublisher",
-  "VultrPublisher",
-  "ExoscalePublisher",
-  "UpcloudPublisher",
-  "StackitPublisher",
-  "EquinixPublisher",
-  "OutscalePublisher",
-  "OpentelekomcloudPublisher",
-  "TencentcloudPublisher",
-  "YandexPublisher",
-  "HypervPublisher",
-  "NetskopeRegistration",
-];
-
-const generatedEntries = remainingComponentNames.map((componentName): ProviderCatalogEntry => ({
-  displayName: componentName.replace(/Publisher$|Registration$/g, ""),
-  componentName,
-  token: token(componentName),
-  support: componentName === "HypervPublisher" ? "experimental" : "supported",
-  implementation: [
-    "AwsPublisher",
-    "AzurePublisher",
-    "GcpPublisher",
-    "KubernetesPublisher",
-    "VspherePublisher",
-    "EsxiPublisher",
-    "HypervPublisher",
-    "NetskopeRegistration",
-  ].includes(componentName) ? "bespoke" : "catalogRawVm",
-  bootstrapModel: componentName === "KubernetesPublisher" ? "helm" : componentName === "NetskopeRegistration" ? "registrationOnly" : "bootstrapOnly",
-  userData: { mode: componentName === "NetskopeRegistration" || componentName === "KubernetesPublisher" ? "none" : "plain" },
-  inputs: { required: [], optional: [] },
-  validation: {},
-  docs: { slug: componentName.replace(/Publisher$|Registration$/g, "").toLowerCase(), summary: `${componentName} metadata.` },
-  yamlExample: { name: `netskope-${componentName.replace(/[A-Z]/g, (match, index) => `${index === 0 ? "" : "-"}${match.toLowerCase()}`)}`, properties: [["namePrefix", "pub"]] },
-}));
-
-export const catalogProviders = [...entries, ...generatedEntries] satisfies ProviderCatalogEntry[];
+export const catalogProviders = providerDefinitions;
 
 export const providerCatalog = Object.fromEntries(catalogProviders.map((provider) => [provider.componentName, provider])) as Record<string, ProviderCatalogEntry>;
 
@@ -325,7 +291,7 @@ export const catalogDrivenProviders = catalogProviders.filter((provider) => prov
 export const bespokeProviders = catalogProviders.filter((provider) => provider.implementation === "bespoke");
 ```
 
-After this task, Task 2 replaces the temporary generated coverage entries with complete provider metadata. The tests in this task establish the catalog contract and public component coverage.
+The implementation in this task must create complete entries for every current component. Do not create temporary generated entries: the catalog tests require catalog-driven providers to have resource tokens, user-data metadata, docs metadata, and YAML example metadata immediately.
 
 - [ ] **Step 4: Export catalog helpers**
 
@@ -348,10 +314,9 @@ git add src/providerCatalog.ts src/index.ts test/providerCatalog.test.ts
 git commit -m "feat: add provider catalog metadata"
 ```
 
-## Task 2: Complete Catalog Metadata And Validation
+## Task 2: Add Provider Validation
 
 **Files:**
-- Modify: `src/providerCatalog.ts`
 - Create: `src/providerValidation.ts`
 - Create: `test/providerValidation.test.ts`
 
@@ -403,63 +368,7 @@ Run: `npm run build && node --test dist/test/providerValidation.test.js`
 
 Expected: FAIL because `src/providerValidation.ts` does not exist.
 
-- [ ] **Step 3: Complete catalog validation metadata**
-
-Replace generated entries in `src/providerCatalog.ts` with explicit entries for every current component. Each catalog-driven provider must have exact required fields:
-
-```ts
-// Vultr example entry values to include in providerCatalog:
-validation: {
-  required: ["region", "plan"],
-  requiredOneOf: [["osId", "imageId"]],
-  mutuallyExclusive: [["osId", "imageId"]],
-},
-inputs: {
-  required: [
-    { name: "region", required: true, summary: "Vultr region slug.", example: "ams" },
-    { name: "plan", required: true, summary: "Vultr plan slug.", example: "vc2-2c-4gb" },
-  ],
-  optional: [
-    { name: "osId", summary: "Vultr OS ID for Ubuntu 22.04.", example: 1743 },
-    { name: "imageId", summary: "Custom image ID." },
-  ],
-},
-```
-
-Minimum required-field metadata for all providers:
-
-```ts
-const requiredByProvider = {
-  AwsPublisher: ["subnetId", "securityGroupIds"],
-  AzurePublisher: ["resourceGroupName", "location", "subnetId", "adminSshPublicKey"],
-  GcpPublisher: ["project", "zone", "network", "subnetwork", "image"],
-  VspherePublisher: ["datacenter", "datastore", "networkName", "templateName"],
-  EsxiPublisher: ["diskStore", "virtualNetwork"],
-  HcloudPublisher: [],
-  NutanixPublisher: ["clusterUuid"],
-  OpenstackPublisher: ["imageName", "flavorName", "networkName"],
-  OvhPublisher: ["serviceName", "region", "imageId", "flavorId"],
-  ScalewayPublisher: [],
-  OciPublisher: ["compartmentId", "availabilityDomain", "subnetId", "imageId"],
-  AlicloudPublisher: ["imageId", "vswitchId", "securityGroupIds"],
-  ProxmoxvePublisher: ["nodeName", "datastoreId", "templateVmId"],
-  DigitaloceanPublisher: ["region"],
-  VultrPublisher: ["region", "plan"],
-  ExoscalePublisher: ["zone", "type", "templateId", "diskSize"],
-  UpcloudPublisher: ["zone"],
-  StackitPublisher: ["projectId", "machineType", "imageId"],
-  EquinixPublisher: ["projectId", "metro", "plan"],
-  OutscalePublisher: ["imageId"],
-  OpentelekomcloudPublisher: ["networks"],
-  TencentcloudPublisher: ["availabilityZone", "imageId"],
-  YandexPublisher: ["imageId", "subnetId"],
-  KubernetesPublisher: [],
-  HypervPublisher: ["switchName", "hardDrives"],
-  NetskopeRegistration: ["publisherNames"],
-};
-```
-
-- [ ] **Step 4: Implement `src/providerValidation.ts`**
+- [ ] **Step 3: Implement `src/providerValidation.ts`**
 
 Create `src/providerValidation.ts`:
 
@@ -502,16 +411,16 @@ function isMissing(value: unknown): boolean {
 }
 ```
 
-- [ ] **Step 5: Run validation tests**
+- [ ] **Step 4: Run validation tests**
 
 Run: `npm run build && node --test dist/test/providerValidation.test.js`
 
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add src/providerCatalog.ts src/providerValidation.ts test/providerValidation.test.ts
+git add src/providerValidation.ts test/providerValidation.test.ts
 git commit -m "feat: validate provider catalog inputs"
 ```
 
