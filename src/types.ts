@@ -224,6 +224,108 @@ export interface ProxmoxvePublisherArgs extends CommonPublisherArgs {
   nameservers?: pulumi.Input<pulumi.Input<string>[]>;
 }
 
+export interface DigitaloceanPublisherArgs extends CommonPublisherArgs {
+  region: pulumi.Input<string>;
+  size?: pulumi.Input<string>;
+  image?: pulumi.Input<string>;
+  sshKeys?: pulumi.Input<pulumi.Input<string>[]>;
+  vpcUuid?: pulumi.Input<string>;
+  monitoring?: pulumi.Input<boolean>;
+  ipv6?: pulumi.Input<boolean>;
+}
+
+export interface VultrPublisherArgs extends CommonPublisherArgs {
+  region: pulumi.Input<string>;
+  plan: pulumi.Input<string>;
+  osId?: pulumi.Input<number>;
+  imageId?: pulumi.Input<string>;
+  sshKeyIds?: pulumi.Input<pulumi.Input<string>[]>;
+  vpc2Ids?: pulumi.Input<pulumi.Input<string>[]>;
+  enableIpv6?: pulumi.Input<boolean>;
+  firewallGroupId?: pulumi.Input<string>;
+}
+
+export interface ExoscalePublisherArgs extends CommonPublisherArgs {
+  zone: pulumi.Input<string>;
+  type: pulumi.Input<string>;
+  templateId: pulumi.Input<string>;
+  diskSize: pulumi.Input<number>;
+  sshKeys?: pulumi.Input<pulumi.Input<string>[]>;
+  securityGroupIds?: pulumi.Input<pulumi.Input<string>[]>;
+  networkInterfaces?: pulumi.Input<pulumi.Input<Record<string, pulumi.Input<unknown>>>[]>;
+}
+
+export interface UpcloudPublisherArgs extends CommonPublisherArgs {
+  zone: pulumi.Input<string>;
+  hostname?: pulumi.Input<string>;
+  plan?: pulumi.Input<string>;
+  template?: pulumi.Input<string>;
+  networkInterfaces?: pulumi.Input<pulumi.Input<Record<string, pulumi.Input<unknown>>>[]>;
+}
+
+export interface StackitPublisherArgs extends CommonPublisherArgs {
+  projectId: pulumi.Input<string>;
+  machineType: pulumi.Input<string>;
+  imageId: pulumi.Input<string>;
+  availabilityZone?: pulumi.Input<string>;
+  keypairName?: pulumi.Input<string>;
+  networkInterfaces?: pulumi.Input<pulumi.Input<Record<string, pulumi.Input<unknown>>>[]>;
+}
+
+export interface EquinixPublisherArgs extends CommonPublisherArgs {
+  projectId: pulumi.Input<string>;
+  metro: pulumi.Input<string>;
+  plan: pulumi.Input<string>;
+  operatingSystem?: pulumi.Input<string>;
+  billingCycle?: pulumi.Input<string>;
+  projectSshKeyIds?: pulumi.Input<pulumi.Input<string>[]>;
+  userSshKeyIds?: pulumi.Input<pulumi.Input<string>[]>;
+}
+
+export interface OutscalePublisherArgs extends CommonPublisherArgs {
+  imageId: pulumi.Input<string>;
+  vmType?: pulumi.Input<string>;
+  subnetId?: pulumi.Input<string>;
+  keypairName?: pulumi.Input<string>;
+  securityGroupIds?: pulumi.Input<pulumi.Input<string>[]>;
+  placementSubregionName?: pulumi.Input<string>;
+}
+
+export interface OpentelekomcloudPublisherArgs extends CommonPublisherArgs {
+  imageName?: pulumi.Input<string>;
+  imageId?: pulumi.Input<string>;
+  flavorName?: pulumi.Input<string>;
+  flavorId?: pulumi.Input<string>;
+  networks: pulumi.Input<pulumi.Input<Record<string, pulumi.Input<unknown>>>[]>;
+  keyPair?: pulumi.Input<string>;
+  availabilityZone?: pulumi.Input<string>;
+  securityGroups?: pulumi.Input<pulumi.Input<string>[]>;
+}
+
+export interface TencentcloudPublisherArgs extends CommonPublisherArgs {
+  availabilityZone: pulumi.Input<string>;
+  imageId: pulumi.Input<string>;
+  instanceType?: pulumi.Input<string>;
+  subnetId?: pulumi.Input<string>;
+  vpcId?: pulumi.Input<string>;
+  keyName?: pulumi.Input<string>;
+  securityGroups?: pulumi.Input<pulumi.Input<string>[]>;
+  systemDiskType?: pulumi.Input<string>;
+  systemDiskSize?: pulumi.Input<number>;
+}
+
+export interface YandexPublisherArgs extends CommonPublisherArgs {
+  zone?: pulumi.Input<string>;
+  platformId?: pulumi.Input<string>;
+  imageId: pulumi.Input<string>;
+  subnetId: pulumi.Input<string>;
+  cores?: pulumi.Input<number>;
+  memory?: pulumi.Input<number>;
+  coreFraction?: pulumi.Input<number>;
+  nat?: pulumi.Input<boolean>;
+  sshKeys?: pulumi.Input<pulumi.Input<string>[]>;
+}
+
 export interface HypervHardDrive {
   path: pulumi.Input<string>;
   controllerType?: pulumi.Input<string>;
