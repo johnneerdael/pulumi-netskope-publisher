@@ -1,6 +1,7 @@
 export * from "./types";
 export * from "./names";
 export * from "./cloudInit";
+export * from "./userDataAdapters";
 export * from "./componentCore";
 export * from "./imageSources";
 export * from "./netskopeClient";
