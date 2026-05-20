@@ -1027,6 +1027,7 @@ type rawVMResource struct {
 	AccessIPV4       pulumi.StringOutput `pulumi:"accessIpV4"`
 	Address          pulumi.StringOutput `pulumi:"address"`
 	Ipv4Address      pulumi.StringOutput `pulumi:"ipv4Address"`
+	Networks         pulumi.ArrayOutput  `pulumi:"networks"`
 	PrimaryIPAddress pulumi.StringOutput `pulumi:"primaryIpAddress"`
 	PrivateIP        pulumi.StringOutput `pulumi:"privateIp"`
 	PublicIP         pulumi.StringOutput `pulumi:"publicIp"`
@@ -1186,6 +1187,13 @@ func NewOpenstackPublisher(ctx *pulumi.Context, name string, args OpenstackPubli
 			}, floatingIP, pulumi.Parent(component)); err != nil {
 				return nil, err
 			}
+			association := &rawVMResource{}
+			if err := ctx.RegisterResource("openstack:networking/floatingIpAssociate:FloatingIpAssociate", name+"-"+publisherName+"-fip-association", pulumi.Map{
+				"floatingIp": floatingIP.Address,
+				"portId":     firstOpenstackNetworkPort(instance.Networks),
+			}, association, pulumi.Parent(component)); err != nil {
+				return nil, err
+			}
 			publicIP = floatingIP.Address
 		}
 		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), publicIP)
@@ -1193,6 +1201,23 @@ func NewOpenstackPublisher(ctx *pulumi.Context, name string, args OpenstackPubli
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
 	return component, ctx.RegisterResourceOutputs(component, pulumi.Map{"publisherNames": component.PublisherNames, "publishers": component.Publishers})
+}
+
+func firstOpenstackNetworkPort(networks pulumi.ArrayOutput) pulumi.StringOutput {
+	return networks.ApplyT(func(values []interface{}) string {
+		if len(values) == 0 {
+			return ""
+		}
+		network, ok := values[0].(map[string]interface{})
+		if !ok {
+			return ""
+		}
+		port, ok := network["port"]
+		if !ok || port == nil {
+			return ""
+		}
+		return fmt.Sprint(port)
+	}).(pulumi.StringOutput)
 }
 
 func NewOvhPublisher(ctx *pulumi.Context, name string, args OvhPublisherArgs, opts ...pulumi.ResourceOption) (*OvhPublisher, error) {

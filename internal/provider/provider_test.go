@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -346,7 +347,184 @@ func TestAdditionalProviderConstructsCreateProviderChildren(t *testing.T) {
 	}
 }
 
+func TestAdditionalProviderConstructsBootstrapWithRegistryFields(t *testing.T) {
+	cases := []struct {
+		name      string
+		token     string
+		inputs    property.Map
+		childType string
+		validate  func(*testing.T, property.Map)
+	}{
+		{
+			name:  "ESXi",
+			token: "netskope-publisher:index:EsxiPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":          property.New([]property.Value{property.New("pub-1")}),
+				"registrations":  registrationMap("pub-1"),
+				"diskStore":      property.New("datastore1"),
+				"virtualNetwork": property.New("VM Network"),
+			}),
+			childType: "esxi-native:index:VirtualMachine",
+			validate: func(t *testing.T, inputs property.Map) {
+				info := inputs.Get("info").AsArray().AsSlice()
+				assertKeyValueArrayHas(t, info, "guestinfo.userdata.encoding", "base64")
+				userData := decodeRequiredBase64(t, keyValueArrayValue(t, info, "guestinfo.userdata"))
+				assertBootstrapUserData(t, userData)
+			},
+		},
+		{
+			name:  "Hcloud",
+			token: "netskope-publisher:index:HcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+			}),
+			childType: "hcloud:index/server:Server",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "Nutanix",
+			token: "netskope-publisher:index:NutanixPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"clusterUuid":   property.New("cluster-uuid"),
+			}),
+			childType: "nutanix:index/virtualMachine:VirtualMachine",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, decodeRequiredBase64(t, inputs.Get("guestCustomizationCloudInitUserData").AsString()))
+			},
+		},
+		{
+			name:  "OpenStack",
+			token: "netskope-publisher:index:OpenstackPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"imageName":     property.New("Ubuntu 22.04"),
+				"flavorName":    property.New("m1.medium"),
+				"networkName":   property.New("private"),
+			}),
+			childType: "openstack:compute/instance:Instance",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "OVH",
+			token: "netskope-publisher:index:OvhPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"serviceName":   property.New("project-id"),
+				"region":        property.New("GRA11"),
+				"imageId":       property.New("image-id"),
+				"flavorId":      property.New("flavor-id"),
+			}),
+			childType: "ovh:CloudProject/instance:Instance",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, inputs.Get("userData").AsString())
+			},
+		},
+		{
+			name:  "Scaleway",
+			token: "netskope-publisher:index:ScalewayPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+			}),
+			childType: "scaleway:instance/server:Server",
+			validate: func(t *testing.T, inputs property.Map) {
+				userData := inputs.Get("userData").AsMap().Get("cloud-init").AsString()
+				assertBootstrapUserData(t, userData)
+			},
+		},
+		{
+			name:  "OCI",
+			token: "netskope-publisher:index:OciPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":              property.New([]property.Value{property.New("pub-1")}),
+				"registrations":      registrationMap("pub-1"),
+				"compartmentId":      property.New("ocid1.compartment.oc1..example"),
+				"availabilityDomain": property.New("AD-1"),
+				"subnetId":           property.New("ocid1.subnet.oc1..example"),
+				"imageId":            property.New("ocid1.image.oc1..example"),
+			}),
+			childType: "oci:Core/instance:Instance",
+			validate: func(t *testing.T, inputs property.Map) {
+				userData := inputs.Get("metadata").AsMap().Get("userData").AsString()
+				assertBootstrapUserData(t, decodeRequiredBase64(t, userData))
+			},
+		},
+		{
+			name:  "Alicloud",
+			token: "netskope-publisher:index:AlicloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":            property.New([]property.Value{property.New("pub-1")}),
+				"registrations":    registrationMap("pub-1"),
+				"imageId":          property.New("ubuntu_22_04_x64_20G_alibase.vhd"),
+				"vswitchId":        property.New("vsw-123"),
+				"securityGroupIds": property.New([]property.Value{property.New("sg-123")}),
+			}),
+			childType: "alicloud:ecs/instance:Instance",
+			validate: func(t *testing.T, inputs property.Map) {
+				assertBootstrapUserData(t, decodeRequiredBase64(t, inputs.Get("userData").AsString()))
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			resources := constructAndCollectResources(t, tc.token, tc.inputs)
+			child := findResourceByType(t, resources, tc.childType)
+			tc.validate(t, child.Inputs)
+		})
+	}
+}
+
+func TestOpenstackConstructAssociatesFloatingIP(t *testing.T) {
+	resources := constructAndCollectResources(t, "netskope-publisher:index:OpenstackPublisher", property.NewMap(map[string]property.Value{
+		"names":            property.New([]property.Value{property.New("pub-1")}),
+		"registrations":    registrationMap("pub-1"),
+		"imageName":        property.New("Ubuntu 22.04"),
+		"flavorName":       property.New("m1.medium"),
+		"networkName":      property.New("private"),
+		"assignFloatingIp": property.New(true),
+		"floatingIpPool":   property.New("public"),
+	}))
+
+	if findResourceByType(t, resources, "openstack:networking/floatingIp:FloatingIp").Inputs.Get("pool").AsString() != "public" {
+		t.Fatalf("expected OpenStack floating IP to use requested pool")
+	}
+
+	association := findResourceByType(t, resources, "openstack:networking/floatingIpAssociate:FloatingIpAssociate")
+	if _, ok := association.Inputs.GetOk("floatingIp"); !ok {
+		t.Fatalf("expected OpenStack floating IP association to set floatingIp")
+	}
+	if _, ok := association.Inputs.GetOk("portId"); !ok {
+		t.Fatalf("expected OpenStack floating IP association to set portId")
+	}
+}
+
+type capturedResource struct {
+	Type   string
+	Name   string
+	Inputs property.Map
+}
+
 func constructAndCollectTypes(t *testing.T, token string, inputs property.Map) []string {
+	t.Helper()
+	resources := constructAndCollectResources(t, token, inputs)
+	createdTypes := make([]string, 0, len(resources))
+	for _, resource := range resources {
+		createdTypes = append(createdTypes, resource.Type)
+	}
+	return createdTypes
+}
+
+func constructAndCollectResources(t *testing.T, token string, inputs property.Map) []capturedResource {
 	t.Helper()
 
 	provider, err := New()
@@ -354,7 +532,7 @@ func constructAndCollectTypes(t *testing.T, token string, inputs property.Map) [
 		t.Fatal(err)
 	}
 
-	var createdTypes []string
+	var createdResources []capturedResource
 	server, err := integration.NewServer(
 		t.Context(),
 		Name,
@@ -362,7 +540,11 @@ func constructAndCollectTypes(t *testing.T, token string, inputs property.Map) [
 		integration.WithProvider(provider),
 		integration.WithMocks(&integration.MockResourceMonitor{
 			NewResourceF: func(args integration.MockResourceArgs) (string, property.Map, error) {
-				createdTypes = append(createdTypes, string(args.TypeToken))
+				createdResources = append(createdResources, capturedResource{
+					Type:   string(args.TypeToken),
+					Name:   args.Name,
+					Inputs: args.Inputs,
+				})
 				if string(args.TypeToken) == "netskope-publisher:index:NetskopeRegistration" {
 					return args.Name + "-id", property.NewMap(map[string]property.Value{
 						"registrations": registrationMap("pub-1"),
@@ -397,7 +579,7 @@ func constructAndCollectTypes(t *testing.T, token string, inputs property.Map) [
 		t.Fatal(err)
 	}
 
-	return createdTypes
+	return createdResources
 }
 
 func createRegistrationResource(t *testing.T, inputs property.Map) p.CreateResponse {
@@ -446,6 +628,67 @@ func writeJSON(t *testing.T, w http.ResponseWriter, body any) {
 	if err := json.NewEncoder(w).Encode(body); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func findResourceByType(t *testing.T, resources []capturedResource, expectedType string) capturedResource {
+	t.Helper()
+	for _, resource := range resources {
+		if resource.Type == expectedType {
+			return resource
+		}
+	}
+	t.Fatalf("expected construct to create %s, got %v", expectedType, resourceTypes(resources))
+	return capturedResource{}
+}
+
+func resourceTypes(resources []capturedResource) []string {
+	types := make([]string, 0, len(resources))
+	for _, resource := range resources {
+		types = append(types, resource.Type)
+	}
+	return types
+}
+
+func assertBootstrapUserData(t *testing.T, userData string) {
+	t.Helper()
+	for _, expected := range []string{
+		"#cloud-config",
+		"curl -fsSL https://s3-us-west-2.amazonaws.com/publisher.netskope.com/latest/generic/bootstrap.sh | sudo bash",
+		"sudo /home/ubuntu/npa_publisher_wizard -token \"token\"",
+	} {
+		if !strings.Contains(userData, expected) {
+			t.Fatalf("expected bootstrap user data to contain %q, got:\n%s", expected, userData)
+		}
+	}
+}
+
+func decodeRequiredBase64(t *testing.T, value string) string {
+	t.Helper()
+	decoded, err := base64.StdEncoding.DecodeString(value)
+	if err != nil {
+		t.Fatalf("expected base64-encoded value, got %q: %v", value, err)
+	}
+	return string(decoded)
+}
+
+func assertKeyValueArrayHas(t *testing.T, values []property.Value, expectedKey string, expectedValue string) {
+	t.Helper()
+	value := keyValueArrayValue(t, values, expectedKey)
+	if value != expectedValue {
+		t.Fatalf("expected %s to be %q, got %q", expectedKey, expectedValue, value)
+	}
+}
+
+func keyValueArrayValue(t *testing.T, values []property.Value, expectedKey string) string {
+	t.Helper()
+	for _, item := range values {
+		itemMap := item.AsMap()
+		if itemMap.Get("key").AsString() == expectedKey {
+			return itemMap.Get("value").AsString()
+		}
+	}
+	t.Fatalf("expected key/value array to contain %s", expectedKey)
+	return ""
 }
 
 func contains(values []string, expected string) bool {
