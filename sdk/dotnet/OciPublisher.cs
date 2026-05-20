@@ -118,13 +118,6 @@ namespace Pulumi.NetskopePublisher
             {
                 Version = Utilities.Version,
                 PluginDownloadURL = "github://api.github.com/johnneerdael/pulumi-netskope-publisher",
-                AdditionalSecretOutputs =
-                {
-                    "apiToken",
-                    "bearerToken",
-                    "installUserPassword",
-                    "publishers",
-                },
             };
             var merged = ComponentResourceOptions.Merge(defaultOptions, options);
             // Override the ID if one was specified for consistency with other language SDKs.

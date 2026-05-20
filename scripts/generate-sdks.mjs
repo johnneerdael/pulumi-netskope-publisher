@@ -43,6 +43,7 @@ for (const language of selectedLanguages) {
   if (language === "dotnet") {
     normalizeDotnetProviderCase();
     normalizeDotnetProviderNamespaces();
+    removeDotnetComponentSecretOutputOptions();
 
     const project = "sdk/dotnet/Pulumi.NetskopePublisher.csproj";
     let contents = readFileSync(project, "utf8");
@@ -223,6 +224,19 @@ function removeJavaComponentSecretOutputOptions() {
       continue;
     }
     const updated = contents.replace(/\n\s*\.additionalSecretOutputs\(List\.of\([\s\S]*?\n\s*\)\)/g, "");
+    if (updated !== contents) {
+      writeFileSync(file, updated);
+    }
+  }
+}
+
+function removeDotnetComponentSecretOutputOptions() {
+  for (const file of listFiles("sdk/dotnet", ".cs")) {
+    const contents = readFileSync(file, "utf8");
+    if (!contents.includes(": global::Pulumi.ComponentResource")) {
+      continue;
+    }
+    const updated = contents.replace(/\n\s*AdditionalSecretOutputs =\n\s*\{[\s\S]*?\n\s*\},/g, "");
     if (updated !== contents) {
       writeFileSync(file, updated);
     }
