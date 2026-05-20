@@ -286,6 +286,71 @@ func (client *netskopeClient) replacePrivateAppPublishers(ctx context.Context, a
 	return client.request(ctx, "Replace private app publishers", http.MethodPut, "/api/v2/steering/apps/private/publishers", body, nil)
 }
 
+type policyGroupRecord struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type realtimePolicyPayload struct {
+	Name          string   `json:"name"`
+	PolicyGroupID int      `json:"policy_group_id,omitempty"`
+	AppIDs        []int    `json:"private_app_ids,omitempty"`
+	AppTags       []string `json:"private_app_tags,omitempty"`
+	Users         []string `json:"users,omitempty"`
+	Groups        []string `json:"groups,omitempty"`
+	Action        string   `json:"action"`
+	Enabled       bool     `json:"enabled"`
+}
+
+type realtimePolicyRecord struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+func (client *netskopeClient) findPolicyGroupByName(ctx context.Context, name string) (*policyGroupRecord, error) {
+	var response struct {
+		Status string              `json:"status"`
+		Data   []policyGroupRecord `json:"data"`
+	}
+	if err := client.request(ctx, "List policy groups", http.MethodGet, "/api/v2/policy/npa/policygroups", nil, &response); err != nil {
+		return nil, err
+	}
+	for _, group := range response.Data {
+		if group.Name == name {
+			return &group, nil
+		}
+	}
+	return nil, nil
+}
+
+func (client *netskopeClient) createRealtimePolicy(ctx context.Context, payload realtimePolicyPayload) (realtimePolicyRecord, error) {
+	var response struct {
+		Status string               `json:"status"`
+		Data   realtimePolicyRecord `json:"data"`
+	}
+	if err := client.request(ctx, "Create realtime protection policy "+payload.Name, http.MethodPost, "/api/v2/policy/npa/rules", payload, &response); err != nil {
+		return realtimePolicyRecord{}, err
+	}
+	return response.Data, nil
+}
+
+func (client *netskopeClient) updateRealtimePolicy(ctx context.Context, id int, payload realtimePolicyPayload) (realtimePolicyRecord, error) {
+	var response struct {
+		Status string               `json:"status"`
+		Data   realtimePolicyRecord `json:"data"`
+	}
+	path := fmt.Sprintf("/api/v2/policy/npa/rules/%d", id)
+	if err := client.request(ctx, "Update realtime protection policy "+payload.Name, http.MethodPatch, path, payload, &response); err != nil {
+		return realtimePolicyRecord{}, err
+	}
+	return response.Data, nil
+}
+
+func (client *netskopeClient) deleteRealtimePolicy(ctx context.Context, id int) error {
+	path := fmt.Sprintf("/api/v2/policy/npa/rules/%d", id)
+	return client.request(ctx, fmt.Sprintf("Delete realtime protection policy %d", id), http.MethodDelete, path, nil, nil)
+}
+
 func (client *netskopeClient) resolveAccessToken(ctx context.Context) (string, error) {
 	switch client.authMode {
 	case "", "token":

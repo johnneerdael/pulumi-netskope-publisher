@@ -38,6 +38,7 @@ func New() (p.Provider, error) {
 			infer.Resource(&NetskopeRegistration{}),
 			infer.Resource(&PrivateApp{}),
 			infer.Resource(&TagPublisherAssignment{}),
+			infer.Resource(&RealtimeProtectionPolicy{}),
 		).
 		WithComponents(
 			infer.ComponentF(NewAwsPublisher),

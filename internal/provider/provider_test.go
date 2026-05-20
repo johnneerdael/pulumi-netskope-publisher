@@ -380,6 +380,44 @@ func TestTagPublisherAssignmentAddsAndRemovesOnlySelectedPublishers(t *testing.T
 	}
 }
 
+func TestRealtimeProtectionPolicyCreatesRuleWithPolicyGroupReference(t *testing.T) {
+	var created map[string]any
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/policy/npa/policygroups":
+			writeJSON(t, w, map[string]any{"status": "success", "data": []map[string]any{{"id": 12, "name": "default"}}})
+		case r.Method == http.MethodPost && r.URL.Path == "/api/v2/policy/npa/rules":
+			if err := json.NewDecoder(r.Body).Decode(&created); err != nil {
+				t.Fatal(err)
+			}
+			writeJSON(t, w, map[string]any{"status": "success", "data": map[string]any{"id": 55, "name": "orders-access"}})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	response, err := createRealtimeProtectionPolicyResource(t, property.NewMap(map[string]property.Value{
+		"tenantUrl":       property.New(server.URL),
+		"bearerToken":     property.New("api-token"),
+		"name":            property.New("orders-access"),
+		"policyGroupName": property.New("default"),
+		"appTags":         property.New([]property.Value{property.New("vpc-a")}),
+		"users":           property.New([]property.Value{property.New("user@example.com")}),
+		"action":          property.New("allow"),
+		"enabled":         property.New(true),
+	}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.ID != "55" {
+		t.Fatalf("expected policy ID 55, got %q", response.ID)
+	}
+	if created["name"] != "orders-access" {
+		t.Fatalf("expected policy name in payload, got %#v", created)
+	}
+}
+
 func TestGcpConstructCreatesComputeInstanceChild(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:GcpPublisher", property.NewMap(map[string]property.Value{
 		"names":         property.New([]property.Value{property.New("pub-1")}),
@@ -1220,6 +1258,30 @@ func createTagPublisherAssignmentResource(t *testing.T, inputs property.Map) (p.
 
 	return server.Create(p.CreateRequest{
 		Urn:        presource.URN("urn:pulumi:stack::project::netskope-publisher:index:TagPublisherAssignment::assignment"),
+		Properties: inputs,
+	})
+}
+
+func createRealtimeProtectionPolicyResource(t *testing.T, inputs property.Map) (p.CreateResponse, error) {
+	t.Helper()
+
+	provider, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server, err := integration.NewServer(
+		t.Context(),
+		Name,
+		semver.MustParse("0.2.0"),
+		integration.WithProvider(provider),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return server.Create(p.CreateRequest{
+		Urn:        presource.URN("urn:pulumi:stack::project::netskope-publisher:index:RealtimeProtectionPolicy::policy"),
 		Properties: inputs,
 	})
 }
