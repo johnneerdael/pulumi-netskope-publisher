@@ -38,14 +38,35 @@ the Netskope bootstrap cloud-init as a snippet, sets
 
 `publisherNames` and secret `publishers`, keyed by publisher name.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set proxmoxve:endpoint https://pve.example.com:8006/
-pulumi config set proxmoxve:apiToken 'root@pam!pulumi=token-value' --secret
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi up
+```yaml
+name: netskope-publisher-proxmoxve
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:ProxmoxvePublisher
+    properties:
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      nodeName: pve-1
+      vmIdStart: 4200
+      templateVmId: 9000
+      datastoreId: local-lvm
+      snippetsDatastoreId: local
+      networkBridge: vmbr0
+      bootstrap: true
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

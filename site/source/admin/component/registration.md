@@ -35,22 +35,58 @@ separate tenant registration from platform infrastructure.
 - `registrationToken`
 - `existedBefore`
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi up
+Static bearer token enrollment:
+
+```yaml
+name: netskope-registration
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  registration:
+    type: netskope-publisher:index:NetskopeRegistration
+    properties:
+      publisherNames:
+        - pub-eu-1
+        - pub-eu-2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+outputs:
+  registrations: ${registration.registrations}
 ```
 
-For OAuth2 client credentials:
+OAuth2 client credentials enrollment:
 
-```bash
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:oauthTokenUrl https://tenant.goskope.com/oauth2/token
-pulumi config set netskope:oauthClientId <client-id>
-pulumi config set netskope:oauthClientSecret --secret
-pulumi up
+```yaml
+name: netskope-registration-oauth2
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  oauthClientSecret:
+    type: String
+    secret: true
+resources:
+  registration:
+    type: netskope-publisher:index:NetskopeRegistration
+    properties:
+      publisherNames:
+        - pub-eu-1
+        - pub-eu-2
+      tenantUrl: ${tenantUrl}
+      authMode: oauth2
+      oauth2:
+        tokenUrl: https://tenant.goskope.com/oauth2/token
+        clientId: <client-id>
+        clientSecret: ${oauthClientSecret}
+outputs:
+  registrations: ${registration.registrations}
 ```
 
 ## TypeScript

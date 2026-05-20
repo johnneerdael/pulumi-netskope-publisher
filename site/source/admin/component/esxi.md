@@ -32,15 +32,32 @@ ESXi Native provider.
 
 `publisherNames` and secret `publishers`, keyed by publisher name.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set esxi-native:host https://esxi.example.com/sdk
-pulumi config set esxi-native:user root
-pulumi config set esxi-native:password --secret
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi up
+```yaml
+name: netskope-publisher-esxi
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:EsxiPublisher
+    properties:
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      datastore: datastore1
+      networkName: VM Network
+      ovfSource: /images/ubuntu-22.04.ova
+      diskStore: datastore1
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

@@ -31,13 +31,34 @@ metadata.
 
 `publisherNames` and secret `publishers`, keyed by publisher name.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set oci:region eu-frankfurt-1
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi up
+```yaml
+name: netskope-publisher-oci
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:OciPublisher
+    properties:
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      compartmentId: ocid1.compartment.oc1..example
+      availabilityDomain: '<availability-domain>'
+      subnetId: ocid1.subnet.oc1..example
+      imageId: ocid1.image.oc1..ubuntu2204
+      shape: VM.Standard.E4.Flex
+      bootstrap: true
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

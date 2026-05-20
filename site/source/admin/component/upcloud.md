@@ -17,12 +17,32 @@ Required Netskope inputs: `tenantUrl` and `bearerToken`, unless `registrations` 
 
 The component renders the shared Netskope Publisher cloud-init payload, installs the generic publisher software, and enrolls the VM with a deployment-time registration token.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi up
+```yaml
+name: netskope-publisher-upcloud
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:UpcloudPublisher
+    properties:
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      zone: nl-ams1
+      plan: 2xCPU-4GB
+      template: Ubuntu Server 22.04 LTS (Jammy Jellyfish)
+      bootstrap: true
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

@@ -41,15 +41,31 @@ during startup.
 - `helmReleaseNames`
 - secret `publishers`
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi new typescript
-pulumi config set kubernetes:context kind-npa
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi config set namespace npa
-pulumi up
+```yaml
+name: netskope-publisher-kubernetes
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:KubernetesPublisher
+    properties:
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      namespace: npa
+      authMode: token
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
+  helmReleaseNames: ${publisher.helmReleaseNames}
 ```
 
 ## TypeScript

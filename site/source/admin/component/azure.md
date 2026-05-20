@@ -44,18 +44,35 @@ cloud-init ownership aligned.
 - `publisherNames`
 - secret `publishers`
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi new typescript
-pulumi config set azure-native:location westeurope
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi config set resourceGroupName rg-npa
-pulumi config set location westeurope
-pulumi config set subnetId /subscriptions/.../subnets/npa
-pulumi config set adminSshPublicKey "ssh-rsa AAAA..."
-pulumi up
+```yaml
+name: netskope-publisher-azure
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:AzurePublisher
+    properties:
+      namePrefix: pub-eu
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      resourceGroupName: rg-npa
+      location: westeurope
+      subnetId: /subscriptions/.../subnets/npa
+      adminSshPublicKey: ssh-rsa AAAA...
+      vmSize: Standard_D2s_v5
+      assignPublicIp: false
+      bootstrap: true
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

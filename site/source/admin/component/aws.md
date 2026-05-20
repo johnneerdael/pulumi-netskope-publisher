@@ -47,17 +47,38 @@ when using a pre-baked Publisher AMI.
 Each `publishers` entry includes publisher ID, registration token,
 instance ID, private IP, and public IP when assigned.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi new typescript
-pulumi config set aws:region eu-west-1
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi config set subnetId subnet-0123456789abcdef0
-pulumi config set securityGroupId sg-0123456789abcdef0
-pulumi config set keyName npa-admin
-pulumi up
+```yaml
+name: netskope-publisher-aws
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:AwsPublisher
+    properties:
+      namePrefix: pub-eu
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      subnetId: subnet-0123456789abcdef0
+      securityGroupIds:
+        - sg-0123456789abcdef0
+      keyName: npa-admin
+      instanceType: t3.medium
+      associatePublicIpAddress: false
+      bootstrap: true
+      tags:
+        service: npa
+        managedBy: pulumi
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

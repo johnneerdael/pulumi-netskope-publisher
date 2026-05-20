@@ -29,13 +29,32 @@ Netskope's generic installer through cloud-init.
 
 `publisherNames` and secret `publishers`, keyed by publisher name.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set hcloud:token --secret
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi up
+```yaml
+name: netskope-publisher-hcloud
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:HcloudPublisher
+    properties:
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      location: fsn1
+      serverType: cx22
+      image: ubuntu-22.04
+      bootstrap: true
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

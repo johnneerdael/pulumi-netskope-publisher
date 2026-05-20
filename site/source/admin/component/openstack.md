@@ -31,15 +31,32 @@ passes decoded cloud-init to the compute instance `userData` field.
 
 `publisherNames` and secret `publishers`, keyed by publisher name.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set openstack:authUrl https://openstack.example.com:5000/v3
-pulumi config set openstack:userName admin
-pulumi config set openstack:password --secret
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi up
+```yaml
+name: netskope-publisher-openstack
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:OpenstackPublisher
+    properties:
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      imageName: Ubuntu 22.04
+      flavorName: m1.medium
+      networkName: private
+      bootstrap: true
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

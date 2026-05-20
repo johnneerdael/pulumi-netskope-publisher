@@ -45,19 +45,35 @@ when using a custom image that already has `npa_publisher_wizard`.
 - `publisherNames`
 - secret `publishers`
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi new typescript
-pulumi config set gcp:project my-gcp-project
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi config set project my-gcp-project
-pulumi config set zone europe-west4-a
-pulumi config set network default
-pulumi config set subnetwork default
-pulumi config set image projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts
-pulumi up
+```yaml
+name: netskope-publisher-gcp
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:GcpPublisher
+    properties:
+      namePrefix: pub-eu
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      project: my-gcp-project
+      zone: europe-west4-a
+      network: default
+      subnetwork: default
+      image: projects/ubuntu-os-cloud/global/images/family/ubuntu-2204-lts
+      machineType: e2-medium
+      bootstrap: true
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

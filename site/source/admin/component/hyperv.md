@@ -30,12 +30,29 @@ The current gate does not create VMs. The intended Hyper-V shape mirrors
 the Terraform module: virtual switch, VHDX source, CPU and memory sizing,
 publisher naming, tenant registration, and NoCloud seed data.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi config set enableExperimentalHyperv true
+```yaml
+name: netskope-publisher-hyperv
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:HypervPublisher
+    properties:
+      enableExperimentalHyperv: true
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

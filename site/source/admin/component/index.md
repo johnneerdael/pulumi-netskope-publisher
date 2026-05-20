@@ -6,7 +6,7 @@ title: Components
 
 The package exposes provider-specific publisher components. Each page
 lists required inputs, common optional inputs, outputs, and examples for
-the Pulumi CLI, TypeScript, Python, C#, Go, Java, and Rust.
+Pulumi YAML, TypeScript, Python, C#, Go, Java, and Rust.
 
 The Java examples use the published
 [`com.pulumi:netskope-publisher`](https://github.com/johnneerdael/pulumi-netskope-publisher/packages)

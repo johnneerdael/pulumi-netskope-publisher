@@ -30,16 +30,33 @@ component uses bootstrap mode and passes cloud-init to the instance
 
 `publisherNames` and secret `publishers`, keyed by publisher name.
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi config set ovh:endpoint ovh-eu
-pulumi config set ovh:applicationKey --secret
-pulumi config set ovh:applicationSecret --secret
-pulumi config set ovh:consumerKey --secret
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi up
+```yaml
+name: netskope-publisher-ovh
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:OvhPublisher
+    properties:
+      namePrefix: pub
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      serviceName: <public-cloud-project-id>
+      region: GRA11
+      flavorName: b2-7
+      imageName: Ubuntu 22.04
+      bootstrap: true
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript

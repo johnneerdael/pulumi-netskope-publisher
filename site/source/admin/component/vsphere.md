@@ -41,21 +41,33 @@ The template must have VMware guestinfo cloud-init support enabled.
 - `publisherNames`
 - secret `publishers`
 
-## Pulumi CLI
+## Pulumi YAML
 
-```bash
-pulumi new typescript
-pulumi config set vsphere:user administrator@vsphere.local
-pulumi config set vsphere:password --secret
-pulumi config set vsphere:vsphereServer vcsa.lab.local
-pulumi config set netskope:tenantUrl https://tenant.goskope.com
-pulumi config set netskope:bearerToken --secret
-pulumi config set datacenter Lab
-pulumi config set datastore datastore1
-pulumi config set networkName VM Network
-pulumi config set templateName npa-publisher-template
-pulumi config set cluster Cluster
-pulumi up
+```yaml
+name: netskope-publisher-vsphere
+runtime: yaml
+config:
+  tenantUrl:
+    type: String
+  bearerToken:
+    type: String
+    secret: true
+resources:
+  publisher:
+    type: netskope-publisher:index:VspherePublisher
+    properties:
+      namePrefix: pub-eu
+      replicas: 2
+      tenantUrl: ${tenantUrl}
+      bearerToken: ${bearerToken}
+      datacenter: Lab
+      datastore: datastore1
+      networkName: VM Network
+      templateName: npa-publisher-template
+      cluster: Cluster
+outputs:
+  publisherNames: ${publisher.publisherNames}
+  publishers: ${publisher.publishers}
 ```
 
 ## TypeScript
