@@ -86,6 +86,21 @@ test("ProxmoxvePublisher rejects missing catalog-required templateVmId", () => {
   );
 });
 
+test("ProxmoxvePublisher rejects vmId with multiple publishers", () => {
+  assert.throws(
+    () => new ProxmoxvePublisher("duplicate-vmid", {
+      names: ["pub-1", "pub-2"],
+      tenantUrl: "https://tenant.goskope.com",
+      apiToken: pulumi.secret("api-token"),
+      nodeName: "pve-1",
+      datastoreId: "local",
+      templateVmId: 9000,
+      vmId: 101,
+    }),
+    /ProxmoxvePublisher vmId can only be used with exactly one publisher/,
+  );
+});
+
 function registrationMock(args: pulumi.runtime.MockResourceArgs) {
   return {
     id: "pub-1",

@@ -1,5 +1,6 @@
 import * as proxmoxve from "@muhlba91/pulumi-proxmoxve";
 import * as pulumi from "@pulumi/pulumi";
+import { resolvePublisherNames } from "./componentCore";
 import { plainUserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { ProxmoxvePublisherArgs, PublisherOutput } from "./types";
@@ -12,6 +13,9 @@ export class ProxmoxvePublisher extends pulumi.ComponentResource {
   constructor(name: string, args: ProxmoxvePublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:ProxmoxvePublisher", name, {}, opts);
     validateComponentArgs("ProxmoxvePublisher", args);
+    if (args.vmId !== undefined && resolvePublisherNames(args).length !== 1) {
+      throw new Error("ProxmoxvePublisher vmId can only be used with exactly one publisher; omit vmId for provider-assigned IDs or deploy one publisher at a time.");
+    }
 
     const outputs = createVmPublishers({
       parent: this,

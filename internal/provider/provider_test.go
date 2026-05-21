@@ -1408,6 +1408,31 @@ func TestProxmoxveConstructRejectsMissingTemplateVMID(t *testing.T) {
 	}
 }
 
+func TestProxmoxveConstructRejectsVMIDWithMultiplePublishers(t *testing.T) {
+	err := constructPublisherResourceError(t, "netskope-publisher:index:ProxmoxvePublisher", property.NewMap(map[string]property.Value{
+		"names": property.New([]property.Value{property.New("pub-1"), property.New("pub-2")}),
+		"registrations": property.New(map[string]property.Value{
+			"pub-1": property.New(map[string]property.Value{
+				"publisherId":       property.New(123.0),
+				"registrationToken": property.New("token-1"),
+				"existedBefore":     property.New(true),
+			}),
+			"pub-2": property.New(map[string]property.Value{
+				"publisherId":       property.New(124.0),
+				"registrationToken": property.New("token-2"),
+				"existedBefore":     property.New(true),
+			}),
+		}),
+		"nodeName":     property.New("pve-1"),
+		"datastoreId":  property.New("local"),
+		"templateVmId": property.New(9000.0),
+		"vmId":         property.New(101.0),
+	}))
+	if err == nil || !strings.Contains(err.Error(), "ProxmoxvePublisher vmId can only be used with exactly one publisher") {
+		t.Fatalf("expected duplicate vmId guard error, got %v", err)
+	}
+}
+
 func TestOciConstructRejectsMissingImageID(t *testing.T) {
 	err := constructPublisherResourceError(t, "netskope-publisher:index:OciPublisher", property.NewMap(map[string]property.Value{
 		"names":              property.New([]property.Value{property.New("pub-1")}),

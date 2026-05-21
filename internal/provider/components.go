@@ -2014,6 +2014,15 @@ func NewProxmoxvePublisher(ctx *pulumi.Context, name string, args ProxmoxvePubli
 	if err := validateProviderCatalogArgs("ProxmoxvePublisher", args); err != nil {
 		return nil, err
 	}
+	if args.VMID != nil {
+		names, err := derivePublisherNames(args.common())
+		if err != nil {
+			return nil, err
+		}
+		if len(names) != 1 {
+			return nil, fmt.Errorf("ProxmoxvePublisher vmId can only be used with exactly one publisher; omit vmId for provider-assigned IDs or deploy one publisher at a time")
+		}
+	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
