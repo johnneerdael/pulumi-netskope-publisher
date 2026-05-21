@@ -348,7 +348,7 @@ type realtimePolicyAction struct {
 }
 
 type realtimePolicyRuleData struct {
-	PrivateApps         []int                `json:"privateApps,omitempty"`
+	PrivateApps         []string             `json:"privateApps,omitempty"`
 	PrivateAppTags      []string             `json:"privateAppTags,omitempty"`
 	Users               []string             `json:"users,omitempty"`
 	UserGroups          []string             `json:"userGroups,omitempty"`
@@ -357,7 +357,7 @@ type realtimePolicyRuleData struct {
 
 type realtimePolicyPayload struct {
 	RuleName  string                 `json:"rule_name"`
-	GroupID   int                    `json:"group_id,omitempty"`
+	GroupID   string                 `json:"group_id,omitempty"`
 	GroupName string                 `json:"group_name,omitempty"`
 	RuleData  realtimePolicyRuleData `json:"rule_data"`
 	Enabled   string                 `json:"enabled"`
@@ -366,6 +366,11 @@ type realtimePolicyPayload struct {
 type realtimePolicyRecord struct {
 	RuleID   int    `json:"rule_id"`
 	RuleName string `json:"rule_name"`
+}
+
+type realtimePolicyEnvelope struct {
+	Status string               `json:"status"`
+	Data   realtimePolicyRecord `json:"data"`
 }
 
 func (client *netskopeClient) findPolicyGroupByName(ctx context.Context, name string) (*policyGroupRecord, error) {
@@ -393,21 +398,21 @@ func (client *netskopeClient) createRealtimePolicy(ctx context.Context, payload 
 }
 
 func (client *netskopeClient) updateRealtimePolicy(ctx context.Context, id int, payload realtimePolicyPayload) (realtimePolicyRecord, error) {
-	var response realtimePolicyRecord
+	var response realtimePolicyEnvelope
 	path := fmt.Sprintf("/api/v2/policy/npa/rules/%d", id)
 	if err := client.request(ctx, "Update realtime protection policy "+payload.RuleName, http.MethodPatch, path, payload, &response); err != nil {
 		return realtimePolicyRecord{}, err
 	}
-	return response, nil
+	return response.Data, nil
 }
 
 func (client *netskopeClient) getRealtimePolicy(ctx context.Context, id int) (realtimePolicyRecord, error) {
-	var response realtimePolicyRecord
+	var response realtimePolicyEnvelope
 	path := fmt.Sprintf("/api/v2/policy/npa/rules/%d", id)
 	if err := client.request(ctx, fmt.Sprintf("Get realtime protection policy %d", id), http.MethodGet, path, nil, &response); err != nil {
 		return realtimePolicyRecord{}, err
 	}
-	return response, nil
+	return response.Data, nil
 }
 
 func (client *netskopeClient) deleteRealtimePolicy(ctx context.Context, id int) error {

@@ -579,15 +579,15 @@ func TestRealtimeProtectionPolicyCreatesRuleWithPolicyGroupReference(t *testing.
 	if created["rule_name"] != "orders-access" {
 		t.Fatalf("expected rule_name in payload, got %#v", created)
 	}
-	if created["group_id"] != float64(12) {
-		t.Fatalf("expected group_id 12 in payload, got %#v", created)
+	if created["group_id"] != "12" {
+		t.Fatalf("expected group_id string 12 in payload, got %#v", created)
 	}
 	if created["enabled"] != "1" {
 		t.Fatalf("expected enabled string 1 in payload, got %#v", created)
 	}
 	ruleData := created["rule_data"].(map[string]any)
-	if got := ruleData["privateApps"].([]any)[0]; got != float64(44) {
-		t.Fatalf("expected privateApps [44], got %#v", ruleData["privateApps"])
+	if got := ruleData["privateApps"].([]any)[0]; got != "44" {
+		t.Fatalf("expected privateApps [44] as strings, got %#v", ruleData["privateApps"])
 	}
 	if got := ruleData["privateAppTags"].([]any)[0]; got != "vpc-a" {
 		t.Fatalf("expected privateAppTags [vpc-a], got %#v", ruleData["privateAppTags"])
@@ -626,6 +626,105 @@ func TestRealtimeProtectionPolicyDryRunDoesNotResolvePolicyGroupName(t *testing.
 	}
 	if response.Output.ResolvedPolicyGroupID != 0 {
 		t.Fatalf("expected unresolved policy group during dry-run, got %d", response.Output.ResolvedPolicyGroupID)
+	}
+}
+
+func TestRealtimeProtectionPolicyReadParsesPolicyEnvelope(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/policy/npa/rules/55":
+			writeJSON(t, w, map[string]any{
+				"status": "success",
+				"data": map[string]any{
+					"rule_id":   55,
+					"rule_name": "orders-access",
+					"rule_data": map[string]any{},
+				},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	resource := RealtimeProtectionPolicy{}
+	response, err := resource.Read(t.Context(), infer.ReadRequest[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]{
+		ID: "55",
+		Inputs: RealtimeProtectionPolicyArgs{
+			TenantURL:   server.URL,
+			BearerToken: stringPtr("api-token"),
+			Name:        "orders-access",
+			Action:      "allow",
+			Enabled:     true,
+		},
+		State: RealtimeProtectionPolicyOutputs{
+			RealtimeProtectionPolicyArgs: RealtimeProtectionPolicyArgs{
+				TenantURL:   server.URL,
+				BearerToken: stringPtr("api-token"),
+				Name:        "orders-access",
+				Action:      "allow",
+				Enabled:     true,
+			},
+			PolicyID: 55,
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.ID != "55" {
+		t.Fatalf("expected read ID 55, got %q", response.ID)
+	}
+	if response.State.PolicyID != 55 {
+		t.Fatalf("expected state policy ID 55, got %d", response.State.PolicyID)
+	}
+}
+
+func TestRealtimeProtectionPolicyUpdateParsesPolicyEnvelope(t *testing.T) {
+	var patched map[string]any
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodPatch && r.URL.Path == "/api/v2/policy/npa/rules/55":
+			if err := json.NewDecoder(r.Body).Decode(&patched); err != nil {
+				t.Fatal(err)
+			}
+			writeJSON(t, w, map[string]any{
+				"status": "success",
+				"data": map[string]any{
+					"rule_id":   55,
+					"rule_name": "orders-access",
+					"rule_data": map[string]any{},
+				},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	resource := RealtimeProtectionPolicy{}
+	response, err := resource.Update(t.Context(), infer.UpdateRequest[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]{
+		ID: "55",
+		Inputs: RealtimeProtectionPolicyArgs{
+			TenantURL:     server.URL,
+			BearerToken:   stringPtr("api-token"),
+			Name:          "orders-access",
+			PolicyGroupID: intPtr(12),
+			AppIDs:        []int{44},
+			Action:        "block",
+			Enabled:       false,
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.Output.PolicyID != 55 {
+		t.Fatalf("expected updated policy ID 55, got %d", response.Output.PolicyID)
+	}
+	if patched["group_id"] != "12" {
+		t.Fatalf("expected group_id string 12 in update payload, got %#v", patched)
+	}
+	if patched["enabled"] != "0" {
+		t.Fatalf("expected enabled string 0 in update payload, got %#v", patched)
 	}
 }
 
@@ -1612,6 +1711,10 @@ func writeJSON(t *testing.T, w http.ResponseWriter, body any) {
 }
 
 func stringPtr(value string) *string {
+	return &value
+}
+
+func intPtr(value int) *int {
 	return &value
 }
 

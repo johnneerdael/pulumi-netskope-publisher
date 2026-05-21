@@ -39,12 +39,14 @@ func (*RealtimeProtectionPolicy) Annotate(a infer.Annotator) {
 }
 
 func (*RealtimeProtectionPolicy) Create(ctx context.Context, req infer.CreateRequest[RealtimeProtectionPolicyArgs]) (infer.CreateResponse[RealtimeProtectionPolicyOutputs], error) {
+	output := RealtimeProtectionPolicyOutputs{RealtimeProtectionPolicyArgs: req.Inputs}
+	if req.DryRun {
+		return infer.CreateResponse[RealtimeProtectionPolicyOutputs]{ID: req.Inputs.Name, Output: output}, nil
+	}
+
 	output, payload, err := realtimePolicyPayloadFromArgs(ctx, req.Inputs)
 	if err != nil {
 		return infer.CreateResponse[RealtimeProtectionPolicyOutputs]{}, err
-	}
-	if req.DryRun {
-		return infer.CreateResponse[RealtimeProtectionPolicyOutputs]{ID: req.Inputs.Name, Output: output}, nil
 	}
 
 	client := newResourceClient(req.Inputs.TenantURL, req.Inputs.APIToken, req.Inputs.BearerToken, req.Inputs.AuthMode, req.Inputs.OAuth2, http.DefaultClient)
@@ -52,19 +54,30 @@ func (*RealtimeProtectionPolicy) Create(ctx context.Context, req infer.CreateReq
 	if err != nil {
 		return infer.CreateResponse[RealtimeProtectionPolicyOutputs]{}, err
 	}
-	output.PolicyID = created.ID
-	return infer.CreateResponse[RealtimeProtectionPolicyOutputs]{ID: strconv.Itoa(created.ID), Output: output}, nil
+	output.PolicyID = created.RuleID
+	return infer.CreateResponse[RealtimeProtectionPolicyOutputs]{ID: strconv.Itoa(created.RuleID), Output: output}, nil
 }
 
 func (*RealtimeProtectionPolicy) Read(ctx context.Context, req infer.ReadRequest[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]) (infer.ReadResponse[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs], error) {
-	return infer.ReadResponse[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]{ID: req.ID, Inputs: req.Inputs, State: req.State}, nil
+	policyID, err := strconv.Atoi(req.ID)
+	if err != nil {
+		return infer.ReadResponse[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]{}, fmt.Errorf("invalid realtime policy ID %q: %w", req.ID, err)
+	}
+	client := newResourceClient(req.Inputs.TenantURL, req.Inputs.APIToken, req.Inputs.BearerToken, req.Inputs.AuthMode, req.Inputs.OAuth2, http.DefaultClient)
+	policy, err := client.getRealtimePolicy(ctx, policyID)
+	if err != nil {
+		if err == errNetskopeNotFound {
+			return infer.ReadResponse[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]{}, nil
+		}
+		return infer.ReadResponse[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]{}, err
+	}
+	state := req.State
+	state.PolicyID = policy.RuleID
+	return infer.ReadResponse[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]{ID: strconv.Itoa(state.PolicyID), Inputs: req.Inputs, State: state}, nil
 }
 
 func (*RealtimeProtectionPolicy) Update(ctx context.Context, req infer.UpdateRequest[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]) (infer.UpdateResponse[RealtimeProtectionPolicyOutputs], error) {
-	output, payload, err := realtimePolicyPayloadFromArgs(ctx, req.Inputs)
-	if err != nil {
-		return infer.UpdateResponse[RealtimeProtectionPolicyOutputs]{}, err
-	}
+	output := RealtimeProtectionPolicyOutputs{RealtimeProtectionPolicyArgs: req.Inputs}
 	policyID, err := strconv.Atoi(req.ID)
 	if err != nil {
 		return infer.UpdateResponse[RealtimeProtectionPolicyOutputs]{}, fmt.Errorf("invalid realtime policy ID %q: %w", req.ID, err)
@@ -74,12 +87,18 @@ func (*RealtimeProtectionPolicy) Update(ctx context.Context, req infer.UpdateReq
 		return infer.UpdateResponse[RealtimeProtectionPolicyOutputs]{Output: output}, nil
 	}
 
+	output, payload, err := realtimePolicyPayloadFromArgs(ctx, req.Inputs)
+	if err != nil {
+		return infer.UpdateResponse[RealtimeProtectionPolicyOutputs]{}, err
+	}
+	output.PolicyID = policyID
+
 	client := newResourceClient(req.Inputs.TenantURL, req.Inputs.APIToken, req.Inputs.BearerToken, req.Inputs.AuthMode, req.Inputs.OAuth2, http.DefaultClient)
 	updated, err := client.updateRealtimePolicy(ctx, policyID, payload)
 	if err != nil {
 		return infer.UpdateResponse[RealtimeProtectionPolicyOutputs]{}, err
 	}
-	output.PolicyID = updated.ID
+	output.PolicyID = updated.RuleID
 	return infer.UpdateResponse[RealtimeProtectionPolicyOutputs]{Output: output}, nil
 }
 
@@ -110,15 +129,39 @@ func realtimePolicyPayloadFromArgs(ctx context.Context, args RealtimeProtectionP
 		groupID = group.ID
 	}
 
+	groupIDString := ""
+	if groupID != 0 {
+		groupIDString = strconv.Itoa(groupID)
+	}
+
 	output.ResolvedPolicyGroupID = groupID
 	return output, realtimePolicyPayload{
-		Name:          args.Name,
-		PolicyGroupID: groupID,
-		AppIDs:        args.AppIDs,
-		AppTags:       args.AppTags,
-		Users:         args.Users,
-		Groups:        args.Groups,
-		Action:        args.Action,
-		Enabled:       args.Enabled,
+		RuleName: args.Name,
+		GroupID:  groupIDString,
+		RuleData: realtimePolicyRuleData{
+			PrivateApps:    intStrings(args.AppIDs),
+			PrivateAppTags: args.AppTags,
+			Users:          args.Users,
+			UserGroups:     args.Groups,
+			MatchCriteriaAction: realtimePolicyAction{
+				ActionName: args.Action,
+			},
+		},
+		Enabled: enabledString(args.Enabled),
 	}, nil
+}
+
+func intStrings(values []int) []string {
+	strings := make([]string, 0, len(values))
+	for _, value := range values {
+		strings = append(strings, strconv.Itoa(value))
+	}
+	return strings
+}
+
+func enabledString(enabled bool) string {
+	if enabled {
+		return "1"
+	}
+	return "0"
 }
