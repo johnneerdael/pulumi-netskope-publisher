@@ -14,8 +14,15 @@ const goProviderSource = readFileSync("internal/provider/provider.go", "utf8");
 const errors = [];
 
 for (const provider of catalogProviders) {
-  if (!schema.resources?.[provider.token]) {
+  const schemaResource = schema.resources?.[provider.token];
+  if (!schemaResource) {
     errors.push(`schema.json missing catalog token ${provider.token}`);
+  } else {
+    const catalogRequired = [...(provider.validation.required ?? [])].sort();
+    const schemaRequired = [...(schemaResource.requiredInputs ?? [])].sort();
+    if (JSON.stringify(catalogRequired) !== JSON.stringify(schemaRequired)) {
+      errors.push(`${provider.componentName} catalog required inputs ${catalogRequired.join(",")} do not match schema requiredInputs ${schemaRequired.join(",")}`);
+    }
   }
 
   if (provider.componentName !== "NetskopeRegistration" && !indexSource.includes(`./${lowerFirst(provider.componentName)}`)) {

@@ -120,3 +120,7 @@ test("Proxmox VE declares both cloud-init snippet schema checks", () => {
     description: "VM cloud-init user-data file reference",
   }]);
 });
+
+test("NetskopeRegistration catalog required inputs match resource args", () => {
+  assert.deepEqual(providerCatalog.NetskopeRegistration.validation.required, ["publisherNames", "tenantUrl"]);
+});

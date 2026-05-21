@@ -29,6 +29,7 @@ func TestProviderCatalogIncludesCurrentComponents(t *testing.T) {
 		"TencentcloudPublisher",
 		"YandexPublisher",
 		"HypervPublisher",
+		"NetskopeRegistration",
 	}
 
 	for _, name := range required {
@@ -85,6 +86,19 @@ func TestProviderCatalogDirectProviderValidationMetadata(t *testing.T) {
 	}
 	if !containsString(oci.RequiredInputs, "imageId") {
 		t.Fatalf("OciPublisher missing imageId validation metadata: %#v", oci.RequiredInputs)
+	}
+}
+
+func TestProviderCatalogIncludesRegistrationMetadata(t *testing.T) {
+	registration := providerCatalog["NetskopeRegistration"]
+	if registration.Implementation != "resource" {
+		t.Fatalf("NetskopeRegistration implementation mismatch: %s", registration.Implementation)
+	}
+	if !containsString(registration.RequiredInputs, "publisherNames") {
+		t.Fatalf("NetskopeRegistration missing publisherNames validation metadata: %#v", registration.RequiredInputs)
+	}
+	if !containsString(registration.RequiredInputs, "tenantUrl") {
+		t.Fatalf("NetskopeRegistration missing tenantUrl validation metadata: %#v", registration.RequiredInputs)
 	}
 }
 

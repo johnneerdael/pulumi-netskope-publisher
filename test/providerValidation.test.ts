@@ -33,3 +33,10 @@ test("validateProviderArgs enforces experimental opt-in", () => {
     /HypervPublisher requires enableExperimentalHyperv: true/,
   );
 });
+
+test("validateProviderArgs rejects NetskopeRegistration without tenantUrl", () => {
+  assert.throws(
+    () => validateProviderArgs("NetskopeRegistration", { publisherNames: ["pub-1"] }),
+    /NetskopeRegistration requires input tenantUrl/,
+  );
+});

@@ -214,7 +214,7 @@ const providerDefinitions = [
   provider({ displayName: "TencentCloud", componentName: "TencentcloudPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "raw", slug: "tencentcloud", required: ["availabilityZone", "imageId"], resourceToken: "tencentcloud:index/instance:Instance", providerPackage: "terraform-provider:tencentcloudstack/tencentcloud" }),
   provider({ displayName: "Yandex Cloud", componentName: "YandexPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "metadata", slug: "yandex", required: ["imageId", "subnetId"], resourceToken: "yandex:index/computeInstance:ComputeInstance", providerPackage: "pulumi/yandex" }),
   provider({ displayName: "Hyper-V", componentName: "HypervPublisher", implementation: "bespoke", bootstrapModel: "experimental", userDataMode: "none", slug: "hyperv", required: ["switchName", "hardDrives"], validation: { experimentalOptInField: "enableExperimentalHyperv" } }),
-  provider({ displayName: "Netskope Registration", componentName: "NetskopeRegistration", implementation: "bespoke", bootstrapModel: "registrationOnly", userDataMode: "none", slug: "registration", required: ["publisherNames"] }),
+  provider({ displayName: "Netskope Registration", componentName: "NetskopeRegistration", implementation: "bespoke", bootstrapModel: "registrationOnly", userDataMode: "none", slug: "registration", required: ["publisherNames", "tenantUrl"] }),
 ] satisfies ProviderCatalogEntry[];
 
 export const catalogProviders = providerDefinitions;
