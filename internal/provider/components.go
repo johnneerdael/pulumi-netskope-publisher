@@ -419,7 +419,13 @@ func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, op
 			return nil, err
 		}
 
-		outputs[publisherName] = publisherOutput(registration, instance.InstanceId, pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(
+			registration,
+			instance.InstanceId,
+			firstGcpNetworkIP(instance.NetworkInterfaces),
+			firstGcpNatIP(instance.NetworkInterfaces),
+			args.PlacementLabels,
+		)
 	}
 
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
@@ -1619,6 +1625,7 @@ type rawVMResource struct {
 	Ipv4Addresses      pulumi.ArrayOutput       `pulumi:"ipv4Addresses"`
 	MainIP             pulumi.StringOutput      `pulumi:"mainIp"`
 	Networks           pulumi.ArrayOutput       `pulumi:"networks"`
+	NetworkInterfaces  pulumi.ArrayOutput       `pulumi:"networkInterfaces"`
 	NicListStatuses    pulumi.AnyOutput         `pulumi:"nicListStatuses"`
 	PrimaryIPAddress   pulumi.StringOutput      `pulumi:"primaryIpAddress"`
 	PrivateIP          pulumi.StringOutput      `pulumi:"privateIp"`
@@ -1711,7 +1718,7 @@ func NewHcloudPublisher(ctx *pulumi.Context, name string, args HcloudPublisherAr
 		if err := ctx.RegisterResource("hcloud:index/server:Server", name+"-"+publisherName, inputs, server, pulumi.Parent(component)); err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), server.Ipv4Address, args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), firstMapFieldOutput(server.Networks, "ip"), server.Ipv4Address, args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1806,7 +1813,7 @@ func NewOpenstackPublisher(ctx *pulumi.Context, name string, args OpenstackPubli
 			}
 			publicIP = floatingIP.Address
 		}
-		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), publicIP, args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), firstMapFieldOutput(instance.Networks, "fixedIpV4"), publicIP, args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -3384,6 +3391,30 @@ func firstMapFieldOutput(values pulumi.ArrayOutput, field string) pulumi.StringO
 			return ""
 		}
 		return fmt.Sprint(value)
+	}).(pulumi.StringOutput)
+}
+
+func firstGcpNetworkIP(values gcpcompute.InstanceNetworkInterfaceArrayOutput) pulumi.StringOutput {
+	return values.ApplyT(func(items []gcpcompute.InstanceNetworkInterface) string {
+		if len(items) == 0 {
+			return ""
+		}
+		if items[0].NetworkIp == nil {
+			return ""
+		}
+		return *items[0].NetworkIp
+	}).(pulumi.StringOutput)
+}
+
+func firstGcpNatIP(values gcpcompute.InstanceNetworkInterfaceArrayOutput) pulumi.StringOutput {
+	return values.ApplyT(func(items []gcpcompute.InstanceNetworkInterface) string {
+		if len(items) == 0 || len(items[0].AccessConfigs) == 0 {
+			return ""
+		}
+		if items[0].AccessConfigs[0].NatIp == nil {
+			return ""
+		}
+		return *items[0].AccessConfigs[0].NatIp
 	}).(pulumi.StringOutput)
 }
 

@@ -1718,13 +1718,30 @@ func constructAndCollectPublisherOutput(t *testing.T, token string, inputs prope
 				case "equinix:metal/device:Device":
 					state = state.Set("accessPublicIpv4", property.New("203.0.113.54"))
 					state = state.Set("accessPrivateIpv4", property.New("10.0.0.54"))
+				case "gcp:compute/instance:Instance":
+					state = state.Set("instanceId", property.New("gcp-instance-id"))
+					state = state.Set("networkInterfaces", property.New([]property.Value{property.New(map[string]property.Value{
+						"networkIp": property.New("10.2.0.10"),
+						"accessConfigs": property.New([]property.Value{property.New(map[string]property.Value{
+							"natIp": property.New("203.0.113.20"),
+						})}),
+					})}))
 				case "hcloud:index/server:Server":
 					state = state.Set("ipv4Address", property.New("203.0.113.10"))
+					state = state.Set("networks", property.New([]property.Value{property.New(map[string]property.Value{
+						"ip": property.New("10.0.0.10"),
+					})}))
 				case "nutanix:index/virtualMachine:VirtualMachine":
 					state = state.Set("nicListStatuses", property.New([]property.Value{property.New(map[string]property.Value{
 						"ipEndpointLists": property.New([]property.Value{property.New(map[string]property.Value{
 							"ip": property.New("10.0.0.20"),
 						})}),
+					})}))
+				case "openstack:compute/instance:Instance":
+					state = state.Set("accessIpV4", property.New("198.51.100.25"))
+					state = state.Set("networks", property.New([]property.Value{property.New(map[string]property.Value{
+						"fixedIpV4": property.New("10.5.0.10"),
+						"port":      property.New("port-123"),
 					})}))
 				case "ovh:CloudProject/instance:Instance":
 					state = state.Set("addresses", property.New([]property.Value{property.New(map[string]property.Value{
@@ -1784,6 +1801,62 @@ func TestProviderOutputsExposeAvailableIPAddresses(t *testing.T) {
 			}),
 			outputField: "publicIp",
 			expected:    "203.0.113.10",
+		},
+		{
+			name:  "GCP private IP",
+			token: "netskope-publisher:index:GcpPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":          property.New([]property.Value{property.New("pub-1")}),
+				"registrations":  registrationMap("pub-1"),
+				"project":        property.New("project"),
+				"zone":           property.New("europe-west4-a"),
+				"network":        property.New("default"),
+				"subnetwork":     property.New("default"),
+				"image":          property.New("projects/example/global/images/npa"),
+				"assignPublicIp": property.New(true),
+			}),
+			outputField: "privateIp",
+			expected:    "10.2.0.10",
+		},
+		{
+			name:  "GCP public IP",
+			token: "netskope-publisher:index:GcpPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":          property.New([]property.Value{property.New("pub-1")}),
+				"registrations":  registrationMap("pub-1"),
+				"project":        property.New("project"),
+				"zone":           property.New("europe-west4-a"),
+				"network":        property.New("default"),
+				"subnetwork":     property.New("default"),
+				"image":          property.New("projects/example/global/images/npa"),
+				"assignPublicIp": property.New(true),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.20",
+		},
+		{
+			name:  "Hcloud private IP",
+			token: "netskope-publisher:index:HcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"networkId":     property.New(123.0),
+			}),
+			outputField: "privateIp",
+			expected:    "10.0.0.10",
+		},
+		{
+			name:  "OpenStack private IP",
+			token: "netskope-publisher:index:OpenstackPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"imageName":     property.New("Ubuntu 22.04"),
+				"flavorName":    property.New("m1.medium"),
+				"networkName":   property.New("private"),
+			}),
+			outputField: "privateIp",
+			expected:    "10.5.0.10",
 		},
 		{
 			name:  "Nutanix",
