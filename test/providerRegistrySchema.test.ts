@@ -72,3 +72,85 @@ test("validateProviderAgainstRegistrySchema accepts terraform-provider package m
 
   assert.deepEqual(errors, []);
 });
+
+test("validateProviderAgainstRegistrySchema accepts explicit nested schema checks", () => {
+  const errors = validateProviderAgainstRegistrySchema({
+    componentName: "CompositePublisher",
+    providerPackage: "@example/provider",
+    resourceToken: "example:index/vm:Vm",
+    userData: {
+      mode: "proxmoxSnippet",
+    },
+    registrySchemaChecks: [{
+      resourceToken: "example:index/file:File",
+      propertyPath: ["sourceRaw", "data"],
+      description: "cloud-init snippet content",
+    }, {
+      resourceToken: "example:index/vm:Vm",
+      propertyPath: ["initialization", "userDataFileId"],
+      description: "VM cloud-init user-data file reference",
+    }],
+  }, {
+    name: "example",
+    language: { nodejs: { packageName: "@example/provider" } },
+    resources: {
+      "example:index/file:File": {
+        inputProperties: {
+          sourceRaw: { "$ref": "#/types/example:index/FileSourceRaw:FileSourceRaw" },
+        },
+      },
+      "example:index/vm:Vm": {
+        inputProperties: {
+          initialization: { "$ref": "#/types/example:index/VmInitialization:VmInitialization" },
+        },
+      },
+    },
+    types: {
+      "example:index/FileSourceRaw:FileSourceRaw": {
+        properties: {
+          data: { type: "string" },
+        },
+      },
+      "example:index/VmInitialization:VmInitialization": {
+        properties: {
+          userDataFileId: { type: "string" },
+        },
+      },
+    },
+  });
+
+  assert.deepEqual(errors, []);
+});
+
+test("validateProviderAgainstRegistrySchema rejects missing nested schema check path", () => {
+  const errors = validateProviderAgainstRegistrySchema({
+    componentName: "CompositePublisher",
+    resourceToken: "example:index/vm:Vm",
+    userData: {
+      mode: "proxmoxSnippet",
+    },
+    registrySchemaChecks: [{
+      resourceToken: "example:index/file:File",
+      propertyPath: ["sourceRaw", "data"],
+      description: "cloud-init snippet content",
+    }],
+  }, {
+    name: "example",
+    resources: {
+      "example:index/file:File": {
+        inputProperties: {
+          sourceRaw: { "$ref": "#/types/example:index/FileSourceRaw:FileSourceRaw" },
+        },
+      },
+    },
+    types: {
+      "example:index/FileSourceRaw:FileSourceRaw": {
+        properties: {
+          fileName: { type: "string" },
+        },
+      },
+    },
+  });
+
+  assert.match(errors.join("\n"), /CompositePublisher upstream resource example:index\/file:File missing cloud-init snippet content path sourceRaw\.data/);
+});

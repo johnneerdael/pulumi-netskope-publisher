@@ -108,3 +108,15 @@ test("catalog-driven providers declare upstream registry schema URLs", () => {
     assert.equal(providerCatalog[componentName].registrySchemaUrl, registrySchemaUrl, `${componentName} registrySchemaUrl mismatch`);
   }
 });
+
+test("Proxmox VE declares both cloud-init snippet schema checks", () => {
+  assert.deepEqual(providerCatalog.ProxmoxvePublisher.registrySchemaChecks, [{
+    resourceToken: "proxmoxve:index/fileLegacy:FileLegacy",
+    propertyPath: ["sourceRaw", "data"],
+    description: "cloud-init snippet content",
+  }, {
+    resourceToken: "proxmoxve:index/vmLegacy:VmLegacy",
+    propertyPath: ["initialization", "userDataFileId"],
+    description: "VM cloud-init user-data file reference",
+  }]);
+});

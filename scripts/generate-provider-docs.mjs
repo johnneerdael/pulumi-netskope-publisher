@@ -33,7 +33,7 @@ const adapterRows = [
     .filter((provider) => provider.userData.mode !== "none")
     .map(
       (provider) =>
-        `| \`${provider.componentName}\` | ${provider.userData.mode} | ${provider.userData.property ?? provider.userData.metadataKey ?? ""} |`,
+        `| \`${provider.componentName}\` | ${provider.userData.mode} | ${userDataPlacement(provider)} |`,
     ),
 ].join("\n");
 writeFileSync("site/source/_generated/shared-cloud-init-table.md", `${adapterRows}\n`);
@@ -105,4 +105,13 @@ function appendProperty(lines, key, value, indent) {
   }
 
   lines.push(`${indent}${key}: ${value}`);
+}
+
+function userDataPlacement(provider) {
+  if (provider.registrySchemaChecks?.length > 0) {
+    return provider.registrySchemaChecks
+      .map((check) => `${check.resourceToken} ${check.propertyPath.join(".")}`)
+      .join("<br>");
+  }
+  return provider.userData.property ?? provider.userData.metadataKey ?? "";
 }

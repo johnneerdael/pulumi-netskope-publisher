@@ -12,7 +12,7 @@
 | `ScalewayPublisher` | scalewayDual | cloudInit |
 | `OciPublisher` | ociMetadata | metadata |
 | `AlicloudPublisher` | base64 | userData |
-| `ProxmoxvePublisher` | proxmoxSnippet | content |
+| `ProxmoxvePublisher` | proxmoxSnippet | proxmoxve:index/fileLegacy:FileLegacy sourceRaw.data<br>proxmoxve:index/vmLegacy:VmLegacy initialization.userDataFileId |
 | `DigitaloceanPublisher` | plain | userData |
 | `VultrPublisher` | plain | userData |
 | `ExoscalePublisher` | plain | userData |
