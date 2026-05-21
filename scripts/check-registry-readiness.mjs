@@ -27,25 +27,6 @@ const requiredFiles = [
   "sdk/go/netskopepublisher/pulumi-plugin.json"
 ];
 
-const expectedResourceTokens = [
-  "netskope-publisher:index:AwsPublisher",
-  "netskope-publisher:index:AzurePublisher",
-  "netskope-publisher:index:GcpPublisher",
-  "netskope-publisher:index:KubernetesPublisher",
-  "netskope-publisher:index:VspherePublisher",
-  "netskope-publisher:index:EsxiPublisher",
-  "netskope-publisher:index:HcloudPublisher",
-  "netskope-publisher:index:NutanixPublisher",
-  "netskope-publisher:index:OpenstackPublisher",
-  "netskope-publisher:index:OvhPublisher",
-  "netskope-publisher:index:ScalewayPublisher",
-  "netskope-publisher:index:OciPublisher",
-  "netskope-publisher:index:AlicloudPublisher",
-  "netskope-publisher:index:ProxmoxvePublisher",
-  "netskope-publisher:index:HypervPublisher",
-  "netskope-publisher:index:NetskopeRegistration"
-];
-
 const sourceTokens = {
   "src/awsPublisher.ts": "netskope-publisher:index:AwsPublisher",
   "src/azurePublisher.ts": "netskope-publisher:index:AzurePublisher",
@@ -61,6 +42,16 @@ const sourceTokens = {
   "src/ociPublisher.ts": "netskope-publisher:index:OciPublisher",
   "src/alicloudPublisher.ts": "netskope-publisher:index:AlicloudPublisher",
   "src/proxmoxvePublisher.ts": "netskope-publisher:index:ProxmoxvePublisher",
+  "src/digitaloceanPublisher.ts": "netskope-publisher:index:DigitaloceanPublisher",
+  "src/vultrPublisher.ts": "netskope-publisher:index:VultrPublisher",
+  "src/exoscalePublisher.ts": "netskope-publisher:index:ExoscalePublisher",
+  "src/upcloudPublisher.ts": "netskope-publisher:index:UpcloudPublisher",
+  "src/stackitPublisher.ts": "netskope-publisher:index:StackitPublisher",
+  "src/equinixPublisher.ts": "netskope-publisher:index:EquinixPublisher",
+  "src/outscalePublisher.ts": "netskope-publisher:index:OutscalePublisher",
+  "src/opentelekomcloudPublisher.ts": "netskope-publisher:index:OpentelekomcloudPublisher",
+  "src/tencentcloudPublisher.ts": "netskope-publisher:index:TencentcloudPublisher",
+  "src/yandexPublisher.ts": "netskope-publisher:index:YandexPublisher",
   "src/hypervPublisher.ts": "netskope-publisher:index:HypervPublisher"
 };
 
@@ -96,6 +87,12 @@ if (existsSync("schema.json")) {
     errors.push(`schema.json is not valid JSON: ${error.message}`);
   }
 }
+
+const expectedResourceTokens = schema
+  ? Object.keys(schema.resources ?? {})
+      .filter((token) => token.startsWith("netskope-publisher:index:"))
+      .sort()
+  : [];
 
 if (schema) {
   for (const field of requiredSchemaFields) {
