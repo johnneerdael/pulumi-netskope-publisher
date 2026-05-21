@@ -308,7 +308,7 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 		if publicIP != nil {
 			publicIPOutput = publicIP.IpAddress.Elem()
 		}
-		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), publicIPOutput, args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), firstAzurePrivateIP(nic.IpConfigurations), publicIPOutput, args.PlacementLabels)
 	}
 
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
@@ -3394,6 +3394,18 @@ func firstMapFieldOutput(values pulumi.ArrayOutput, field string) pulumi.StringO
 			return ""
 		}
 		return fmt.Sprint(value)
+	}).(pulumi.StringOutput)
+}
+
+func firstAzurePrivateIP(configs azurenetwork.NetworkInterfaceIPConfigurationResponseArrayOutput) pulumi.StringOutput {
+	return configs.ApplyT(func(items []azurenetwork.NetworkInterfaceIPConfigurationResponse) string {
+		if len(items) == 0 {
+			return ""
+		}
+		if items[0].PrivateIPAddress == nil {
+			return ""
+		}
+		return *items[0].PrivateIPAddress
 	}).(pulumi.StringOutput)
 }
 

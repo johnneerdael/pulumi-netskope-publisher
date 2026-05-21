@@ -1728,6 +1728,10 @@ func constructAndCollectPublisherOutput(t *testing.T, token string, inputs prope
 			NewResourceF: func(args integration.MockResourceArgs) (string, property.Map, error) {
 				state := args.Inputs
 				switch string(args.TypeToken) {
+				case "azure-native:network:NetworkInterface":
+					state = state.Set("ipConfigurations", property.New([]property.Value{property.New(map[string]property.Value{
+						"privateIPAddress": property.New("10.1.0.10"),
+					})}))
 				case "digitalocean:index/droplet:Droplet":
 					state = state.Set("ipv4Address", property.New("203.0.113.51"))
 					state = state.Set("ipv4AddressPrivate", property.New("10.0.0.51"))
@@ -1813,6 +1817,21 @@ func TestProviderOutputsExposeAvailableIPAddresses(t *testing.T) {
 		outputField string
 		expected    string
 	}{
+		{
+			name:  "Azure private IP",
+			token: "netskope-publisher:index:AzurePublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":             property.New([]property.Value{property.New("pub-1")}),
+				"registrations":     registrationMap("pub-1"),
+				"resourceGroupName": property.New("rg"),
+				"location":          property.New("westeurope"),
+				"subnetId":          property.New("/subscriptions/000/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet/subnets/default"),
+				"adminSshPublicKey": property.New("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtest"),
+				"imageId":           property.New("/subscriptions/000/resourceGroups/rg/providers/Microsoft.Compute/images/publisher"),
+			}),
+			outputField: "privateIp",
+			expected:    "10.1.0.10",
+		},
 		{
 			name:  "Hcloud",
 			token: "netskope-publisher:index:HcloudPublisher",

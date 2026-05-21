@@ -55,6 +55,7 @@ test("AzurePublisher creates outputs keyed by publisher name", async () => {
   assert.deepEqual(publisherNames, ["pub-1"]);
   assert.equal(publishers["pub-1"].publisherId, 101);
   assert.equal(publishers["pub-1"].vmId, "publisher-pub-1-id");
+  assert.equal(publishers["pub-1"].privateIp, "10.1.0.10");
 });
 
 test("AzurePublisher rejects acceptMarketplaceTerms because terms acceptance is external", () => {
