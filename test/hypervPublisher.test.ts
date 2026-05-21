@@ -9,6 +9,6 @@ test("HypervPublisher requires explicit experimental opt-in", () => {
       switchName: "Default Switch",
       hardDrives: [{ path: "C:\\VMs\\pub-1\\disk.vhdx" }],
     }),
-    /Hyper-V support is experimental and requires enableExperimentalHyperv: true/,
+    /HypervPublisher requires enableExperimentalHyperv: true/,
   );
 });

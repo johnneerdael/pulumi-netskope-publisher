@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
 import { providerCatalog } from "./providerCatalog";
 import { EquinixPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class EquinixPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -9,6 +10,7 @@ export class EquinixPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: EquinixPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:EquinixPublisher", name, {}, opts);
+    validateComponentArgs("EquinixPublisher", args);
 
     const provider = providerCatalog.EquinixPublisher;
     const outputs = createCatalogRawVmPublishers({

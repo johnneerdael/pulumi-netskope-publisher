@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
 import { providerCatalog } from "./providerCatalog";
 import { PublisherOutput, VultrPublisherArgs } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class VultrPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -9,6 +10,7 @@ export class VultrPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: VultrPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:VultrPublisher", name, {}, opts);
+    validateComponentArgs("VultrPublisher", args);
 
     const provider = providerCatalog.VultrPublisher;
     const outputs = createCatalogRawVmPublishers({

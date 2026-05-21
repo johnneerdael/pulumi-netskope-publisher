@@ -3,6 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { plainUserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { OpenstackPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class OpenstackPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -10,6 +11,7 @@ export class OpenstackPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: OpenstackPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:OpenstackPublisher", name, {}, opts);
+    validateComponentArgs("OpenstackPublisher", args);
 
     const outputs = createVmPublishers({
       parent: this,

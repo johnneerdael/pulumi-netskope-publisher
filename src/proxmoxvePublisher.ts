@@ -3,6 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { plainUserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { ProxmoxvePublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class ProxmoxvePublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -10,6 +11,7 @@ export class ProxmoxvePublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: ProxmoxvePublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:ProxmoxvePublisher", name, {}, opts);
+    validateComponentArgs("ProxmoxvePublisher", args);
 
     const outputs = createVmPublishers({
       parent: this,

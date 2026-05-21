@@ -1,5 +1,9 @@
 import { providerCatalog } from "./providerCatalog";
 
+export function validateComponentArgs(componentName: string, args: unknown): void {
+  validateProviderArgs(componentName, args as Record<string, unknown>);
+}
+
 export function validateProviderArgs(componentName: string, args: Record<string, unknown>): void {
   const provider = providerCatalog[componentName];
   if (!provider) {

@@ -73,6 +73,19 @@ test("ProxmoxvePublisher creates cloud-init snippet and cloned VM", async () => 
   assert.equal(publishers["pub-1"].privateIp, "10.10.0.50");
 });
 
+test("ProxmoxvePublisher rejects missing catalog-required templateVmId", () => {
+  assert.throws(
+    () => new ProxmoxvePublisher("missing-template", {
+      names: ["pub-1"],
+      tenantUrl: "https://tenant.goskope.com",
+      apiToken: pulumi.secret("api-token"),
+      nodeName: "pve-1",
+      datastoreId: "local",
+    } as any),
+    /ProxmoxvePublisher requires input templateVmId/,
+  );
+});
+
 function registrationMock(args: pulumi.runtime.MockResourceArgs) {
   return {
     id: "pub-1",

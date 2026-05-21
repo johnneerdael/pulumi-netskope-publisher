@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
 import { providerCatalog } from "./providerCatalog";
 import { DigitaloceanPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class DigitaloceanPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -9,6 +10,7 @@ export class DigitaloceanPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: DigitaloceanPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:DigitaloceanPublisher", name, {}, opts);
+    validateComponentArgs("DigitaloceanPublisher", args);
 
     const provider = providerCatalog.DigitaloceanPublisher;
     const outputs = createCatalogRawVmPublishers({

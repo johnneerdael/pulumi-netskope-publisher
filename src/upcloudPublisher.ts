@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
 import { providerCatalog } from "./providerCatalog";
 import { PublisherOutput, UpcloudPublisherArgs } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 const ubuntu2204Template = "01000000-0000-4000-8000-000030220200";
 
@@ -11,6 +12,7 @@ export class UpcloudPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: UpcloudPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:UpcloudPublisher", name, {}, opts);
+    validateComponentArgs("UpcloudPublisher", args);
 
     const provider = providerCatalog.UpcloudPublisher;
     const outputs = createCatalogRawVmPublishers({

@@ -3,6 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { base64UserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { OciPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class OciPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -10,6 +11,7 @@ export class OciPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: OciPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:OciPublisher", name, {}, opts);
+    validateComponentArgs("OciPublisher", args);
 
     const outputs = createVmPublishers({
       parent: this,

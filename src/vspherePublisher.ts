@@ -7,6 +7,7 @@ import {
   resolvePublisherNames,
 } from "./componentCore";
 import { PublisherOutput, VspherePublisherArgs } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class VspherePublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -14,6 +15,7 @@ export class VspherePublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: VspherePublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:VspherePublisher", name, {}, opts);
+    validateComponentArgs("VspherePublisher", args);
 
     if (args.cluster === undefined && args.host === undefined) {
       throw new Error("Provide either vsphere.cluster or vsphere.host.");

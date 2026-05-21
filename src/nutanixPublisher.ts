@@ -3,6 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { base64UserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { NutanixPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class NutanixPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -10,6 +11,7 @@ export class NutanixPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: NutanixPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:NutanixPublisher", name, {}, opts);
+    validateComponentArgs("NutanixPublisher", args);
 
     const outputs = createVmPublishers({
       parent: this,

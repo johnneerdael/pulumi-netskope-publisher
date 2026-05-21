@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
 import { providerCatalog } from "./providerCatalog";
 import { PublisherOutput, TencentcloudPublisherArgs } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class TencentcloudPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -9,6 +10,7 @@ export class TencentcloudPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: TencentcloudPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:TencentcloudPublisher", name, {}, opts);
+    validateComponentArgs("TencentcloudPublisher", args);
 
     const provider = providerCatalog.TencentcloudPublisher;
     const outputs = createCatalogRawVmPublishers({

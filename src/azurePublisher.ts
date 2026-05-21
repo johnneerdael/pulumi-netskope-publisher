@@ -8,6 +8,7 @@ import {
   resolvePublisherNames,
 } from "./componentCore";
 import { AzurePublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class AzurePublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -15,6 +16,7 @@ export class AzurePublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: AzurePublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:AzurePublisher", name, {}, opts);
+    validateComponentArgs("AzurePublisher", args);
 
     const bootstrap = args.bootstrap ?? false;
     if (args.imageId === undefined && args.marketplace === undefined && bootstrap !== true) {

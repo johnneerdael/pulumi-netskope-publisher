@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
 import { providerCatalog } from "./providerCatalog";
 import { OpentelekomcloudPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class OpentelekomcloudPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -9,6 +10,7 @@ export class OpentelekomcloudPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: OpentelekomcloudPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:OpentelekomcloudPublisher", name, {}, opts);
+    validateComponentArgs("OpentelekomcloudPublisher", args);
 
     const provider = providerCatalog.OpentelekomcloudPublisher;
     const outputs = createCatalogRawVmPublishers({

@@ -3,6 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { plainUserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
 import { HcloudPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class HcloudPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -10,6 +11,7 @@ export class HcloudPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: HcloudPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:HcloudPublisher", name, {}, opts);
+    validateComponentArgs("HcloudPublisher", args);
 
     const outputs = createVmPublishers({
       parent: this,

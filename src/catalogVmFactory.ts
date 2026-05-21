@@ -1,6 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
 import { RawResource } from "./rawResource";
-import { validateProviderArgs } from "./providerValidation";
 import { base64UserData, metadataUserData, plainUserData } from "./userDataAdapters";
 import { CommonPublisherArgs, PublisherOutput } from "./types";
 import { ProviderCatalogEntry } from "./providerCatalog";
@@ -21,8 +20,6 @@ export function createCatalogRawVmPublishers<TArgs extends CommonPublisherArgs>(
   publisherNames: pulumi.Output<string[]>;
   publishers: pulumi.Output<Record<string, PublisherOutput>>;
 } {
-  validateProviderArgs(options.provider.componentName, options.args as Record<string, unknown>);
-
   return createVmPublishers({
     parent: options.parent,
     componentName: options.componentName,

@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as esxi from "@pulumiverse/esxi-native";
 import { createVmPublishers } from "./vmPublisherCore";
 import { EsxiPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class EsxiPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -9,6 +10,7 @@ export class EsxiPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: EsxiPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:EsxiPublisher", name, {}, opts);
+    validateComponentArgs("EsxiPublisher", args);
 
     const outputs = createVmPublishers({
       parent: this,

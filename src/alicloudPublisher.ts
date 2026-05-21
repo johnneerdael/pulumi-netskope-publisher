@@ -3,6 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { AlicloudPublisherArgs, PublisherOutput } from "./types";
 import { base64UserData } from "./userDataAdapters";
 import { createVmPublishers } from "./vmPublisherCore";
+import { validateComponentArgs } from "./providerValidation";
 
 export class AlicloudPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -10,6 +11,7 @@ export class AlicloudPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: AlicloudPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:AlicloudPublisher", name, {}, opts);
+    validateComponentArgs("AlicloudPublisher", args);
 
     const outputs = createVmPublishers({
       parent: this,

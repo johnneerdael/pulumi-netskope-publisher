@@ -54,6 +54,17 @@ test("NutanixPublisher creates VM with cloud-init bootstrap data", async () => {
   assert.equal(publishers["pub-1"].privateIp, "10.4.0.10");
 });
 
+test("NutanixPublisher rejects missing catalog-required clusterUuid", () => {
+  assert.throws(
+    () => new NutanixPublisher("missing-cluster", {
+      names: ["pub-1"],
+      tenantUrl: "https://tenant.goskope.com",
+      apiToken: pulumi.secret("api-token"),
+    } as any),
+    /NutanixPublisher requires input clusterUuid/,
+  );
+});
+
 function registrationMock(args: pulumi.runtime.MockResourceArgs) {
   return {
     id: "pub-1",

@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import { createCatalogRawVmPublishers, userDataProperty } from "./catalogVmFactory";
 import { providerCatalog } from "./providerCatalog";
 import { PublisherOutput, YandexPublisherArgs } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class YandexPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -9,6 +10,7 @@ export class YandexPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: YandexPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:YandexPublisher", name, {}, opts);
+    validateComponentArgs("YandexPublisher", args);
 
     const provider = providerCatalog.YandexPublisher;
     const outputs = createCatalogRawVmPublishers({

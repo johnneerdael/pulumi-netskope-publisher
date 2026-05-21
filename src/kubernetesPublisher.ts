@@ -1,5 +1,6 @@
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
+import { validateComponentArgs } from "./providerValidation";
 import {
   createRegistrations,
   resolvePublisherNames,
@@ -20,6 +21,7 @@ export class KubernetesPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: KubernetesPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:KubernetesPublisher", name, {}, opts);
+    validateComponentArgs("KubernetesPublisher", args);
 
     const parentOpts = { parent: this };
     const publisherNames = resolvePublisherNames(args);

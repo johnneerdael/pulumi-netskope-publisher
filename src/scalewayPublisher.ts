@@ -3,6 +3,7 @@ import * as scaleway from "@pulumiverse/scaleway";
 import { createVmPublishers } from "./vmPublisherCore";
 import { PublisherOutput, ScalewayPublisherArgs } from "./types";
 import { scalewayUserData } from "./userDataAdapters";
+import { validateComponentArgs } from "./providerValidation";
 
 export class ScalewayPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -10,6 +11,7 @@ export class ScalewayPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: ScalewayPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:ScalewayPublisher", name, {}, opts);
+    validateComponentArgs("ScalewayPublisher", args);
 
     const outputs = createVmPublishers({
       parent: this,

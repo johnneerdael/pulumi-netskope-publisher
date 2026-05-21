@@ -7,6 +7,7 @@ import {
   resolvePublisherNames,
 } from "./componentCore";
 import { GcpPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class GcpPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -14,6 +15,7 @@ export class GcpPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: GcpPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:GcpPublisher", name, {}, opts);
+    validateComponentArgs("GcpPublisher", args);
 
     const parentOpts = { parent: this };
     const publisherNames = resolvePublisherNames(args);

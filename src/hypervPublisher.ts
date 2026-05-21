@@ -1,5 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { HypervPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class HypervPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -7,10 +8,7 @@ export class HypervPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: HypervPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:HypervPublisher", name, {}, opts);
-
-    if (args.enableExperimentalHyperv !== true) {
-      throw new Error("Hyper-V support is experimental and requires enableExperimentalHyperv: true");
-    }
+    validateComponentArgs("HypervPublisher", args);
 
     throw new Error(
       "Hyper-V support requires @pulumi/hyperv from pulumi/pulumi-hyperv because it is not published to npm.",

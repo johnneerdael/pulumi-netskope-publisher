@@ -8,6 +8,7 @@ import {
   resolvePublisherNames,
 } from "./componentCore";
 import { AwsPublisherArgs, PublisherOutput } from "./types";
+import { validateComponentArgs } from "./providerValidation";
 
 export class AwsPublisher extends pulumi.ComponentResource {
   public readonly publisherNames: pulumi.Output<string[]>;
@@ -15,6 +16,7 @@ export class AwsPublisher extends pulumi.ComponentResource {
 
   constructor(name: string, args: AwsPublisherArgs, opts?: pulumi.ComponentResourceOptions) {
     super("netskope-publisher:index:AwsPublisher", name, {}, opts);
+    validateComponentArgs("AwsPublisher", args);
 
     const parentOpts = { parent: this };
     const publisherNames = resolvePublisherNames(args);
