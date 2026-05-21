@@ -858,6 +858,32 @@ func TestExpandedProviderConstructsBootstrapWithRegistryFields(t *testing.T) {
 	}
 }
 
+func TestVultrConstructRejectsMissingImageChoice(t *testing.T) {
+	err := constructPublisherResourceError(t, "netskope-publisher:index:VultrPublisher", property.NewMap(map[string]property.Value{
+		"names":         property.New([]property.Value{property.New("pub-1")}),
+		"registrations": registrationMap("pub-1"),
+		"region":        property.New("ams"),
+		"plan":          property.New("vc2-2c-4gb"),
+	}))
+	if err == nil || !strings.Contains(err.Error(), "VultrPublisher requires one of: osId, imageId") {
+		t.Fatalf("expected Vultr missing image choice error, got %v", err)
+	}
+}
+
+func TestVultrConstructRejectsConflictingImageChoices(t *testing.T) {
+	err := constructPublisherResourceError(t, "netskope-publisher:index:VultrPublisher", property.NewMap(map[string]property.Value{
+		"names":         property.New([]property.Value{property.New("pub-1")}),
+		"registrations": registrationMap("pub-1"),
+		"region":        property.New("ams"),
+		"plan":          property.New("vc2-2c-4gb"),
+		"osId":          property.New(1743.0),
+		"imageId":       property.New("img-123"),
+	}))
+	if err == nil || !strings.Contains(err.Error(), "VultrPublisher accepts only one of: osId, imageId") {
+		t.Fatalf("expected Vultr conflicting image choice error, got %v", err)
+	}
+}
+
 type expandedProviderCase struct {
 	name     string
 	token    string
@@ -1125,6 +1151,36 @@ func constructPublisherResource(t *testing.T, token string, inputs property.Map)
 	}
 
 	return response
+}
+
+func constructPublisherResourceError(t *testing.T, token string, inputs property.Map) error {
+	t.Helper()
+
+	provider, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server, err := integration.NewServer(
+		t.Context(),
+		Name,
+		semver.MustParse("0.3.0"),
+		integration.WithProvider(provider),
+		integration.WithMocks(&integration.MockResourceMonitor{
+			NewResourceF: func(args integration.MockResourceArgs) (string, property.Map, error) {
+				return args.Name + "-id", args.Inputs, nil
+			},
+		}),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = server.Construct(p.ConstructRequest{
+		Urn:    presource.URN("urn:pulumi:stack::project::" + token + "::publisher"),
+		Inputs: inputs,
+	})
+	return err
 }
 
 func constructAndCollectResources(t *testing.T, token string, inputs property.Map) []capturedResource {

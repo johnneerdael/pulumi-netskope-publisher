@@ -791,8 +791,8 @@ func (*HypervPublisher) Annotate(a infer.Annotator) {
 }
 
 func NewHypervPublisher(ctx *pulumi.Context, name string, args HypervPublisherArgs, opts ...pulumi.ResourceOption) (*HypervPublisher, error) {
-	if !args.EnableExperimentalHyperv {
-		return nil, fmt.Errorf("Hyper-V support is experimental and requires enableExperimentalHyperv: true")
+	if err := validateProviderCatalogArgs("HypervPublisher", args); err != nil {
+		return nil, err
 	}
 
 	return nil, fmt.Errorf("Hyper-V support requires a stable Pulumi Hyper-V provider SDK")
@@ -2075,6 +2075,9 @@ func NewDigitaloceanPublisher(ctx *pulumi.Context, name string, args Digitalocea
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("DigitaloceanPublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
 		droplet := &rawVMResource{}
 		err := ctx.RegisterResource("digitalocean:index/droplet:Droplet", name+"-"+publisherName, pulumi.Map{
@@ -2102,6 +2105,9 @@ func NewDigitaloceanPublisher(ctx *pulumi.Context, name string, args Digitalocea
 func NewVultrPublisher(ctx *pulumi.Context, name string, args VultrPublisherArgs, opts ...pulumi.ResourceOption) (*VultrPublisher, error) {
 	component := &VultrPublisher{VultrPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("VultrPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
@@ -2135,6 +2141,9 @@ func NewExoscalePublisher(ctx *pulumi.Context, name string, args ExoscalePublish
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("ExoscalePublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
 		instance := &rawVMResource{}
 		err := ctx.RegisterResource("exoscale:index/computeInstance:ComputeInstance", name+"-"+publisherName, pulumi.Map{
@@ -2162,6 +2171,9 @@ func NewExoscalePublisher(ctx *pulumi.Context, name string, args ExoscalePublish
 func NewUpcloudPublisher(ctx *pulumi.Context, name string, args UpcloudPublisherArgs, opts ...pulumi.ResourceOption) (*UpcloudPublisher, error) {
 	component := &UpcloudPublisher{UpcloudPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("UpcloudPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
@@ -2192,6 +2204,9 @@ func NewStackitPublisher(ctx *pulumi.Context, name string, args StackitPublisher
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("StackitPublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
 		server := &rawVMResource{}
 		err := ctx.RegisterResource("stackit:index/server:Server", name+"-"+publisherName, pulumi.Map{
@@ -2218,6 +2233,9 @@ func NewStackitPublisher(ctx *pulumi.Context, name string, args StackitPublisher
 func NewEquinixPublisher(ctx *pulumi.Context, name string, args EquinixPublisherArgs, opts ...pulumi.ResourceOption) (*EquinixPublisher, error) {
 	component := &EquinixPublisher{EquinixPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("EquinixPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
@@ -2249,6 +2267,9 @@ func NewOutscalePublisher(ctx *pulumi.Context, name string, args OutscalePublish
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("OutscalePublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
 		vm := &rawVMResource{}
 		err := ctx.RegisterResource("outscale:index/vm:Vm", name+"-"+publisherName, pulumi.Map{
@@ -2273,6 +2294,9 @@ func NewOutscalePublisher(ctx *pulumi.Context, name string, args OutscalePublish
 func NewOpentelekomcloudPublisher(ctx *pulumi.Context, name string, args OpentelekomcloudPublisherArgs, opts ...pulumi.ResourceOption) (*OpentelekomcloudPublisher, error) {
 	component := &OpentelekomcloudPublisher{OpentelekomcloudPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("OpentelekomcloudPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
@@ -2302,6 +2326,9 @@ func NewOpentelekomcloudPublisher(ctx *pulumi.Context, name string, args Opentel
 func NewTencentcloudPublisher(ctx *pulumi.Context, name string, args TencentcloudPublisherArgs, opts ...pulumi.ResourceOption) (*TencentcloudPublisher, error) {
 	component := &TencentcloudPublisher{TencentcloudPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("TencentcloudPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
@@ -2335,6 +2362,9 @@ func NewTencentcloudPublisher(ctx *pulumi.Context, name string, args Tencentclou
 func NewYandexPublisher(ctx *pulumi.Context, name string, args YandexPublisherArgs, opts ...pulumi.ResourceOption) (*YandexPublisher, error) {
 	component := &YandexPublisher{YandexPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("YandexPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
