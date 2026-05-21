@@ -197,6 +197,9 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 	if args.ImageID == nil && args.Marketplace == nil && !defaultBool(args.Bootstrap, false) {
 		return nil, fmt.Errorf("provide imageId, marketplace, or set bootstrap: true")
 	}
+	if defaultBool(args.AcceptMarketplaceTerms, false) {
+		return nil, fmt.Errorf("acceptMarketplaceTerms is not implemented; accept Azure marketplace terms outside this component before deploying marketplace images")
+	}
 
 	component := &AzurePublisher{AzurePublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {

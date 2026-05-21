@@ -1421,6 +1421,27 @@ func TestOciConstructRejectsMissingImageID(t *testing.T) {
 	}
 }
 
+func TestAzurePublisherRejectsUnsupportedMarketplaceTermsAcceptance(t *testing.T) {
+	err := constructPublisherResourceError(t, "netskope-publisher:index:AzurePublisher", property.NewMap(map[string]property.Value{
+		"names":                  property.New([]property.Value{property.New("pub-1")}),
+		"registrations":          registrationMap("pub-1"),
+		"resourceGroupName":      property.New("rg"),
+		"location":               property.New("westeurope"),
+		"subnetId":               property.New("/subscriptions/000/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet/subnets/default"),
+		"adminSshPublicKey":      property.New("ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCtest"),
+		"acceptMarketplaceTerms": property.New(true),
+		"marketplace": property.New(map[string]property.Value{
+			"publisher": property.New("netskope"),
+			"offer":     property.New("private-access-publisher"),
+			"sku":       property.New("publisher"),
+			"version":   property.New("latest"),
+		}),
+	}))
+	if err == nil || !strings.Contains(err.Error(), "acceptMarketplaceTerms is not implemented") {
+		t.Fatalf("expected unsupported acceptMarketplaceTerms error, got %v", err)
+	}
+}
+
 type expandedProviderCase struct {
 	name     string
 	token    string

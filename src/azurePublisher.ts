@@ -22,6 +22,9 @@ export class AzurePublisher extends pulumi.ComponentResource {
     if (args.imageId === undefined && args.marketplace === undefined && bootstrap !== true) {
       throw new Error("Provide imageId, marketplace, or set bootstrap: true.");
     }
+    if (args.acceptMarketplaceTerms === true) {
+      throw new Error("acceptMarketplaceTerms is not implemented; accept Azure marketplace terms outside this component before deploying marketplace images.");
+    }
 
     const parentOpts = { parent: this };
     const publisherNames = resolvePublisherNames(args);

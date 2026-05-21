@@ -57,6 +57,25 @@ test("AzurePublisher creates outputs keyed by publisher name", async () => {
   assert.equal(publishers["pub-1"].vmId, "publisher-pub-1-id");
 });
 
+test("AzurePublisher rejects acceptMarketplaceTerms because terms acceptance is external", () => {
+  assert.throws(() => new AzurePublisher("publisher-terms", {
+    names: ["pub-1"],
+    tenantUrl: "https://tenant.goskope.com",
+    apiToken: pulumi.secret("api-token"),
+    resourceGroupName: "rg",
+    location: "westeurope",
+    subnetId: "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet/subnets/default",
+    adminSshPublicKey: "ssh-rsa AAAA",
+    marketplace: {
+      publisher: "netskope",
+      offer: "private-access-publisher",
+      sku: "publisher",
+      version: "latest",
+    },
+    acceptMarketplaceTerms: true,
+  }), /acceptMarketplaceTerms is not implemented/);
+});
+
 async function outputValue<T>(output: pulumi.Output<T>): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     output.apply((value) => {

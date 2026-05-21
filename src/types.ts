@@ -96,6 +96,7 @@ export interface AzurePublisherArgs extends CommonPublisherArgs {
   osDisk?: pulumi.Input<AzureOsDisk>;
   imageId?: pulumi.Input<string>;
   marketplace?: pulumi.Input<AzureMarketplaceImage>;
+  /** Terms acceptance is not automated; accept marketplace terms outside this component before deploying marketplace images. */
   acceptMarketplaceTerms?: pulumi.Input<boolean>;
 }
 

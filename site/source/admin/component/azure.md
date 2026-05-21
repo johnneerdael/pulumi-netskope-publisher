@@ -27,7 +27,7 @@ Required:
 Common optional inputs:
 
 - `vmSize`, `adminUsername`, `networkSecurityGroupId`,
-  `assignPublicIp`, `osDisk`, `acceptMarketplaceTerms`
+  `assignPublicIp`, `osDisk`
 - `namePrefix`, `names`, `replicas`, `tags`
 - `bootstrap`, `bootstrapUrl`, `nonat`, `installUser`,
   `installUserPassword`, `installUserPasswordIsHash`,
@@ -38,6 +38,12 @@ When `bootstrap` is true and no image is supplied, the component uses
 Canonical Ubuntu 22.04 Minimal and installs the publisher at first boot.
 `adminUsername` defaults to `installUser`, keeping Azure SSH and
 cloud-init ownership aligned.
+
+Marketplace terms acceptance is not performed by this component. If you
+use a third-party marketplace image, accept the Azure marketplace terms
+outside this component before running `pulumi up`. With `bootstrap: true`,
+the component uses the Canonical Ubuntu image path and does not require
+Netskope marketplace terms.
 
 ## Outputs
 
