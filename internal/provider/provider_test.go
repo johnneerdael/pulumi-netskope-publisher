@@ -344,6 +344,14 @@ func TestPrivateAppCreateIncludesInitialPublishersWhenProvided(t *testing.T) {
 	if response.ID != "44" {
 		t.Fatalf("expected created ID 44, got %q", response.ID)
 	}
+	protocols := created["protocols"].([]any)
+	protocol := protocols[0].(map[string]any)
+	if protocol["port"] != "443" {
+		t.Fatalf("expected protocol port 443, got %#v", created)
+	}
+	if _, ok := protocol["ports"]; ok {
+		t.Fatalf("did not expect response-only protocol ports in request payload: %#v", created)
+	}
 	publishers := created["publishers"].([]any)
 	publisher := publishers[0].(map[string]any)
 	if publisher["publisher_id"] != "101" {

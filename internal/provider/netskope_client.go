@@ -164,9 +164,8 @@ func (client *netskopeClient) generateRegistrationToken(ctx context.Context, pub
 }
 
 type privateAppProtocol struct {
-	Type  string `json:"type"`
-	Ports string `json:"ports,omitempty"`
-	Port  string `json:"port,omitempty"`
+	Type string `json:"type"`
+	Port string `json:"port,omitempty"`
 }
 
 type privateAppTag struct {

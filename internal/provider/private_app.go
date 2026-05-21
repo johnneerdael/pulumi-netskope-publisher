@@ -146,9 +146,8 @@ func privateAppPayloadFromArgs(args PrivateAppArgs) privateAppPayload {
 	protocols := make([]privateAppProtocol, 0, len(args.Protocols))
 	for _, protocol := range args.Protocols {
 		protocols = append(protocols, privateAppProtocol{
-			Type:  protocol.Type,
-			Port:  protocol.Ports,
-			Ports: protocol.Ports,
+			Type: protocol.Type,
+			Port: protocol.Ports,
 		})
 	}
 
