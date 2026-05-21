@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"sort"
 	"strings"
@@ -47,7 +48,11 @@ func (*TagPublisherAssignment) Create(ctx context.Context, req infer.CreateReque
 }
 
 func (*TagPublisherAssignment) Read(ctx context.Context, req infer.ReadRequest[TagPublisherAssignmentArgs, TagPublisherAssignmentOutputs]) (infer.ReadResponse[TagPublisherAssignmentArgs, TagPublisherAssignmentOutputs], error) {
-	return infer.ReadResponse[TagPublisherAssignmentArgs, TagPublisherAssignmentOutputs]{ID: req.ID, Inputs: req.Inputs, State: req.State}, nil
+	state, err := summarizeTagPublisherAssignment(ctx, req.Inputs)
+	if err != nil {
+		return infer.ReadResponse[TagPublisherAssignmentArgs, TagPublisherAssignmentOutputs]{}, err
+	}
+	return infer.ReadResponse[TagPublisherAssignmentArgs, TagPublisherAssignmentOutputs]{ID: req.ID, Inputs: req.Inputs, State: state}, nil
 }
 
 func (*TagPublisherAssignment) Update(ctx context.Context, req infer.UpdateRequest[TagPublisherAssignmentArgs, TagPublisherAssignmentOutputs]) (infer.UpdateResponse[TagPublisherAssignmentOutputs], error) {
@@ -59,11 +64,39 @@ func (*TagPublisherAssignment) Update(ctx context.Context, req infer.UpdateReque
 }
 
 func (*TagPublisherAssignment) Delete(ctx context.Context, req infer.DeleteRequest[TagPublisherAssignmentOutputs]) (infer.DeleteResponse, error) {
+	selected := selectPublishersByPlacement(req.State.Publishers, req.State.PublisherPlacementLabels)
+	if len(selected) == 0 {
+		return infer.DeleteResponse{}, nil
+	}
+
+	client := newResourceClient(req.State.TenantURL, req.State.APIToken, req.State.BearerToken, req.State.AuthMode, req.State.OAuth2, http.DefaultClient)
+	apps, err := client.listPrivateAppsWithPublishers(ctx)
+	if err != nil {
+		return infer.DeleteResponse{}, err
+	}
+
+	selectedSet := intSet(selected)
+	for _, app := range apps {
+		if !appMatchesTags(app.Tags, req.State.AppTags, defaultString(req.State.MatchMode, "any")) {
+			continue
+		}
+		current := currentPublisherIDs(app.ServicePublisherAssignments)
+		toRemove := intersectPublisherIDs(current, selectedSet)
+		if len(toRemove) == 0 {
+			continue
+		}
+		if err := client.deletePrivateAppPublishers(ctx, []int{app.resourceID()}, toRemove); err != nil {
+			return infer.DeleteResponse{}, err
+		}
+	}
 	return infer.DeleteResponse{}, nil
 }
 
 func reconcileTagPublisherAssignment(ctx context.Context, args TagPublisherAssignmentArgs, dryRun bool) (TagPublisherAssignmentOutputs, error) {
 	selected := selectPublishersByPlacement(args.Publishers, args.PublisherPlacementLabels)
+	if len(selected) == 0 {
+		return TagPublisherAssignmentOutputs{}, fmt.Errorf("publisherPlacementLabels %v did not match any managed publishers", args.PublisherPlacementLabels)
+	}
 	output := TagPublisherAssignmentOutputs{
 		TagPublisherAssignmentArgs: args,
 		SelectedPublishers:         selected,
@@ -84,11 +117,37 @@ func reconcileTagPublisherAssignment(ctx context.Context, args TagPublisherAssig
 		current := currentPublisherIDs(app.ServicePublisherAssignments)
 		next := reconcilePublisherIDs(current, selectedSet, matches)
 		if !sameInts(current, next) {
-			if err := client.replacePrivateAppPublishers(ctx, []string{app.AppName}, next); err != nil {
+			if err := client.replacePrivateAppPublishers(ctx, []int{app.resourceID()}, next); err != nil {
 				return output, err
 			}
 		}
 		if matches {
+			output.MatchedApps = append(output.MatchedApps, app.AppName)
+		}
+	}
+	sort.Strings(output.MatchedApps)
+	return output, nil
+}
+
+func summarizeTagPublisherAssignment(ctx context.Context, args TagPublisherAssignmentArgs) (TagPublisherAssignmentOutputs, error) {
+	selected := selectPublishersByPlacement(args.Publishers, args.PublisherPlacementLabels)
+	if len(selected) == 0 {
+		return TagPublisherAssignmentOutputs{}, fmt.Errorf("publisherPlacementLabels %v did not match any managed publishers", args.PublisherPlacementLabels)
+	}
+
+	output := TagPublisherAssignmentOutputs{
+		TagPublisherAssignmentArgs: args,
+		SelectedPublishers:         selected,
+	}
+
+	client := newResourceClient(args.TenantURL, args.APIToken, args.BearerToken, args.AuthMode, args.OAuth2, http.DefaultClient)
+	apps, err := client.listPrivateAppsWithPublishers(ctx)
+	if err != nil {
+		return output, err
+	}
+
+	for _, app := range apps {
+		if appMatchesTags(app.Tags, args.AppTags, defaultString(args.MatchMode, "any")) {
 			output.MatchedApps = append(output.MatchedApps, app.AppName)
 		}
 	}
@@ -148,6 +207,17 @@ func reconcilePublisherIDs(current []int, selected map[int]bool, matches bool) [
 		}
 	}
 	return sortedIntSet(nextSet)
+}
+
+func intersectPublisherIDs(current []int, selected map[int]bool) []int {
+	var values []int
+	for _, id := range current {
+		if selected[id] {
+			values = append(values, id)
+		}
+	}
+	sort.Ints(values)
+	return values
 }
 
 func stringSet(values []string) map[string]bool {

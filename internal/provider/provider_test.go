@@ -537,6 +537,60 @@ func TestTagPublisherAssignmentDeleteRemovesSelectedPublishersFromMatchedApps(t 
 	}
 }
 
+func TestTagPublisherAssignmentReadRecomputesRemoteState(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private":
+			writeJSON(t, w, map[string]any{
+				"status": "success",
+				"data": map[string]any{
+					"private_apps": []map[string]any{{
+						"app_id":   10,
+						"app_name": "orders",
+						"tags":     []map[string]any{{"tag_name": "vpc-a"}},
+						"service_publisher_assignments": []map[string]any{
+							{"publisher_id": 101},
+						},
+					}},
+				},
+			})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	resource := TagPublisherAssignment{}
+	response, err := resource.Read(t.Context(), infer.ReadRequest[TagPublisherAssignmentArgs, TagPublisherAssignmentOutputs]{
+		ID: "vpc-a",
+		Inputs: TagPublisherAssignmentArgs{
+			TenantURL:                server.URL,
+			BearerToken:              stringPtr("api-token"),
+			AppTags:                  []string{"vpc-a"},
+			PublisherPlacementLabels: []string{"vpc-a"},
+			Publishers: map[string]PublisherAssignmentInput{
+				"pub-a": {PublisherID: 101, PlacementLabels: []string{"vpc-a"}},
+			},
+		},
+		State: TagPublisherAssignmentOutputs{
+			MatchedApps:        []string{"stale"},
+			SelectedPublishers: []int{202},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.ID != "vpc-a" {
+		t.Fatalf("expected read ID vpc-a, got %q", response.ID)
+	}
+	if len(response.State.MatchedApps) != 1 || response.State.MatchedApps[0] != "orders" {
+		t.Fatalf("expected matched app orders after refresh, got %#v", response.State.MatchedApps)
+	}
+	if len(response.State.SelectedPublishers) != 1 || response.State.SelectedPublishers[0] != 101 {
+		t.Fatalf("expected selected publisher 101 after refresh, got %#v", response.State.SelectedPublishers)
+	}
+}
+
 func TestRealtimeProtectionPolicyCreatesRuleWithPolicyGroupReference(t *testing.T) {
 	var created map[string]any
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
