@@ -51,6 +51,7 @@ test("provider catalog includes current public components", () => {
 test("catalog-driven providers declare resource token, adapter, docs, and yaml example", () => {
   for (const provider of catalogDrivenProviders) {
     assert.ok(provider.resourceToken, `${provider.componentName} missing resourceToken`);
+    assert.ok(provider.registrySchemaUrl, `${provider.componentName} missing registrySchemaUrl`);
     assert.notEqual(provider.userData.mode, "none", `${provider.componentName} missing user-data mode`);
     assert.ok(provider.docs.summary, `${provider.componentName} missing docs summary`);
     assert.ok(provider.yamlExample.name, `${provider.componentName} missing yaml example name`);
@@ -78,5 +79,32 @@ test("provider catalog uses installable upstream package metadata", () => {
 
   for (const [componentName, packageName] of Object.entries(expectedPackages)) {
     assert.equal(providerCatalog[componentName].providerPackage, packageName, `${componentName} providerPackage mismatch`);
+  }
+});
+
+test("catalog-driven providers declare upstream registry schema URLs", () => {
+  const expectedUrls: Record<string, string> = {
+    HcloudPublisher: "https://www.pulumi.com/registry/packages/hcloud/schema.json",
+    NutanixPublisher: "https://www.pulumi.com/registry/packages/nutanix/schema.json",
+    OpenstackPublisher: "https://www.pulumi.com/registry/packages/openstack/schema.json",
+    OvhPublisher: "https://www.pulumi.com/registry/packages/ovh/schema.json",
+    ScalewayPublisher: "https://www.pulumi.com/registry/packages/scaleway/schema.json",
+    OciPublisher: "https://www.pulumi.com/registry/packages/oci/schema.json",
+    AlicloudPublisher: "https://www.pulumi.com/registry/packages/alicloud/schema.json",
+    ProxmoxvePublisher: "https://www.pulumi.com/registry/packages/proxmoxve/schema.json",
+    DigitaloceanPublisher: "https://www.pulumi.com/registry/packages/digitalocean/schema.json",
+    VultrPublisher: "https://www.pulumi.com/registry/packages/vultr/schema.json",
+    ExoscalePublisher: "https://www.pulumi.com/registry/packages/exoscale/schema.json",
+    UpcloudPublisher: "https://www.pulumi.com/registry/packages/upcloud/schema.json",
+    StackitPublisher: "https://www.pulumi.com/registry/packages/stackit/schema.json",
+    EquinixPublisher: "https://www.pulumi.com/registry/packages/equinix/schema.json",
+    OutscalePublisher: "https://www.pulumi.com/registry/packages/outscale/schema.json",
+    OpentelekomcloudPublisher: "https://www.pulumi.com/registry/packages/opentelekomcloud/schema.json",
+    TencentcloudPublisher: "https://www.pulumi.com/registry/packages/tencentcloud/schema.json",
+    YandexPublisher: "https://www.pulumi.com/registry/packages/yandex/schema.json",
+  };
+
+  for (const [componentName, registrySchemaUrl] of Object.entries(expectedUrls)) {
+    assert.equal(providerCatalog[componentName].registrySchemaUrl, registrySchemaUrl, `${componentName} registrySchemaUrl mismatch`);
   }
 });

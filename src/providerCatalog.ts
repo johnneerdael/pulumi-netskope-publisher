@@ -40,6 +40,7 @@ export interface ProviderCatalogEntry {
   support: ProviderSupportStatus;
   providerPackage?: string;
   resourceToken?: string;
+  registrySchemaUrl?: string;
   implementation: ProviderImplementationMode;
   bootstrapModel: BootstrapModel;
   userData: {
@@ -70,6 +71,7 @@ interface ProviderDefinition {
   required: string[];
   resourceToken?: string;
   providerPackage?: string;
+  registrySchemaUrl?: string;
   validation?: Omit<ProviderValidationMetadata, "required">;
   yamlProperties?: Array<[string, unknown]>;
 }
@@ -92,6 +94,7 @@ function provider(definition: ProviderDefinition): ProviderCatalogEntry {
     support: definition.componentName === "HypervPublisher" ? "experimental" : "supported",
     providerPackage: definition.providerPackage,
     resourceToken: definition.resourceToken,
+    registrySchemaUrl: definition.registrySchemaUrl ?? registrySchemaUrl(definition),
     implementation: definition.implementation,
     bootstrapModel: definition.bootstrapModel,
     userData: {
@@ -115,6 +118,13 @@ function provider(definition: ProviderDefinition): ProviderCatalogEntry {
       properties: yamlProperties,
     },
   };
+}
+
+function registrySchemaUrl(definition: ProviderDefinition): string | undefined {
+  if (!definition.resourceToken) {
+    return undefined;
+  }
+  return `https://www.pulumi.com/registry/packages/${definition.slug}/schema.json`;
 }
 
 function userDataProperty(mode: UserDataMode): string | undefined {
