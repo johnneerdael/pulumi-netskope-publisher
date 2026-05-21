@@ -23,6 +23,7 @@ __all__ = [
     'MetadataOptions',
     'NetskopeOAuth2Args',
     'PrivateAppProtocol',
+    'PrivateAppPublisher',
     'PublisherAssignmentInput',
     'PublisherRegistrationInput',
     'RegistrationRecord',
@@ -341,6 +342,45 @@ class PrivateAppProtocol(dict):
     @pulumi.getter
     def type(self) -> _builtins.str:
         return pulumi.get(self, "type")
+
+
+@pulumi.output_type
+class PrivateAppPublisher(dict):
+    @staticmethod
+    def __key_warning(key: str):
+        suggest = None
+        if key == "publisherId":
+            suggest = "publisher_id"
+        elif key == "publisherName":
+            suggest = "publisher_name"
+
+        if suggest:
+            pulumi.log.warn(f"Key '{key}' not found in PrivateAppPublisher. Access the value via the '{suggest}' property getter instead.")
+
+    def __getitem__(self, key: str) -> Any:
+        PrivateAppPublisher.__key_warning(key)
+        return super().__getitem__(key)
+
+    def get(self, key: str, default = None) -> Any:
+        PrivateAppPublisher.__key_warning(key)
+        return super().get(key, default)
+
+    def __init__(__self__, *,
+                 publisher_id: _builtins.int,
+                 publisher_name: Optional[_builtins.str] = None):
+        pulumi.set(__self__, "publisher_id", publisher_id)
+        if publisher_name is not None:
+            pulumi.set(__self__, "publisher_name", publisher_name)
+
+    @_builtins.property
+    @pulumi.getter(name="publisherId")
+    def publisher_id(self) -> _builtins.int:
+        return pulumi.get(self, "publisher_id")
+
+    @_builtins.property
+    @pulumi.getter(name="publisherName")
+    def publisher_name(self) -> Optional[_builtins.str]:
+        return pulumi.get(self, "publisher_name")
 
 
 @pulumi.output_type

@@ -6,6 +6,11 @@ export interface PrivateAppProtocol {
   ports: pulumi.Input<string>;
 }
 
+export interface PrivateAppPublisher {
+  publisherId: pulumi.Input<number>;
+  publisherName?: pulumi.Input<string>;
+}
+
 export interface PrivateAppArgs {
   tenantUrl: pulumi.Input<string>;
   bearerToken?: pulumi.Input<string>;
@@ -21,6 +26,7 @@ export interface PrivateAppArgs {
   isUserPortalApp: pulumi.Input<boolean>;
   usePublisherDns: pulumi.Input<boolean>;
   trustSelfSignedCerts: pulumi.Input<boolean>;
+  publishers?: pulumi.Input<pulumi.Input<PrivateAppPublisher>[]>;
   tags?: pulumi.Input<pulumi.Input<string>[]>;
   adoptExisting?: pulumi.Input<boolean>;
 }

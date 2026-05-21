@@ -31,6 +31,8 @@ __all__ = [
     'NetskopeOAuth2ArgsArgsDict',
     'PrivateAppProtocolArgs',
     'PrivateAppProtocolArgsDict',
+    'PrivateAppPublisherArgs',
+    'PrivateAppPublisherArgsDict',
     'PublisherAssignmentInputArgs',
     'PublisherAssignmentInputArgsDict',
     'PublisherRegistrationInputArgs',
@@ -418,6 +420,38 @@ class PrivateAppProtocolArgs:
     @type.setter
     def type(self, value: pulumi.Input[_builtins.str]):
         pulumi.set(self, "type", value)
+
+
+class PrivateAppPublisherArgsDict(TypedDict):
+    publisher_id: pulumi.Input[_builtins.int]
+    publisher_name: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+
+@pulumi.input_type
+class PrivateAppPublisherArgs:
+    def __init__(__self__, *,
+                 publisher_id: pulumi.Input[_builtins.int],
+                 publisher_name: pulumi.Input[Optional[_builtins.str]] = None):
+        pulumi.set(__self__, "publisher_id", publisher_id)
+        if publisher_name is not None:
+            pulumi.set(__self__, "publisher_name", publisher_name)
+
+    @_builtins.property
+    @pulumi.getter(name="publisherId")
+    def publisher_id(self) -> pulumi.Input[_builtins.int]:
+        return pulumi.get(self, "publisher_id")
+
+    @publisher_id.setter
+    def publisher_id(self, value: pulumi.Input[_builtins.int]):
+        pulumi.set(self, "publisher_id", value)
+
+    @_builtins.property
+    @pulumi.getter(name="publisherName")
+    def publisher_name(self) -> pulumi.Input[Optional[_builtins.str]]:
+        return pulumi.get(self, "publisher_name")
+
+    @publisher_name.setter
+    def publisher_name(self, value: pulumi.Input[Optional[_builtins.str]]):
+        pulumi.set(self, "publisher_name", value)
 
 
 class PublisherAssignmentInputArgsDict(TypedDict):

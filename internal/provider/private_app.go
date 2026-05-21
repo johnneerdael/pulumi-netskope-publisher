@@ -16,22 +16,28 @@ type PrivateAppProtocol struct {
 	Ports string `pulumi:"ports"`
 }
 
+type PrivateAppPublisher struct {
+	PublisherID   int     `pulumi:"publisherId"`
+	PublisherName *string `pulumi:"publisherName,optional"`
+}
+
 type PrivateAppArgs struct {
-	TenantURL            string               `pulumi:"tenantUrl"`
-	APIToken             *string              `pulumi:"apiToken,optional" provider:"secret"`
-	BearerToken          *string              `pulumi:"bearerToken,optional" provider:"secret"`
-	AuthMode             *string              `pulumi:"authMode,optional"`
-	OAuth2               *NetskopeOAuth2Args  `pulumi:"oauth2,optional"`
-	AppName              string               `pulumi:"appName"`
-	AppType              *string              `pulumi:"appType,optional"`
-	Host                 string               `pulumi:"host"`
-	Protocols            []PrivateAppProtocol `pulumi:"protocols"`
-	ClientlessAccess     bool                 `pulumi:"clientlessAccess"`
-	IsUserPortalApp      bool                 `pulumi:"isUserPortalApp"`
-	UsePublisherDNS      bool                 `pulumi:"usePublisherDns"`
-	TrustSelfSignedCerts bool                 `pulumi:"trustSelfSignedCerts"`
-	Tags                 []string             `pulumi:"tags,optional"`
-	AdoptExisting        *bool                `pulumi:"adoptExisting,optional"`
+	TenantURL            string                `pulumi:"tenantUrl"`
+	APIToken             *string               `pulumi:"apiToken,optional" provider:"secret"`
+	BearerToken          *string               `pulumi:"bearerToken,optional" provider:"secret"`
+	AuthMode             *string               `pulumi:"authMode,optional"`
+	OAuth2               *NetskopeOAuth2Args   `pulumi:"oauth2,optional"`
+	AppName              string                `pulumi:"appName"`
+	AppType              *string               `pulumi:"appType,optional"`
+	Host                 string                `pulumi:"host"`
+	Protocols            []PrivateAppProtocol  `pulumi:"protocols"`
+	ClientlessAccess     bool                  `pulumi:"clientlessAccess"`
+	IsUserPortalApp      bool                  `pulumi:"isUserPortalApp"`
+	UsePublisherDNS      bool                  `pulumi:"usePublisherDns"`
+	TrustSelfSignedCerts bool                  `pulumi:"trustSelfSignedCerts"`
+	Publishers           []PrivateAppPublisher `pulumi:"publishers,optional"`
+	Tags                 []string              `pulumi:"tags,optional"`
+	AdoptExisting        *bool                 `pulumi:"adoptExisting,optional"`
 }
 
 type PrivateAppOutputs struct {
@@ -151,6 +157,14 @@ func privateAppPayloadFromArgs(args PrivateAppArgs) privateAppPayload {
 		tags = append(tags, privateAppTag{TagName: tag})
 	}
 
+	publishers := make([]privateAppPublisher, 0, len(args.Publishers))
+	for _, publisher := range args.Publishers {
+		publishers = append(publishers, privateAppPublisher{
+			PublisherID:   publisher.PublisherID,
+			PublisherName: stringValue(publisher.PublisherName),
+		})
+	}
+
 	return privateAppPayload{
 		AppName:              args.AppName,
 		AppType:              defaultString(args.AppType, "client"),
@@ -162,5 +176,6 @@ func privateAppPayloadFromArgs(args PrivateAppArgs) privateAppPayload {
 		UsePublisherDNS:      args.UsePublisherDNS,
 		PrivateAppTags:       tags,
 		Tags:                 tags,
+		Publishers:           publishers,
 	}
 }

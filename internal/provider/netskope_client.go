@@ -174,17 +174,23 @@ type privateAppTag struct {
 	TagName string `json:"tag_name"`
 }
 
+type privateAppPublisher struct {
+	PublisherID   int    `json:"publisher_id"`
+	PublisherName string `json:"publisher_name,omitempty"`
+}
+
 type privateAppPayload struct {
-	AppName              string               `json:"app_name"`
-	AppType              string               `json:"app_type,omitempty"`
-	Host                 any                  `json:"host"`
-	ClientlessAccess     bool                 `json:"clientless_access"`
-	IsUserPortalApp      bool                 `json:"is_user_portal_app"`
-	Protocols            []privateAppProtocol `json:"protocols"`
-	TrustSelfSignedCerts bool                 `json:"trust_self_signed_certs"`
-	UsePublisherDNS      bool                 `json:"use_publisher_dns"`
-	PrivateAppTags       []privateAppTag      `json:"private_app_tags,omitempty"`
-	Tags                 []privateAppTag      `json:"tags,omitempty"`
+	AppName              string                `json:"app_name"`
+	AppType              string                `json:"app_type,omitempty"`
+	Host                 any                   `json:"host"`
+	ClientlessAccess     bool                  `json:"clientless_access"`
+	IsUserPortalApp      bool                  `json:"is_user_portal_app"`
+	Protocols            []privateAppProtocol  `json:"protocols"`
+	TrustSelfSignedCerts bool                  `json:"trust_self_signed_certs"`
+	UsePublisherDNS      bool                  `json:"use_publisher_dns"`
+	PrivateAppTags       []privateAppTag       `json:"private_app_tags,omitempty"`
+	Tags                 []privateAppTag       `json:"tags,omitempty"`
+	Publishers           []privateAppPublisher `json:"publishers,omitempty"`
 }
 
 type privateAppRecord struct {

@@ -48,6 +48,9 @@ namespace Pulumi.NetskopePublisher
         [Output("protocols")]
         public Output<ImmutableArray<Pulumi.NetskopePublisher.Types.Outputs.PrivateAppProtocol>> Protocols { get; private set; } = null!;
 
+        [Output("publishers")]
+        public Output<ImmutableArray<Pulumi.NetskopePublisher.Types.Outputs.PrivateAppPublisher>> Publishers { get; private set; } = null!;
+
         [Output("tags")]
         public Output<ImmutableArray<string>> Tags { get; private set; } = null!;
 
@@ -165,6 +168,14 @@ namespace Pulumi.NetskopePublisher
         {
             get => _protocols ?? (_protocols = new InputList<Pulumi.NetskopePublisher.Types.Inputs.PrivateAppProtocolArgs>());
             set => _protocols = value;
+        }
+
+        [Input("publishers")]
+        private InputList<Pulumi.NetskopePublisher.Types.Inputs.PrivateAppPublisherArgs>? _publishers;
+        public InputList<Pulumi.NetskopePublisher.Types.Inputs.PrivateAppPublisherArgs> Publishers
+        {
+            get => _publishers ?? (_publishers = new InputList<Pulumi.NetskopePublisher.Types.Inputs.PrivateAppPublisherArgs>());
+            set => _publishers = value;
         }
 
         [Input("tags")]

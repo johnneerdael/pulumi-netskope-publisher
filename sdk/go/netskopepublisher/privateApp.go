@@ -16,22 +16,23 @@ import (
 type PrivateApp struct {
 	pulumi.CustomResourceState
 
-	AdoptExisting        pulumi.BoolPtrOutput                   `pulumi:"adoptExisting"`
-	ApiToken             pulumi.StringPtrOutput                 `pulumi:"apiToken"`
-	AppId                pulumi.IntOutput                       `pulumi:"appId"`
-	AppName              pulumi.StringOutput                    `pulumi:"appName"`
-	AppType              pulumi.StringPtrOutput                 `pulumi:"appType"`
-	AuthMode             pulumi.StringPtrOutput                 `pulumi:"authMode"`
-	BearerToken          pulumi.StringPtrOutput                 `pulumi:"bearerToken"`
-	ClientlessAccess     pulumi.BoolOutput                      `pulumi:"clientlessAccess"`
-	Host                 pulumi.StringOutput                    `pulumi:"host"`
-	IsUserPortalApp      pulumi.BoolOutput                      `pulumi:"isUserPortalApp"`
-	Oauth2               provider.NetskopeOAuth2ArgsPtrOutput   `pulumi:"oauth2"`
-	Protocols            provider.PrivateAppProtocolArrayOutput `pulumi:"protocols"`
-	Tags                 pulumi.StringArrayOutput               `pulumi:"tags"`
-	TenantUrl            pulumi.StringOutput                    `pulumi:"tenantUrl"`
-	TrustSelfSignedCerts pulumi.BoolOutput                      `pulumi:"trustSelfSignedCerts"`
-	UsePublisherDns      pulumi.BoolOutput                      `pulumi:"usePublisherDns"`
+	AdoptExisting        pulumi.BoolPtrOutput                    `pulumi:"adoptExisting"`
+	ApiToken             pulumi.StringPtrOutput                  `pulumi:"apiToken"`
+	AppId                pulumi.IntOutput                        `pulumi:"appId"`
+	AppName              pulumi.StringOutput                     `pulumi:"appName"`
+	AppType              pulumi.StringPtrOutput                  `pulumi:"appType"`
+	AuthMode             pulumi.StringPtrOutput                  `pulumi:"authMode"`
+	BearerToken          pulumi.StringPtrOutput                  `pulumi:"bearerToken"`
+	ClientlessAccess     pulumi.BoolOutput                       `pulumi:"clientlessAccess"`
+	Host                 pulumi.StringOutput                     `pulumi:"host"`
+	IsUserPortalApp      pulumi.BoolOutput                       `pulumi:"isUserPortalApp"`
+	Oauth2               provider.NetskopeOAuth2ArgsPtrOutput    `pulumi:"oauth2"`
+	Protocols            provider.PrivateAppProtocolArrayOutput  `pulumi:"protocols"`
+	Publishers           provider.PrivateAppPublisherArrayOutput `pulumi:"publishers"`
+	Tags                 pulumi.StringArrayOutput                `pulumi:"tags"`
+	TenantUrl            pulumi.StringOutput                     `pulumi:"tenantUrl"`
+	TrustSelfSignedCerts pulumi.BoolOutput                       `pulumi:"trustSelfSignedCerts"`
+	UsePublisherDns      pulumi.BoolOutput                       `pulumi:"usePublisherDns"`
 }
 
 // NewPrivateApp registers a new resource with the given unique name, arguments, and options.
@@ -109,21 +110,22 @@ func (PrivateAppState) ElementType() reflect.Type {
 }
 
 type privateAppArgs struct {
-	AdoptExisting        *bool                         `pulumi:"adoptExisting"`
-	ApiToken             *string                       `pulumi:"apiToken"`
-	AppName              string                        `pulumi:"appName"`
-	AppType              *string                       `pulumi:"appType"`
-	AuthMode             *string                       `pulumi:"authMode"`
-	BearerToken          *string                       `pulumi:"bearerToken"`
-	ClientlessAccess     bool                          `pulumi:"clientlessAccess"`
-	Host                 string                        `pulumi:"host"`
-	IsUserPortalApp      bool                          `pulumi:"isUserPortalApp"`
-	Oauth2               *provider.NetskopeOAuth2Args  `pulumi:"oauth2"`
-	Protocols            []provider.PrivateAppProtocol `pulumi:"protocols"`
-	Tags                 []string                      `pulumi:"tags"`
-	TenantUrl            string                        `pulumi:"tenantUrl"`
-	TrustSelfSignedCerts bool                          `pulumi:"trustSelfSignedCerts"`
-	UsePublisherDns      bool                          `pulumi:"usePublisherDns"`
+	AdoptExisting        *bool                          `pulumi:"adoptExisting"`
+	ApiToken             *string                        `pulumi:"apiToken"`
+	AppName              string                         `pulumi:"appName"`
+	AppType              *string                        `pulumi:"appType"`
+	AuthMode             *string                        `pulumi:"authMode"`
+	BearerToken          *string                        `pulumi:"bearerToken"`
+	ClientlessAccess     bool                           `pulumi:"clientlessAccess"`
+	Host                 string                         `pulumi:"host"`
+	IsUserPortalApp      bool                           `pulumi:"isUserPortalApp"`
+	Oauth2               *provider.NetskopeOAuth2Args   `pulumi:"oauth2"`
+	Protocols            []provider.PrivateAppProtocol  `pulumi:"protocols"`
+	Publishers           []provider.PrivateAppPublisher `pulumi:"publishers"`
+	Tags                 []string                       `pulumi:"tags"`
+	TenantUrl            string                         `pulumi:"tenantUrl"`
+	TrustSelfSignedCerts bool                           `pulumi:"trustSelfSignedCerts"`
+	UsePublisherDns      bool                           `pulumi:"usePublisherDns"`
 }
 
 // The set of arguments for constructing a PrivateApp resource.
@@ -139,6 +141,7 @@ type PrivateAppArgs struct {
 	IsUserPortalApp      pulumi.BoolInput
 	Oauth2               provider.NetskopeOAuth2ArgsPtrInput
 	Protocols            provider.PrivateAppProtocolArrayInput
+	Publishers           provider.PrivateAppPublisherArrayInput
 	Tags                 pulumi.StringArrayInput
 	TenantUrl            pulumi.StringInput
 	TrustSelfSignedCerts pulumi.BoolInput
@@ -228,6 +231,10 @@ func (o PrivateAppOutput) Oauth2() provider.NetskopeOAuth2ArgsPtrOutput {
 
 func (o PrivateAppOutput) Protocols() provider.PrivateAppProtocolArrayOutput {
 	return o.ApplyT(func(v *PrivateApp) provider.PrivateAppProtocolArrayOutput { return v.Protocols }).(provider.PrivateAppProtocolArrayOutput)
+}
+
+func (o PrivateAppOutput) Publishers() provider.PrivateAppPublisherArrayOutput {
+	return o.ApplyT(func(v *PrivateApp) provider.PrivateAppPublisherArrayOutput { return v.Publishers }).(provider.PrivateAppPublisherArrayOutput)
 }
 
 func (o PrivateAppOutput) Tags() pulumi.StringArrayOutput {

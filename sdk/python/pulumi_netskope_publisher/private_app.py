@@ -34,6 +34,7 @@ class PrivateAppArgs:
                  auth_mode: pulumi.Input[Optional[_builtins.str]] = None,
                  bearer_token: pulumi.Input[Optional[_builtins.str]] = None,
                  oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
+                 publishers: pulumi.Input[Optional[Sequence[pulumi.Input['_provider.PrivateAppPublisherArgs']]]] = None,
                  tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
         The set of arguments for constructing a PrivateApp resource.
@@ -58,6 +59,8 @@ class PrivateAppArgs:
             pulumi.set(__self__, "bearer_token", bearer_token)
         if oauth2 is not None:
             pulumi.set(__self__, "oauth2", oauth2)
+        if publishers is not None:
+            pulumi.set(__self__, "publishers", publishers)
         if tags is not None:
             pulumi.set(__self__, "tags", tags)
 
@@ -189,6 +192,15 @@ class PrivateAppArgs:
 
     @_builtins.property
     @pulumi.getter
+    def publishers(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['_provider.PrivateAppPublisherArgs']]]]:
+        return pulumi.get(self, "publishers")
+
+    @publishers.setter
+    def publishers(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['_provider.PrivateAppPublisherArgs']]]]):
+        pulumi.set(self, "publishers", value)
+
+    @_builtins.property
+    @pulumi.getter
     def tags(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         return pulumi.get(self, "tags")
 
@@ -214,6 +226,7 @@ class PrivateApp(pulumi.CustomResource):
                  is_user_portal_app: pulumi.Input[Optional[_builtins.bool]] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  protocols: pulumi.Input[Optional[Sequence[pulumi.Input[Union['_provider.PrivateAppProtocolArgs', '_provider.PrivateAppProtocolArgsDict']]]]] = None,
+                 publishers: pulumi.Input[Optional[Sequence[pulumi.Input[Union['_provider.PrivateAppPublisherArgs', '_provider.PrivateAppPublisherArgsDict']]]]] = None,
                  tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
                  trust_self_signed_certs: pulumi.Input[Optional[_builtins.bool]] = None,
@@ -260,6 +273,7 @@ class PrivateApp(pulumi.CustomResource):
                  is_user_portal_app: pulumi.Input[Optional[_builtins.bool]] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  protocols: pulumi.Input[Optional[Sequence[pulumi.Input[Union['_provider.PrivateAppProtocolArgs', '_provider.PrivateAppProtocolArgsDict']]]]] = None,
+                 publishers: pulumi.Input[Optional[Sequence[pulumi.Input[Union['_provider.PrivateAppPublisherArgs', '_provider.PrivateAppPublisherArgsDict']]]]] = None,
                  tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  tenant_url: pulumi.Input[Optional[_builtins.str]] = None,
                  trust_self_signed_certs: pulumi.Input[Optional[_builtins.bool]] = None,
@@ -294,6 +308,7 @@ class PrivateApp(pulumi.CustomResource):
             if protocols is None and not opts.urn:
                 raise TypeError("Missing required property 'protocols'")
             __props__.__dict__["protocols"] = protocols
+            __props__.__dict__["publishers"] = publishers
             __props__.__dict__["tags"] = tags
             if tenant_url is None and not opts.urn:
                 raise TypeError("Missing required property 'tenant_url'")
@@ -341,6 +356,7 @@ class PrivateApp(pulumi.CustomResource):
         __props__.__dict__["is_user_portal_app"] = None
         __props__.__dict__["oauth2"] = None
         __props__.__dict__["protocols"] = None
+        __props__.__dict__["publishers"] = None
         __props__.__dict__["tags"] = None
         __props__.__dict__["tenant_url"] = None
         __props__.__dict__["trust_self_signed_certs"] = None
@@ -406,6 +422,11 @@ class PrivateApp(pulumi.CustomResource):
     @pulumi.getter
     def protocols(self) -> pulumi.Output[Sequence['_provider.outputs.PrivateAppProtocol']]:
         return pulumi.get(self, "protocols")
+
+    @_builtins.property
+    @pulumi.getter
+    def publishers(self) -> pulumi.Output[Optional[Sequence['_provider.outputs.PrivateAppPublisher']]]:
+        return pulumi.get(self, "publishers")
 
     @_builtins.property
     @pulumi.getter

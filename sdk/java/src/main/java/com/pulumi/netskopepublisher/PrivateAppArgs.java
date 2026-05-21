@@ -8,6 +8,7 @@ import com.pulumi.core.annotations.Import;
 import com.pulumi.exceptions.MissingRequiredPropertyException;
 import com.pulumi.netskopepublisher.provider.inputs.NetskopeOAuth2ArgsArgs;
 import com.pulumi.netskopepublisher.provider.inputs.PrivateAppProtocolArgs;
+import com.pulumi.netskopepublisher.provider.inputs.PrivateAppPublisherArgs;
 import java.lang.Boolean;
 import java.lang.String;
 import java.util.List;
@@ -97,6 +98,13 @@ public final class PrivateAppArgs extends com.pulumi.resources.ResourceArgs {
         return this.protocols;
     }
 
+    @Import(name="publishers")
+    private @Nullable Output<List<PrivateAppPublisherArgs>> publishers;
+
+    public Optional<Output<List<PrivateAppPublisherArgs>>> publishers() {
+        return Optional.ofNullable(this.publishers);
+    }
+
     @Import(name="tags")
     private @Nullable Output<List<String>> tags;
 
@@ -139,6 +147,7 @@ public final class PrivateAppArgs extends com.pulumi.resources.ResourceArgs {
         this.isUserPortalApp = $.isUserPortalApp;
         this.oauth2 = $.oauth2;
         this.protocols = $.protocols;
+        this.publishers = $.publishers;
         this.tags = $.tags;
         this.tenantUrl = $.tenantUrl;
         this.trustSelfSignedCerts = $.trustSelfSignedCerts;
@@ -264,6 +273,19 @@ public final class PrivateAppArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder protocols(PrivateAppProtocolArgs... protocols) {
             return protocols(List.of(protocols));
+        }
+
+        public Builder publishers(@Nullable Output<List<PrivateAppPublisherArgs>> publishers) {
+            $.publishers = publishers;
+            return this;
+        }
+
+        public Builder publishers(List<PrivateAppPublisherArgs> publishers) {
+            return publishers(Output.of(publishers));
+        }
+
+        public Builder publishers(PrivateAppPublisherArgs... publishers) {
+            return publishers(List.of(publishers));
         }
 
         public Builder tags(@Nullable Output<List<String>> tags) {

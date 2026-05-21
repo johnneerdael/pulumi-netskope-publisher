@@ -302,6 +302,58 @@ func TestPrivateAppReadDropsResourceWhenRemoteAppIsMissing(t *testing.T) {
 	}
 }
 
+func TestPrivateAppCreateIncludesInitialPublishersWhenProvided(t *testing.T) {
+	var created map[string]any
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private":
+			writeJSON(t, w, map[string]any{
+				"status": "success",
+				"data":   map[string]any{"private_apps": []map[string]any{}},
+			})
+		case r.Method == http.MethodPost && r.URL.Path == "/api/v2/steering/apps/private":
+			if err := json.NewDecoder(r.Body).Decode(&created); err != nil {
+				t.Fatal(err)
+			}
+			writeJSON(t, w, map[string]any{"status": "success", "data": map[string]any{"app_id": 44, "app_name": "orders", "name": "orders"}})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	response, err := createPrivateAppResource(t, property.NewMap(map[string]property.Value{
+		"tenantUrl":            property.New(server.URL),
+		"bearerToken":          property.New("api-token"),
+		"appName":              property.New("orders"),
+		"appType":              property.New("client"),
+		"host":                 property.New("orders.internal"),
+		"protocols":            property.New([]property.Value{property.New(map[string]property.Value{"type": property.New("tcp"), "ports": property.New("443")})}),
+		"clientlessAccess":     property.New(false),
+		"isUserPortalApp":      property.New(false),
+		"usePublisherDns":      property.New(false),
+		"trustSelfSignedCerts": property.New(false),
+		"publishers": property.New([]property.Value{property.New(map[string]property.Value{
+			"publisherId":   property.New(101.0),
+			"publisherName": property.New("pub-a"),
+		})}),
+	}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.ID != "44" {
+		t.Fatalf("expected created ID 44, got %q", response.ID)
+	}
+	publishers := created["publishers"].([]any)
+	publisher := publishers[0].(map[string]any)
+	if publisher["publisher_id"] != float64(101) {
+		t.Fatalf("expected publisher_id 101, got %#v", created)
+	}
+	if publisher["publisher_name"] != "pub-a" {
+		t.Fatalf("expected publisher_name pub-a, got %#v", created)
+	}
+}
+
 func TestAwsConstructCreatesRegistrationChildWhenRegistrationsOmitted(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:AwsPublisher", property.NewMap(map[string]property.Value{
 		"names":            property.New([]property.Value{property.New("pub-1")}),

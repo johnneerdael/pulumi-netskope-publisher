@@ -11,6 +11,7 @@ import com.pulumi.netskopepublisher.PrivateAppArgs;
 import com.pulumi.netskopepublisher.Utilities;
 import com.pulumi.netskopepublisher.provider.outputs.NetskopeOAuth2Args;
 import com.pulumi.netskopepublisher.provider.outputs.PrivateAppProtocol;
+import com.pulumi.netskopepublisher.provider.outputs.PrivateAppPublisher;
 import java.lang.Boolean;
 import java.lang.Integer;
 import java.lang.String;
@@ -91,6 +92,12 @@ public class PrivateApp extends com.pulumi.resources.CustomResource {
 
     public Output<List<PrivateAppProtocol>> protocols() {
         return this.protocols;
+    }
+    @Export(name="publishers", refs={List.class,PrivateAppPublisher.class}, tree="[0,1]")
+    private Output</* @Nullable */ List<PrivateAppPublisher>> publishers;
+
+    public Output<Optional<List<PrivateAppPublisher>>> publishers() {
+        return Codegen.optional(this.publishers);
     }
     @Export(name="tags", refs={List.class,String.class}, tree="[0,1]")
     private Output</* @Nullable */ List<String>> tags;
