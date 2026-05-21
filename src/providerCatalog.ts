@@ -67,6 +67,7 @@ interface ProviderDefinition {
   implementation: ProviderImplementationMode;
   bootstrapModel: BootstrapModel;
   userDataMode: UserDataMode;
+  userDataProperty?: string;
   slug: string;
   required: string[];
   resourceToken?: string;
@@ -99,7 +100,7 @@ function provider(definition: ProviderDefinition): ProviderCatalogEntry {
     bootstrapModel: definition.bootstrapModel,
     userData: {
       mode: definition.userDataMode,
-      property: userDataProperty(definition.userDataMode),
+      property: definition.userDataProperty ?? userDataProperty(definition.userDataMode),
       metadataKey: definition.userDataMode === "metadata" ? "user-data" : undefined,
     },
     inputs: {
@@ -167,13 +168,13 @@ const providerDefinitions = [
   provider({ displayName: "vSphere", componentName: "VspherePublisher", implementation: "bespoke", bootstrapModel: "prebakedSupported", userDataMode: "guestInfo", slug: "vsphere", required: ["datacenter", "datastore", "networkName", "templateName"], providerPackage: "@pulumi/vsphere" }),
   provider({ displayName: "ESXi Native", componentName: "EsxiPublisher", implementation: "bespoke", bootstrapModel: "prebakedSupported", userDataMode: "guestInfo", slug: "esxi", required: ["diskStore", "virtualNetwork"], providerPackage: "@pulumiverse/esxi-native" }),
   provider({ displayName: "Hcloud", componentName: "HcloudPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "hcloud", required: [], resourceToken: "hcloud:index/server:Server", providerPackage: "@pulumi/hcloud" }),
-  provider({ displayName: "Nutanix", componentName: "NutanixPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "base64", slug: "nutanix", required: ["clusterUuid"], resourceToken: "nutanix:index/virtualMachine:VirtualMachine", providerPackage: "@pierskarsenbarg/nutanix" }),
+  provider({ displayName: "Nutanix", componentName: "NutanixPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "base64", userDataProperty: "guestCustomizationCloudInitUserData", slug: "nutanix", required: ["clusterUuid"], resourceToken: "nutanix:index/virtualMachine:VirtualMachine", providerPackage: "@pierskarsenbarg/nutanix" }),
   provider({ displayName: "OpenStack", componentName: "OpenstackPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "openstack", required: ["imageName", "flavorName", "networkName"], resourceToken: "openstack:compute/instance:Instance", providerPackage: "@pulumi/openstack" }),
-  provider({ displayName: "OVH", componentName: "OvhPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "ovh", required: ["serviceName", "region", "imageId", "flavorId"], resourceToken: "ovh:cloudproject/instance:Instance", providerPackage: "@ovhcloud/pulumi-ovh" }),
+  provider({ displayName: "OVH", componentName: "OvhPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "ovh", required: ["serviceName", "region", "imageId", "flavorId"], resourceToken: "ovh:CloudProject/instance:Instance", providerPackage: "@ovhcloud/pulumi-ovh" }),
   provider({ displayName: "Scaleway", componentName: "ScalewayPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "scalewayDual", slug: "scaleway", required: [], resourceToken: "scaleway:index/instanceServer:InstanceServer", providerPackage: "@pulumiverse/scaleway" }),
-  provider({ displayName: "OCI", componentName: "OciPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "ociMetadata", slug: "oci", required: ["compartmentId", "availabilityDomain", "subnetId", "imageId"], resourceToken: "oci:core/instance:Instance", providerPackage: "@pulumi/oci" }),
+  provider({ displayName: "OCI", componentName: "OciPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "ociMetadata", slug: "oci", required: ["compartmentId", "availabilityDomain", "subnetId", "imageId"], resourceToken: "oci:Core/instance:Instance", providerPackage: "@pulumi/oci" }),
   provider({ displayName: "Alicloud", componentName: "AlicloudPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "base64", slug: "alicloud", required: ["imageId", "vswitchId", "securityGroupIds"], resourceToken: "alicloud:ecs/instance:Instance", providerPackage: "@pulumi/alicloud" }),
-  provider({ displayName: "Proxmox VE", componentName: "ProxmoxvePublisher", implementation: "catalogSpecializedVm", bootstrapModel: "bootstrapOnly", userDataMode: "proxmoxSnippet", slug: "proxmoxve", required: ["nodeName", "datastoreId", "templateVmId"], resourceToken: "proxmoxve:vm/virtualMachine:VirtualMachine", providerPackage: "@muhlba91/pulumi-proxmoxve" }),
+  provider({ displayName: "Proxmox VE", componentName: "ProxmoxvePublisher", implementation: "catalogSpecializedVm", bootstrapModel: "bootstrapOnly", userDataMode: "proxmoxSnippet", slug: "proxmoxve", required: ["nodeName", "datastoreId", "templateVmId"], resourceToken: "proxmoxve:index/vmLegacy:VmLegacy", providerPackage: "@muhlba91/pulumi-proxmoxve" }),
   provider({ displayName: "DigitalOcean", componentName: "DigitaloceanPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "digitalocean", required: ["region"], resourceToken: "digitalocean:index/droplet:Droplet", providerPackage: "@pulumi/digitalocean", yamlProperties: [["namePrefix", "pub"], ["replicas", 2], ["region", "ams3"], ["size", "s-2vcpu-4gb"], ["image", "ubuntu-22-04-x64"], ["bootstrap", true]] }),
   provider({ displayName: "Vultr", componentName: "VultrPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "vultr", required: ["region", "plan"], resourceToken: "vultr:index/instance:Instance", providerPackage: "@ediri/vultr", validation: { requiredOneOf: [["osId", "imageId"]], mutuallyExclusive: [["osId", "imageId"]] }, yamlProperties: [["namePrefix", "pub"], ["replicas", 2], ["region", "ams"], ["plan", "vc2-2c-4gb"], ["osId", 1743], ["bootstrap", true]] }),
   provider({ displayName: "Exoscale", componentName: "ExoscalePublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "exoscale", required: ["zone", "type", "templateId", "diskSize"], resourceToken: "exoscale:index/computeInstance:ComputeInstance", providerPackage: "@pulumiverse/exoscale" }),

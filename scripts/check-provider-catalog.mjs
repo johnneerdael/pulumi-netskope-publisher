@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { validateProvidersAgainstRegistrySchemas } from "./provider-registry-schema-check.mjs";
 
 const build = spawnSync("npm", ["run", "build"], { stdio: "inherit" });
 if (build.status !== 0) {
@@ -38,6 +39,12 @@ for (const provider of catalogProviders) {
       errors.push(`${docsPath} missing Pulumi YAML example`);
     }
   }
+}
+
+const registrySchemaErrors = await validateProvidersAgainstRegistrySchemas(catalogProviders);
+errors.push(...registrySchemaErrors);
+if (registrySchemaErrors.length === 0) {
+  console.log("Provider registry schema check passed.");
 }
 
 if (errors.length > 0) {

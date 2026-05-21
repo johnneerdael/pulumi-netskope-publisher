@@ -32,6 +32,7 @@
     "scripts/generate-provider-docs.mjs",
     "scripts/generate-sdks.mjs",
     "scripts/package-sdks.mjs",
+    "scripts/provider-registry-schema-check.mjs",
     "scripts/run-node-tests.mjs",
     "LICENSE"
   ],
