@@ -26,6 +26,10 @@ Optional platform inputs: `cloneNodeName`, `vmId`, `poolId`,
 `vlanId`, `started`, `onBoot`, `fullClone`, `ipAddress`, `gateway`, and
 `nameservers`.
 
+`vmId` is only valid when exactly one publisher is created. For HA pairs
+or larger replica sets, omit `vmId` and let Proxmox VE assign VM IDs, or
+deploy each VM as its own component with a distinct `vmId`.
+
 ## Image and bootstrap behavior
 
 Prepare an Ubuntu 22.04 cloud-init template in Proxmox VE and enable
@@ -58,10 +62,8 @@ resources:
       tenantUrl: ${tenantUrl}
       bearerToken: ${bearerToken}
       nodeName: pve-1
-      vmIdStart: 4200
       templateVmId: 9000
-      datastoreId: local-lvm
-      snippetsDatastoreId: local
+      datastoreId: local
       networkBridge: vmbr0
       bootstrap: true
 outputs:
