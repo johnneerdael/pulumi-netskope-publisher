@@ -59,8 +59,8 @@ func validateProviderCatalogArgs(componentName string, args any) error {
 }
 
 func isGoFieldMissing(value reflect.Value, pulumiName string) bool {
-	field := value.FieldByName(goFieldName(pulumiName))
-	if !field.IsValid() {
+	field, ok := fieldByPulumiName(value, pulumiName)
+	if !ok {
 		return true
 	}
 	if field.Kind() == reflect.Pointer {
@@ -70,8 +70,8 @@ func isGoFieldMissing(value reflect.Value, pulumiName string) bool {
 }
 
 func boolFieldIsTrue(value reflect.Value, pulumiName string) bool {
-	field := value.FieldByName(goFieldName(pulumiName))
-	if !field.IsValid() {
+	field, ok := fieldByPulumiName(value, pulumiName)
+	if !ok {
 		return false
 	}
 	if field.Kind() == reflect.Bool {
@@ -83,25 +83,23 @@ func boolFieldIsTrue(value reflect.Value, pulumiName string) bool {
 	return false
 }
 
-func goFieldName(pulumiName string) string {
-	switch pulumiName {
-	case "osId":
-		return "OSID"
-	case "imageId":
-		return "ImageID"
-	case "projectId":
-		return "ProjectID"
-	case "subnetId":
-		return "SubnetID"
-	case "templateId":
-		return "TemplateID"
-	case "vpcId":
-		return "VpcID"
-	case "enableExperimentalHyperv":
-		return "EnableExperimentalHyperv"
-	case "hardDrives":
-		return "HardDrives"
-	default:
-		return strings.ToUpper(pulumiName[:1]) + pulumiName[1:]
+func fieldByPulumiName(value reflect.Value, pulumiName string) (reflect.Value, bool) {
+	valueType := value.Type()
+	for i := 0; i < value.NumField(); i++ {
+		structField := valueType.Field(i)
+		if pulumiTagName(structField.Tag.Get("pulumi")) == pulumiName {
+			return value.Field(i), true
+		}
 	}
+	return reflect.Value{}, false
+}
+
+func pulumiTagName(tag string) string {
+	if tag == "" || tag == "-" {
+		return ""
+	}
+	if comma := strings.Index(tag, ","); comma >= 0 {
+		return tag[:comma]
+	}
+	return tag
 }
