@@ -69,3 +69,30 @@ func TestProviderCatalogOneOfValidationMetadata(t *testing.T) {
 		t.Fatalf("VultrPublisher mutually-exclusive mismatch: %#v", vultr.MutuallyExclusive)
 	}
 }
+
+func TestProviderCatalogDirectProviderValidationMetadata(t *testing.T) {
+	proxmox := providerCatalog["ProxmoxvePublisher"]
+	if proxmox.Implementation != "catalogSpecializedVm" {
+		t.Fatalf("ProxmoxvePublisher implementation mismatch: %s", proxmox.Implementation)
+	}
+	if !containsString(proxmox.RequiredInputs, "templateVmId") {
+		t.Fatalf("ProxmoxvePublisher missing templateVmId validation metadata: %#v", proxmox.RequiredInputs)
+	}
+
+	oci := providerCatalog["OciPublisher"]
+	if oci.Implementation != "catalogRawVm" {
+		t.Fatalf("OciPublisher implementation mismatch: %s", oci.Implementation)
+	}
+	if !containsString(oci.RequiredInputs, "imageId") {
+		t.Fatalf("OciPublisher missing imageId validation metadata: %#v", oci.RequiredInputs)
+	}
+}
+
+func containsString(values []string, expected string) bool {
+	for _, value := range values {
+		if value == expected {
+			return true
+		}
+	}
+	return false
+}

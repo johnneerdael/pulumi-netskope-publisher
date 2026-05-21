@@ -1265,6 +1265,31 @@ func TestVultrConstructRejectsConflictingImageChoices(t *testing.T) {
 	}
 }
 
+func TestProxmoxveConstructRejectsMissingTemplateVMID(t *testing.T) {
+	err := constructPublisherResourceError(t, "netskope-publisher:index:ProxmoxvePublisher", property.NewMap(map[string]property.Value{
+		"names":         property.New([]property.Value{property.New("pub-1")}),
+		"registrations": registrationMap("pub-1"),
+		"nodeName":      property.New("pve-1"),
+		"datastoreId":   property.New("local"),
+	}))
+	if err == nil || !strings.Contains(err.Error(), "ProxmoxvePublisher requires input templateVmId") {
+		t.Fatalf("expected Proxmoxve missing templateVmId error, got %v", err)
+	}
+}
+
+func TestOciConstructRejectsMissingImageID(t *testing.T) {
+	err := constructPublisherResourceError(t, "netskope-publisher:index:OciPublisher", property.NewMap(map[string]property.Value{
+		"names":              property.New([]property.Value{property.New("pub-1")}),
+		"registrations":      registrationMap("pub-1"),
+		"compartmentId":      property.New("ocid1.compartment"),
+		"availabilityDomain": property.New("phx-ad-1"),
+		"subnetId":           property.New("ocid1.subnet"),
+	}))
+	if err == nil || !strings.Contains(err.Error(), "OciPublisher requires input imageId") {
+		t.Fatalf("expected OCI missing imageId error, got %v", err)
+	}
+}
+
 type expandedProviderCase struct {
 	name     string
 	token    string

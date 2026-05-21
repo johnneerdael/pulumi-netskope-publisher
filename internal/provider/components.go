@@ -70,6 +70,9 @@ func NewAwsPublisher(ctx *pulumi.Context, name string, args AwsPublisherArgs, op
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("AwsPublisher", args); err != nil {
+		return nil, err
+	}
 
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
@@ -197,6 +200,9 @@ func NewAzurePublisher(ctx *pulumi.Context, name string, args AzurePublisherArgs
 
 	component := &AzurePublisher{AzurePublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("AzurePublisher", args); err != nil {
 		return nil, err
 	}
 
@@ -358,6 +364,9 @@ func (*GcpPublisher) Annotate(a infer.Annotator) {
 func NewGcpPublisher(ctx *pulumi.Context, name string, args GcpPublisherArgs, opts ...pulumi.ResourceOption) (*GcpPublisher, error) {
 	component := &GcpPublisher{GcpPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("GcpPublisher", args); err != nil {
 		return nil, err
 	}
 
@@ -682,6 +691,9 @@ func NewVspherePublisher(ctx *pulumi.Context, name string, args VspherePublisher
 
 	component := &VspherePublisher{VspherePublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("VspherePublisher", args); err != nil {
 		return nil, err
 	}
 
@@ -1610,6 +1622,9 @@ func NewEsxiPublisher(ctx *pulumi.Context, name string, args EsxiPublisherArgs, 
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("EsxiPublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
@@ -1650,6 +1665,9 @@ func NewEsxiPublisher(ctx *pulumi.Context, name string, args EsxiPublisherArgs, 
 func NewHcloudPublisher(ctx *pulumi.Context, name string, args HcloudPublisherArgs, opts ...pulumi.ResourceOption) (*HcloudPublisher, error) {
 	component := &HcloudPublisher{HcloudPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("HcloudPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
@@ -1694,6 +1712,9 @@ func NewNutanixPublisher(ctx *pulumi.Context, name string, args NutanixPublisher
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("NutanixPublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
@@ -1730,6 +1751,9 @@ func NewNutanixPublisher(ctx *pulumi.Context, name string, args NutanixPublisher
 func NewOpenstackPublisher(ctx *pulumi.Context, name string, args OpenstackPublisherArgs, opts ...pulumi.ResourceOption) (*OpenstackPublisher, error) {
 	component := &OpenstackPublisher{OpenstackPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("OpenstackPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
@@ -1800,6 +1824,9 @@ func NewOvhPublisher(ctx *pulumi.Context, name string, args OvhPublisherArgs, op
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("OvhPublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
@@ -1841,6 +1868,9 @@ func NewScalewayPublisher(ctx *pulumi.Context, name string, args ScalewayPublish
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("ScalewayPublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
@@ -1875,6 +1905,9 @@ func NewScalewayPublisher(ctx *pulumi.Context, name string, args ScalewayPublish
 func NewOciPublisher(ctx *pulumi.Context, name string, args OciPublisherArgs, opts ...pulumi.ResourceOption) (*OciPublisher, error) {
 	component := &OciPublisher{OciPublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("OciPublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
@@ -1919,6 +1952,9 @@ func NewAlicloudPublisher(ctx *pulumi.Context, name string, args AlicloudPublish
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
 		return nil, err
 	}
+	if err := validateProviderCatalogArgs("AlicloudPublisher", args); err != nil {
+		return nil, err
+	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
 	if err != nil {
 		return nil, err
@@ -1952,6 +1988,9 @@ func NewAlicloudPublisher(ctx *pulumi.Context, name string, args AlicloudPublish
 func NewProxmoxvePublisher(ctx *pulumi.Context, name string, args ProxmoxvePublisherArgs, opts ...pulumi.ResourceOption) (*ProxmoxvePublisher, error) {
 	component := &ProxmoxvePublisher{ProxmoxvePublisherArgs: args}
 	if err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, component, opts...); err != nil {
+		return nil, err
+	}
+	if err := validateProviderCatalogArgs("ProxmoxvePublisher", args); err != nil {
 		return nil, err
 	}
 	publisherNames, registrations, err := resolvePublisherInputs(ctx, component, name, args.common())
