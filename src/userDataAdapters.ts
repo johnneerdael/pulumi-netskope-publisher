@@ -1,13 +1,7 @@
 import * as pulumi from "@pulumi/pulumi";
+import type { UserDataMode } from "./providerCatalog";
 
-export type UserDataMode =
-  | "plain"
-  | "base64"
-  | "metadata-user-data"
-  | "custom-data"
-  | "cloud-init-disk"
-  | "guestinfo"
-  | "startup-script";
+export type { UserDataMode } from "./providerCatalog";
 
 export interface PublisherUserDataAdapter {
   mode: UserDataMode;
@@ -50,3 +44,14 @@ export function scalewayUserData(payload: pulumi.Output<string>): Record<string,
     },
   };
 }
+
+export const userDataAdapters: Partial<Record<UserDataMode, (payload: pulumi.Output<string>, key?: string) => pulumi.Input<string> | Record<string, pulumi.Input<unknown>>>> = {
+  plain: (payload) => plainUserData(payload),
+  base64: (payload) => base64UserData(payload),
+  metadata: (payload, key = "user-data") => metadataUserData(payload, key),
+  raw: (payload) => plainUserData(payload),
+  customData: (payload) => customData(payload),
+  guestInfo: (payload) => guestInfoUserData(payload),
+  scalewayDual: (payload) => scalewayUserData(payload),
+  ociMetadata: (payload, key = "userData") => base64MetadataUserData(payload, key),
+};

@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import * as pulumi from "@pulumi/pulumi";
+import { providerCatalog } from "../src/providerCatalog";
 import {
   base64UserData,
   guestInfoUserData,
   metadataUserData,
   plainUserData,
   scalewayUserData,
+  userDataAdapters,
 } from "../src/userDataAdapters";
 
 async function outputValue<T>(value: pulumi.Output<T>): Promise<T> {
@@ -42,4 +44,22 @@ test("scalewayUserData emits both cloudInit and userData cloud-init keys", async
   assert.equal(await outputValue(result.cloudInit as pulumi.Output<string>), "#cloud-config");
   const map = result.userData as Record<string, pulumi.Input<string>>;
   assert.equal(await outputValue(map["cloud-init"] as pulumi.Output<string>), "#cloud-config");
+});
+
+test("userDataAdapters cover raw VM factory provider modes", () => {
+  for (const componentName of [
+    "DigitaloceanPublisher",
+    "VultrPublisher",
+    "ExoscalePublisher",
+    "UpcloudPublisher",
+    "StackitPublisher",
+    "EquinixPublisher",
+    "OutscalePublisher",
+    "OpentelekomcloudPublisher",
+    "TencentcloudPublisher",
+    "YandexPublisher",
+  ]) {
+    const mode = providerCatalog[componentName].userData.mode;
+    assert.ok(userDataAdapters[mode], `${componentName} mode ${mode} has no adapter`);
+  }
 });

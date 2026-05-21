@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { RawResource } from "./rawResource";
-import { base64UserData, metadataUserData, plainUserData } from "./userDataAdapters";
+import { userDataAdapters } from "./userDataAdapters";
 import { CommonPublisherArgs, PublisherOutput } from "./types";
 import { ProviderCatalogEntry } from "./providerCatalog";
 import { createVmPublishers, VmPublisherBuildInput, VmPublisherBuildResult } from "./vmPublisherCore";
@@ -41,19 +41,21 @@ export function createCatalogRawVmPublishers<TArgs extends CommonPublisherArgs>(
 }
 
 export function userDataProperty(provider: ProviderCatalogEntry, input: VmPublisherBuildInput): Record<string, pulumi.Input<unknown>> {
-  if (provider.userData.mode === "plain") {
-    return { [provider.userData.property ?? "userData"]: plainUserData(input.userData) };
+  if (provider.userData.mode === "scalewayDual" || provider.userData.mode === "guestInfo" || provider.userData.mode === "ociMetadata" || provider.userData.mode === "customData") {
+    throw new Error(`${provider.componentName} cannot use catalog raw VM factory with user-data mode ${provider.userData.mode}`);
   }
-  if (provider.userData.mode === "base64") {
-    return { [provider.userData.property ?? "userData"]: base64UserData(input.userData) };
+
+  const adapter = userDataAdapters[provider.userData.mode];
+  if (!adapter) {
+    throw new Error(`${provider.componentName} cannot use catalog raw VM factory with user-data mode ${provider.userData.mode}`);
   }
+
+  const property = provider.userData.property;
+  const rendered = adapter(input.userData, provider.userData.metadataKey);
+
   if (provider.userData.mode === "metadata") {
-    return {
-      [provider.userData.property ?? "metadata"]: metadataUserData(input.userData, provider.userData.metadataKey ?? "user-data"),
-    };
+    return { [property ?? "metadata"]: rendered };
   }
-  if (provider.userData.mode === "raw") {
-    return { [provider.userData.property ?? "userDataRaw"]: plainUserData(input.userData) };
-  }
-  throw new Error(`${provider.componentName} cannot use catalog raw VM factory with user-data mode ${provider.userData.mode}`);
+
+  return { [property ?? "userData"]: rendered };
 }
