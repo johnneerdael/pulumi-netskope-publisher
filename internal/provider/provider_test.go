@@ -1716,9 +1716,17 @@ func constructAndCollectPublisherOutput(t *testing.T, token string, inputs prope
 						})}),
 					})}))
 				case "ovh:CloudProject/instance:Instance":
-					state = state.Set("ipAddresses", property.New([]property.Value{property.New("198.51.100.30")}))
+					state = state.Set("addresses", property.New([]property.Value{property.New(map[string]property.Value{
+						"ip":      property.New("198.51.100.30"),
+						"version": property.New(4.0),
+					})}))
 				case "scaleway:instance/server:Server":
-					state = state.Set("publicIp", property.New("198.51.100.40"))
+					state = state.Set("publicIps", property.New([]property.Value{property.New(map[string]property.Value{
+						"address": property.New("198.51.100.40"),
+					})}))
+					state = state.Set("privateIps", property.New([]property.Value{property.New(map[string]property.Value{
+						"address": property.New("10.0.0.40"),
+					})}))
 				}
 				return args.Name + "-id", state, nil
 			},

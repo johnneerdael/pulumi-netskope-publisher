@@ -1609,6 +1609,7 @@ type rawVMResource struct {
 
 	AccessIPV4       pulumi.StringOutput      `pulumi:"accessIpV4"`
 	Address          pulumi.StringOutput      `pulumi:"address"`
+	Addresses        pulumi.ArrayOutput       `pulumi:"addresses"`
 	IPAddresses      pulumi.StringArrayOutput `pulumi:"ipAddresses"`
 	Ipv4Address      pulumi.StringOutput      `pulumi:"ipv4Address"`
 	Ipv4Addresses    pulumi.ArrayOutput       `pulumi:"ipv4Addresses"`
@@ -1616,7 +1617,9 @@ type rawVMResource struct {
 	NicListStatuses  pulumi.AnyOutput         `pulumi:"nicListStatuses"`
 	PrimaryIPAddress pulumi.StringOutput      `pulumi:"primaryIpAddress"`
 	PrivateIP        pulumi.StringOutput      `pulumi:"privateIp"`
+	PrivateIPs       pulumi.ArrayOutput       `pulumi:"privateIps"`
 	PublicIP         pulumi.StringOutput      `pulumi:"publicIp"`
+	PublicIPs        pulumi.ArrayOutput       `pulumi:"publicIps"`
 }
 
 func NewEsxiPublisher(ctx *pulumi.Context, name string, args EsxiPublisherArgs, opts ...pulumi.ResourceOption) (*EsxiPublisher, error) {
@@ -1858,7 +1861,7 @@ func NewOvhPublisher(ctx *pulumi.Context, name string, args OvhPublisherArgs, op
 		if err := ctx.RegisterResource("ovh:CloudProject/instance:Instance", name+"-"+publisherName, inputs, instance, pulumi.Parent(component)); err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), firstStringOutput(instance.IPAddresses), args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), firstMapFieldOutput(instance.Addresses, "ip"), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1897,7 +1900,7 @@ func NewScalewayPublisher(ctx *pulumi.Context, name string, args ScalewayPublish
 		if err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), server.PublicIP, args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), firstMapFieldOutput(server.PrivateIPs, "address"), firstMapFieldOutput(server.PublicIPs, "address"), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -3358,6 +3361,23 @@ func firstStringOutput(values pulumi.StringArrayOutput) pulumi.StringOutput {
 			return ""
 		}
 		return items[0]
+	}).(pulumi.StringOutput)
+}
+
+func firstMapFieldOutput(values pulumi.ArrayOutput, field string) pulumi.StringOutput {
+	return values.ApplyT(func(items []interface{}) string {
+		if len(items) == 0 {
+			return ""
+		}
+		item, ok := items[0].(map[string]interface{})
+		if !ok {
+			return ""
+		}
+		value, ok := item[field]
+		if !ok || value == nil {
+			return ""
+		}
+		return fmt.Sprint(value)
 	}).(pulumi.StringOutput)
 }
 
