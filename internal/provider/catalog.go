@@ -7,6 +7,8 @@ type providerCatalogEntry struct {
 	Implementation         string
 	UserDataMode           string
 	RequiredInputs         []string
+	RequiredOneOf          [][]string
+	MutuallyExclusive      [][]string
 	ExperimentalOptInField string
 }
 
@@ -26,7 +28,16 @@ var providerCatalog = map[string]providerCatalogEntry{
 	"AlicloudPublisher":         providerEntry("Alicloud", "AlicloudPublisher", "catalogRawVm", "base64", "imageId", "vswitchId", "securityGroupIds"),
 	"ProxmoxvePublisher":        providerEntry("Proxmox VE", "ProxmoxvePublisher", "catalogSpecializedVm", "proxmoxSnippet", "nodeName", "datastoreId", "templateVmId"),
 	"DigitaloceanPublisher":     providerEntry("DigitalOcean", "DigitaloceanPublisher", "catalogRawVm", "plain", "region"),
-	"VultrPublisher":            providerEntry("Vultr", "VultrPublisher", "catalogRawVm", "plain", "region", "plan"),
+	"VultrPublisher": {
+		DisplayName:       "Vultr",
+		ComponentName:     "VultrPublisher",
+		Token:             "netskope-publisher:index:VultrPublisher",
+		Implementation:    "catalogRawVm",
+		UserDataMode:      "plain",
+		RequiredInputs:    []string{"region", "plan"},
+		RequiredOneOf:     [][]string{{"osId", "imageId"}},
+		MutuallyExclusive: [][]string{{"osId", "imageId"}},
+	},
 	"ExoscalePublisher":         providerEntry("Exoscale", "ExoscalePublisher", "catalogRawVm", "plain", "zone", "type", "templateId", "diskSize"),
 	"UpcloudPublisher":          providerEntry("UpCloud", "UpcloudPublisher", "catalogRawVm", "plain", "zone"),
 	"StackitPublisher":          providerEntry("Stackit", "StackitPublisher", "catalogRawVm", "plain", "projectId", "machineType", "imageId"),

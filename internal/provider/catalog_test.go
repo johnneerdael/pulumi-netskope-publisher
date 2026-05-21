@@ -53,3 +53,19 @@ func TestProviderCatalogValidationMetadata(t *testing.T) {
 		t.Fatalf("HypervPublisher missing experimental opt-in metadata")
 	}
 }
+
+func TestProviderCatalogOneOfValidationMetadata(t *testing.T) {
+	vultr := providerCatalog["VultrPublisher"]
+	if len(vultr.RequiredOneOf) != 1 || len(vultr.RequiredOneOf[0]) != 2 {
+		t.Fatalf("VultrPublisher missing required-one-of metadata: %#v", vultr.RequiredOneOf)
+	}
+	if vultr.RequiredOneOf[0][0] != "osId" || vultr.RequiredOneOf[0][1] != "imageId" {
+		t.Fatalf("VultrPublisher required-one-of mismatch: %#v", vultr.RequiredOneOf)
+	}
+	if len(vultr.MutuallyExclusive) != 1 || len(vultr.MutuallyExclusive[0]) != 2 {
+		t.Fatalf("VultrPublisher missing mutually-exclusive metadata: %#v", vultr.MutuallyExclusive)
+	}
+	if vultr.MutuallyExclusive[0][0] != "osId" || vultr.MutuallyExclusive[0][1] != "imageId" {
+		t.Fatalf("VultrPublisher mutually-exclusive mismatch: %#v", vultr.MutuallyExclusive)
+	}
+}
