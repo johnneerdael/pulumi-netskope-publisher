@@ -152,7 +152,7 @@ test("validateProviderAgainstRegistrySchema rejects missing nested schema check 
     },
   });
 
-  assert.match(errors.join("\n"), /CompositePublisher upstream resource example:index\/file:File missing cloud-init snippet content path sourceRaw\.data/);
+  assert.match(errors.join("\n"), /CompositePublisher upstream resource example:index\/file:File missing input cloud-init snippet content path sourceRaw\.data/);
 });
 
 test("validateProviderAgainstRegistrySchema accepts declared upstream property paths", () => {
@@ -177,6 +177,75 @@ test("validateProviderAgainstRegistrySchema accepts declared upstream property p
         inputProperties: {
           userData: { type: "string" },
           network: { "$ref": "#/types/example:index/ServerNetwork:ServerNetwork" },
+        },
+      },
+    },
+    types: {
+      "example:index/ServerNetwork:ServerNetwork": {
+        properties: {
+          subnetId: { type: "string" },
+        },
+      },
+    },
+  });
+
+  assert.deepEqual(errors, []);
+});
+
+test("validateProviderAgainstRegistrySchema accepts declared upstream output property paths", () => {
+  const errors = validateProviderAgainstRegistrySchema({
+    componentName: "OutputPublisher",
+    resourceToken: "example:index/server:Server",
+    upstreamPropertyChecks: [{
+      resourceToken: "example:index/server:Server",
+      propertyPath: ["publicIpAddress"],
+      description: "public IP output",
+      propertyKind: "output",
+    }],
+    userData: {
+      mode: "plain",
+      property: "userData",
+    },
+  }, {
+    name: "example",
+    resources: {
+      "example:index/server:Server": {
+        inputProperties: {
+          userData: { type: "string" },
+        },
+        properties: {
+          publicIpAddress: { type: "string" },
+        },
+      },
+    },
+  });
+
+  assert.deepEqual(errors, []);
+});
+
+test("validateProviderAgainstRegistrySchema accepts array item ref property paths", () => {
+  const errors = validateProviderAgainstRegistrySchema({
+    componentName: "ArrayPublisher",
+    resourceToken: "example:index/server:Server",
+    upstreamPropertyChecks: [{
+      resourceToken: "example:index/server:Server",
+      propertyPath: ["networks", "subnetId"],
+      description: "network subnet",
+    }],
+    userData: {
+      mode: "plain",
+      property: "userData",
+    },
+  }, {
+    name: "example",
+    resources: {
+      "example:index/server:Server": {
+        inputProperties: {
+          userData: { type: "string" },
+          networks: {
+            type: "array",
+            items: { "$ref": "#/types/example:index/ServerNetwork:ServerNetwork" },
+          },
         },
       },
     },
@@ -224,5 +293,5 @@ test("validateProviderAgainstRegistrySchema rejects missing declared upstream pr
     },
   });
 
-  assert.match(errors.join("\n"), /NestedPublisher upstream resource example:index\/server:Server missing server subnet placement path network\.subnetId/);
+  assert.match(errors.join("\n"), /NestedPublisher upstream resource example:index\/server:Server missing input server subnet placement path network\.subnetId/);
 });

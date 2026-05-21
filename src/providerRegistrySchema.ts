@@ -8,11 +8,13 @@ export interface RegistryProviderEntry {
     resourceToken: string;
     propertyPath: string[];
     description: string;
+    propertyKind?: "input" | "output";
   }>;
   upstreamPropertyChecks?: Array<{
     resourceToken: string;
     propertyPath: string[];
     description: string;
+    propertyKind?: "input" | "output";
   }>;
   userData?: {
     mode: string;
@@ -22,6 +24,7 @@ export interface RegistryProviderEntry {
 
 export interface RegistrySchemaResource {
   inputProperties?: Record<string, unknown>;
+  properties?: Record<string, unknown>;
 }
 
 export interface RegistrySchema {
@@ -48,26 +51,18 @@ export function validateProviderAgainstRegistrySchema(provider: RegistryProvider
 
   if (provider.registrySchemaChecks && provider.registrySchemaChecks.length > 0) {
     for (const check of provider.registrySchemaChecks) {
-      const checkedResource = schema.resources?.[check.resourceToken];
-      if (!checkedResource) {
-        errors.push(`${provider.componentName} upstream schema missing resource token ${check.resourceToken}`);
-        continue;
-      }
-      if (!schemaHasPath(schema, checkedResource.inputProperties ?? {}, check.propertyPath)) {
-        errors.push(`${provider.componentName} upstream resource ${check.resourceToken} missing ${check.description} path ${check.propertyPath.join(".")}`);
+      const error = checkRegistryPath(provider, schema, check);
+      if (error) {
+        errors.push(error);
       }
     }
   }
 
   if (provider.upstreamPropertyChecks && provider.upstreamPropertyChecks.length > 0) {
     for (const check of provider.upstreamPropertyChecks) {
-      const checkedResource = schema.resources?.[check.resourceToken];
-      if (!checkedResource) {
-        errors.push(`${provider.componentName} upstream schema missing resource token ${check.resourceToken}`);
-        continue;
-      }
-      if (!schemaHasPath(schema, checkedResource.inputProperties ?? {}, check.propertyPath)) {
-        errors.push(`${provider.componentName} upstream resource ${check.resourceToken} missing ${check.description} path ${check.propertyPath.join(".")}`);
+      const error = checkRegistryPath(provider, schema, check);
+      if (error) {
+        errors.push(error);
       }
     }
   }
@@ -89,6 +84,33 @@ export function validateProviderAgainstRegistrySchema(provider: RegistryProvider
   }
 
   return errors;
+}
+
+function checkRegistryPath(
+  provider: RegistryProviderEntry,
+  schema: RegistrySchema,
+  check: {
+    resourceToken: string;
+    propertyPath: string[];
+    description: string;
+    propertyKind?: "input" | "output";
+  },
+): string | undefined {
+  const checkedResource = schema.resources?.[check.resourceToken];
+  if (!checkedResource) {
+    return `${provider.componentName} upstream schema missing resource token ${check.resourceToken}`;
+  }
+
+  const propertyKind = check.propertyKind ?? "input";
+  const properties = propertyKind === "output"
+    ? checkedResource.properties ?? {}
+    : checkedResource.inputProperties ?? {};
+
+  if (!schemaHasPath(schema, properties, check.propertyPath)) {
+    return `${provider.componentName} upstream resource ${check.resourceToken} missing ${propertyKind} ${check.description} path ${check.propertyPath.join(".")}`;
+  }
+
+  return undefined;
 }
 
 function schemaHasPath(schema: RegistrySchema, properties: Record<string, unknown>, path: string[]): boolean {

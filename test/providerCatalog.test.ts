@@ -59,6 +59,15 @@ test("catalog-driven providers declare resource token, adapter, docs, and yaml e
   }
 });
 
+test("catalog-driven providers declare explicit upstream schema checks", () => {
+  for (const provider of catalogDrivenProviders) {
+    assert.ok(
+      (provider.registrySchemaChecks?.length ?? 0) > 0 || (provider.upstreamPropertyChecks?.length ?? 0) > 0,
+      `${provider.componentName} missing registrySchemaChecks or upstreamPropertyChecks`,
+    );
+  }
+});
+
 test("bespoke providers are metadata-only", () => {
   for (const provider of bespokeProviders) {
     assert.equal(provider.implementation, "bespoke");
