@@ -108,7 +108,11 @@ func (*RealtimeProtectionPolicy) Delete(ctx context.Context, req infer.DeleteReq
 		return infer.DeleteResponse{}, fmt.Errorf("invalid realtime policy ID %q: %w", req.ID, err)
 	}
 	client := newResourceClient(req.State.TenantURL, req.State.APIToken, req.State.BearerToken, req.State.AuthMode, req.State.OAuth2, http.DefaultClient)
-	return infer.DeleteResponse{}, client.deleteRealtimePolicy(ctx, policyID)
+	err = client.deleteRealtimePolicy(ctx, policyID)
+	if err == errNetskopeNotFound {
+		return infer.DeleteResponse{}, nil
+	}
+	return infer.DeleteResponse{}, err
 }
 
 func realtimePolicyPayloadFromArgs(ctx context.Context, args RealtimeProtectionPolicyArgs) (RealtimeProtectionPolicyOutputs, realtimePolicyPayload, error) {

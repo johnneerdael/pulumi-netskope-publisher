@@ -126,7 +126,11 @@ func (*PrivateApp) Delete(ctx context.Context, req infer.DeleteRequest[PrivateAp
 		return infer.DeleteResponse{}, fmt.Errorf("invalid private app ID %q: %w", req.ID, err)
 	}
 	client := newResourceClient(req.State.TenantURL, req.State.APIToken, req.State.BearerToken, req.State.AuthMode, req.State.OAuth2, http.DefaultClient)
-	return infer.DeleteResponse{}, client.deletePrivateApp(ctx, appID)
+	err = client.deletePrivateApp(ctx, appID)
+	if err == errNetskopeNotFound {
+		return infer.DeleteResponse{}, nil
+	}
+	return infer.DeleteResponse{}, err
 }
 
 func newResourceClient(tenantURL string, apiToken *string, bearerToken *string, authMode *string, oauth2 *NetskopeOAuth2Args, httpClient *http.Client) netskopeClient {

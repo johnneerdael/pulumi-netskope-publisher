@@ -302,6 +302,28 @@ func TestPrivateAppReadDropsResourceWhenRemoteAppIsMissing(t *testing.T) {
 	}
 }
 
+func TestPrivateAppDeleteIgnoresRemoteNotFound(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	resource := PrivateApp{}
+	_, err := resource.Delete(t.Context(), infer.DeleteRequest[PrivateAppOutputs]{
+		ID: "44",
+		State: PrivateAppOutputs{
+			PrivateAppArgs: PrivateAppArgs{
+				TenantURL:   server.URL,
+				BearerToken: stringPtr("api-token"),
+			},
+			AppID: 44,
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected delete to ignore remote 404, got %v", err)
+	}
+}
+
 func TestPrivateAppCreateIncludesInitialPublishersWhenProvided(t *testing.T) {
 	var created map[string]any
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -883,6 +905,28 @@ func TestRealtimeProtectionPolicyReadDropsResourceWhenRemotePolicyIsMissing(t *t
 	}
 	if response.ID != "" {
 		t.Fatalf("expected missing remote policy to clear ID, got %q", response.ID)
+	}
+}
+
+func TestRealtimeProtectionPolicyDeleteIgnoresRemoteNotFound(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	resource := RealtimeProtectionPolicy{}
+	_, err := resource.Delete(t.Context(), infer.DeleteRequest[RealtimeProtectionPolicyOutputs]{
+		ID: "55",
+		State: RealtimeProtectionPolicyOutputs{
+			RealtimeProtectionPolicyArgs: RealtimeProtectionPolicyArgs{
+				TenantURL:   server.URL,
+				BearerToken: stringPtr("api-token"),
+			},
+			PolicyID: 55,
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected delete to ignore remote 404, got %v", err)
 	}
 }
 
