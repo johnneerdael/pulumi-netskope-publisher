@@ -154,3 +154,75 @@ test("validateProviderAgainstRegistrySchema rejects missing nested schema check 
 
   assert.match(errors.join("\n"), /CompositePublisher upstream resource example:index\/file:File missing cloud-init snippet content path sourceRaw\.data/);
 });
+
+test("validateProviderAgainstRegistrySchema accepts declared upstream property paths", () => {
+  const errors = validateProviderAgainstRegistrySchema({
+    componentName: "NestedPublisher",
+    resourceToken: "example:index/server:Server",
+    providerPackage: "@example/provider",
+    upstreamPropertyChecks: [{
+      resourceToken: "example:index/server:Server",
+      propertyPath: ["network", "subnetId"],
+      description: "server subnet placement",
+    }],
+    userData: {
+      mode: "plain",
+      property: "userData",
+    },
+  }, {
+    name: "example",
+    language: { nodejs: { packageName: "@example/provider" } },
+    resources: {
+      "example:index/server:Server": {
+        inputProperties: {
+          userData: { type: "string" },
+          network: { "$ref": "#/types/example:index/ServerNetwork:ServerNetwork" },
+        },
+      },
+    },
+    types: {
+      "example:index/ServerNetwork:ServerNetwork": {
+        properties: {
+          subnetId: { type: "string" },
+        },
+      },
+    },
+  });
+
+  assert.deepEqual(errors, []);
+});
+
+test("validateProviderAgainstRegistrySchema rejects missing declared upstream property paths", () => {
+  const errors = validateProviderAgainstRegistrySchema({
+    componentName: "NestedPublisher",
+    resourceToken: "example:index/server:Server",
+    upstreamPropertyChecks: [{
+      resourceToken: "example:index/server:Server",
+      propertyPath: ["network", "subnetId"],
+      description: "server subnet placement",
+    }],
+    userData: {
+      mode: "plain",
+      property: "userData",
+    },
+  }, {
+    name: "example",
+    resources: {
+      "example:index/server:Server": {
+        inputProperties: {
+          userData: { type: "string" },
+          network: { "$ref": "#/types/example:index/ServerNetwork:ServerNetwork" },
+        },
+      },
+    },
+    types: {
+      "example:index/ServerNetwork:ServerNetwork": {
+        properties: {
+          networkId: { type: "string" },
+        },
+      },
+    },
+  });
+
+  assert.match(errors.join("\n"), /NestedPublisher upstream resource example:index\/server:Server missing server subnet placement path network\.subnetId/);
+});

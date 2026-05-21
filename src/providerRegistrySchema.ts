@@ -9,6 +9,11 @@ export interface RegistryProviderEntry {
     propertyPath: string[];
     description: string;
   }>;
+  upstreamPropertyChecks?: Array<{
+    resourceToken: string;
+    propertyPath: string[];
+    description: string;
+  }>;
   userData?: {
     mode: string;
     property?: string;
@@ -52,7 +57,19 @@ export function validateProviderAgainstRegistrySchema(provider: RegistryProvider
         errors.push(`${provider.componentName} upstream resource ${check.resourceToken} missing ${check.description} path ${check.propertyPath.join(".")}`);
       }
     }
-    return errors;
+  }
+
+  if (provider.upstreamPropertyChecks && provider.upstreamPropertyChecks.length > 0) {
+    for (const check of provider.upstreamPropertyChecks) {
+      const checkedResource = schema.resources?.[check.resourceToken];
+      if (!checkedResource) {
+        errors.push(`${provider.componentName} upstream schema missing resource token ${check.resourceToken}`);
+        continue;
+      }
+      if (!schemaHasPath(schema, checkedResource.inputProperties ?? {}, check.propertyPath)) {
+        errors.push(`${provider.componentName} upstream resource ${check.resourceToken} missing ${check.description} path ${check.propertyPath.join(".")}`);
+      }
+    }
   }
 
   if (!provider.resourceToken) {
@@ -77,14 +94,17 @@ export function validateProviderAgainstRegistrySchema(provider: RegistryProvider
 function schemaHasPath(schema: RegistrySchema, properties: Record<string, unknown>, path: string[]): boolean {
   let currentProperties: Record<string, unknown> | undefined = properties;
   for (const [index, segment] of path.entries()) {
-    const property = currentProperties?.[segment] as { $ref?: string; properties?: Record<string, unknown> } | undefined;
+    const property = currentProperties?.[segment] as { $ref?: string; properties?: Record<string, unknown>; items?: { $ref?: string; properties?: Record<string, unknown> } } | undefined;
     if (!property) {
       return false;
     }
     if (index === path.length - 1) {
       return true;
     }
-    currentProperties = property.properties ?? resolveRefProperties(schema, property.$ref);
+    currentProperties = property.properties
+      ?? resolveRefProperties(schema, property.$ref)
+      ?? property.items?.properties
+      ?? resolveRefProperties(schema, property.items?.$ref);
   }
   return false;
 }

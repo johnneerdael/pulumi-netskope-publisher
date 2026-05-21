@@ -39,6 +39,8 @@ export interface ProviderRegistrySchemaCheck {
   description: string;
 }
 
+export type ProviderUpstreamPropertyCheck = ProviderRegistrySchemaCheck;
+
 export interface ProviderCatalogEntry {
   displayName: string;
   componentName: string;
@@ -48,6 +50,7 @@ export interface ProviderCatalogEntry {
   resourceToken?: string;
   registrySchemaUrl?: string;
   registrySchemaChecks?: ProviderRegistrySchemaCheck[];
+  upstreamPropertyChecks?: ProviderUpstreamPropertyCheck[];
   implementation: ProviderImplementationMode;
   bootstrapModel: BootstrapModel;
   userData: {
@@ -81,6 +84,7 @@ interface ProviderDefinition {
   providerPackage?: string;
   registrySchemaUrl?: string;
   registrySchemaChecks?: ProviderRegistrySchemaCheck[];
+  upstreamPropertyChecks?: ProviderUpstreamPropertyCheck[];
   validation?: Omit<ProviderValidationMetadata, "required">;
   yamlProperties?: Array<[string, unknown]>;
 }
@@ -105,6 +109,7 @@ function provider(definition: ProviderDefinition): ProviderCatalogEntry {
     resourceToken: definition.resourceToken,
     registrySchemaUrl: definition.registrySchemaUrl ?? registrySchemaUrl(definition),
     registrySchemaChecks: definition.registrySchemaChecks,
+    upstreamPropertyChecks: definition.upstreamPropertyChecks,
     implementation: definition.implementation,
     bootstrapModel: definition.bootstrapModel,
     userData: {
@@ -178,10 +183,33 @@ const providerDefinitions = [
   provider({ displayName: "ESXi Native", componentName: "EsxiPublisher", implementation: "bespoke", bootstrapModel: "prebakedSupported", userDataMode: "guestInfo", slug: "esxi", required: ["diskStore", "virtualNetwork"], providerPackage: "@pulumiverse/esxi-native" }),
   provider({ displayName: "Hcloud", componentName: "HcloudPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "hcloud", required: [], resourceToken: "hcloud:index/server:Server", providerPackage: "@pulumi/hcloud" }),
   provider({ displayName: "Nutanix", componentName: "NutanixPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "base64", userDataProperty: "guestCustomizationCloudInitUserData", slug: "nutanix", required: ["clusterUuid"], resourceToken: "nutanix:index/virtualMachine:VirtualMachine", providerPackage: "@pierskarsenbarg/nutanix" }),
-  provider({ displayName: "OpenStack", componentName: "OpenstackPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "openstack", required: ["imageName", "flavorName", "networkName"], resourceToken: "openstack:compute/instance:Instance", providerPackage: "@pulumi/openstack" }),
+  provider({ displayName: "OpenStack", componentName: "OpenstackPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "openstack", required: ["imageName", "flavorName", "networkName"], resourceToken: "openstack:compute/instance:Instance", providerPackage: "@pulumi/openstack", upstreamPropertyChecks: [{ resourceToken: "openstack:compute/instance:Instance", propertyPath: ["networks"], description: "instance network attachments" }] }),
   provider({ displayName: "OVH", componentName: "OvhPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "ovh", required: ["serviceName", "region", "imageId", "flavorId"], resourceToken: "ovh:CloudProject/instance:Instance", providerPackage: "@ovhcloud/pulumi-ovh" }),
   provider({ displayName: "Scaleway", componentName: "ScalewayPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "scalewayDual", slug: "scaleway", required: [], resourceToken: "scaleway:index/instanceServer:InstanceServer", providerPackage: "@pulumiverse/scaleway" }),
-  provider({ displayName: "OCI", componentName: "OciPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "ociMetadata", slug: "oci", required: ["compartmentId", "availabilityDomain", "subnetId", "imageId"], resourceToken: "oci:Core/instance:Instance", providerPackage: "@pulumi/oci" }),
+  provider({
+    displayName: "OCI",
+    componentName: "OciPublisher",
+    implementation: "catalogRawVm",
+    bootstrapModel: "bootstrapOnly",
+    userDataMode: "ociMetadata",
+    slug: "oci",
+    required: ["compartmentId", "availabilityDomain", "subnetId", "imageId"],
+    resourceToken: "oci:Core/instance:Instance",
+    providerPackage: "@pulumi/oci",
+    upstreamPropertyChecks: [{
+      resourceToken: "oci:Core/instance:Instance",
+      propertyPath: ["createVnicDetails", "subnetId"],
+      description: "primary VNIC subnet",
+    }, {
+      resourceToken: "oci:Core/instance:Instance",
+      propertyPath: ["sourceDetails", "sourceId"],
+      description: "image source ID",
+    }, {
+      resourceToken: "oci:Core/instance:Instance",
+      propertyPath: ["metadata"],
+      description: "cloud-init metadata map",
+    }],
+  }),
   provider({ displayName: "Alicloud", componentName: "AlicloudPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "base64", slug: "alicloud", required: ["imageId", "vswitchId", "securityGroupIds"], resourceToken: "alicloud:ecs/instance:Instance", providerPackage: "@pulumi/alicloud" }),
   provider({
     displayName: "Proxmox VE",
@@ -212,7 +240,30 @@ const providerDefinitions = [
   provider({ displayName: "Outscale", componentName: "OutscalePublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "outscale", required: ["imageId"], resourceToken: "outscale:index/vm:Vm", providerPackage: "terraform-provider:outscale/outscale" }),
   provider({ displayName: "OpenTelekomCloud", componentName: "OpentelekomcloudPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "plain", slug: "opentelekomcloud", required: ["networks"], resourceToken: "opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2", providerPackage: "terraform-provider:opentelekomcloud/opentelekomcloud" }),
   provider({ displayName: "TencentCloud", componentName: "TencentcloudPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "raw", slug: "tencentcloud", required: ["availabilityZone", "imageId"], resourceToken: "tencentcloud:index/instance:Instance", providerPackage: "terraform-provider:tencentcloudstack/tencentcloud" }),
-  provider({ displayName: "Yandex Cloud", componentName: "YandexPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "metadata", slug: "yandex", required: ["imageId", "subnetId"], resourceToken: "yandex:index/computeInstance:ComputeInstance", providerPackage: "pulumi/yandex" }),
+  provider({
+    displayName: "Yandex Cloud",
+    componentName: "YandexPublisher",
+    implementation: "catalogRawVm",
+    bootstrapModel: "bootstrapOnly",
+    userDataMode: "metadata",
+    slug: "yandex",
+    required: ["imageId", "subnetId"],
+    resourceToken: "yandex:index/computeInstance:ComputeInstance",
+    providerPackage: "pulumi/yandex",
+    upstreamPropertyChecks: [{
+      resourceToken: "yandex:index/computeInstance:ComputeInstance",
+      propertyPath: ["bootDisk", "initializeParams", "imageId"],
+      description: "boot disk image",
+    }, {
+      resourceToken: "yandex:index/computeInstance:ComputeInstance",
+      propertyPath: ["networkInterfaces", "subnetId"],
+      description: "network interface subnet",
+    }, {
+      resourceToken: "yandex:index/computeInstance:ComputeInstance",
+      propertyPath: ["metadata"],
+      description: "cloud-init metadata map",
+    }],
+  }),
   provider({ displayName: "Hyper-V", componentName: "HypervPublisher", implementation: "bespoke", bootstrapModel: "experimental", userDataMode: "none", slug: "hyperv", required: ["switchName", "hardDrives"], validation: { experimentalOptInField: "enableExperimentalHyperv" } }),
   provider({ displayName: "Netskope Registration", componentName: "NetskopeRegistration", implementation: "bespoke", bootstrapModel: "registrationOnly", userDataMode: "none", slug: "registration", required: ["publisherNames", "tenantUrl"] }),
 ] satisfies ProviderCatalogEntry[];
