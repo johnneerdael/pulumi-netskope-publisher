@@ -10,6 +10,7 @@ import (
 
 	"github.com/blang/semver"
 	p "github.com/pulumi/pulumi-go-provider"
+	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi-go-provider/integration"
 	presource "github.com/pulumi/pulumi/sdk/v3/go/common/resource"
 	"github.com/pulumi/pulumi/sdk/v3/go/property"
@@ -181,12 +182,14 @@ func TestPrivateAppCreateFailsWhenExistingWithoutAdopt(t *testing.T) {
 		if r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private" {
 			writeJSON(t, w, map[string]any{
 				"status": "success",
-				"data": []map[string]any{{
-					"app_id":   44,
-					"app_name": "orders",
-					"name":     "orders",
-					"tags":     []map[string]any{},
-				}},
+				"data": map[string]any{
+					"private_apps": []map[string]any{{
+						"app_id":   44,
+						"app_name": "orders",
+						"name":     "orders",
+						"tags":     []map[string]any{},
+					}},
+				},
 			})
 			return
 		}
@@ -221,14 +224,16 @@ func TestPrivateAppAdoptsExistingByName(t *testing.T) {
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private":
 			writeJSON(t, w, map[string]any{
 				"status": "success",
-				"data": []map[string]any{{
-					"app_id":   44,
-					"app_name": "orders",
-					"name":     "orders",
-					"tags":     []map[string]any{{"tag_id": 7, "tag_name": "vpc-a"}},
-				}},
+				"data": map[string]any{
+					"private_apps": []map[string]any{{
+						"app_id":   44,
+						"app_name": "orders",
+						"name":     "orders",
+						"tags":     []map[string]any{{"tag_id": 7, "tag_name": "vpc-a"}},
+					}},
+				},
 			})
-		case r.Method == http.MethodPatch && r.URL.Path == "/api/v2/steering/apps/private/44":
+		case r.Method == http.MethodPut && r.URL.Path == "/api/v2/steering/apps/private/44":
 			patched = true
 			writeJSON(t, w, map[string]any{"status": "success", "data": map[string]any{"app_id": 44, "app_name": "orders", "name": "orders"}})
 		default:
@@ -258,7 +263,64 @@ func TestPrivateAppAdoptsExistingByName(t *testing.T) {
 		t.Fatalf("expected adopted ID 44, got %q", response.ID)
 	}
 	if !patched {
-		t.Fatalf("expected adopted app to be reconciled with PATCH")
+		t.Fatalf("expected adopted app to be reconciled with PUT")
+	}
+}
+
+func TestPrivateAppReadDropsResourceWhenRemoteAppIsMissing(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private/44" {
+			http.NotFound(w, r)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	resource := PrivateApp{}
+	response, err := resource.Read(t.Context(), infer.ReadRequest[PrivateAppArgs, PrivateAppOutputs]{
+		ID: "44",
+		Inputs: PrivateAppArgs{
+			TenantURL:   server.URL,
+			BearerToken: stringPtr("api-token"),
+			AppName:     "orders",
+		},
+		State: PrivateAppOutputs{
+			PrivateAppArgs: PrivateAppArgs{
+				TenantURL:   server.URL,
+				BearerToken: stringPtr("api-token"),
+				AppName:     "orders",
+			},
+			AppID: 44,
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.ID != "" {
+		t.Fatalf("expected missing remote app to clear ID, got %q", response.ID)
+	}
+}
+
+func TestPrivateAppRejectsHostsUntilApiShapeIsConfirmed(t *testing.T) {
+	_, err := createPrivateAppResource(t, property.NewMap(map[string]property.Value{
+		"tenantUrl":            property.New("https://tenant.example"),
+		"bearerToken":          property.New("api-token"),
+		"appName":              property.New("orders"),
+		"appType":              property.New("client"),
+		"host":                 property.New("orders.internal"),
+		"hosts":                property.New([]property.Value{property.New("orders.internal"), property.New("orders-alt.internal")}),
+		"protocols":            property.New([]property.Value{property.New(map[string]property.Value{"type": property.New("tcp"), "ports": property.New("443")})}),
+		"clientlessAccess":     property.New(false),
+		"isUserPortalApp":      property.New(false),
+		"usePublisherDns":      property.New(false),
+		"trustSelfSignedCerts": property.New(false),
+	}))
+	if err == nil {
+		t.Fatalf("expected hosts validation error")
+	}
+	if !strings.Contains(err.Error(), "hosts is not supported by the documented private app API; use host") {
+		t.Fatalf("expected hosts validation error, got %v", err)
 	}
 }
 
@@ -319,22 +381,24 @@ func TestTagPublisherAssignmentAddsAndRemovesOnlySelectedPublishers(t *testing.T
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private":
 			writeJSON(t, w, map[string]any{
 				"status": "success",
-				"data": []map[string]any{
-					{
-						"app_id":   10,
-						"app_name": "orders",
-						"tags":     []map[string]any{{"tag_name": "vpc-a"}},
-						"service_publisher_assignments": []map[string]any{
-							{"publisher_id": 99},
+				"data": map[string]any{
+					"private_apps": []map[string]any{
+						{
+							"app_id":   10,
+							"app_name": "orders",
+							"tags":     []map[string]any{{"tag_name": "vpc-a"}},
+							"service_publisher_assignments": []map[string]any{
+								{"publisher_id": 99},
+							},
 						},
-					},
-					{
-						"app_id":   20,
-						"app_name": "billing",
-						"tags":     []map[string]any{{"tag_name": "vpc-b"}},
-						"service_publisher_assignments": []map[string]any{
-							{"publisher_id": 101},
-							{"publisher_id": 99},
+						{
+							"app_id":   20,
+							"app_name": "billing",
+							"tags":     []map[string]any{{"tag_name": "vpc-b"}},
+							"service_publisher_assignments": []map[string]any{
+								{"publisher_id": 101},
+								{"publisher_id": 99},
+							},
 						},
 					},
 				},
@@ -374,9 +438,102 @@ func TestTagPublisherAssignmentAddsAndRemovesOnlySelectedPublishers(t *testing.T
 	if len(putBodies) != 2 {
 		t.Fatalf("expected two publisher association updates, got %#v", putBodies)
 	}
+	firstBody := putBodies[0]
+	if _, ok := firstBody["private_app_names"]; ok {
+		t.Fatalf("did not expect private_app_names in publisher assignment body: %#v", firstBody)
+	}
+	if got := firstBody["private_app_ids"].([]any)[0]; got != "10" {
+		t.Fatalf("expected first update to target private app ID 10, got %#v", firstBody)
+	}
+	if got := firstBody["publisher_ids"].([]any); len(got) != 2 || got[0] != "99" || got[1] != "101" {
+		t.Fatalf("expected first update to keep 99 and add 101, got %#v", firstBody)
+	}
 	matchedApps := response.Properties.Get("matchedApps").AsArray()
 	if matchedApps.Len() != 1 || matchedApps.Get(0).AsString() != "orders" {
 		t.Fatalf("expected matched app orders, got %#v", matchedApps)
+	}
+}
+
+func TestTagPublisherAssignmentFailsWhenPlacementLabelsSelectNoPublishers(t *testing.T) {
+	_, err := createTagPublisherAssignmentResource(t, property.NewMap(map[string]property.Value{
+		"tenantUrl":                property.New("https://tenant.example"),
+		"bearerToken":              property.New("api-token"),
+		"appTags":                  property.New([]property.Value{property.New("vpc-a")}),
+		"publisherPlacementLabels": property.New([]property.Value{property.New("vpc-a")}),
+		"publishers": property.New(map[string]property.Value{
+			"pub-b": property.New(map[string]property.Value{
+				"publisherId":     property.New(202.0),
+				"placementLabels": property.New([]property.Value{property.New("vpc-b")}),
+			}),
+		}),
+	}))
+	if err == nil {
+		t.Fatalf("expected validation error")
+	}
+	if !strings.Contains(err.Error(), `publisherPlacementLabels [vpc-a] did not match any managed publishers`) {
+		t.Fatalf("expected placement label validation error, got %v", err)
+	}
+}
+
+func TestTagPublisherAssignmentDeleteRemovesSelectedPublishersFromMatchedApps(t *testing.T) {
+	var deleteBodies []map[string]any
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/steering/apps/private":
+			writeJSON(t, w, map[string]any{
+				"status": "success",
+				"data": map[string]any{
+					"private_apps": []map[string]any{{
+						"app_id":   10,
+						"app_name": "orders",
+						"tags":     []map[string]any{{"tag_name": "vpc-a"}},
+						"service_publisher_assignments": []map[string]any{
+							{"publisher_id": 99},
+							{"publisher_id": 101},
+						},
+					}},
+				},
+			})
+		case r.Method == http.MethodDelete && r.URL.Path == "/api/v2/steering/apps/private/publishers":
+			var body map[string]any
+			if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+				t.Fatal(err)
+			}
+			deleteBodies = append(deleteBodies, body)
+			writeJSON(t, w, map[string]any{"status": "success"})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	resource := TagPublisherAssignment{}
+	_, err := resource.Delete(t.Context(), infer.DeleteRequest[TagPublisherAssignmentOutputs]{
+		ID: "vpc-a",
+		State: TagPublisherAssignmentOutputs{
+			TagPublisherAssignmentArgs: TagPublisherAssignmentArgs{
+				TenantURL:                server.URL,
+				BearerToken:              stringPtr("api-token"),
+				AppTags:                  []string{"vpc-a"},
+				PublisherPlacementLabels: []string{"vpc-a"},
+				Publishers: map[string]PublisherAssignmentInput{
+					"pub-a": {PublisherID: 101, PlacementLabels: []string{"vpc-a"}},
+				},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(deleteBodies) != 1 {
+		t.Fatalf("expected one delete request, got %#v", deleteBodies)
+	}
+	body := deleteBodies[0]
+	if got := body["private_app_ids"].([]any)[0]; got != "10" {
+		t.Fatalf("expected delete for private app ID 10, got %#v", body)
+	}
+	if got := body["publisher_ids"].([]any); len(got) != 1 || got[0] != "101" {
+		t.Fatalf("expected delete for selected publisher 101 only, got %#v", body)
 	}
 }
 
@@ -390,7 +547,11 @@ func TestRealtimeProtectionPolicyCreatesRuleWithPolicyGroupReference(t *testing.
 			if err := json.NewDecoder(r.Body).Decode(&created); err != nil {
 				t.Fatal(err)
 			}
-			writeJSON(t, w, map[string]any{"status": "success", "data": map[string]any{"id": 55, "name": "orders-access"}})
+			writeJSON(t, w, map[string]any{
+				"rule_id":   55,
+				"rule_name": "orders-access",
+				"rule_data": map[string]any{},
+			})
 		default:
 			http.NotFound(w, r)
 		}
@@ -402,8 +563,10 @@ func TestRealtimeProtectionPolicyCreatesRuleWithPolicyGroupReference(t *testing.
 		"bearerToken":     property.New("api-token"),
 		"name":            property.New("orders-access"),
 		"policyGroupName": property.New("default"),
+		"appIds":          property.New([]property.Value{property.New(44.0)}),
 		"appTags":         property.New([]property.Value{property.New("vpc-a")}),
 		"users":           property.New([]property.Value{property.New("user@example.com")}),
+		"groups":          property.New([]property.Value{property.New("CN=npa-users,OU=Groups,DC=example,DC=com")}),
 		"action":          property.New("allow"),
 		"enabled":         property.New(true),
 	}))
@@ -413,8 +576,95 @@ func TestRealtimeProtectionPolicyCreatesRuleWithPolicyGroupReference(t *testing.
 	if response.ID != "55" {
 		t.Fatalf("expected policy ID 55, got %q", response.ID)
 	}
-	if created["name"] != "orders-access" {
-		t.Fatalf("expected policy name in payload, got %#v", created)
+	if created["rule_name"] != "orders-access" {
+		t.Fatalf("expected rule_name in payload, got %#v", created)
+	}
+	if created["group_id"] != float64(12) {
+		t.Fatalf("expected group_id 12 in payload, got %#v", created)
+	}
+	if created["enabled"] != "1" {
+		t.Fatalf("expected enabled string 1 in payload, got %#v", created)
+	}
+	ruleData := created["rule_data"].(map[string]any)
+	if got := ruleData["privateApps"].([]any)[0]; got != float64(44) {
+		t.Fatalf("expected privateApps [44], got %#v", ruleData["privateApps"])
+	}
+	if got := ruleData["privateAppTags"].([]any)[0]; got != "vpc-a" {
+		t.Fatalf("expected privateAppTags [vpc-a], got %#v", ruleData["privateAppTags"])
+	}
+	if got := ruleData["users"].([]any)[0]; got != "user@example.com" {
+		t.Fatalf("expected users in rule_data, got %#v", ruleData["users"])
+	}
+	if got := ruleData["userGroups"].([]any)[0]; got != "CN=npa-users,OU=Groups,DC=example,DC=com" {
+		t.Fatalf("expected userGroups in rule_data, got %#v", ruleData["userGroups"])
+	}
+	action := ruleData["match_criteria_action"].(map[string]any)
+	if got := action["action_name"]; got != "allow" {
+		t.Fatalf("expected action_name allow, got %#v", action)
+	}
+}
+
+func TestRealtimeProtectionPolicyDryRunDoesNotResolvePolicyGroupName(t *testing.T) {
+	resource := RealtimeProtectionPolicy{}
+	response, err := resource.Create(t.Context(), infer.CreateRequest[RealtimeProtectionPolicyArgs]{
+		DryRun: true,
+		Inputs: RealtimeProtectionPolicyArgs{
+			TenantURL:       "https://unused.example",
+			BearerToken:     stringPtr("api-token"),
+			Name:            "orders-access",
+			PolicyGroupName: stringPtr("default"),
+			AppTags:         []string{"vpc-a"},
+			Action:          "allow",
+			Enabled:         true,
+		},
+	})
+	if err != nil {
+		t.Fatalf("expected dry-run create without live lookup, got %v", err)
+	}
+	if response.ID != "orders-access" {
+		t.Fatalf("expected dry-run ID to use policy name, got %q", response.ID)
+	}
+	if response.Output.ResolvedPolicyGroupID != 0 {
+		t.Fatalf("expected unresolved policy group during dry-run, got %d", response.Output.ResolvedPolicyGroupID)
+	}
+}
+
+func TestRealtimeProtectionPolicyReadDropsResourceWhenRemotePolicyIsMissing(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet && r.URL.Path == "/api/v2/policy/npa/rules/55" {
+			http.NotFound(w, r)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	defer server.Close()
+
+	resource := RealtimeProtectionPolicy{}
+	response, err := resource.Read(t.Context(), infer.ReadRequest[RealtimeProtectionPolicyArgs, RealtimeProtectionPolicyOutputs]{
+		ID: "55",
+		Inputs: RealtimeProtectionPolicyArgs{
+			TenantURL:   server.URL,
+			BearerToken: stringPtr("api-token"),
+			Name:        "orders-access",
+			Action:      "allow",
+			Enabled:     true,
+		},
+		State: RealtimeProtectionPolicyOutputs{
+			RealtimeProtectionPolicyArgs: RealtimeProtectionPolicyArgs{
+				TenantURL:   server.URL,
+				BearerToken: stringPtr("api-token"),
+				Name:        "orders-access",
+				Action:      "allow",
+				Enabled:     true,
+			},
+			PolicyID: 55,
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if response.ID != "" {
+		t.Fatalf("expected missing remote policy to clear ID, got %q", response.ID)
 	}
 }
 
@@ -1359,6 +1609,10 @@ func writeJSON(t *testing.T, w http.ResponseWriter, body any) {
 	if err := json.NewEncoder(w).Encode(body); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func stringPtr(value string) *string {
+	return &value
 }
 
 func findResourceByType(t *testing.T, resources []capturedResource, expectedType string) capturedResource {

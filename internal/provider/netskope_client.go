@@ -30,6 +30,8 @@ type netskopeClient struct {
 	httpClient  *http.Client
 }
 
+var errNetskopeNotFound = fmt.Errorf("netskope resource not found")
+
 func newNetskopeClient(config netskopeClientConfig) netskopeClient {
 	token := config.BearerToken
 	if token == "" {
@@ -96,6 +98,9 @@ func (client *netskopeClient) request(
 	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return fmt.Errorf("%s failed reading response: %w", operation, err)
+	}
+	if response.StatusCode == http.StatusNotFound {
+		return errNetskopeNotFound
 	}
 	if response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {
 		return fmt.Errorf("%s failed (status=%d): %s", operation, response.StatusCode, strings.TrimSpace(string(bodyBytes)))
@@ -198,15 +203,19 @@ func (app privateAppRecord) resourceID() int {
 	return app.ID
 }
 
+type privateAppsListResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		PrivateApps []privateAppRecord `json:"private_apps"`
+	} `json:"data"`
+}
+
 func (client *netskopeClient) listPrivateApps(ctx context.Context) ([]privateAppRecord, error) {
-	var response struct {
-		Status string             `json:"status"`
-		Data   []privateAppRecord `json:"data"`
-	}
+	var response privateAppsListResponse
 	if err := client.request(ctx, "List private apps", http.MethodGet, "/api/v2/steering/apps/private", nil, &response); err != nil {
 		return nil, err
 	}
-	return response.Data, nil
+	return response.Data.PrivateApps, nil
 }
 
 func (client *netskopeClient) findPrivateAppByName(ctx context.Context, name string) (*privateAppRecord, error) {
@@ -233,13 +242,25 @@ func (client *netskopeClient) createPrivateApp(ctx context.Context, payload priv
 	return response.Data, nil
 }
 
+func (client *netskopeClient) getPrivateApp(ctx context.Context, id int) (privateAppRecord, error) {
+	var response struct {
+		Status string           `json:"status"`
+		Data   privateAppRecord `json:"data"`
+	}
+	path := fmt.Sprintf("/api/v2/steering/apps/private/%d", id)
+	if err := client.request(ctx, fmt.Sprintf("Get private app %d", id), http.MethodGet, path, nil, &response); err != nil {
+		return privateAppRecord{}, err
+	}
+	return response.Data, nil
+}
+
 func (client *netskopeClient) updatePrivateApp(ctx context.Context, id int, payload privateAppPayload) (privateAppRecord, error) {
 	var response struct {
 		Status string           `json:"status"`
 		Data   privateAppRecord `json:"data"`
 	}
 	path := fmt.Sprintf("/api/v2/steering/apps/private/%d", id)
-	if err := client.request(ctx, "Update private app "+payload.AppName, http.MethodPatch, path, payload, &response); err != nil {
+	if err := client.request(ctx, "Update private app "+payload.AppName, http.MethodPut, path, payload, &response); err != nil {
 		return privateAppRecord{}, err
 	}
 	return response.Data, nil
@@ -263,27 +284,58 @@ type privateAppRecordWithPublishers struct {
 	ServicePublisherAssignments []privateAppPublisherAssignment `json:"service_publisher_assignments"`
 }
 
-func (client *netskopeClient) listPrivateAppsWithPublishers(ctx context.Context) ([]privateAppRecordWithPublishers, error) {
-	var response struct {
-		Status string                           `json:"status"`
-		Data   []privateAppRecordWithPublishers `json:"data"`
+func (app privateAppRecordWithPublishers) resourceID() int {
+	if app.AppID != 0 {
+		return app.AppID
 	}
+	return app.ID
+}
+
+type privateAppsWithPublishersListResponse struct {
+	Status string `json:"status"`
+	Data   struct {
+		PrivateApps []privateAppRecordWithPublishers `json:"private_apps"`
+	} `json:"data"`
+}
+
+func (client *netskopeClient) listPrivateAppsWithPublishers(ctx context.Context) ([]privateAppRecordWithPublishers, error) {
+	var response privateAppsWithPublishersListResponse
 	if err := client.request(ctx, "List private apps", http.MethodGet, "/api/v2/steering/apps/private", nil, &response); err != nil {
 		return nil, err
 	}
-	return response.Data, nil
+	return response.Data.PrivateApps, nil
 }
 
-func (client *netskopeClient) replacePrivateAppPublishers(ctx context.Context, appNames []string, publisherIDs []int) error {
-	ids := make([]string, 0, len(publisherIDs))
+func (client *netskopeClient) replacePrivateAppPublishers(ctx context.Context, appIDs []int, publisherIDs []int) error {
+	privateAppIDs := make([]string, 0, len(appIDs))
+	for _, id := range appIDs {
+		privateAppIDs = append(privateAppIDs, strconv.Itoa(id))
+	}
+	publisherIDValues := make([]string, 0, len(publisherIDs))
 	for _, id := range publisherIDs {
-		ids = append(ids, strconv.Itoa(id))
+		publisherIDValues = append(publisherIDValues, strconv.Itoa(id))
 	}
 	body := map[string]any{
-		"private_app_names": appNames,
-		"publisher_ids":     ids,
+		"private_app_ids": privateAppIDs,
+		"publisher_ids":   publisherIDValues,
 	}
 	return client.request(ctx, "Replace private app publishers", http.MethodPut, "/api/v2/steering/apps/private/publishers", body, nil)
+}
+
+func (client *netskopeClient) deletePrivateAppPublishers(ctx context.Context, appIDs []int, publisherIDs []int) error {
+	privateAppIDs := make([]string, 0, len(appIDs))
+	for _, id := range appIDs {
+		privateAppIDs = append(privateAppIDs, strconv.Itoa(id))
+	}
+	publisherIDValues := make([]string, 0, len(publisherIDs))
+	for _, id := range publisherIDs {
+		publisherIDValues = append(publisherIDValues, strconv.Itoa(id))
+	}
+	body := map[string]any{
+		"private_app_ids": privateAppIDs,
+		"publisher_ids":   publisherIDValues,
+	}
+	return client.request(ctx, "Delete private app publishers", http.MethodDelete, "/api/v2/steering/apps/private/publishers", body, nil)
 }
 
 type policyGroupRecord struct {
@@ -291,20 +343,29 @@ type policyGroupRecord struct {
 	Name string `json:"name"`
 }
 
+type realtimePolicyAction struct {
+	ActionName string `json:"action_name"`
+}
+
+type realtimePolicyRuleData struct {
+	PrivateApps         []int                `json:"privateApps,omitempty"`
+	PrivateAppTags      []string             `json:"privateAppTags,omitempty"`
+	Users               []string             `json:"users,omitempty"`
+	UserGroups          []string             `json:"userGroups,omitempty"`
+	MatchCriteriaAction realtimePolicyAction `json:"match_criteria_action"`
+}
+
 type realtimePolicyPayload struct {
-	Name          string   `json:"name"`
-	PolicyGroupID int      `json:"policy_group_id,omitempty"`
-	AppIDs        []int    `json:"private_app_ids,omitempty"`
-	AppTags       []string `json:"private_app_tags,omitempty"`
-	Users         []string `json:"users,omitempty"`
-	Groups        []string `json:"groups,omitempty"`
-	Action        string   `json:"action"`
-	Enabled       bool     `json:"enabled"`
+	RuleName  string                 `json:"rule_name"`
+	GroupID   int                    `json:"group_id,omitempty"`
+	GroupName string                 `json:"group_name,omitempty"`
+	RuleData  realtimePolicyRuleData `json:"rule_data"`
+	Enabled   string                 `json:"enabled"`
 }
 
 type realtimePolicyRecord struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	RuleID   int    `json:"rule_id"`
+	RuleName string `json:"rule_name"`
 }
 
 func (client *netskopeClient) findPolicyGroupByName(ctx context.Context, name string) (*policyGroupRecord, error) {
@@ -324,26 +385,29 @@ func (client *netskopeClient) findPolicyGroupByName(ctx context.Context, name st
 }
 
 func (client *netskopeClient) createRealtimePolicy(ctx context.Context, payload realtimePolicyPayload) (realtimePolicyRecord, error) {
-	var response struct {
-		Status string               `json:"status"`
-		Data   realtimePolicyRecord `json:"data"`
-	}
-	if err := client.request(ctx, "Create realtime protection policy "+payload.Name, http.MethodPost, "/api/v2/policy/npa/rules", payload, &response); err != nil {
+	var response realtimePolicyRecord
+	if err := client.request(ctx, "Create realtime protection policy "+payload.RuleName, http.MethodPost, "/api/v2/policy/npa/rules", payload, &response); err != nil {
 		return realtimePolicyRecord{}, err
 	}
-	return response.Data, nil
+	return response, nil
 }
 
 func (client *netskopeClient) updateRealtimePolicy(ctx context.Context, id int, payload realtimePolicyPayload) (realtimePolicyRecord, error) {
-	var response struct {
-		Status string               `json:"status"`
-		Data   realtimePolicyRecord `json:"data"`
-	}
+	var response realtimePolicyRecord
 	path := fmt.Sprintf("/api/v2/policy/npa/rules/%d", id)
-	if err := client.request(ctx, "Update realtime protection policy "+payload.Name, http.MethodPatch, path, payload, &response); err != nil {
+	if err := client.request(ctx, "Update realtime protection policy "+payload.RuleName, http.MethodPatch, path, payload, &response); err != nil {
 		return realtimePolicyRecord{}, err
 	}
-	return response.Data, nil
+	return response, nil
+}
+
+func (client *netskopeClient) getRealtimePolicy(ctx context.Context, id int) (realtimePolicyRecord, error) {
+	var response realtimePolicyRecord
+	path := fmt.Sprintf("/api/v2/policy/npa/rules/%d", id)
+	if err := client.request(ctx, fmt.Sprintf("Get realtime protection policy %d", id), http.MethodGet, path, nil, &response); err != nil {
+		return realtimePolicyRecord{}, err
+	}
+	return response, nil
 }
 
 func (client *netskopeClient) deleteRealtimePolicy(ctx context.Context, id int) error {
