@@ -64,3 +64,19 @@ test("bespoke providers are metadata-only", () => {
     assert.ok(provider.docs.summary, `${provider.componentName} missing docs summary`);
   }
 });
+
+test("provider catalog uses installable upstream package metadata", () => {
+  const expectedPackages: Record<string, string> = {
+    UpcloudPublisher: "@upcloud/pulumi-upcloud",
+    StackitPublisher: "@stackitcloud/pulumi-stackit",
+    EquinixPublisher: "@equinix-labs/pulumi-equinix",
+    OpentelekomcloudPublisher: "terraform-provider:opentelekomcloud/opentelekomcloud",
+    OutscalePublisher: "terraform-provider:outscale/outscale",
+    TencentcloudPublisher: "terraform-provider:tencentcloudstack/tencentcloud",
+    YandexPublisher: "pulumi/yandex",
+  };
+
+  for (const [componentName, packageName] of Object.entries(expectedPackages)) {
+    assert.equal(providerCatalog[componentName].providerPackage, packageName, `${componentName} providerPackage mismatch`);
+  }
+});
