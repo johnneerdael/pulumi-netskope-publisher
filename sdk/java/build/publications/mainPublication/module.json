@@ -3,7 +3,7 @@
   "component": {
     "group": "com.pulumi",
     "module": "netskope-publisher",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "attributes": {
       "org.gradle.status": "release"
     }
@@ -25,13 +25,13 @@
       },
       "files": [
         {
-          "name": "netskope-publisher-0.3.2.jar",
-          "url": "netskope-publisher-0.3.2.jar",
+          "name": "netskope-publisher-0.3.3.jar",
+          "url": "netskope-publisher-0.3.3.jar",
           "size": 266640,
-          "sha512": "50521cbda902b50474df449b31954172430499ca8a92bbc8a21324403d06ec9d60d5d7a830b0463649cb9b0cf2d91f2290889dd1d551ddf8b85b200c1d6f6dc4",
-          "sha256": "b30f364c4310e8eaac9a0e40d869a7ed5f818dfc8770baf7b7073c995881f284",
-          "sha1": "ad9c86064e347300775904709689f347e3c2201a",
-          "md5": "82f464eac8412e849565d137168a5fe6"
+          "sha512": "1488ad33978256c6e5240cf8e26b4a5254d91883621112f5521e58463c902bc98ad87a59e5e98a30c2976bdbd3b0e09d1cbb875c2db968f8d22a3ebb16ef1a98",
+          "sha256": "1d979b92de36565c5571f178281b0576db17447a51372564be19c91196eaaf50",
+          "sha1": "f15bffa686dcd441c013f15b1820a90226023ee8",
+          "md5": "20ec2fc21736bb0b12004e94ad51f250"
         }
       ]
     },
@@ -69,13 +69,13 @@
       ],
       "files": [
         {
-          "name": "netskope-publisher-0.3.2.jar",
-          "url": "netskope-publisher-0.3.2.jar",
+          "name": "netskope-publisher-0.3.3.jar",
+          "url": "netskope-publisher-0.3.3.jar",
           "size": 266640,
-          "sha512": "50521cbda902b50474df449b31954172430499ca8a92bbc8a21324403d06ec9d60d5d7a830b0463649cb9b0cf2d91f2290889dd1d551ddf8b85b200c1d6f6dc4",
-          "sha256": "b30f364c4310e8eaac9a0e40d869a7ed5f818dfc8770baf7b7073c995881f284",
-          "sha1": "ad9c86064e347300775904709689f347e3c2201a",
-          "md5": "82f464eac8412e849565d137168a5fe6"
+          "sha512": "1488ad33978256c6e5240cf8e26b4a5254d91883621112f5521e58463c902bc98ad87a59e5e98a30c2976bdbd3b0e09d1cbb875c2db968f8d22a3ebb16ef1a98",
+          "sha256": "1d979b92de36565c5571f178281b0576db17447a51372564be19c91196eaaf50",
+          "sha1": "f15bffa686dcd441c013f15b1820a90226023ee8",
+          "md5": "20ec2fc21736bb0b12004e94ad51f250"
         }
       ]
     }
