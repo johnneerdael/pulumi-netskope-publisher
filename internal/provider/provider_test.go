@@ -513,6 +513,30 @@ func TestTagPublisherAssignmentFailsWhenPlacementLabelsSelectNoPublishers(t *tes
 	}
 }
 
+func TestTagPublisherAssignmentRequiresAllPlacementLabels(t *testing.T) {
+	_, err := createTagPublisherAssignmentResource(t, property.NewMap(map[string]property.Value{
+		"tenantUrl":                property.New("https://tenant.example"),
+		"bearerToken":              property.New("api-token"),
+		"appTags":                  property.New([]property.Value{property.New("vpc-a")}),
+		"publisherPlacementLabels": property.New([]property.Value{property.New("aws"), property.New("vpc-a")}),
+		"publishers": property.New(map[string]property.Value{
+			"pub-wrong-vpc": property.New(map[string]property.Value{
+				"publisherId": property.New(202.0),
+				"placementLabels": property.New([]property.Value{
+					property.New("aws"),
+					property.New("vpc-b"),
+				}),
+			}),
+		}),
+	}))
+	if err == nil {
+		t.Fatalf("expected validation error when publisher matches only one placement label")
+	}
+	if !strings.Contains(err.Error(), `publisherPlacementLabels [aws vpc-a] did not match any managed publishers`) {
+		t.Fatalf("expected placement label validation error, got %v", err)
+	}
+}
+
 func TestTagPublisherAssignmentDeleteRemovesSelectedPublishersFromMatchedApps(t *testing.T) {
 	var deleteBodies []map[string]any
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

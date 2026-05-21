@@ -156,10 +156,9 @@ func summarizeTagPublisherAssignment(ctx context.Context, args TagPublisherAssig
 }
 
 func selectPublishersByPlacement(publishers map[string]PublisherAssignmentInput, labels []string) []int {
-	labelSet := stringSet(labels)
 	var selected []int
 	for _, publisher := range publishers {
-		if intersectsStringSet(publisher.PlacementLabels, labelSet) {
+		if containsAllStrings(publisher.PlacementLabels, labels) {
 			selected = append(selected, publisher.PublisherID)
 		}
 	}
@@ -236,13 +235,17 @@ func intSet(values []int) map[int]bool {
 	return set
 }
 
-func intersectsStringSet(values []string, set map[string]bool) bool {
-	for _, value := range values {
-		if set[value] {
-			return true
+func containsAllStrings(values []string, required []string) bool {
+	if len(required) == 0 {
+		return false
+	}
+	set := stringSet(values)
+	for _, value := range required {
+		if !set[value] {
+			return false
 		}
 	}
-	return false
+	return true
 }
 
 func sortedIntSet(set map[int]bool) []int {
