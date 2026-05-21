@@ -1446,6 +1446,53 @@ func TestOciConstructRejectsMissingImageID(t *testing.T) {
 	}
 }
 
+func TestOpentelekomcloudConstructRejectsConflictingSelectors(t *testing.T) {
+	imageErr := constructPublisherResourceError(t, "netskope-publisher:index:OpentelekomcloudPublisher", property.NewMap(map[string]property.Value{
+		"names":         property.New([]property.Value{property.New("pub-1")}),
+		"registrations": registrationMap("pub-1"),
+		"networks":      property.New([]property.Value{property.New(map[string]property.Value{"name": property.New("private")})}),
+		"imageName":     property.New("Ubuntu 22.04"),
+		"imageId":       property.New("image-id"),
+	}))
+	if imageErr == nil || !strings.Contains(imageErr.Error(), "OpentelekomcloudPublisher accepts only one of: imageName, imageId") {
+		t.Fatalf("expected conflicting image selector error, got %v", imageErr)
+	}
+
+	flavorErr := constructPublisherResourceError(t, "netskope-publisher:index:OpentelekomcloudPublisher", property.NewMap(map[string]property.Value{
+		"names":         property.New([]property.Value{property.New("pub-1")}),
+		"registrations": registrationMap("pub-1"),
+		"networks":      property.New([]property.Value{property.New(map[string]property.Value{"name": property.New("private")})}),
+		"flavorName":    property.New("s3.medium.2"),
+		"flavorId":      property.New("flavor-id"),
+	}))
+	if flavorErr == nil || !strings.Contains(flavorErr.Error(), "OpentelekomcloudPublisher accepts only one of: flavorName, flavorId") {
+		t.Fatalf("expected conflicting flavor selector error, got %v", flavorErr)
+	}
+}
+
+func TestOpentelekomcloudConstructUsesIDSelectorsWithoutDefaultNames(t *testing.T) {
+	resources := constructAndCollectResources(t, "netskope-publisher:index:OpentelekomcloudPublisher", property.NewMap(map[string]property.Value{
+		"names":         property.New([]property.Value{property.New("pub-1")}),
+		"registrations": registrationMap("pub-1"),
+		"networks":      property.New([]property.Value{property.New(map[string]property.Value{"name": property.New("private")})}),
+		"imageId":       property.New("image-id"),
+		"flavorId":      property.New("flavor-id"),
+	}))
+	instance := findResourceByType(t, resources, "opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2")
+	if got := instance.Inputs.Get("imageId").AsString(); got != "image-id" {
+		t.Fatalf("expected imageId, got %q", got)
+	}
+	if got := instance.Inputs.Get("flavorId").AsString(); got != "flavor-id" {
+		t.Fatalf("expected flavorId, got %q", got)
+	}
+	if instance.Inputs.Get("imageName").IsString() && instance.Inputs.Get("imageName").AsString() != "" {
+		t.Fatalf("did not expect default imageName when imageId is supplied")
+	}
+	if instance.Inputs.Get("flavorName").IsString() && instance.Inputs.Get("flavorName").AsString() != "" {
+		t.Fatalf("did not expect default flavorName when flavorId is supplied")
+	}
+}
+
 func TestAzurePublisherRejectsUnsupportedMarketplaceTermsAcceptance(t *testing.T) {
 	err := constructPublisherResourceError(t, "netskope-publisher:index:AzurePublisher", property.NewMap(map[string]property.Value{
 		"names":                  property.New([]property.Value{property.New("pub-1")}),

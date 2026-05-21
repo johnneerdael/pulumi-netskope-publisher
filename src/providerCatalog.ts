@@ -382,7 +382,7 @@ const providerDefinitions = [
     ...upstreamOutputChecks("opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2", [
       [["accessIpV4"], "public IPv4 output"],
     ]),
-  ] }),
+  ], validation: { mutuallyExclusive: [["imageName", "imageId"], ["flavorName", "flavorId"]] } }),
   provider({ displayName: "TencentCloud", componentName: "TencentcloudPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "raw", slug: "tencentcloud", required: ["availabilityZone", "imageId"], resourceToken: "tencentcloud:index/instance:Instance", providerPackage: "terraform-provider:tencentcloudstack/tencentcloud", upstreamPropertyChecks: [
     ...upstreamChecks("tencentcloud:index/instance:Instance", [
       [["availabilityZone"], "availability zone placement"],

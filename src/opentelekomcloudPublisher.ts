@@ -20,9 +20,9 @@ export class OpentelekomcloudPublisher extends pulumi.ComponentResource {
       args,
       mapInputs: (input, currentArgs) => ({
         name: input.publisherName,
-        imageName: currentArgs.imageName ?? "Ubuntu 22.04",
+        imageName: currentArgs.imageId === undefined ? currentArgs.imageName ?? "Ubuntu 22.04" : currentArgs.imageName,
         imageId: currentArgs.imageId,
-        flavorName: currentArgs.flavorName ?? "s3.medium.2",
+        flavorName: currentArgs.flavorId === undefined ? currentArgs.flavorName ?? "s3.medium.2" : currentArgs.flavorName,
         flavorId: currentArgs.flavorId,
         networks: currentArgs.networks,
         keyPair: currentArgs.keyPair,

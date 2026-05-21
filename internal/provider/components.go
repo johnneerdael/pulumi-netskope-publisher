@@ -2369,12 +2369,22 @@ func NewOpentelekomcloudPublisher(ctx *pulumi.Context, name string, args Opentel
 		return nil, err
 	}
 	publisherNames, publishers, err := createRawBootstrapPublishers(ctx, component, name, args.common(), func(publisherName string, userData pulumi.StringOutput) (rawBootstrapBuildResult, error) {
+		imageName := args.ImageName
+		if args.ImageID == nil && imageName == nil {
+			defaultImageName := "Ubuntu 22.04"
+			imageName = &defaultImageName
+		}
+		flavorName := args.FlavorName
+		if args.FlavorID == nil && flavorName == nil {
+			defaultFlavorName := "s3.medium.2"
+			flavorName = &defaultFlavorName
+		}
 		instance := &rawVMResource{}
 		err := ctx.RegisterResource("opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2", name+"-"+publisherName, pulumi.Map{
 			"name":             pulumi.String(publisherName),
-			"imageName":        pulumi.String(defaultString(args.ImageName, "Ubuntu 22.04")),
+			"imageName":        stringPtrInput(imageName),
 			"imageId":          stringPtrInput(args.ImageID),
-			"flavorName":       pulumi.String(defaultString(args.FlavorName, "s3.medium.2")),
+			"flavorName":       stringPtrInput(flavorName),
 			"flavorId":         stringPtrInput(args.FlavorID),
 			"networks":         toMapArray(args.Networks),
 			"keyPair":          stringPtrInput(args.KeyPair),

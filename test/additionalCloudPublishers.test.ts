@@ -172,6 +172,42 @@ test("OpentelekomcloudPublisher creates compute instance with plain userData", a
   assert.match(await inputValue<string>(instance.userData), /bootstrap\.sh/);
 });
 
+test("OpentelekomcloudPublisher uses imageId and flavorId without default name selectors", async () => {
+  const component = new OpentelekomcloudPublisher("otc-id-selectors", baseArgs({
+    networks: [{ name: "private" }],
+    imageId: "image-id",
+    flavorId: "flavor-id",
+  }));
+
+  await outputValue(component.publishers);
+  const instance = createdResources["opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2"]["otc-id-selectors-pub-1"];
+
+  assert.equal(instance.imageId, "image-id");
+  assert.equal(instance.flavorId, "flavor-id");
+  assert.equal(instance.imageName, undefined);
+  assert.equal(instance.flavorName, undefined);
+});
+
+test("OpentelekomcloudPublisher rejects conflicting image and flavor selectors", () => {
+  assert.throws(
+    () => new OpentelekomcloudPublisher("otc-conflicting-image", baseArgs({
+      networks: [{ name: "private" }],
+      imageName: "Ubuntu 22.04",
+      imageId: "image-id",
+    })),
+    /OpentelekomcloudPublisher accepts only one of: imageName, imageId/,
+  );
+
+  assert.throws(
+    () => new OpentelekomcloudPublisher("otc-conflicting-flavor", baseArgs({
+      networks: [{ name: "private" }],
+      flavorName: "s3.medium.2",
+      flavorId: "flavor-id",
+    })),
+    /OpentelekomcloudPublisher accepts only one of: flavorName, flavorId/,
+  );
+});
+
 test("TencentcloudPublisher creates instance with raw userData", async () => {
   const component = new TencentcloudPublisher("tencent", baseArgs({
     availabilityZone: "ap-guangzhou-6",
