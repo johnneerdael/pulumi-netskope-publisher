@@ -30,6 +30,11 @@ export class ExoscalePublisher extends pulumi.ComponentResource {
         ...userDataProperty(provider, input),
         labels: currentArgs.tags,
       }),
+      mapOutputs: (resource) => ({
+        vmId: resource.id,
+        privateIp: pulumi.output(""),
+        publicIp: resource.output<string>("publicIpAddress"),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

@@ -27,6 +27,11 @@ export class OutscalePublisher extends pulumi.ComponentResource {
         placementSubregionName: currentArgs.placementSubregionName,
         ...userDataProperty(provider, input),
       }),
+      mapOutputs: (resource) => ({
+        vmId: resource.id,
+        privateIp: resource.output<string>("privateIp"),
+        publicIp: resource.output<string>("publicIp"),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

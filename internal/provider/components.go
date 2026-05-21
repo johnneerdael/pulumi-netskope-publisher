@@ -1607,19 +1607,25 @@ func (*YandexPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "Yande
 type rawVMResource struct {
 	pulumi.CustomResourceState
 
-	AccessIPV4       pulumi.StringOutput      `pulumi:"accessIpV4"`
-	Address          pulumi.StringOutput      `pulumi:"address"`
-	Addresses        pulumi.ArrayOutput       `pulumi:"addresses"`
-	IPAddresses      pulumi.StringArrayOutput `pulumi:"ipAddresses"`
-	Ipv4Address      pulumi.StringOutput      `pulumi:"ipv4Address"`
-	Ipv4Addresses    pulumi.ArrayOutput       `pulumi:"ipv4Addresses"`
-	Networks         pulumi.ArrayOutput       `pulumi:"networks"`
-	NicListStatuses  pulumi.AnyOutput         `pulumi:"nicListStatuses"`
-	PrimaryIPAddress pulumi.StringOutput      `pulumi:"primaryIpAddress"`
-	PrivateIP        pulumi.StringOutput      `pulumi:"privateIp"`
-	PrivateIPs       pulumi.ArrayOutput       `pulumi:"privateIps"`
-	PublicIP         pulumi.StringOutput      `pulumi:"publicIp"`
-	PublicIPs        pulumi.ArrayOutput       `pulumi:"publicIps"`
+	AccessIPV4         pulumi.StringOutput      `pulumi:"accessIpV4"`
+	AccessPrivateIpv4  pulumi.StringOutput      `pulumi:"accessPrivateIpv4"`
+	AccessPublicIpv4   pulumi.StringOutput      `pulumi:"accessPublicIpv4"`
+	Address            pulumi.StringOutput      `pulumi:"address"`
+	Addresses          pulumi.ArrayOutput       `pulumi:"addresses"`
+	InternalIP         pulumi.StringOutput      `pulumi:"internalIp"`
+	IPAddresses        pulumi.StringArrayOutput `pulumi:"ipAddresses"`
+	Ipv4Address        pulumi.StringOutput      `pulumi:"ipv4Address"`
+	Ipv4AddressPrivate pulumi.StringOutput      `pulumi:"ipv4AddressPrivate"`
+	Ipv4Addresses      pulumi.ArrayOutput       `pulumi:"ipv4Addresses"`
+	MainIP             pulumi.StringOutput      `pulumi:"mainIp"`
+	Networks           pulumi.ArrayOutput       `pulumi:"networks"`
+	NicListStatuses    pulumi.AnyOutput         `pulumi:"nicListStatuses"`
+	PrimaryIPAddress   pulumi.StringOutput      `pulumi:"primaryIpAddress"`
+	PrivateIP          pulumi.StringOutput      `pulumi:"privateIp"`
+	PrivateIPs         pulumi.ArrayOutput       `pulumi:"privateIps"`
+	PublicIP           pulumi.StringOutput      `pulumi:"publicIp"`
+	PublicIPAddress    pulumi.StringOutput      `pulumi:"publicIpAddress"`
+	PublicIPs          pulumi.ArrayOutput       `pulumi:"publicIps"`
 }
 
 func NewEsxiPublisher(ctx *pulumi.Context, name string, args EsxiPublisherArgs, opts ...pulumi.ResourceOption) (*EsxiPublisher, error) {
@@ -2136,7 +2142,7 @@ func NewDigitaloceanPublisher(ctx *pulumi.Context, name string, args Digitalocea
 			"userData":   plainUserData(userData),
 			"tags":       stringMapToColonTagArray(args.Tags),
 		}, droplet, pulumi.Parent(component))
-		return rawBootstrapBuildResult{droplet.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+		return rawBootstrapBuildResult{droplet.ID().ToStringOutput(), droplet.Ipv4AddressPrivate, droplet.Ipv4Address}, err
 	})
 	if err != nil {
 		return nil, err
@@ -2170,7 +2176,7 @@ func NewVultrPublisher(ctx *pulumi.Context, name string, args VultrPublisherArgs
 			"userData":        plainUserData(userData),
 			"tags":            stringMapToColonTagArray(args.Tags),
 		}, instance, pulumi.Parent(component))
-		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), instance.InternalIP, instance.MainIP}, err
 	})
 	if err != nil {
 		return nil, err
@@ -2202,7 +2208,7 @@ func NewExoscalePublisher(ctx *pulumi.Context, name string, args ExoscalePublish
 			"userData":          plainUserData(userData),
 			"labels":            toStringMap(args.Tags),
 		}, instance, pulumi.Parent(component))
-		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), instance.PublicIPAddress}, err
 	})
 	if err != nil {
 		return nil, err
@@ -2296,7 +2302,7 @@ func NewEquinixPublisher(ctx *pulumi.Context, name string, args EquinixPublisher
 			"userData":         plainUserData(userData),
 			"tags":             stringMapToColonTagArray(args.Tags),
 		}, device, pulumi.Parent(component))
-		return rawBootstrapBuildResult{device.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+		return rawBootstrapBuildResult{device.ID().ToStringOutput(), device.AccessPrivateIpv4, device.AccessPublicIpv4}, err
 	})
 	if err != nil {
 		return nil, err
@@ -2325,7 +2331,7 @@ func NewOutscalePublisher(ctx *pulumi.Context, name string, args OutscalePublish
 			"placementSubregionName": stringPtrInput(args.PlacementSubregionName),
 			"userData":               plainUserData(userData),
 		}, vm, pulumi.Parent(component))
-		return rawBootstrapBuildResult{vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+		return rawBootstrapBuildResult{vm.ID().ToStringOutput(), vm.PrivateIP, vm.PublicIP}, err
 	})
 	if err != nil {
 		return nil, err
@@ -2357,7 +2363,7 @@ func NewOpentelekomcloudPublisher(ctx *pulumi.Context, name string, args Opentel
 			"securityGroups":   toStringArray(args.SecurityGroups),
 			"userData":         plainUserData(userData),
 		}, instance, pulumi.Parent(component))
-		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), instance.AccessIPV4}, err
 	})
 	if err != nil {
 		return nil, err
@@ -2393,7 +2399,7 @@ func NewTencentcloudPublisher(ctx *pulumi.Context, name string, args Tencentclou
 			"userDataReplaceOnChange": pulumi.Bool(true),
 			"tags":                    toStringMap(args.Tags),
 		}, instance, pulumi.Parent(component))
-		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput()}, err
+		return rawBootstrapBuildResult{instance.ID().ToStringOutput(), instance.PrivateIP, instance.PublicIP}, err
 	})
 	if err != nil {
 		return nil, err

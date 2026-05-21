@@ -49,7 +49,7 @@ export class OvhPublisher extends pulumi.ComponentResource {
       return {
         vmId: instance.id,
         privateIp: pulumi.output(""),
-        publicIp: pulumi.output(""),
+        publicIp: instance.addresses.apply((addresses) => addresses?.[0]?.ip),
       };
     });
 

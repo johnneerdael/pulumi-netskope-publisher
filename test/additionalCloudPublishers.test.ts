@@ -15,11 +15,49 @@ import { PublisherOutput } from "../src/types";
 
 const createdResources: Record<string, Record<string, any>> = {};
 
+const mockedResourceOutputs: Record<string, Record<string, any>> = {
+  "digitalocean:index/droplet:Droplet": {
+    ipv4Address: "203.0.113.51",
+    ipv4AddressPrivate: "10.0.0.51",
+  },
+  "vultr:index/instance:Instance": {
+    mainIp: "203.0.113.52",
+    internalIp: "10.0.0.52",
+  },
+  "exoscale:index/computeInstance:ComputeInstance": {
+    publicIpAddress: "203.0.113.53",
+  },
+  "equinix:metal/device:Device": {
+    accessPublicIpv4: "203.0.113.54",
+    accessPrivateIpv4: "10.0.0.54",
+  },
+  "outscale:index/vm:Vm": {
+    publicIp: "203.0.113.55",
+    privateIp: "10.0.0.55",
+  },
+  "tencentcloud:index/instance:Instance": {
+    publicIp: "203.0.113.56",
+    privateIp: "10.0.0.56",
+  },
+  "opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2": {
+    accessIpV4: "203.0.113.57",
+  },
+  "ovh:CloudProject/instance:Instance": {
+    addresses: [{ ip: "203.0.113.58", version: 4 }],
+  },
+};
+
 pulumi.runtime.setMocks({
   newResource(args) {
     createdResources[args.type] ??= {};
     createdResources[args.type][args.name] = args.inputs;
-    return { id: `${args.name}-id`, state: args.inputs };
+    return {
+      id: `${args.name}-id`,
+      state: {
+        ...args.inputs,
+        ...(mockedResourceOutputs[args.type] ?? {}),
+      },
+    };
   },
   call(args) {
     return args.inputs;
@@ -159,6 +197,56 @@ test("YandexPublisher creates compute instance with metadata user-data", async (
 
   assert.equal(instance.bootDisk.initializeParams.imageId, "image-id");
   assert.match(metadata["user-data"], /bootstrap\.sh/);
+});
+
+test("catalog raw VM publishers expose registry-backed IP outputs", async () => {
+  const cases: Array<{
+    name: string;
+    component: pulumi.ComponentResource & { publishers: pulumi.Output<Record<string, PublisherOutput>> };
+    expectedPrivateIp: string;
+    expectedPublicIp: string | undefined;
+  }> = [{
+    name: "DigitalOcean",
+    component: new DigitaloceanPublisher("digitalocean-outputs", baseArgs({ region: "ams3" })),
+    expectedPrivateIp: "10.0.0.51",
+    expectedPublicIp: "203.0.113.51",
+  }, {
+    name: "Vultr",
+    component: new VultrPublisher("vultr-outputs", baseArgs({ region: "ams", plan: "vc2-2c-4gb", osId: 1743 })),
+    expectedPrivateIp: "10.0.0.52",
+    expectedPublicIp: "203.0.113.52",
+  }, {
+    name: "Exoscale",
+    component: new ExoscalePublisher("exoscale-outputs", baseArgs({ zone: "ch-gva-2", type: "standard.medium", templateId: "template-id", diskSize: 50 })),
+    expectedPrivateIp: "",
+    expectedPublicIp: "203.0.113.53",
+  }, {
+    name: "Equinix",
+    component: new EquinixPublisher("equinix-outputs", baseArgs({ projectId: "project-id", metro: "AM", plan: "c3.small.x86" })),
+    expectedPrivateIp: "10.0.0.54",
+    expectedPublicIp: "203.0.113.54",
+  }, {
+    name: "Outscale",
+    component: new OutscalePublisher("outscale-outputs", baseArgs({ imageId: "ami-123" })),
+    expectedPrivateIp: "10.0.0.55",
+    expectedPublicIp: "203.0.113.55",
+  }, {
+    name: "TencentCloud",
+    component: new TencentcloudPublisher("tencent-outputs", baseArgs({ availabilityZone: "ap-guangzhou-6", imageId: "img-123" })),
+    expectedPrivateIp: "10.0.0.56",
+    expectedPublicIp: "203.0.113.56",
+  }, {
+    name: "OpenTelekomCloud",
+    component: new OpentelekomcloudPublisher("otc-outputs", baseArgs({ networks: [{ name: "private" }] })),
+    expectedPrivateIp: "",
+    expectedPublicIp: "203.0.113.57",
+  }];
+
+  for (const tc of cases) {
+    const publishers = await outputValue<Record<string, PublisherOutput>>(tc.component.publishers);
+    assert.equal(publishers["pub-1"].privateIp, tc.expectedPrivateIp, `${tc.name} privateIp mismatch`);
+    assert.equal(publishers["pub-1"].publicIp, tc.expectedPublicIp, `${tc.name} publicIp mismatch`);
+  }
 });
 
 function baseArgs<T extends object>(args: T): T & {

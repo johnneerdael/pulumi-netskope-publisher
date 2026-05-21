@@ -34,6 +34,11 @@ export class TencentcloudPublisher extends pulumi.ComponentResource {
         userDataReplaceOnChange: true,
         tags: currentArgs.tags,
       }),
+      mapOutputs: (resource) => ({
+        vmId: resource.id,
+        privateIp: resource.output<string>("privateIp"),
+        publicIp: resource.output<string>("publicIp"),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

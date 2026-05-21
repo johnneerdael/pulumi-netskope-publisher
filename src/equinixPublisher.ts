@@ -30,6 +30,11 @@ export class EquinixPublisher extends pulumi.ComponentResource {
         ...userDataProperty(provider, input),
         tags: currentArgs.tags === undefined ? undefined : pulumi.output(currentArgs.tags).apply((tags) => Object.entries(tags).map(([key, value]) => `${key}:${value}`)),
       }),
+      mapOutputs: (resource) => ({
+        vmId: resource.id,
+        privateIp: resource.output<string>("accessPrivateIpv4"),
+        publicIp: resource.output<string>("accessPublicIpv4"),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

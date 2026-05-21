@@ -30,6 +30,11 @@ export class DigitaloceanPublisher extends pulumi.ComponentResource {
         ...userDataProperty(provider, input),
         tags: currentArgs.tags === undefined ? undefined : pulumi.output(currentArgs.tags).apply((tags) => Object.entries(tags).map(([key, value]) => `${key}:${value}`)),
       }),
+      mapOutputs: (resource) => ({
+        vmId: resource.id,
+        privateIp: resource.output<string>("ipv4AddressPrivate"),
+        publicIp: resource.output<string>("ipv4Address"),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;

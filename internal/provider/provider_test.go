@@ -1707,6 +1707,17 @@ func constructAndCollectPublisherOutput(t *testing.T, token string, inputs prope
 			NewResourceF: func(args integration.MockResourceArgs) (string, property.Map, error) {
 				state := args.Inputs
 				switch string(args.TypeToken) {
+				case "digitalocean:index/droplet:Droplet":
+					state = state.Set("ipv4Address", property.New("203.0.113.51"))
+					state = state.Set("ipv4AddressPrivate", property.New("10.0.0.51"))
+				case "vultr:index/instance:Instance":
+					state = state.Set("mainIp", property.New("203.0.113.52"))
+					state = state.Set("internalIp", property.New("10.0.0.52"))
+				case "exoscale:index/computeInstance:ComputeInstance":
+					state = state.Set("publicIpAddress", property.New("203.0.113.53"))
+				case "equinix:metal/device:Device":
+					state = state.Set("accessPublicIpv4", property.New("203.0.113.54"))
+					state = state.Set("accessPrivateIpv4", property.New("10.0.0.54"))
 				case "hcloud:index/server:Server":
 					state = state.Set("ipv4Address", property.New("203.0.113.10"))
 				case "nutanix:index/virtualMachine:VirtualMachine":
@@ -1720,6 +1731,9 @@ func constructAndCollectPublisherOutput(t *testing.T, token string, inputs prope
 						"ip":      property.New("198.51.100.30"),
 						"version": property.New(4.0),
 					})}))
+				case "outscale:index/vm:Vm":
+					state = state.Set("publicIp", property.New("203.0.113.55"))
+					state = state.Set("privateIp", property.New("10.0.0.55"))
 				case "scaleway:instance/server:Server":
 					state = state.Set("publicIps", property.New([]property.Value{property.New(map[string]property.Value{
 						"address": property.New("198.51.100.40"),
@@ -1727,6 +1741,11 @@ func constructAndCollectPublisherOutput(t *testing.T, token string, inputs prope
 					state = state.Set("privateIps", property.New([]property.Value{property.New(map[string]property.Value{
 						"address": property.New("10.0.0.40"),
 					})}))
+				case "tencentcloud:index/instance:Instance":
+					state = state.Set("publicIp", property.New("203.0.113.56"))
+					state = state.Set("privateIp", property.New("10.0.0.56"))
+				case "opentelekomcloud:index/computeInstanceV2:ComputeInstanceV2":
+					state = state.Set("accessIpV4", property.New("203.0.113.57"))
 				}
 				return args.Name + "-id", state, nil
 			},
@@ -1800,6 +1819,93 @@ func TestProviderOutputsExposeAvailableIPAddresses(t *testing.T) {
 			}),
 			outputField: "publicIp",
 			expected:    "198.51.100.40",
+		},
+		{
+			name:  "DigitalOcean",
+			token: "netskope-publisher:index:DigitaloceanPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"region":        property.New("ams3"),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.51",
+		},
+		{
+			name:  "Vultr",
+			token: "netskope-publisher:index:VultrPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"region":        property.New("ams"),
+				"plan":          property.New("vc2-2c-4gb"),
+				"osId":          property.New(1743.0),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.52",
+		},
+		{
+			name:  "Exoscale",
+			token: "netskope-publisher:index:ExoscalePublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"zone":          property.New("ch-gva-2"),
+				"type":          property.New("standard.medium"),
+				"templateId":    property.New("template-id"),
+				"diskSize":      property.New(50.0),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.53",
+		},
+		{
+			name:  "Equinix",
+			token: "netskope-publisher:index:EquinixPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"projectId":     property.New("project-id"),
+				"metro":         property.New("AM"),
+				"plan":          property.New("c3.small.x86"),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.54",
+		},
+		{
+			name:  "Outscale",
+			token: "netskope-publisher:index:OutscalePublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"imageId":       property.New("ami-123"),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.55",
+		},
+		{
+			name:  "TencentCloud",
+			token: "netskope-publisher:index:TencentcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":            property.New([]property.Value{property.New("pub-1")}),
+				"registrations":    registrationMap("pub-1"),
+				"availabilityZone": property.New("ap-guangzhou-6"),
+				"imageId":          property.New("img-123"),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.56",
+		},
+		{
+			name:  "OpenTelekomCloud",
+			token: "netskope-publisher:index:OpentelekomcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"networks": property.New([]property.Value{property.New(map[string]property.Value{
+					"name": property.New("private"),
+				})}),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.57",
 		},
 	}
 

@@ -30,6 +30,11 @@ export class OpentelekomcloudPublisher extends pulumi.ComponentResource {
         securityGroups: currentArgs.securityGroups,
         ...userDataProperty(provider, input),
       }),
+      mapOutputs: (resource) => ({
+        vmId: resource.id,
+        privateIp: pulumi.output(""),
+        publicIp: resource.output<string>("accessIpV4"),
+      }),
     });
 
     this.publisherNames = outputs.publisherNames;
