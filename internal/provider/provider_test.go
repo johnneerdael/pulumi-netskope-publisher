@@ -626,7 +626,10 @@ func TestRealtimeProtectionPolicyCreatesRuleWithPolicyGroupReference(t *testing.
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v2/policy/npa/policygroups":
-			writeJSON(t, w, map[string]any{"status": "success", "data": []map[string]any{{"id": 12, "name": "default"}}})
+			writeJSON(t, w, []map[string]any{{
+				"group_id":   12,
+				"group_name": "default",
+			}})
 		case r.Method == http.MethodPost && r.URL.Path == "/api/v2/policy/npa/rules":
 			if err := json.NewDecoder(r.Body).Decode(&created); err != nil {
 				t.Fatal(err)

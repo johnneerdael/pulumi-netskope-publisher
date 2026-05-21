@@ -345,8 +345,8 @@ func (client *netskopeClient) deletePrivateAppPublishers(ctx context.Context, ap
 }
 
 type policyGroupRecord struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID   int    `json:"group_id"`
+	Name string `json:"group_name"`
 }
 
 type realtimePolicyAction struct {
@@ -380,14 +380,11 @@ type realtimePolicyEnvelope struct {
 }
 
 func (client *netskopeClient) findPolicyGroupByName(ctx context.Context, name string) (*policyGroupRecord, error) {
-	var response struct {
-		Status string              `json:"status"`
-		Data   []policyGroupRecord `json:"data"`
-	}
+	var response []policyGroupRecord
 	if err := client.request(ctx, "List policy groups", http.MethodGet, "/api/v2/policy/npa/policygroups", nil, &response); err != nil {
 		return nil, err
 	}
-	for _, group := range response.Data {
+	for _, group := range response {
 		if group.Name == name {
 			return &group, nil
 		}
