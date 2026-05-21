@@ -118,6 +118,14 @@ test("catalog-driven providers declare upstream registry schema URLs", () => {
   }
 });
 
+test("Scaleway catalog uses the current non-deprecated resource token", () => {
+  assert.equal(providerCatalog.ScalewayPublisher.resourceToken, "scaleway:instance/server:Server");
+  assert.ok(
+    providerCatalog.ScalewayPublisher.upstreamPropertyChecks?.every((check) => check.resourceToken === "scaleway:instance/server:Server"),
+    "Scaleway upstream checks must use scaleway:instance/server:Server",
+  );
+});
+
 test("Proxmox VE declares both cloud-init snippet schema checks", () => {
   assert.deepEqual(providerCatalog.ProxmoxvePublisher.registrySchemaChecks, [{
     resourceToken: "proxmoxve:index/fileLegacy:FileLegacy",

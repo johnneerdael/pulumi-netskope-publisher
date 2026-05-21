@@ -240,13 +240,13 @@ const providerDefinitions = [
       [["addresses"], "instance address outputs"],
     ]),
   ] }),
-  provider({ displayName: "Scaleway", componentName: "ScalewayPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "scalewayDual", slug: "scaleway", required: [], resourceToken: "scaleway:index/instanceServer:InstanceServer", providerPackage: "@pulumiverse/scaleway", upstreamPropertyChecks: [
-    ...upstreamChecks("scaleway:index/instanceServer:InstanceServer", [
+  provider({ displayName: "Scaleway", componentName: "ScalewayPublisher", implementation: "catalogRawVm", bootstrapModel: "bootstrapOnly", userDataMode: "scalewayDual", slug: "scaleway", required: [], resourceToken: "scaleway:instance/server:Server", providerPackage: "@pulumiverse/scaleway", upstreamPropertyChecks: [
+    ...upstreamChecks("scaleway:instance/server:Server", [
       [["cloudInit"], "cloud-init content"],
       [["userData"], "user data map"],
       [["enableDynamicIp"], "dynamic IP flag"],
     ]),
-    ...upstreamOutputChecks("scaleway:index/instanceServer:InstanceServer", [
+    ...upstreamOutputChecks("scaleway:instance/server:Server", [
       [["privateIps"], "private IP outputs"],
       [["publicIps"], "public IP outputs"],
     ]),

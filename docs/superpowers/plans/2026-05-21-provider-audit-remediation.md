@@ -27,6 +27,12 @@
 
 ### Task 1: Fix Scaleway Resource Token Drift
 
+**Execution correction:** During execution, `@pulumiverse/scaleway` 1.49.0 showed that
+`scaleway:index/instanceServer:InstanceServer` is the deprecated alias and
+`scaleway:instance/server:Server` is the current resource token. The implemented
+fix keeps both TypeScript and Go on the current token and moves the catalog
+registry checks away from the deprecated alias.
+
 **Files:**
 - Modify: `test/scalewayPublisher.test.ts`
 - Modify: `src/scalewayPublisher.ts`
@@ -649,4 +655,3 @@ Expected: no uncommitted changes. The branch may still be ahead of `origin/main`
 **Placeholder scan:** No task uses TBD/TODO/fill-in language. Each code-changing step includes exact snippets and exact commands.
 
 **Type consistency:** The plan consistently uses `scaleway:index/instanceServer:InstanceServer`, `acceptMarketplaceTerms`, `NetworkInterfaces`, `firstMapFieldOutput`, and `firstNestedMapFieldOutput`.
-
