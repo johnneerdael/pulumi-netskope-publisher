@@ -1690,6 +1690,121 @@ func constructPublisherResource(t *testing.T, token string, inputs property.Map)
 	return response
 }
 
+func constructAndCollectPublisherOutput(t *testing.T, token string, inputs property.Map) property.Map {
+	t.Helper()
+
+	provider, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	server, err := integration.NewServer(
+		t.Context(),
+		Name,
+		semver.MustParse("0.3.1"),
+		integration.WithProvider(provider),
+		integration.WithMocks(&integration.MockResourceMonitor{
+			NewResourceF: func(args integration.MockResourceArgs) (string, property.Map, error) {
+				state := args.Inputs
+				switch string(args.TypeToken) {
+				case "hcloud:index/server:Server":
+					state = state.Set("ipv4Address", property.New("203.0.113.10"))
+				case "nutanix:index/virtualMachine:VirtualMachine":
+					state = state.Set("nicListStatuses", property.New([]property.Value{property.New(map[string]property.Value{
+						"ipEndpointLists": property.New([]property.Value{property.New(map[string]property.Value{
+							"ip": property.New("10.0.0.20"),
+						})}),
+					})}))
+				case "ovh:CloudProject/instance:Instance":
+					state = state.Set("ipAddresses", property.New([]property.Value{property.New("198.51.100.30")}))
+				case "scaleway:instance/server:Server":
+					state = state.Set("publicIp", property.New("198.51.100.40"))
+				}
+				return args.Name + "-id", state, nil
+			},
+		}),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response, err := server.Construct(p.ConstructRequest{
+		Urn:    presource.URN("urn:pulumi:stack::project::" + token + "::publisher"),
+		Inputs: inputs,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	publishers := response.State.Get("publishers").AsMap()
+	return publishers.Get("pub-1").AsMap()
+}
+
+func TestProviderOutputsExposeAvailableIPAddresses(t *testing.T) {
+	cases := []struct {
+		name        string
+		token       string
+		inputs      property.Map
+		outputField string
+		expected    string
+	}{
+		{
+			name:  "Hcloud",
+			token: "netskope-publisher:index:HcloudPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+			}),
+			outputField: "publicIp",
+			expected:    "203.0.113.10",
+		},
+		{
+			name:  "Nutanix",
+			token: "netskope-publisher:index:NutanixPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"clusterUuid":   property.New("cluster-uuid"),
+			}),
+			outputField: "privateIp",
+			expected:    "10.0.0.20",
+		},
+		{
+			name:  "OVH",
+			token: "netskope-publisher:index:OvhPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+				"serviceName":   property.New("project-id"),
+				"region":        property.New("GRA11"),
+				"imageId":       property.New("image-id"),
+				"flavorId":      property.New("flavor-id"),
+			}),
+			outputField: "publicIp",
+			expected:    "198.51.100.30",
+		},
+		{
+			name:  "Scaleway",
+			token: "netskope-publisher:index:ScalewayPublisher",
+			inputs: property.NewMap(map[string]property.Value{
+				"names":         property.New([]property.Value{property.New("pub-1")}),
+				"registrations": registrationMap("pub-1"),
+			}),
+			outputField: "publicIp",
+			expected:    "198.51.100.40",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			output := constructAndCollectPublisherOutput(t, tc.token, tc.inputs)
+			if output.Get(tc.outputField).AsString() != tc.expected {
+				t.Fatalf("expected %s %s %q, got %#v", tc.name, tc.outputField, tc.expected, output.Get(tc.outputField))
+			}
+		})
+	}
+}
+
 func constructPublisherResourceError(t *testing.T, token string, inputs property.Map) error {
 	t.Helper()
 

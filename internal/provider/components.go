@@ -1607,14 +1607,16 @@ func (*YandexPublisher) Annotate(a infer.Annotator) { a.SetToken("index", "Yande
 type rawVMResource struct {
 	pulumi.CustomResourceState
 
-	AccessIPV4       pulumi.StringOutput `pulumi:"accessIpV4"`
-	Address          pulumi.StringOutput `pulumi:"address"`
-	Ipv4Address      pulumi.StringOutput `pulumi:"ipv4Address"`
-	Ipv4Addresses    pulumi.ArrayOutput  `pulumi:"ipv4Addresses"`
-	Networks         pulumi.ArrayOutput  `pulumi:"networks"`
-	PrimaryIPAddress pulumi.StringOutput `pulumi:"primaryIpAddress"`
-	PrivateIP        pulumi.StringOutput `pulumi:"privateIp"`
-	PublicIP         pulumi.StringOutput `pulumi:"publicIp"`
+	AccessIPV4       pulumi.StringOutput      `pulumi:"accessIpV4"`
+	Address          pulumi.StringOutput      `pulumi:"address"`
+	IPAddresses      pulumi.StringArrayOutput `pulumi:"ipAddresses"`
+	Ipv4Address      pulumi.StringOutput      `pulumi:"ipv4Address"`
+	Ipv4Addresses    pulumi.ArrayOutput       `pulumi:"ipv4Addresses"`
+	Networks         pulumi.ArrayOutput       `pulumi:"networks"`
+	NicListStatuses  pulumi.AnyOutput         `pulumi:"nicListStatuses"`
+	PrimaryIPAddress pulumi.StringOutput      `pulumi:"primaryIpAddress"`
+	PrivateIP        pulumi.StringOutput      `pulumi:"privateIp"`
+	PublicIP         pulumi.StringOutput      `pulumi:"publicIp"`
 }
 
 func NewEsxiPublisher(ctx *pulumi.Context, name string, args EsxiPublisherArgs, opts ...pulumi.ResourceOption) (*EsxiPublisher, error) {
@@ -1741,7 +1743,7 @@ func NewNutanixPublisher(ctx *pulumi.Context, name string, args NutanixPublisher
 		if err := ctx.RegisterResource("nutanix:index/virtualMachine:VirtualMachine", name+"-"+publisherName, inputs, vm, pulumi.Parent(component)); err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(registration, vm.ID().ToStringOutput(), firstNutanixPrivateIP(vm.NicListStatuses), pulumi.String("").ToStringOutput(), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1856,7 +1858,7 @@ func NewOvhPublisher(ctx *pulumi.Context, name string, args OvhPublisherArgs, op
 		if err := ctx.RegisterResource("ovh:CloudProject/instance:Instance", name+"-"+publisherName, inputs, instance, pulumi.Parent(component)); err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(registration, instance.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), firstStringOutput(instance.IPAddresses), args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -1895,7 +1897,7 @@ func NewScalewayPublisher(ctx *pulumi.Context, name string, args ScalewayPublish
 		if err != nil {
 			return nil, err
 		}
-		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), pulumi.String("").ToStringOutput(), args.PlacementLabels)
+		outputs[publisherName] = publisherOutput(registration, server.ID().ToStringOutput(), pulumi.String("").ToStringOutput(), server.PublicIP, args.PlacementLabels)
 	}
 	component.PublisherNames = toStringArray(publisherNames).ToStringArrayOutput()
 	component.Publishers = pulumi.ToSecret(outputs).(pulumi.MapOutput)
@@ -3347,6 +3349,44 @@ func firstNestedString(values pulumi.ArrayOutput) pulumi.StringOutput {
 		default:
 			return fmt.Sprint(first)
 		}
+	}).(pulumi.StringOutput)
+}
+
+func firstStringOutput(values pulumi.StringArrayOutput) pulumi.StringOutput {
+	return values.ApplyT(func(items []string) string {
+		if len(items) == 0 {
+			return ""
+		}
+		return items[0]
+	}).(pulumi.StringOutput)
+}
+
+func firstNutanixPrivateIP(values pulumi.AnyOutput) pulumi.StringOutput {
+	return values.ApplyT(func(value interface{}) string {
+		items, ok := value.([]interface{})
+		if !ok {
+			return ""
+		}
+		if len(items) == 0 {
+			return ""
+		}
+		status, ok := items[0].(map[string]interface{})
+		if !ok {
+			return ""
+		}
+		endpoints, ok := status["ipEndpointLists"].([]interface{})
+		if !ok || len(endpoints) == 0 {
+			return ""
+		}
+		endpoint, ok := endpoints[0].(map[string]interface{})
+		if !ok {
+			return ""
+		}
+		ip, ok := endpoint["ip"]
+		if !ok || ip == nil {
+			return ""
+		}
+		return fmt.Sprint(ip)
 	}).(pulumi.StringOutput)
 }
 
