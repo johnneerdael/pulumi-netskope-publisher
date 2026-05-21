@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.pulumi</groupId>
   <artifactId>netskope-publisher</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
   <name>Netskope Publisher Pulumi Java SDK</name>
   <description>Pulumi components for provisioning Netskope Private Access Publishers on AWS, Azure, GCP, Kubernetes, vSphere, ESXi, Hcloud, Nutanix, OpenStack, OVH, Scaleway, OCI, Alicloud, Proxmox VE, DigitalOcean, Vultr, Exoscale, UpCloud, Stackit, Equinix Metal, Outscale, OpenTelekomCloud, TencentCloud, Yandex, and experimental Hyper-V.</description>
   <url>https://github.com/johnneerdael/pulumi-netskope-publisher</url>

@@ -1,0 +1,1 @@
+{"rustc":7458672600737419911,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[2149944856470573440,"build_script_build",false,7387770485498583618]],"local":[{"RerunIfChanged":{"output":"debug/build/pulumi-netskope-publisher-678e19854f1e7b79/output","paths":["build.rs","schema.json"]}}],"rustflags":[],"config":0,"compile_kind":0}
