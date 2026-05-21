@@ -175,7 +175,7 @@ type privateAppTag struct {
 }
 
 type privateAppPublisher struct {
-	PublisherID   int    `json:"publisher_id"`
+	PublisherID   string `json:"publisher_id"`
 	PublisherName string `json:"publisher_name,omitempty"`
 }
 

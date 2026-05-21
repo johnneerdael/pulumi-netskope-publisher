@@ -160,7 +160,7 @@ func privateAppPayloadFromArgs(args PrivateAppArgs) privateAppPayload {
 	publishers := make([]privateAppPublisher, 0, len(args.Publishers))
 	for _, publisher := range args.Publishers {
 		publishers = append(publishers, privateAppPublisher{
-			PublisherID:   publisher.PublisherID,
+			PublisherID:   strconv.Itoa(publisher.PublisherID),
 			PublisherName: stringValue(publisher.PublisherName),
 		})
 	}

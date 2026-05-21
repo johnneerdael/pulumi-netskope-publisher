@@ -346,8 +346,8 @@ func TestPrivateAppCreateIncludesInitialPublishersWhenProvided(t *testing.T) {
 	}
 	publishers := created["publishers"].([]any)
 	publisher := publishers[0].(map[string]any)
-	if publisher["publisher_id"] != float64(101) {
-		t.Fatalf("expected publisher_id 101, got %#v", created)
+	if publisher["publisher_id"] != "101" {
+		t.Fatalf("expected publisher_id string 101, got %#v", created)
 	}
 	if publisher["publisher_name"] != "pub-a" {
 		t.Fatalf("expected publisher_name pub-a, got %#v", created)
