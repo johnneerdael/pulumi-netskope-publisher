@@ -39,9 +39,6 @@ namespace Pulumi.NetskopePublisher
         [Output("host")]
         public Output<string> Host { get; private set; } = null!;
 
-        [Output("hosts")]
-        public Output<ImmutableArray<string>> Hosts { get; private set; } = null!;
-
         [Output("isUserPortalApp")]
         public Output<bool> IsUserPortalApp { get; private set; } = null!;
 
@@ -155,14 +152,6 @@ namespace Pulumi.NetskopePublisher
 
         [Input("host", required: true)]
         public Input<string> Host { get; set; } = null!;
-
-        [Input("hosts")]
-        private InputList<string>? _hosts;
-        public InputList<string> Hosts
-        {
-            get => _hosts ?? (_hosts = new InputList<string>());
-            set => _hosts = value;
-        }
 
         [Input("isUserPortalApp", required: true)]
         public Input<bool> IsUserPortalApp { get; set; } = null!;

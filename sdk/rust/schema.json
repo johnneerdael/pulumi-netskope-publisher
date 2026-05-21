@@ -5103,12 +5103,6 @@
         "host": {
           "type": "string"
         },
-        "hosts": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
         "isUserPortalApp": {
           "type": "boolean"
         },
@@ -5166,12 +5160,6 @@
         },
         "host": {
           "type": "string"
-        },
-        "hosts": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
         },
         "isUserPortalApp": {
           "type": "boolean"

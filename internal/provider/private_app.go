@@ -25,7 +25,6 @@ type PrivateAppArgs struct {
 	AppName              string               `pulumi:"appName"`
 	AppType              *string              `pulumi:"appType,optional"`
 	Host                 string               `pulumi:"host"`
-	Hosts                []string             `pulumi:"hosts,optional"`
 	Protocols            []PrivateAppProtocol `pulumi:"protocols"`
 	ClientlessAccess     bool                 `pulumi:"clientlessAccess"`
 	IsUserPortalApp      bool                 `pulumi:"isUserPortalApp"`
@@ -78,7 +77,21 @@ func (*PrivateApp) Create(ctx context.Context, req infer.CreateRequest[PrivateAp
 }
 
 func (*PrivateApp) Read(ctx context.Context, req infer.ReadRequest[PrivateAppArgs, PrivateAppOutputs]) (infer.ReadResponse[PrivateAppArgs, PrivateAppOutputs], error) {
-	return infer.ReadResponse[PrivateAppArgs, PrivateAppOutputs]{ID: req.ID, Inputs: req.Inputs, State: req.State}, nil
+	appID, err := strconv.Atoi(req.ID)
+	if err != nil {
+		return infer.ReadResponse[PrivateAppArgs, PrivateAppOutputs]{}, fmt.Errorf("invalid private app ID %q: %w", req.ID, err)
+	}
+	client := newResourceClient(req.Inputs.TenantURL, req.Inputs.APIToken, req.Inputs.BearerToken, req.Inputs.AuthMode, req.Inputs.OAuth2, http.DefaultClient)
+	app, err := client.getPrivateApp(ctx, appID)
+	if err != nil {
+		if err == errNetskopeNotFound {
+			return infer.ReadResponse[PrivateAppArgs, PrivateAppOutputs]{}, nil
+		}
+		return infer.ReadResponse[PrivateAppArgs, PrivateAppOutputs]{}, err
+	}
+	state := req.State
+	state.AppID = app.resourceID()
+	return infer.ReadResponse[PrivateAppArgs, PrivateAppOutputs]{ID: strconv.Itoa(state.AppID), Inputs: req.Inputs, State: state}, nil
 }
 
 func (*PrivateApp) Update(ctx context.Context, req infer.UpdateRequest[PrivateAppArgs, PrivateAppOutputs]) (infer.UpdateResponse[PrivateAppOutputs], error) {
@@ -123,9 +136,6 @@ func newResourceClient(tenantURL string, apiToken *string, bearerToken *string, 
 
 func privateAppPayloadFromArgs(args PrivateAppArgs) privateAppPayload {
 	host := any(args.Host)
-	if len(args.Hosts) > 0 {
-		host = args.Hosts
-	}
 
 	protocols := make([]privateAppProtocol, 0, len(args.Protocols))
 	for _, protocol := range args.Protocols {

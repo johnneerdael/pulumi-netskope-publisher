@@ -33,7 +33,6 @@ class PrivateAppArgs:
                  app_type: pulumi.Input[Optional[_builtins.str]] = None,
                  auth_mode: pulumi.Input[Optional[_builtins.str]] = None,
                  bearer_token: pulumi.Input[Optional[_builtins.str]] = None,
-                 hosts: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  oauth2: pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']] = None,
                  tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None):
         """
@@ -57,8 +56,6 @@ class PrivateAppArgs:
             pulumi.set(__self__, "auth_mode", auth_mode)
         if bearer_token is not None:
             pulumi.set(__self__, "bearer_token", bearer_token)
-        if hosts is not None:
-            pulumi.set(__self__, "hosts", hosts)
         if oauth2 is not None:
             pulumi.set(__self__, "oauth2", oauth2)
         if tags is not None:
@@ -183,15 +180,6 @@ class PrivateAppArgs:
 
     @_builtins.property
     @pulumi.getter
-    def hosts(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
-        return pulumi.get(self, "hosts")
-
-    @hosts.setter
-    def hosts(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
-        pulumi.set(self, "hosts", value)
-
-    @_builtins.property
-    @pulumi.getter
     def oauth2(self) -> pulumi.Input[Optional['_provider.NetskopeOAuth2ArgsArgs']]:
         return pulumi.get(self, "oauth2")
 
@@ -223,7 +211,6 @@ class PrivateApp(pulumi.CustomResource):
                  bearer_token: pulumi.Input[Optional[_builtins.str]] = None,
                  clientless_access: pulumi.Input[Optional[_builtins.bool]] = None,
                  host: pulumi.Input[Optional[_builtins.str]] = None,
-                 hosts: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  is_user_portal_app: pulumi.Input[Optional[_builtins.bool]] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  protocols: pulumi.Input[Optional[Sequence[pulumi.Input[Union['_provider.PrivateAppProtocolArgs', '_provider.PrivateAppProtocolArgsDict']]]]] = None,
@@ -270,7 +257,6 @@ class PrivateApp(pulumi.CustomResource):
                  bearer_token: pulumi.Input[Optional[_builtins.str]] = None,
                  clientless_access: pulumi.Input[Optional[_builtins.bool]] = None,
                  host: pulumi.Input[Optional[_builtins.str]] = None,
-                 hosts: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
                  is_user_portal_app: pulumi.Input[Optional[_builtins.bool]] = None,
                  oauth2: pulumi.Input[Optional[Union['_provider.NetskopeOAuth2ArgsArgs', '_provider.NetskopeOAuth2ArgsArgsDict']]] = None,
                  protocols: pulumi.Input[Optional[Sequence[pulumi.Input[Union['_provider.PrivateAppProtocolArgs', '_provider.PrivateAppProtocolArgsDict']]]]] = None,
@@ -301,7 +287,6 @@ class PrivateApp(pulumi.CustomResource):
             if host is None and not opts.urn:
                 raise TypeError("Missing required property 'host'")
             __props__.__dict__["host"] = host
-            __props__.__dict__["hosts"] = hosts
             if is_user_portal_app is None and not opts.urn:
                 raise TypeError("Missing required property 'is_user_portal_app'")
             __props__.__dict__["is_user_portal_app"] = is_user_portal_app
@@ -353,7 +338,6 @@ class PrivateApp(pulumi.CustomResource):
         __props__.__dict__["bearer_token"] = None
         __props__.__dict__["clientless_access"] = None
         __props__.__dict__["host"] = None
-        __props__.__dict__["hosts"] = None
         __props__.__dict__["is_user_portal_app"] = None
         __props__.__dict__["oauth2"] = None
         __props__.__dict__["protocols"] = None
@@ -407,11 +391,6 @@ class PrivateApp(pulumi.CustomResource):
     @pulumi.getter
     def host(self) -> pulumi.Output[_builtins.str]:
         return pulumi.get(self, "host")
-
-    @_builtins.property
-    @pulumi.getter
-    def hosts(self) -> pulumi.Output[Optional[Sequence[_builtins.str]]]:
-        return pulumi.get(self, "hosts")
 
     @_builtins.property
     @pulumi.getter(name="isUserPortalApp")

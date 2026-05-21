@@ -25,7 +25,6 @@ type PrivateApp struct {
 	BearerToken          pulumi.StringPtrOutput                 `pulumi:"bearerToken"`
 	ClientlessAccess     pulumi.BoolOutput                      `pulumi:"clientlessAccess"`
 	Host                 pulumi.StringOutput                    `pulumi:"host"`
-	Hosts                pulumi.StringArrayOutput               `pulumi:"hosts"`
 	IsUserPortalApp      pulumi.BoolOutput                      `pulumi:"isUserPortalApp"`
 	Oauth2               provider.NetskopeOAuth2ArgsPtrOutput   `pulumi:"oauth2"`
 	Protocols            provider.PrivateAppProtocolArrayOutput `pulumi:"protocols"`
@@ -118,7 +117,6 @@ type privateAppArgs struct {
 	BearerToken          *string                       `pulumi:"bearerToken"`
 	ClientlessAccess     bool                          `pulumi:"clientlessAccess"`
 	Host                 string                        `pulumi:"host"`
-	Hosts                []string                      `pulumi:"hosts"`
 	IsUserPortalApp      bool                          `pulumi:"isUserPortalApp"`
 	Oauth2               *provider.NetskopeOAuth2Args  `pulumi:"oauth2"`
 	Protocols            []provider.PrivateAppProtocol `pulumi:"protocols"`
@@ -138,7 +136,6 @@ type PrivateAppArgs struct {
 	BearerToken          pulumi.StringPtrInput
 	ClientlessAccess     pulumi.BoolInput
 	Host                 pulumi.StringInput
-	Hosts                pulumi.StringArrayInput
 	IsUserPortalApp      pulumi.BoolInput
 	Oauth2               provider.NetskopeOAuth2ArgsPtrInput
 	Protocols            provider.PrivateAppProtocolArrayInput
@@ -219,10 +216,6 @@ func (o PrivateAppOutput) ClientlessAccess() pulumi.BoolOutput {
 
 func (o PrivateAppOutput) Host() pulumi.StringOutput {
 	return o.ApplyT(func(v *PrivateApp) pulumi.StringOutput { return v.Host }).(pulumi.StringOutput)
-}
-
-func (o PrivateAppOutput) Hosts() pulumi.StringArrayOutput {
-	return o.ApplyT(func(v *PrivateApp) pulumi.StringArrayOutput { return v.Hosts }).(pulumi.StringArrayOutput)
 }
 
 func (o PrivateAppOutput) IsUserPortalApp() pulumi.BoolOutput {

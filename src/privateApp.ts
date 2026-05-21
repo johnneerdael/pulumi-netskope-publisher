@@ -16,7 +16,6 @@ export interface PrivateAppArgs {
   appName: pulumi.Input<string>;
   appType?: pulumi.Input<"client" | "clientless">;
   host: pulumi.Input<string>;
-  hosts?: pulumi.Input<pulumi.Input<string>[]>;
   protocols: pulumi.Input<pulumi.Input<PrivateAppProtocol>[]>;
   clientlessAccess: pulumi.Input<boolean>;
   isUserPortalApp: pulumi.Input<boolean>;

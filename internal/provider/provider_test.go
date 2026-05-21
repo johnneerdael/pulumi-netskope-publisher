@@ -302,28 +302,6 @@ func TestPrivateAppReadDropsResourceWhenRemoteAppIsMissing(t *testing.T) {
 	}
 }
 
-func TestPrivateAppRejectsHostsUntilApiShapeIsConfirmed(t *testing.T) {
-	_, err := createPrivateAppResource(t, property.NewMap(map[string]property.Value{
-		"tenantUrl":            property.New("https://tenant.example"),
-		"bearerToken":          property.New("api-token"),
-		"appName":              property.New("orders"),
-		"appType":              property.New("client"),
-		"host":                 property.New("orders.internal"),
-		"hosts":                property.New([]property.Value{property.New("orders.internal"), property.New("orders-alt.internal")}),
-		"protocols":            property.New([]property.Value{property.New(map[string]property.Value{"type": property.New("tcp"), "ports": property.New("443")})}),
-		"clientlessAccess":     property.New(false),
-		"isUserPortalApp":      property.New(false),
-		"usePublisherDns":      property.New(false),
-		"trustSelfSignedCerts": property.New(false),
-	}))
-	if err == nil {
-		t.Fatalf("expected hosts validation error")
-	}
-	if !strings.Contains(err.Error(), "hosts is not supported by the documented private app API; use host") {
-		t.Fatalf("expected hosts validation error, got %v", err)
-	}
-}
-
 func TestAwsConstructCreatesRegistrationChildWhenRegistrationsOmitted(t *testing.T) {
 	createdTypes := constructAndCollectTypes(t, "netskope-publisher:index:AwsPublisher", property.NewMap(map[string]property.Value{
 		"names":            property.New([]property.Value{property.New("pub-1")}),

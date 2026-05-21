@@ -76,13 +76,6 @@ public final class PrivateAppArgs extends com.pulumi.resources.ResourceArgs {
         return this.host;
     }
 
-    @Import(name="hosts")
-    private @Nullable Output<List<String>> hosts;
-
-    public Optional<Output<List<String>>> hosts() {
-        return Optional.ofNullable(this.hosts);
-    }
-
     @Import(name="isUserPortalApp", required=true)
     private Output<Boolean> isUserPortalApp;
 
@@ -143,7 +136,6 @@ public final class PrivateAppArgs extends com.pulumi.resources.ResourceArgs {
         this.bearerToken = $.bearerToken;
         this.clientlessAccess = $.clientlessAccess;
         this.host = $.host;
-        this.hosts = $.hosts;
         this.isUserPortalApp = $.isUserPortalApp;
         this.oauth2 = $.oauth2;
         this.protocols = $.protocols;
@@ -241,19 +233,6 @@ public final class PrivateAppArgs extends com.pulumi.resources.ResourceArgs {
 
         public Builder host(String host) {
             return host(Output.of(host));
-        }
-
-        public Builder hosts(@Nullable Output<List<String>> hosts) {
-            $.hosts = hosts;
-            return this;
-        }
-
-        public Builder hosts(List<String> hosts) {
-            return hosts(Output.of(hosts));
-        }
-
-        public Builder hosts(String... hosts) {
-            return hosts(List.of(hosts));
         }
 
         public Builder isUserPortalApp(Output<Boolean> isUserPortalApp) {

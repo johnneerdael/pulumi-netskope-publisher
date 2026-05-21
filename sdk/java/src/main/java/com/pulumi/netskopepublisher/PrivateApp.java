@@ -74,12 +74,6 @@ public class PrivateApp extends com.pulumi.resources.CustomResource {
     public Output<String> host() {
         return this.host;
     }
-    @Export(name="hosts", refs={List.class,String.class}, tree="[0,1]")
-    private Output</* @Nullable */ List<String>> hosts;
-
-    public Output<Optional<List<String>>> hosts() {
-        return Codegen.optional(this.hosts);
-    }
     @Export(name="isUserPortalApp", refs={Boolean.class}, tree="[0]")
     private Output<Boolean> isUserPortalApp;
 
