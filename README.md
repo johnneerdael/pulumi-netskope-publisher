@@ -84,9 +84,15 @@ npm run plugin:dist
 
 Provider capability metadata lives in `src/providerCatalog.ts`. Run
 `npm run docs:gen` after changing provider metadata and run
-`npm run catalog:check` before opening a release PR. The generated docs
-snippets under `site/source/_generated/` are committed so GitHub Pages
-builds are reproducible.
+`npm run catalog:check` before opening a release PR.
+
+`npm run catalog:check` validates local schema/export/docs parity and also
+fetches upstream Pulumi Registry schema JSON for raw child providers. This
+guards raw resource tokens, user-data placement properties, and install package
+metadata that TypeScript and Go mocks cannot catch.
+
+The generated docs snippets under `site/source/_generated/` are committed so
+GitHub Pages builds are reproducible.
 
 ## Quick start
 

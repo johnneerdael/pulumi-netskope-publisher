@@ -6,7 +6,7 @@
 | `VspherePublisher` | guestInfo | guestinfo.userdata |
 | `EsxiPublisher` | guestInfo | guestinfo.userdata |
 | `HcloudPublisher` | plain | userData |
-| `NutanixPublisher` | base64 | userData |
+| `NutanixPublisher` | base64 | guestCustomizationCloudInitUserData |
 | `OpenstackPublisher` | plain | userData |
 | `OvhPublisher` | plain | userData |
 | `ScalewayPublisher` | scalewayDual | cloudInit |
